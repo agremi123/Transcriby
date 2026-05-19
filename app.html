@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transcriby — Application</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="app-page">
+
+  <!-- ── Navbar ────────────────────────────────────────────────────────────── -->
+  <nav class="nav nav-app">
+    <div class="nav-inner">
+      <a class="nav-logo" href="/">
+        <span class="logo-icon">🎙</span>
+        Transcriby
+      </a>
+      <div class="nav-actions">
+        <span class="nav-email" id="nav-email"></span>
+        <button class="btn btn-ghost btn-sm" id="btn-logout">Se déconnecter</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Subscription gate (hidden by default) ─────────────────────────────── -->
+  <div class="gate-overlay hidden" id="subscription-gate">
+    <div class="gate-card">
+      <div class="gate-icon">🔒</div>
+      <h2>Abonnez-vous pour continuer</h2>
+      <p>Transcription en temps réel et corrections IA illimitées pour seulement 9 $/mois.</p>
+      <button class="btn btn-primary btn-lg" id="btn-subscribe">S'abonner pour 9 $/mois →</button>
+      <p class="gate-note">Paiement sécurisé via Stripe · Résiliable à tout moment</p>
+    </div>
+  </div>
+
+  <!-- ── Toast notification ─────────────────────────────────────────────────── -->
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- ── Main layout ────────────────────────────────────────────────────────── -->
+  <main class="app-layout">
+
+    <!-- Transcript panel -->
+    <section class="transcript-panel">
+      <div class="transcript-header">
+        <h1 class="transcript-title">Séance</h1>
+        <div class="transcript-stats" id="transcript-stats"></div>
+      </div>
+
+      <!-- Whiteboard -->
+      <div class="whiteboard" id="transcript-area" aria-live="polite">
+        <span class="wb-placeholder" id="transcript-placeholder">Appuyez sur <strong>Démarrer</strong> et commencez à parler…</span>
+      </div>
+
+      <!-- Recording controls -->
+      <div class="controls">
+        <select class="lang-select" id="lang-select" title="Langue" style="display:none">
+          <option value="fr">Français</option>
+        </select>
+        <button class="mic-btn" id="mic-btn" aria-label="Start recording">
+          <span class="mic-icon" id="mic-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </span>
+          <span id="mic-label">Démarrer</span>
+        </button>
+        <div class="recording-indicator hidden" id="recording-indicator">
+          <span class="rec-dot"></span>
+          <span id="rec-timer">0:00</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- History sidebar -->
+    <aside class="history-panel">
+      <div class="history-header">
+        <h2 class="history-title">Historique</h2>
+        <button class="btn btn-ghost btn-sm" id="btn-refresh-history" title="Actualiser">↻</button>
+      </div>
+      <div class="history-list" id="history-list">
+        <p class="history-empty">Aucune séance pour l'instant.</p>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Supabase + Stripe CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <!-- App scripts -->
+  <script src="/js/auth.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/transcribe.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

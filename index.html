@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transcriby — Parlez. Apprenez. Progressez.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="landing-page">
+
+  <!-- ── Navbar ────────────────────────────────────────────────────────────── -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" href="/">
+        <span class="logo-icon">🎙</span>
+        Transcriby
+      </a>
+      <div class="nav-actions">
+        <button class="btn btn-ghost" id="btn-open-login">Se connecter</button>
+        <button class="btn btn-primary" id="btn-open-signup">Commencer gratuitement</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-badge">Correction linguistique par IA</div>
+    <h1 class="hero-title">
+      Parlez. Soyez corrigé.<br />
+      <span class="gradient-text">Maîtrisez le français.</span>
+    </h1>
+    <p class="hero-subtitle">
+      Transcriby écoute pendant que vous parlez, repère vos fautes de grammaire en temps réel
+      et vous montre exactement comment les corriger — mot par mot.
+    </p>
+    <div class="hero-cta">
+      <button class="btn btn-primary btn-lg" id="btn-hero-signup">Commencer gratuitement →</button>
+      <span class="hero-note">Aucune carte bancaire requise pour essayer</span>
+    </div>
+    <!-- Demo transcript preview -->
+    <div class="demo-card">
+      <div class="demo-label">Exemple en direct</div>
+      <div class="demo-sentence">
+        <span class="demo-word">I</span>
+        <span class="demo-word-block">
+          <span class="demo-word error-word">goes</span>
+          <span class="demo-fix">go</span>
+        </span>
+        <span class="demo-word">to</span>
+        <span class="demo-word">the</span>
+        <span class="demo-word">store</span>
+        <span class="demo-word">yesterday</span>
+        <span class="demo-word-block">
+          <span class="demo-word error-word">and buy</span>
+          <span class="demo-fix">and bought</span>
+        </span>
+        <span class="demo-word">milk.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Features ──────────────────────────────────────────────────────────── -->
+  <section class="features">
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Transcription en temps réel</h3>
+        <p>Propulsé par Speechmatics — vos mots s'affichent à l'écran au fur et à mesure que vous parlez.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Corrections mot par mot</h3>
+        <p>L'IA identifie chaque faute de grammaire ou de vocabulaire et affiche la correction directement.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📚</div>
+        <h3>Historique des séances</h3>
+        <p>Chaque phrase et ses corrections sont sauvegardées pour suivre vos progrès.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Pricing ────────────────────────────────────────────────────────────── -->
+  <section class="pricing">
+    <h2 class="section-title">Tarif simple</h2>
+    <div class="pricing-card">
+      <div class="pricing-badge">Most popular</div>
+      <div class="pricing-amount"><span class="price">$9</span><span class="period">/month</span></div>
+      <ul class="pricing-features">
+        <li>✓ Transcription en temps réel illimitée</li>
+        <li>✓ Corrections IA mot par mot</li>
+        <li>✓ Historique complet des séances</li>
+        <li>✓ Toutes les langues supportées</li>
+        <li>✓ Résiliable à tout moment</li>
+      </ul>
+      <button class="btn btn-primary btn-lg" id="btn-pricing-signup">Commencer →</button>
+    </div>
+  </section>
+
+  <!-- ── Auth Modal ─────────────────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="auth-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="btn-close-modal" aria-label="Close">&times;</button>
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login" id="tab-login">Se connecter</button>
+        <button class="auth-tab" data-tab="signup" id="tab-signup">S'inscrire</button>
+      </div>
+
+      <!-- Login form -->
+      <div class="auth-panel" id="panel-login">
+        <h2 id="modal-title" class="auth-heading">Bon retour !</h2>
+        <form id="form-login" novalidate>
+          <div class="form-group">
+            <label for="login-email">E-mail</label>
+            <input id="login-email" type="email" placeholder="vous@exemple.com" autocomplete="email" required />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Mot de passe</label>
+            <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password" required />
+          </div>
+          <div class="auth-error" id="login-error"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="btn-login">Se connecter</button>
+        </form>
+        <p class="auth-switch">Pas encore de compte ? <a href="#" id="switch-to-signup">S'inscrire</a></p>
+      </div>
+
+      <!-- Signup form -->
+      <div class="auth-panel hidden" id="panel-signup">
+        <h2 class="auth-heading">Créer votre compte</h2>
+        <form id="form-signup" novalidate>
+          <div class="form-group">
+            <label for="signup-email">E-mail</label>
+            <input id="signup-email" type="email" placeholder="vous@exemple.com" autocomplete="email" required />
+          </div>
+          <div class="form-group">
+            <label for="signup-password">Mot de passe</label>
+            <input id="signup-password" type="password" placeholder="min. 8 caractères" autocomplete="new-password" required minlength="8" />
+          </div>
+          <div class="auth-error" id="signup-error"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="btn-signup">Créer un compte</button>
+        </form>
+        <p class="auth-switch">Déjà un compte ? <a href="#" id="switch-to-login">Se connecter</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    // ── Modal helpers ────────────────────────────────────────────────────────
+
+    function openModal(tab) {
+      const modal = document.getElementById('auth-modal');
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      if (tab === 'signup') switchTab('signup');
+      else switchTab('login');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('auth-modal');
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+      document.getElementById('panel-login').classList.toggle('hidden', tab !== 'login');
+      document.getElementById('panel-signup').classList.toggle('hidden', tab !== 'signup');
+    }
+
+    document.getElementById('btn-open-login').addEventListener('click', () => openModal('login'));
+    document.getElementById('btn-open-signup').addEventListener('click', () => openModal('signup'));
+    document.getElementById('btn-hero-signup').addEventListener('click', () => openModal('signup'));
+    document.getElementById('btn-pricing-signup').addEventListener('click', () => openModal('signup'));
+    document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+    document.getElementById('tab-login').addEventListener('click', () => switchTab('login'));
+    document.getElementById('tab-signup').addEventListener('click', () => switchTab('signup'));
+    document.getElementById('switch-to-signup').addEventListener('click', e => { e.preventDefault(); switchTab('signup'); });
+    document.getElementById('switch-to-login').addEventListener('click', e => { e.preventDefault(); switchTab('login'); });
+
+    document.getElementById('auth-modal').addEventListener('click', e => {
+      if (e.target.id === 'auth-modal') closeModal();
+    });
+
+    // ── Auth form handlers ────────────────────────────────────────────────────
+
+    document.getElementById('form-login').addEventListener('submit', async e => {
+      e.preventDefault();
+      const errEl = document.getElementById('login-error');
+      const btn = document.getElementById('btn-login');
+      errEl.textContent = '';
+      btn.disabled = true;
+      btn.textContent = 'Connexion…';
+
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      const { error } = await Auth.signIn(email, password);
+      if (error) {
+        errEl.textContent = error.message;
+        btn.disabled = false;
+        btn.textContent = 'Se connecter';
+      } else {
+        window.location.href = '/app.html';
+      }
+    });
+
+    document.getElementById('form-signup').addEventListener('submit', async e => {
+      e.preventDefault();
+      const errEl = document.getElementById('signup-error');
+      const btn = document.getElementById('btn-signup');
+      errEl.textContent = '';
+      btn.disabled = true;
+      btn.textContent = 'Création du compte…';
+
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+
+      const { error } = await Auth.signUp(email, password);
+      if (error) {
+        errEl.textContent = error.message;
+        btn.disabled = false;
+        btn.textContent = 'Créer un compte';
+      } else {
+        window.location.href = '/app.html';
+      }
+    });
+
+    // If already logged in, redirect to app
+    (async () => {
+      const user = await Auth.getUser();
+      if (user) window.location.href = '/app.html';
+    })();
+  </script>
+</body>
+</html>
