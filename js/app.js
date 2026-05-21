@@ -193,13 +193,13 @@ window.onunhandledrejection = (e) => {
           UI.clearPartial();
         },
 
-        onPartial(text) {
-          UI.setPartial(text);
+        onPartial() {},
+
+        onChunk(text) {
+          UI.appendChunk(text);
         },
 
-        onSentence(sentence) {
-          UI.commitPartial(sentence);
-        },
+        onSentence() {},
 
         onStop() {
           setRecordingUI(false);

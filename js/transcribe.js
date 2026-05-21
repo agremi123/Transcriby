@@ -26,10 +26,28 @@ const Transcribe = (() => {
 
   // ── Callbacks ──────────────────────────────────────────────────────────────
   let _onPartial  = null;  // (text: string) => void
-  let _onSentence = null;  // (text: string) => void
+  let _onChunk    = null;  // (text: string) => void — fires per AddTranscript (immediate)
+  let _onSentence = null;  // (text: string) => void — fires at sentence boundary (for AI)
   let _onError    = null;  // (msg: string)  => void
   let _onStart    = null;  // () => void
   let _onStop     = null;  // () => void
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
+  function extractText(results) {
+    let out = '';
+    for (const r of results) {
+      if (!r.alternatives?.length) continue;
+      const content = r.alternatives[0].content;
+      if (!content) continue;
+      if (r.type === 'punctuation') {
+        out = out.trimEnd() + content;
+      } else {
+        out += (out ? ' ' : '') + content;
+      }
+    }
+    return out.trim();
+  }
 
   // ── Sentence accumulator ───────────────────────────────────────────────────
 
@@ -115,7 +133,7 @@ const Transcribe = (() => {
         },
         transcription_config: {
           language: lang,
-          enable_partials: true,
+          enable_partials: false,
         },
       }));
       };
@@ -145,6 +163,10 @@ const Transcribe = (() => {
         }
 
         if (msg.message === 'AddTranscript') {
+          // Show words immediately as they are confirmed — no waiting
+          const text = extractText(msg.results ?? []);
+          if (text) _onChunk?.(text);
+          // Also accumulate for sentence-level AI correction
           accumulateResults(msg.results ?? []);
         }
 
@@ -186,10 +208,11 @@ const Transcribe = (() => {
 
   // ── Public API ─────────────────────────────────────────────────────────────
 
-  async function start({ lang = 'en', onPartial, onSentence, onError, onStart, onStop }) {
+  async function start({ lang = 'en', onPartial, onChunk, onSentence, onError, onStart, onStop }) {
     if (isRecording) return;
 
     _onPartial  = onPartial;
+    _onChunk    = onChunk;
     _onSentence = onSentence;
     _onError    = onError;
     _onStart    = onStart;
