@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  background: #f6f1e8;
+  color: #1a2340;
+}
+
+body {
+  font-family: 'Manrope', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.eyebrow {
+  font-family: 'Manrope', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+::selection {
+  background: #8b1e2d;
+  color: #f6f1e8;
+}
+
+.grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(26, 35, 64, 0.04) 1px, transparent 1px);
+  background-size: 3px 3px;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.hairline {
+  box-shadow: 0 0 0 1px #e4dcc9;
+}
+
+.underline-wine {
+  background-image: linear-gradient(transparent 86%, rgba(139, 30, 45, 0.18) 86%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
