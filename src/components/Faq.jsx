@@ -4,19 +4,19 @@ import { Container, Reveal, SectionLabel } from './atoms';
 
 const QUESTIONS = [
   {
-    q: 'Does Transcriby work offline?',
-    a: 'Transcriby works primarily online to take full advantage of our real-time AI. A limited offline mode is available on Premium for reviewing previously downloaded lessons.',
+    q: 'Does Nativa work offline?',
+    a: 'Nativa works primarily online to take full advantage of our real-time AI. A limited offline mode is available on Premium for reviewing previously downloaded lessons.',
   },
   {
     q: 'What languages are supported?',
-    a: 'Transcriby specialises in French correction. The interface is available in English, French, Spanish and Arabic to make learning as accessible as possible.',
+    a: 'Nativa specialises in French correction. The interface is available in English, French, Spanish and Arabic to make learning as accessible as possible.',
   },
   {
     q: 'Is my voice data private?',
     a: 'Absolutely. Your recordings are end-to-end encrypted, never shared, and automatically deleted after analysis. You stay in full control at all times.',
   },
   {
-    q: 'Can I prepare for the TCF or TEF with Transcriby?',
+    q: 'Can I prepare for the TCF or TEF with Nativa?',
     a: 'Yes. Pro and Premium plans include full simulations with detailed scoring aligned with the official TCF and TEF Canada marking schemes.',
   },
   {
@@ -25,7 +25,7 @@ const QUESTIONS = [
   },
   {
     q: 'Is there a mobile app?',
-    a: 'Yes, Transcriby is available on iOS and Android. Your progress syncs automatically across all your devices.',
+    a: 'Yes, Nativa is available on iOS and Android. Your progress syncs automatically across all your devices.',
   },
 ];
 

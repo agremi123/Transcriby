@@ -83,7 +83,7 @@ export default function Comparison() {
                 </div>
                 <div className="border border-ivory/15 p-5">
                   <div className="text-[11px] tracking-wide text-ivory/55 mb-2">
-                    Transcriby corrects
+                    Nativa corrects
                   </div>
                   <p className="font-display text-[22px] md:text-[26px] leading-tight text-ivory">
                     Je m&apos;intéresse beaucoup à…

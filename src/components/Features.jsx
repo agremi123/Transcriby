@@ -105,7 +105,7 @@ export function Features() {
     {
       icon: 'mic',
       title: 'Real-time correction',
-      desc: 'Transcriby corrects your grammar and pronunciation as you speak, instantly.',
+      desc: 'Nativa corrects your grammar and pronunciation as you speak, instantly.',
     },
     {
       icon: 'sparkle',

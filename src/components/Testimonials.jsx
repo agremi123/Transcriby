@@ -5,7 +5,7 @@ import { Container, Reveal, SectionLabel, Star } from './atoms';
 const TESTIS = [
   {
     quote:
-      "Transcriby helped me finally speak French without fear of making mistakes. It's like having a personal coach available 24/7.",
+      "Nativa helped me finally speak French without fear of making mistakes. It's like having a personal coach available 24/7.",
     name: 'Emma B.',
     loc: 'Montreal, Canada',
     rating: 5,
@@ -37,7 +37,7 @@ const TESTIS = [
   },
   {
     quote:
-      "My French colleagues can no longer tell I'm a beginner. Thank you, Transcriby.",
+      "My French colleagues can no longer tell I'm a beginner. Thank you, Nativa.",
     name: 'Yuki T.',
     loc: 'Tokyo, Japan',
     rating: 5,

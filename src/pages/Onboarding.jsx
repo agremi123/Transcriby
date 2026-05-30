@@ -228,7 +228,7 @@ export default function Onboarding() {
             onClick={handleGetStarted}
             className="inline-flex items-center gap-3 px-10 py-4 bg-[#8B1E2D] text-white rounded-2xl font-medium text-[16px] hover:bg-[#6B1620] transition-all duration-300 shadow-md hover:shadow-lg active:scale-95"
           >
-            <span>Find out with Transcriby</span>
+            <span>Find out with Nativa</span>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="group-hover:translate-x-1 transition-transform">
               <path d="M4 10h12M14 6l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>

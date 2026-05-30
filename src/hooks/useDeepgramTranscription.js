@@ -11,6 +11,32 @@ export function useDeepgramTranscription() {
   const currentWordsRef = React.useRef([]);
   const utteranceStartRef = React.useRef(null);
   const lastPartialRef = React.useRef('');
+  const keepAliveRef = React.useRef(null);
+
+  // ── Pre-warm: fetch key + mic in background on mount ──────────────────
+  const cachedKeyRef = React.useRef(null);
+  const prewarmStreamRef = React.useRef(null);
+
+  React.useEffect(() => {
+    // Pre-fetch the Deepgram key immediately — removes it from the click critical path
+    fetch('/api/deepgram/key')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.key) cachedKeyRef.current = data.key; })
+      .catch(() => {});
+
+    // Pre-request mic permission silently — user already sees the page so this is expected
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => { prewarmStreamRef.current = stream; })
+      .catch(() => {}); // silently fail — will retry on click
+
+    return () => {
+      // Clean up pre-warmed stream if never used
+      if (prewarmStreamRef.current) {
+        prewarmStreamRef.current.getTracks().forEach(t => t.stop());
+        prewarmStreamRef.current = null;
+      }
+    };
+  }, []);
 
   const [utterances, setUtterances] = React.useState([]);
   const [partialTranscript, setPartialTranscript] = React.useState('');
@@ -21,6 +47,12 @@ export function useDeepgramTranscription() {
 
   const stop = React.useCallback(() => {
     activeRef.current = false;
+
+    // Clear keep-alive interval
+    if (keepAliveRef.current) {
+      clearInterval(keepAliveRef.current);
+      keepAliveRef.current = null;
+    }
 
     const ws = wsRef.current;
     wsRef.current = null;
@@ -84,11 +116,28 @@ export function useDeepgramTranscription() {
     setStatus('connecting');
 
     try {
-      const keyRes = await fetch('/api/deepgram/key');
-      if (!keyRes.ok) throw new Error('Failed to get Deepgram API key');
-      const { key } = await keyRes.json();
+      // ── Use pre-warmed key + stream, or fetch both in parallel as fallback ──
+      const [key, stream] = await Promise.all([
+        cachedKeyRef.current
+          ? Promise.resolve(cachedKeyRef.current)
+          : fetch('/api/deepgram/key').then(r => {
+              if (!r.ok) throw new Error('Failed to get Deepgram API key');
+              return r.json().then(d => d.key);
+            }),
+        prewarmStreamRef.current
+          ? Promise.resolve(prewarmStreamRef.current)
+          : navigator.mediaDevices.getUserMedia({ audio: true }),
+      ]);
 
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Consume the pre-warmed stream so it's not stopped on cleanup
+      prewarmStreamRef.current = null;
+      // Refresh key cache for next recording
+      cachedKeyRef.current = null;
+      fetch('/api/deepgram/key')
+        .then(r => r.ok ? r.json() : null)
+        .then(data => { if (data?.key) cachedKeyRef.current = data.key; })
+        .catch(() => {});
+
       streamRef.current = stream;
 
       const params = new URLSearchParams({
@@ -96,7 +145,7 @@ export function useDeepgramTranscription() {
         language: 'fr',
         punctuate: 'true',
         interim_results: 'true',
-        utterance_end_ms: '1500',
+        utterance_end_ms: '3000', // Increased from 1500ms to 3000ms to give more time between words
         vad_events: 'true',
         words: 'true',
         filler_words: 'true',
@@ -113,6 +162,13 @@ export function useDeepgramTranscription() {
         if (!activeRef.current || wsRef.current !== ws) { ws.close(); return; }
         setStatus('recording');
 
+        // Keep-alive ping every 30 seconds to prevent WebSocket timeout
+        keepAliveRef.current = setInterval(() => {
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            try { ws.send(JSON.stringify({ type: 'KeepAlive' })); } catch {}
+          }
+        }, 30000);
+
         const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
           ? 'audio/webm;codecs=opus'
           : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '';
@@ -127,7 +183,7 @@ export function useDeepgramTranscription() {
             if (ws.readyState === WebSocket.OPEN) ws.send(e.data);
           }
         });
-        mr.start(250);
+        mr.start(100);
       };
 
       ws.onmessage = (event) => {

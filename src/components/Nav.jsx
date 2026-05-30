@@ -49,7 +49,7 @@ export default function Nav() {
           >
             Log in
           </a>
-          <ButtonPrimary>Try Transcriby</ButtonPrimary>
+          <ButtonPrimary>Try Nativa</ButtonPrimary>
         </div>
       </Container>
     </motion.nav>

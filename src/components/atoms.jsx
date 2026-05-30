@@ -12,7 +12,7 @@ export function Logo({ className = '' }) {
           );
         })}
       </svg>
-      <span className="font-display text-[26px] leading-none text-navy">Transcriby</span>
+      <span className="font-display text-[26px] leading-none text-navy">Nativa</span>
     </a>
   );
 }

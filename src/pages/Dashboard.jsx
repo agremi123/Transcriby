@@ -121,7 +121,7 @@ export default function Dashboard() {
                 onClick={() => {}}
                 className="px-8 py-4 bg-wine text-ivory rounded-full font-display text-[16px] font-medium hover:bg-wine2 transition-all duration-300 shadow-sm hover:shadow-md"
               >
-                Find out with Transcriby
+                Find out with Nativa
               </motion.button>
             </div>
           </div>

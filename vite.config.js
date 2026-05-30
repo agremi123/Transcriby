@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
+import { createClient } from '@supabase/supabase-js';
 
 function readEnvFile(dir) {
   try {
@@ -50,10 +51,13 @@ function ttsMiddleware(apiKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/tts' || req.method !== 'POST') { next(); return; }
 
-    let text = '';
+    let text = '', voice = 'nova';
     try {
       const body = JSON.parse(await readBody(req));
       text = body.text || '';
+      // narrator: 'jules' → onyx (deep male), 'lea' → nova (warm female)
+      if (body.narrator === 'jules') voice = 'onyx';
+      else if (body.voice) voice = body.voice;
     } catch {
       res.statusCode = 400;
       res.end(JSON.stringify({ error: 'Invalid JSON' }));
@@ -77,7 +81,7 @@ function ttsMiddleware(apiKey) {
         body: JSON.stringify({
           model: 'tts-1',
           input: text,
-          voice: 'nova',
+          voice,
           response_format: 'mp3',
         }),
       });
@@ -159,13 +163,14 @@ function correctionMiddleware(apiKey) {
       return;
     }
 
-    const sharedRules = 'STRICT RULES: (1) Return ONLY a raw JSON object — no markdown, no code fences, no notes, no explanations, nothing else. (2) Never change, replace, or guess words — only fix grammar (conjugations, agreements, prepositions, articles). Keep every word exactly as spoken, even if it seems like a transcription error or a non-existent word. (3) Also assess the CEFR level of the original spoken French (A1, A2, B1, B2, C1, or C2). Output format: {"corrected": "...", "level": "B1"}';
+    const sharedRules = 'STRICT RULES: (1) Return ONLY a raw JSON object — no markdown, no code fences, no notes, no explanations, nothing else. (2) Also assess the CEFR level of the original spoken French (A1, A2, B1, B2, C1, or C2). Output format: {"corrected": "...", "level": "B1"}';
     const systemPrompts = {
+      Parisien: `Tu es un Parisien de 25 ans, branchée, qui corrige le français des gens pour qu'il sonne comme un vrai jeune Parisien. Réécris la phrase pour qu'elle soit naturelle, relax et authentiquement parisienne — comme si tu l'envoyais par texto à un pote. Utilise les vraies tournures des jeunes Parisiens : supprime le "ne" dans les négations (je sais pas, j'veux pas), contracte les mots (t'as, c'est, j'suis, y'a), utilise des mots du quotidien comme "genre", "carrément", "vachement", "trop", "c'est chelou", "ça me saoule", "c'est ouf". Garde le sens original mais rends-le cool et naturel. Ne traduis pas, ne changes pas la langue. ${sharedRules}`,
       Casual: `You are a French grammar corrector. Fix only grammar errors (verb forms, agreements) in casual spoken French. Keep the informal tone. ${sharedRules}`,
       Standard: `You are a French grammar corrector. Fix only grammar errors (verb forms, agreements, prepositions) in spoken French. ${sharedRules}`,
       Formal: `You are a French grammar corrector. Fix grammar errors and elevate register (formal vocabulary, no contractions) but never replace or guess words. ${sharedRules}`,
     };
-    const system = systemPrompts[register] || systemPrompts.Standard;
+    const system = systemPrompts[register] || systemPrompts.Parisien;
 
     try {
       const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -204,6 +209,198 @@ function correctionMiddleware(apiKey) {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ corrected: text, level: null }));
+    }
+  };
+}
+
+// ElevenLabs voices — multilingual v2 model
+const ELEVENLABS_VOICES = {
+  lea:   'ebRwkdEFVZIx2A6YucFh', // Léa — custom Parisian female voice
+  jules: 'n1u6R6yj3qEpDLH3liBh', // Jules — custom Parisian male voice
+};
+const ELEVENLABS_VOICE_ID = ELEVENLABS_VOICES.lea; // default
+
+function elevenLabsTtsMiddleware(apiKey) {
+  return async (req, res, next) => {
+    if (req.url !== '/api/elevenlabs-tts' || req.method !== 'POST') { next(); return; }
+    let text = '', narrator = 'lea';
+    try {
+      const body = JSON.parse(await readBody(req));
+      text = body.text || '';
+      narrator = body.narrator || 'lea';
+    } catch {
+      res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
+    }
+    if (!apiKey || !text) {
+      res.statusCode = 400; res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ error: 'Missing ElevenLabs key or text' })); return;
+    }
+    const voiceId = ELEVENLABS_VOICES[narrator] || ELEVENLABS_VOICE_ID;
+    try {
+      const response = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
+        {
+          method: 'POST',
+          headers: {
+            'xi-api-key': apiKey,
+            'Content-Type': 'application/json',
+            'Accept': 'audio/mpeg',
+          },
+          body: JSON.stringify({
+            text,
+            model_id: 'eleven_multilingual_v2',
+            voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
+          }),
+        }
+      );
+      if (!response.ok) {
+        const err = await response.text();
+        res.statusCode = response.status;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: err })); return;
+      }
+      const buf = await response.arrayBuffer();
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'audio/mpeg');
+      res.end(Buffer.from(buf));
+    } catch (err) {
+      res.statusCode = 500; res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ error: err.message }));
+    }
+  };
+}
+
+function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey) {
+  const AUDIO_DIR = resolve(process.cwd(), 'public', 'word-audio');
+  let supabase = null;
+
+  // Initialize Supabase if credentials provided
+  if (supabaseUrl && supabaseKey) {
+    supabase = createClient(supabaseUrl, supabaseKey);
+  }
+
+  // Ensure audio dir exists
+  try {
+    if (!existsSync(AUDIO_DIR)) mkdirSync(AUDIO_DIR, { recursive: true });
+  } catch {}
+
+  async function saveEntry(entry) {
+    if (!supabase) {
+      console.warn('[word] Supabase not configured, skipping save');
+      return;
+    }
+    try {
+      const { error } = await supabase
+        .from('parisian_words')
+        .insert([entry]);
+      if (error) console.error('[word] Supabase insert error:', error);
+    } catch (err) {
+      console.error('[word] Failed to save entry to Supabase:', err);
+    }
+  }
+
+  return async (req, res, next) => {
+    if (req.url !== '/api/word' || req.method !== 'POST') { next(); return; }
+    if (!anthropicKey) {
+      res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ word: null })); return;
+    }
+    try {
+      // 1. Try to load cached words from Supabase
+      let cachedWords = [];
+      if (supabase) {
+        try {
+          const { data, error } = await supabase
+            .from('parisian_words')
+            .select('*');
+          if (!error && data) {
+            cachedWords = data;
+          }
+        } catch (err) {
+          console.warn('[word] Failed to fetch cached words from Supabase:', err);
+        }
+      }
+
+      // 2. Decide: 70% cached, 30% new generation (gets cheaper as you use it!)
+      const useCached = cachedWords.length > 0 && Math.random() < 0.7;
+      let parsed;
+
+      if (useCached) {
+        // Pick random cached word
+        const cached = cachedWords[Math.floor(Math.random() * cachedWords.length)];
+        parsed = {
+          word: cached.word,
+          meaning: cached.meaning,
+          example: cached.example,
+          exampleTranslation: cached.exampleTranslation,
+          audioUrl: cached.audioUrl,
+        };
+        res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(parsed));
+        return;
+      }
+
+      // 3. Generate new word with Claude
+      const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 250,
+          system: 'You are a French language teacher specializing in authentic Parisian French. Pick a vivid, interesting French word or expression — something a Parisian would actually say, not too basic, not too rare. Provide: the word/expression, its short English meaning, one natural example sentence in French, and an English translation of that sentence. Respond with raw JSON only, no markdown: {"word":"...","meaning":"...","example":"...","exampleTranslation":"..."}',
+          messages: [{ role: 'user', content: 'Give me an interesting Parisian French word to learn today.' }],
+        }),
+      });
+      const claudeData = await claudeRes.json();
+      let raw = claudeData.content?.[0]?.text?.trim() || '{}';
+      raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      parsed = JSON.parse(raw);
+      if (!parsed.word) throw new Error('No word generated');
+
+      // 4. Generate audio with ElevenLabs
+      let audioUrl = null;
+      if (elevenLabsKey && parsed.example) {
+        try {
+          const elRes = await fetch(
+            `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`,
+            {
+              method: 'POST',
+              headers: { 'xi-api-key': elevenLabsKey, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg' },
+              body: JSON.stringify({
+                text: parsed.example,
+                model_id: 'eleven_multilingual_v2',
+                voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
+              }),
+            }
+          );
+          if (elRes.ok) {
+            const audioBuf = Buffer.from(await elRes.arrayBuffer());
+            const fileName = `word-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.mp3`;
+            writeFileSync(resolve(AUDIO_DIR, fileName), audioBuf);
+            audioUrl = `/word-audio/${fileName}`;
+          }
+        } catch {}
+      }
+
+      // 5. Save to database
+      const entry = {
+        id: Date.now(),
+        word: parsed.word,
+        meaning: parsed.meaning,
+        example: parsed.example,
+        exampleTranslation: parsed.exampleTranslation,
+        voiceId: ELEVENLABS_VOICE_ID,
+        audioUrl,
+        createdAt: new Date().toISOString(),
+      };
+      saveEntry(entry);
+
+      // 6. Return to client
+      res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ ...parsed, audioUrl }));
+    } catch {
+      res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ word: null }));
     }
   };
 }
@@ -259,12 +456,16 @@ export default defineConfig(() => {
           server.middlewares.use(correctionMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY));
+          server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY));
+          server.middlewares.use(elevenLabsTtsMiddleware(env.ELEVENLABS_API_KEY));
         },
         configurePreviewServer(server) {
           server.middlewares.use(deepgramKeyMiddleware(env.DEEPGRAM_API_KEY));
           server.middlewares.use(correctionMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY));
+          server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY));
+          server.middlewares.use(elevenLabsTtsMiddleware(env.ELEVENLABS_API_KEY));
         },
       },
     ],

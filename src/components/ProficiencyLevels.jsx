@@ -72,7 +72,7 @@ export function ProficiencyLevels() {
               <div className="w-16 h-1 bg-wine rounded-full mb-6" />
             </Reveal>
             <Reveal delay={0.4}>
-              <ButtonGhost>Find out with Transcriby</ButtonGhost>
+              <ButtonGhost>Find out with Nativa</ButtonGhost>
             </Reveal>
           </div>
 
