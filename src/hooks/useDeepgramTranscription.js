@@ -8,30 +8,19 @@ export function useDeepgramTranscription() {
   const streamRef = React.useRef(null);
   const activeRef = React.useRef(false);
   const currentUtteranceRef = React.useRef('');
+  const currentWordsRef = React.useRef([]);
   const utteranceStartRef = React.useRef(null);
-  const pendingChunkRef = React.useRef([]);
-  const CHUNK_SIZE = 3;
+  const lastPartialRef = React.useRef('');
 
   const [utterances, setUtterances] = React.useState([]);
   const [partialTranscript, setPartialTranscript] = React.useState('');
+  const [settledText, setSettledText] = React.useState('');
   const [status, setStatus] = React.useState('idle');
   const [error, setError] = React.useState(null);
   const [audioUrl, setAudioUrl] = React.useState(null);
 
-  const flushPendingChunk = React.useCallback(() => {
-    const pending = pendingChunkRef.current;
-    if (pending.length === 0) return;
-    pendingChunkRef.current = [];
-    const id = Date.now() + Math.random();
-    const text = pending.map((u) => u.text).join(' ');
-    const startTime = pending[0].startTime;
-    const endTime = pending[pending.length - 1].endTime;
-    setUtterances((prev) => [...prev, { id, text, startTime, endTime }]);
-  }, []);
-
   const stop = React.useCallback(() => {
     activeRef.current = false;
-    flushPendingChunk();
 
     const ws = wsRef.current;
     wsRef.current = null;
@@ -58,21 +47,40 @@ export function useDeepgramTranscription() {
     streamRef.current = null;
     if (stream) stream.getTracks().forEach((t) => t.stop());
 
+    // Flush any in-progress utterance — prefer the fuller partial over just is_final confirmed text
+    const confirmed = currentUtteranceRef.current.trim();
+    const partial = lastPartialRef.current.trim();
+    const leftover = partial.length > confirmed.length ? partial : confirmed;
+    const startTime = utteranceStartRef.current ?? 0;
+    const leftoverWords = currentWordsRef.current;
+    currentUtteranceRef.current = '';
+    currentWordsRef.current = [];
+    utteranceStartRef.current = null;
+    lastPartialRef.current = '';
+    if (leftover) {
+      setSettledText('');
+      setUtterances((prev) => [...prev, {
+        id: Date.now() + Math.random(),
+        text: leftover,
+        startTime,
+        endTime: leftoverWords.length > 0 ? (leftoverWords[leftoverWords.length - 1].end ?? startTime) : startTime,
+        words: leftoverWords,
+      }]);
+    }
+
     setStatus('idle');
     setPartialTranscript('');
-  }, [flushPendingChunk]);
+  }, []);
 
   const start = React.useCallback(async () => {
     if (activeRef.current) return;
 
     setError(null);
-    setUtterances([]);
-    setPartialTranscript('');
     setAudioUrl(null);
     audioChunksRef.current = [];
     currentUtteranceRef.current = '';
+    currentWordsRef.current = [];
     utteranceStartRef.current = null;
-    pendingChunkRef.current = [];
     setStatus('connecting');
 
     try {
@@ -90,6 +98,8 @@ export function useDeepgramTranscription() {
         interim_results: 'true',
         utterance_end_ms: '1500',
         vad_events: 'true',
+        words: 'true',
+        filler_words: 'true',
       });
 
       const ws = new WebSocket(
@@ -126,6 +136,7 @@ export function useDeepgramTranscription() {
           if (data.type !== 'Results') return;
 
           const transcript = data.channel?.alternatives?.[0]?.transcript ?? '';
+          const words = data.channel?.alternatives?.[0]?.words ?? [];
 
           if (data.is_final && data.speech_final) {
             if (utteranceStartRef.current === null) utteranceStartRef.current = data.start ?? 0;
@@ -136,19 +147,30 @@ export function useDeepgramTranscription() {
             const full = currentUtteranceRef.current
               ? currentUtteranceRef.current + (transcript ? ' ' + transcript : '')
               : transcript;
-            currentUtteranceRef.current = '';
 
+            // Use accumulated words + speech_final words, but dedupe by start time
+            const combined = [...currentWordsRef.current, ...words];
+            const seen = new Set();
+            const allWords = combined.filter((w) => {
+              const key = `${w.start}-${w.word}`;
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            });
+
+            currentUtteranceRef.current = '';
+            currentWordsRef.current = [];
+
+            lastPartialRef.current = '';
             if (full.trim()) {
-              pendingChunkRef.current.push({ text: full.trim(), startTime, endTime });
-              if (pendingChunkRef.current.length >= CHUNK_SIZE) {
-                const chunk = pendingChunkRef.current;
-                pendingChunkRef.current = [];
-                const id = Date.now() + Math.random();
-                const mergedText = chunk.map((u) => u.text).join(' ');
-                const chunkStart = chunk[0].startTime;
-                const chunkEnd = chunk[chunk.length - 1].endTime;
-                setUtterances((prev) => [...prev, { id, text: mergedText, startTime: chunkStart, endTime: chunkEnd }]);
-              }
+              setSettledText('');
+              setUtterances((prev) => [...prev, {
+                id: Date.now() + Math.random(),
+                text: full.trim(),
+                startTime,
+                endTime,
+                words: allWords,
+              }]);
             }
             setPartialTranscript('');
           } else if (data.is_final) {
@@ -157,12 +179,16 @@ export function useDeepgramTranscription() {
               currentUtteranceRef.current = currentUtteranceRef.current
                 ? currentUtteranceRef.current + ' ' + transcript
                 : transcript;
+              currentWordsRef.current = [...currentWordsRef.current, ...words];
             }
-            setPartialTranscript(currentUtteranceRef.current);
+            setSettledText(currentUtteranceRef.current);
+            setPartialTranscript('');
           } else {
             const live = currentUtteranceRef.current
               ? currentUtteranceRef.current + (transcript ? ' ' + transcript : '')
               : transcript;
+            lastPartialRef.current = live;
+            setSettledText(currentUtteranceRef.current);
             setPartialTranscript(live);
           }
         } catch {}
@@ -201,14 +227,27 @@ export function useDeepgramTranscription() {
     [stop],
   );
 
+  const reset = React.useCallback(() => {
+    stop();
+    setUtterances([]);
+    setPartialTranscript('');
+    setSettledText('');
+    setAudioUrl(null);
+    currentUtteranceRef.current = '';
+    currentWordsRef.current = [];
+    utteranceStartRef.current = null;
+  }, [stop]);
+
   return {
     utterances,
     partialTranscript,
+    settledText,
     audioUrl,
     status,
     error,
     isRecording: status === 'recording',
     start,
     stop,
+    reset,
   };
 }
