@@ -1046,36 +1046,36 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative pt-[120px] pb-32 min-h-screen overflow-hidden">
+    <section className="relative pt-12 pb-12 min-h-screen overflow-hidden flex items-center">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0" style={{ background: 'radial-gradient(60% 80% at 80% 30%, rgba(217,196,162,0.30), transparent 60%), linear-gradient(180deg, #F6F1E8 0%, #F2EBDA 100%)' }} />
         <img src="/assets/paris-skyline.png" alt=""
-          className="absolute right-0 bottom-0 w-[1280px] max-w-[80%] object-contain object-bottom-right select-none"
+          className="absolute right-0 bottom-0 w-[1280px] max-w-[70%] object-contain object-bottom-right select-none"
           style={{ opacity: 0.85, mixBlendMode: 'multiply' }} />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, #F2EBDA 0%, #F2EBDA 15%, rgba(242,235,218,0.96) 28%, rgba(242,235,218,0.82) 40%, rgba(242,235,218,0.55) 55%, rgba(242,235,218,0.2) 70%, rgba(242,235,218,0.0) 82%)' }} />
       </div>
 
       <Container className="relative">
-        <div className="grid lg:grid-cols-[1fr_2fr] gap-12 lg:gap-16 items-center">
-          <div className="relative">
-            <h1 className="font-display text-[46px] md:text-[60px] leading-[0.95] tracking-[-0.015em] text-navy whitespace-nowrap">
+        <div className="grid lg:grid-cols-[1fr_1.5fr] gap-8 items-center h-[calc(100vh-96px)]">
+          <div className="relative flex flex-col justify-center">
+            <h1 className="font-display text-[48px] leading-[0.95] tracking-[-0.015em] text-navy">
               <Reveal delay={0.08}>Correct your French</Reveal>
               <Reveal delay={0.18} className="text-wine italic">Instantanément.</Reveal>
             </h1>
             <Reveal delay={0.3}>
-              <p className="mt-7 max-w-[460px] text-[16px] leading-[1.65] text-navy/70">
+              <p className="mt-6 max-w-[400px] text-[15px] leading-[1.6] text-navy/70">
                 Transcriby listens as you speak and corrects your French in real time —
                 helping you express yourself with fluency and confidence.
               </p>
             </Reveal>
             <Reveal delay={0.42}>
-              <div className="mt-10 flex items-center gap-3">
+              <div className="mt-8 flex items-center gap-3">
                 <ButtonPrimary onClick={() => goToDashboard()}>Assess your level for free</ButtonPrimary>
                 <ButtonGhost>Watch the demo</ButtonGhost>
               </div>
             </Reveal>
             <Reveal delay={0.5}>
-              <div className="mt-6 flex items-center gap-5">
+              <div className="mt-8 flex items-center gap-5">
                 <div className="flex -space-x-2.5">
                   {[0, 1, 2, 3].map((i) => (
                     <div key={i} className="w-9 h-9 rounded-full ring-2 ring-ivory overflow-hidden"
@@ -1095,7 +1095,7 @@ export default function Hero() {
             </Reveal>
           </div>
 
-          <div className="flex justify-center lg:justify-end">
+          <div className="flex items-center justify-end h-full">
             <AudioDemoCard onOpenFullscreen={(topic) => goToDashboard(topic)} />
           </div>
         </div>
