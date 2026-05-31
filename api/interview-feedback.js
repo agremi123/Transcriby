@@ -1,5 +1,5 @@
-import { readJsonBody } from '../../server/read-body.js';
-import { handleInterviewFeedbackGet, handleInterviewFeedbackPost } from '../../server/handlers.js';
+import { readJsonBody } from '../server/read-body.js';
+import { handleInterviewFeedbackGet, handleInterviewFeedbackPost } from '../server/handlers.js';
 
 export default async function handler(req, res) {
   try {
