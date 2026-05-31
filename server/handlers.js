@@ -198,15 +198,21 @@ export async function handleCorrect(body) {
   if (assessOnly) {
     try {
       const isInterviewReport = interviewReport;
+      const assessSystemPrompt = isInterviewReport
+        ? `You are Léa and Jules, Parisian French coaches. A learner claimed CEFR level ${claimedLevel || 'unknown'} and answered interview questions in French. Assess their spoken French holistically. Return raw JSON only, no markdown: {"overallLevel":"B1","overallScore":72,"learnerGender":"woman","summary":"You're good at speaking — you don't hesitate and your accent sounds natural. But your grammar slips on past tenses, and you still sound a bit textbook rather than Parisian.","strengths":[{"label":"Speaking confidence","hint":"You aren't afraid to speak up","score":78},{"label":"Accent & pronunciation","hint":"How natural you sound","score":74},{"label":"Vocabulary","hint":"Words you know and use","score":68}],"weaknesses":[{"label":"Grammar accuracy","hint":"Verb forms, agreements, tenses","score":44},{"label":"Parisian style","hint":"Local register vs textbook French","score":40},{"label":"Natural flow","hint":"Rhythm and pace when you speak","score":46},{"label":"Local expressions","hint":"Idioms Parisians actually use","score":38}]}. Include exactly 3 strengths and 4 weaknesses using ONLY these exact labels (do not invent new ones). Each score is 0-100 (higher is better). Strength scores typically 58-92. Weakness scores typically 28-58. overallScore is 0-100. overallLevel is A1, A2, B1, B2, C1, or C2. learnerGender must be "woman" or "man" — infer from how the learner speaks about themselves (adjective/participle agreement, je suis né/née, je suis content/contente, etc.). summary: 2-3 warm sentences in plain English — start with what they do well, then "but" or "however" for what to improve. Keep hints under 8 words.`
+        : `${levelCtx} You are a French language expert. Assess the overall CEFR level of the spoken French (A1, A2, B1, B2, C1, or C2). Identify one key strength. Then give one concrete actionable tip specifically targeting the NEXT level up (A1→A2, A2→B1, B1→B2, B2→C1, C1→C2). The tip must be relevant to bridging exactly that gap. Respond with raw JSON only, no markdown: {"level":"B1","strength":"...","weakness":"..."}. Keep strength and weakness to max 7 words each. The "weakness" field must be a short positive actionable advice (e.g. "Practise subjunctive mood daily"), never a problem description.`;
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-beta': 'prompt-caching-2024-07-31',
+        },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: isInterviewReport ? 700 : 120,
-          system: isInterviewReport
-            ? `You are Léa and Jules, Parisian French coaches. A learner claimed CEFR level ${claimedLevel || 'unknown'} and answered interview questions in French. Assess their spoken French holistically. Return raw JSON only, no markdown: {"overallLevel":"B1","overallScore":72,"learnerGender":"woman","summary":"You're good at speaking — you don't hesitate and your accent sounds natural. But your grammar slips on past tenses, and you still sound a bit textbook rather than Parisian.","strengths":[{"label":"Speaking confidence","hint":"You aren't afraid to speak up","score":78},{"label":"Accent & pronunciation","hint":"How natural you sound","score":74},{"label":"Vocabulary","hint":"Words you know and use","score":68}],"weaknesses":[{"label":"Grammar accuracy","hint":"Verb forms, agreements, tenses","score":44},{"label":"Parisian style","hint":"Local register vs textbook French","score":40},{"label":"Natural flow","hint":"Rhythm and pace when you speak","score":46},{"label":"Local expressions","hint":"Idioms Parisians actually use","score":38}]}. Include exactly 3 strengths and 4 weaknesses using ONLY these exact labels (do not invent new ones). Each score is 0-100 (higher is better). Strength scores typically 58-92. Weakness scores typically 28-58. overallScore is 0-100. overallLevel is A1, A2, B1, B2, C1, or C2. learnerGender must be "woman" or "man" — infer from how the learner speaks about themselves (adjective/participle agreement, je suis né/née, je suis content/contente, etc.). summary: 2-3 warm sentences in plain English — start with what they do well, then "but" or "however" for what to improve. Keep hints under 8 words.`
-            : `${levelCtx} You are a French language expert. Assess the overall CEFR level of the spoken French (A1, A2, B1, B2, C1, or C2). Identify one key strength. Then give one concrete actionable tip specifically targeting the NEXT level up (A1→A2, A2→B1, B1→B2, B2→C1, C1→C2). The tip must be relevant to bridging exactly that gap. Respond with raw JSON only, no markdown: {"level":"B1","strength":"...","weakness":"..."}. Keep strength and weakness to max 7 words each. The "weakness" field must be a short positive actionable advice (e.g. "Practise subjunctive mood daily"), never a problem description.`,
+          system: [{ type: 'text', text: assessSystemPrompt, cache_control: { type: 'ephemeral' } }],
           messages: [{ role: 'user', content: text }],
         }),
       });
@@ -260,11 +266,12 @@ export async function handleCorrect(body) {
         'Content-Type': 'application/json',
         'x-api-key': ANTHROPIC_API_KEY,
         'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'prompt-caching-2024-07-31',
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-          max_tokens: Math.min(1400, 240 + Math.ceil(text.length / 2.5)),
-        system,
+        max_tokens: Math.min(1400, 240 + Math.ceil(text.length / 2.5)),
+        system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }],
         messages: [{ role: 'user', content: text }],
       }),
     });
