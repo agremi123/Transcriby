@@ -49,7 +49,7 @@ export default function Nav() {
           >
             Log in
           </a>
-          <ButtonPrimary>Try Nativa</ButtonPrimary>
+          <ButtonPrimary>They rate your French</ButtonPrimary>
         </div>
       </Container>
     </motion.nav>

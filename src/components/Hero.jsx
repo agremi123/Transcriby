@@ -1,48 +1,71 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import { useDeepgramTranscription } from '../hooks/useDeepgramTranscription';
 import {
   ButtonPrimary,
-  ButtonGhost,
   Container,
   Reveal,
   Star,
 } from './atoms';
+import { fetchNarratorAudio, connectNarratorSource } from '../lib/narratorAudio';
+import { buildWordTimings, playDecodedBuffer } from '../lib/speechHighlight';
+import { HighlightedSpeech } from '../lib/HighlightedSpeech';
 
 // Small TTS play button for corrections
 function TtsPlayButton({ text }) {
   const [playing, setPlaying] = React.useState(false);
+  const [playbackTime, setPlaybackTime] = React.useState(null);
+  const [timings, setTimings] = React.useState([]);
   const ctxRef = React.useRef(null);
   const sourceRef = React.useRef(null);
 
   const stopAudio = React.useCallback(() => {
     try { sourceRef.current?.stop(); } catch {}
-    ctxRef.current?.close().catch?.(() => {});
-    sourceRef.current = null; ctxRef.current = null;
+    sourceRef.current = null;
     setPlaying(false);
+    setPlaybackTime(null);
+    setTimings([]);
   }, []);
 
-  React.useEffect(() => () => stopAudio(), [stopAudio]);
+  React.useEffect(() => () => {
+    try { sourceRef.current?.stop(); } catch {}
+    ctxRef.current?.close().catch?.(() => {});
+  }, []);
 
   const play = async () => {
     stopAudio();
-    const ctx = new AudioContext();
-    ctxRef.current = ctx;
+    if (!ctxRef.current) ctxRef.current = new AudioContext();
+    const ctx = ctxRef.current;
     setPlaying(true);
     try {
       const res = await fetch('/api/tts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
       const buf = await res.arrayBuffer();
       const decoded = await ctx.decodeAudioData(buf);
-      const src = ctx.createBufferSource();
-      src.buffer = decoded; src.connect(ctx.destination);
-      src.onended = stopAudio; src.start(0);
-      sourceRef.current = src;
+      setTimings(buildWordTimings(text, decoded.duration));
+      setPlaybackTime(0);
+      await playDecodedBuffer(ctx, {
+        buffer: decoded,
+        sourceRef,
+        onTimeUpdate: (t) => {
+          setPlaybackTime(t);
+          if (t == null) stopAudio();
+        },
+      });
     } catch { stopAudio(); }
   };
 
   return (
-    <button
+    <div className="flex items-start gap-2 min-w-0">
+      {playing && (
+        <HighlightedSpeech
+          text={text}
+          playbackTime={playbackTime}
+          timings={timings}
+          className="font-display text-[15px] leading-snug text-navy flex-1 min-w-0"
+        />
+      )}
+      <button
       type="button"
       onClick={playing ? stopAudio : play}
       className="flex-shrink-0 flex items-center justify-center hover:opacity-70 transition-opacity"
@@ -56,6 +79,7 @@ function TtsPlayButton({ text }) {
         }
       </svg>
     </button>
+    </div>
   );
 }
 
@@ -203,7 +227,7 @@ function CorrectionBlock({ original, corrected, className }) {
           w.struck ? (
             <React.Fragment key={i}>
               <span
-                className="cursor-help text-wine"
+                className="cursor-help text-navy underline decoration-wine/75 decoration-wavy underline-offset-[5px]"
                 onMouseEnter={(e) => handleEnter(e.currentTarget, w.fix)}
                 onMouseLeave={() => setTooltip(null)}
               >{w.word}</span>{' '}
@@ -287,7 +311,224 @@ function nextLevel(level) {
   return i >= 0 && i < CEFR.length - 1 ? CEFR[i + 1] : null;
 }
 
-export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, initialTopic }) {
+const DEMO_NARRATORS = {
+  lea: { id: 'lea', name: 'Léa', src: '/assets/lea.png' },
+  jules: { id: 'jules', name: 'Jules', src: '/assets/jules.png' },
+};
+
+const NARRATOR_NEGATIVE_QUIPS = {
+  lea: [
+    'Mouais, pas terrible…',
+    'Euh… c\'est pas grave, mais on peut mieux faire.',
+    'Hmm, ça sonne un peu manuel, non ?',
+    'Bon, t\'as le droit à une correction.',
+    'Franchement, c\'est pas très parisien.',
+  ],
+  jules: [
+    'Mouais, bof…',
+    'Pas ouf, franchement.',
+    'Là, c\'est pas très parisien.',
+    'On va retaper ça, d\'accord ?',
+    'Hmm… j\'ai entendu mieux.',
+  ],
+};
+
+function pickNarratorReaction() {
+  const id = Math.random() < 0.5 ? 'lea' : 'jules';
+  const options = NARRATOR_NEGATIVE_QUIPS[id];
+  return {
+    id,
+    text: options[Math.floor(Math.random() * options.length)],
+  };
+}
+
+function NarratorPortraitPlay({ narratorId, playing, onClick }) {
+  const n = DEMO_NARRATORS[narratorId];
+  if (!n) return null;
+
+  return (
+    <div className="flex flex-col items-center gap-0.5 flex-shrink-0">
+      <button
+        type="button"
+        onClick={onClick}
+        className="group relative w-14 h-14 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-wine/40"
+        aria-label={playing ? `Stop ${n.name}` : `${n.name} reads the correction`}
+        title={playing ? 'Stop' : 'Play'}
+      >
+        <div className={`relative w-full h-full rounded-full overflow-hidden transition-all duration-200 ${
+          playing ? 'ring-2 ring-wine scale-105 shadow-md' : 'ring-2 ring-wine/25 shadow-sm group-hover:ring-wine/45'
+        }`}>
+          <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
+          {playing && (
+            <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-30 pointer-events-none" />
+          )}
+          <div className={`absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity ${
+            playing ? 'opacity-100' : 'opacity-75 group-hover:opacity-90'
+          }`}>
+            {playing ? (
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="white" aria-hidden>
+                <rect x="2" y="2" width="10" height="10" rx="1.5" fill="white" />
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white" aria-hidden>
+                <path d="M8 5v14l11-7z" fill="white" />
+              </svg>
+            )}
+          </div>
+        </div>
+      </button>
+      <span className={`font-display text-[11px] transition-colors ${playing ? 'text-wine italic' : 'text-navy/45'}`}>
+        {n.name}
+      </span>
+    </div>
+  );
+}
+
+function NarratorReactionPanel({ reaction, onMakeParisien, loading }) {
+  const n = DEMO_NARRATORS[reaction.id];
+  const [speaking, setSpeaking] = React.useState(false);
+  const [playbackTime, setPlaybackTime] = React.useState(null);
+  const [timings, setTimings] = React.useState([]);
+  const ctxRef = React.useRef(null);
+  const sourceRef = React.useRef(null);
+  const decodedRef = React.useRef(null);
+  const sessionRef = React.useRef(0);
+  const hasAutoPlayedRef = React.useRef(false);
+
+  const stopAudio = React.useCallback(() => {
+    sessionRef.current += 1;
+    try { sourceRef.current?.stop(); } catch {}
+    sourceRef.current = null;
+    setSpeaking(false);
+    setPlaybackTime(null);
+    setTimings([]);
+  }, []);
+
+  const playReactionAudio = React.useCallback(async () => {
+    stopAudio();
+    const session = sessionRef.current;
+
+    try {
+      if (!ctxRef.current) ctxRef.current = new AudioContext();
+      const ctx = ctxRef.current;
+      if (ctx.state === 'suspended') await ctx.resume();
+
+      if (!decodedRef.current) {
+        const buf = await fetchNarratorAudio(reaction.text, reaction.id);
+        if (sessionRef.current !== session) return;
+        decodedRef.current = await ctx.decodeAudioData(buf);
+      }
+
+      const decoded = decodedRef.current;
+      if (sessionRef.current !== session) return;
+
+      setSpeaking(true);
+      setTimings(buildWordTimings(reaction.text, decoded.duration));
+      setPlaybackTime(0);
+
+      await playDecodedBuffer(ctx, {
+        buffer: decoded,
+        narrator: reaction.id,
+        sourceRef,
+        connectSource: connectNarratorSource,
+        onTimeUpdate: (t) => {
+          if (sessionRef.current !== session) return;
+          setPlaybackTime(t);
+          if (t == null) {
+            setSpeaking(false);
+            setPlaybackTime(null);
+          }
+        },
+      });
+    } catch {
+      if (sessionRef.current === session) setSpeaking(false);
+    }
+  }, [reaction.id, reaction.text, stopAudio]);
+
+  React.useEffect(() => {
+    decodedRef.current = null;
+    hasAutoPlayedRef.current = false;
+  }, [reaction.id, reaction.text]);
+
+  React.useEffect(() => {
+    if (hasAutoPlayedRef.current) return;
+    hasAutoPlayedRef.current = true;
+    playReactionAudio();
+    return () => stopAudio();
+    // Auto-play once per reaction; manual replay via portrait tap.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reaction.id, reaction.text]);
+
+  const toggleReplay = () => {
+    if (speaking) stopAudio();
+    else playReactionAudio();
+  };
+
+  const handleMakeParisien = () => {
+    stopAudio();
+    onMakeParisien();
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 4 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className="mx-5 border border-line/50 border-t-0 bg-ivory/40 px-5 py-4"
+    >
+      <div className="flex items-center gap-4">
+        <div className="flex flex-col items-center gap-1 shrink-0">
+          <button
+            type="button"
+            onClick={toggleReplay}
+            className="relative rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-wine/40"
+            aria-label={speaking ? `Stop ${n.name}` : `Replay ${n.name}`}
+            title={speaking ? 'Stop' : 'Replay'}
+          >
+            <div className={`w-14 h-14 rounded-full overflow-hidden transition-all duration-300 ${
+              speaking ? 'ring-2 ring-wine scale-105 shadow-md' : 'ring-2 ring-wine/25 shadow-sm hover:ring-wine/45 hover:scale-105'
+            }`}>
+              <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
+            </div>
+            {speaking && (
+              <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-30" />
+            )}
+          </button>
+          <span className="font-display text-[11px] text-navy/45">{n.name}</span>
+        </div>
+        <p className="flex-1 min-w-0 font-display text-[16px] italic text-navy leading-snug">
+          {speaking ? (
+            <HighlightedSpeech
+              text={reaction.text}
+              playbackTime={playbackTime}
+              timings={timings}
+            />
+          ) : (
+            reaction.text
+          )}
+        </p>
+        <button
+          type="button"
+          onClick={handleMakeParisien}
+          disabled={loading}
+          className="shrink-0 font-display text-[14px] italic px-4 py-2 rounded-full bg-wine text-ivory hover:bg-wine2 transition-all duration-200 hover:shadow-md disabled:opacity-60"
+        >
+          Make it Parisien !
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+export function AudioDemoCard({
+  fullscreen = false,
+  onClose,
+  onOpenFullscreen,
+  initialTopic,
+  initialLearnMode = null,
+  initialLearnLevel = null,
+  onLearnModeHandled,
+}) {
   const {
     utterances,
     partialTranscript,
@@ -322,19 +563,33 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
   const [writeCorrection, setWriteCorrection] = React.useState(null);
   const [writeCorrecting, setWriteCorrecting] = React.useState(false);
   const [writeEditing, setWriteEditing] = React.useState(true);
+  const [writeSubmittedText, setWriteSubmittedText] = React.useState(null);
   const writeTextareaRef = React.useRef(null);
+  const writeBoxRef = React.useRef(null);
   const [speakCorrection, setSpeakCorrection] = React.useState(null);
   const [fetchingCorrection, setFetchingCorrection] = React.useState(false);
   const [manualCorrection, setManualCorrection] = React.useState(null);
   const [manualCorrecting, setManualCorrecting] = React.useState(false);
+  const [previewCorrection, setPreviewCorrection] = React.useState(null);
+  const [fetchingPreview, setFetchingPreview] = React.useState(false);
+  const [narratorReaction, setNarratorReaction] = React.useState(null);
+  const [correctionReaderId, setCorrectionReaderId] = React.useState(null);
+  const speakCorrectionUiRef = React.useRef({
+    previewCorrection: null,
+    manualCorrection: null,
+    narratorReaction: null,
+    correctionReaderId: null,
+    manualCorrecting: false,
+    fetchingPreview: false,
+  });
   const [playbackTime, setPlaybackTime] = React.useState(null);
   const [isPlaying, setIsPlaying] = React.useState(false);
   const audioRef = React.useRef(null);
 
   // Parisian voice playback timing
   const [parisianPlaybackTime, setParisianPlaybackTime] = React.useState(null);
-  const parisianAudioStartRef = React.useRef(null);
-  const parisianRafRef = React.useRef(null);
+  const [parisianTimings, setParisianTimings] = React.useState([]);
+  const [parisianSpeakingText, setParisianSpeakingText] = React.useState(null);
 
   // Word discovery
   const [wordData, setWordData] = React.useState(null);
@@ -348,7 +603,13 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
   const [wordPracticeMode, setWordPracticeMode] = React.useState('speak'); // 'write' | 'speak'
   const [narrator, setNarrator] = React.useState('lea'); // 'jules' | 'lea'
   const [showStartHint, setShowStartHint] = React.useState(true);
+  const [showWriteHint, setShowWriteHint] = React.useState(false);
+  const [pendingWriteHint, setPendingWriteHint] = React.useState(false);
+  const [writeHintKey, setWriteHintKey] = React.useState(0);
   const [showCorrectHint, setShowCorrectHint] = React.useState(false);
+  const [highlightMic, setHighlightMic] = React.useState(false);
+  const [highlightDiscover, setHighlightDiscover] = React.useState(false);
+  const [vocabLevel, setVocabLevel] = React.useState(null);
   const wordUtteranceBaseRef = React.useRef(0); // utterance count when word-speak started
   const wordAudioCtxRef = React.useRef(null);
   const wordAudioSrcRef = React.useRef(null);
@@ -409,17 +670,88 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
   React.useEffect(() => {
     if (inputMode === 'speak' && !isRecording) {
       setShowStartHint(true);
+      setShowWriteHint(false);
     }
   }, [inputMode, isRecording]);
+
+  // Keep speak correction UI in sync while on the speak tab
+  React.useEffect(() => {
+    if (inputMode !== 'speak') return;
+    speakCorrectionUiRef.current = {
+      previewCorrection,
+      manualCorrection,
+      narratorReaction,
+      correctionReaderId,
+      manualCorrecting,
+      fetchingPreview,
+    };
+  }, [inputMode, previewCorrection, manualCorrection, narratorReaction, correctionReaderId, manualCorrecting, fetchingPreview]);
+
+  const clearCorrectionUi = React.useCallback(() => {
+    setPreviewCorrection(null);
+    setManualCorrection(null);
+    setNarratorReaction(null);
+    setCorrectionReaderId(null);
+    setManualCorrecting(false);
+    setFetchingPreview(false);
+  }, []);
+
+  const restoreSpeakCorrectionUi = React.useCallback(() => {
+    const s = speakCorrectionUiRef.current;
+    setPreviewCorrection(s.previewCorrection);
+    setManualCorrection(s.manualCorrection);
+    setNarratorReaction(s.narratorReaction);
+    setCorrectionReaderId(s.correctionReaderId);
+    setManualCorrecting(s.manualCorrecting);
+    setFetchingPreview(s.fetchingPreview);
+  }, []);
+
+  const resetWriteSession = React.useCallback(() => {
+    setWriteText('');
+    setWriteCorrection(null);
+    setWriteCorrecting(false);
+    setWriteEditing(true);
+    setWriteSubmittedText(null);
+    setShowWriteHint(false);
+    setPendingWriteHint(true);
+    setWriteHintKey((k) => k + 1);
+  }, []);
+
+  // Run write hint + focus once write UI is mounted (no scroll — keeps the page still)
+  React.useEffect(() => {
+    if (inputMode !== 'write' || !pendingWriteHint || writeText.trim()) return;
+
+    setPendingWriteHint(false);
+    setShowWriteHint(true);
+    setWriteHintKey((k) => k + 1);
+
+    requestAnimationFrame(() => {
+      const textarea = writeTextareaRef.current;
+      if (!textarea) return;
+      textarea.scrollTop = 0;
+      textarea.focus({ preventScroll: true });
+    });
+  }, [inputMode, pendingWriteHint, writeText]);
 
   // Dismiss start hint when recording begins or after 6s
   React.useEffect(() => {
     if (isRecording) setShowStartHint(false);
   }, [isRecording]);
   React.useEffect(() => {
+    if (!showStartHint) return;
     const t = setTimeout(() => setShowStartHint(false), 6000);
     return () => clearTimeout(t);
-  }, []);
+  }, [showStartHint]);
+
+  // Dismiss write hint when user types or after 6s
+  React.useEffect(() => {
+    if (writeText.trim()) setShowWriteHint(false);
+  }, [writeText]);
+  React.useEffect(() => {
+    if (!showWriteHint) return;
+    const t = setTimeout(() => setShowWriteHint(false), 6000);
+    return () => clearTimeout(t);
+  }, [showWriteHint]);
 
   // Show "Parisien !" hint once when audio has been recorded
   // (isLive is derived below, so inline its parts here to avoid TDZ)
@@ -448,15 +780,32 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
   const stopParisianAudio = React.useCallback(() => {
     wordPlayingRef.current = false;
     try { wordAudioSrcRef.current?.stop(); } catch {}
-    wordAudioCtxRef.current?.close().catch?.(() => {});
     wordAudioSrcRef.current = null;
-    wordAudioCtxRef.current = null;
-    if (parisianRafRef.current) cancelAnimationFrame(parisianRafRef.current);
-    parisianRafRef.current = null;
-    parisianAudioStartRef.current = null;
     setParisianPlaybackTime(null);
+    setParisianTimings([]);
+    setParisianSpeakingText(null);
     setWordPlaying(false);
   }, []);
+
+  const activateWriteMode = React.useCallback(() => {
+    stopParisianAudio();
+    clearCorrectionUi();
+    resetWriteSession();
+    setInputMode('write');
+    setLastSpeakWriteMode('write');
+    setShowStartHint(false);
+  }, [stopParisianAudio, clearCorrectionUi, resetWriteSession]);
+
+  const activateSpeakMode = React.useCallback(() => {
+    stopParisianAudio();
+    clearCorrectionUi();
+    restoreSpeakCorrectionUi();
+    setInputMode('speak');
+    setLastSpeakWriteMode('speak');
+    setShowWriteHint(false);
+    setPendingWriteHint(false);
+    if (!isRecording) setShowStartHint(true);
+  }, [stopParisianAudio, clearCorrectionUi, restoreSpeakCorrectionUi, isRecording]);
 
   const playParisianWord = async (textOverride, narratorOverride) => {
     if (wordPlayingRef.current) { stopParisianAudio(); return; }
@@ -466,13 +815,14 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
     setWordPlayError(null);
     wordPlayingRef.current = true;
     setWordPlaying(true);
-    setParisianPlaybackTime(0); // Start highlighting from time 0
+    setParisianSpeakingText(text);
+    setParisianTimings([]);
+    setParisianPlaybackTime(0);
     try {
-      const ctx = new AudioContext();
-      wordAudioCtxRef.current = ctx;
+      if (!wordAudioCtxRef.current) wordAudioCtxRef.current = new AudioContext();
+      const ctx = wordAudioCtxRef.current;
       if (ctx.state === 'suspended') await ctx.resume();
 
-      // Try ElevenLabs first (narrator-specific voice), fall back to OpenAI TTS
       let res = await fetch('/api/elevenlabs-tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -480,7 +830,6 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
       });
 
       if (!res.ok) {
-        console.warn('[play] ElevenLabs failed', res.status, '— falling back to OpenAI TTS');
         res = await fetch('/api/tts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -489,36 +838,26 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
       }
 
       if (!res.ok) {
-        const err = await res.text();
-        console.error('[play] both TTS failed:', res.status, err);
         setWordPlayError(`Audio unavailable (${res.status})`);
         stopParisianAudio();
         return;
       }
 
       const buf = await res.arrayBuffer();
-      console.log('[play] got audio buffer, size:', buf.byteLength);
       const decoded = await ctx.decodeAudioData(buf);
-      const src = ctx.createBufferSource();
-      src.buffer = decoded;
-      src.connect(ctx.destination);
+      setParisianTimings(buildWordTimings(text, decoded.duration));
 
-      // Start RAF loop to track playback time
-      parisianAudioStartRef.current = ctx.currentTime;
-      const updatePlaybackTime = () => {
-        if (wordPlayingRef.current && ctx.currentTime !== null) {
-          const elapsed = ctx.currentTime - parisianAudioStartRef.current;
-          setParisianPlaybackTime(elapsed);
-        }
-        if (wordPlayingRef.current) {
-          parisianRafRef.current = requestAnimationFrame(updatePlaybackTime);
-        }
-      };
-      parisianRafRef.current = requestAnimationFrame(updatePlaybackTime);
-
-      src.onended = stopParisianAudio;
-      src.start(0);
-      wordAudioSrcRef.current = src;
+      await playDecodedBuffer(ctx, {
+        buffer: decoded,
+        narrator: activeNarrator,
+        sourceRef: wordAudioSrcRef,
+        connectSource: connectNarratorSource,
+        onTimeUpdate: (t) => {
+          if (!wordPlayingRef.current) return;
+          setParisianPlaybackTime(t);
+          if (t == null) stopParisianAudio();
+        },
+      });
     } catch (err) {
       console.error('[play] failed:', err);
       setWordPlayError('Playback failed — check console');
@@ -548,10 +887,10 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
     setAssessingLevel(false);
   };
 
-  const startPractice = async (topic) => {
+  const loadPractice = async (topic, { openFullscreen = false } = {}) => {
     const t = topic || overallWeakness;
     if (!t) return;
-    onOpenFullscreen?.(t);
+    if (openFullscreen) onOpenFullscreen?.(t);
     setActiveTab('practice');
     setPracticeExercises(null);
     setCompletedInBatch(new Set());
@@ -566,6 +905,10 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
       setPracticeExercises(data.exercises || []);
     } catch { setPracticeExercises([]); }
     setLoadingPractice(false);
+  };
+
+  const startPractice = async (topic) => {
+    await loadPractice(topic, { openFullscreen: true });
   };
 
   const practiceMore = async () => {
@@ -591,23 +934,45 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
     setSkillProgress((prev) => ({ ...prev, [key]: Math.min(100, (prev[key] || 0) + 5) }));
   };
 
+  const fetchPreviewCorrection = async (text) => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    setPreviewCorrection(null);
+    setFetchingPreview(true);
+    try {
+      const res = await fetch('/api/correct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: trimmed, register: 'Parisien' }),
+      });
+      const data = await res.json();
+      const corrected = data.corrected?.trim() || trimmed;
+      if (corrected !== trimmed) {
+        setPreviewCorrection({ original: trimmed, corrected });
+      }
+    } catch {}
+    setFetchingPreview(false);
+  };
+
+  const chatDiffCorrection = manualCorrection?.original
+    ? manualCorrection
+    : previewCorrection?.original
+      ? previewCorrection
+      : null;
+
+  const showChatDiff = chatDiffCorrection
+    && chatDiffCorrection.corrected?.trim() !== chatDiffCorrection.original?.trim();
+
   const toggleRecording = async () => {
     if (isRecording) {
       await stop();
       const fullText = utterances.map((u) => u.text).join(' ').trim();
       if (fullText) {
-        setFetchingCorrection(true);
         setSpeakCorrection(null);
-        try {
-          const res = await fetch('/api/correct', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: fullText, register }),
-          });
-          const data = await res.json();
-          setSpeakCorrection(data);
-        } catch {}
-        setFetchingCorrection(false);
+        setManualCorrection(null);
+        setPreviewCorrection(null);
+        setNarratorReaction(pickNarratorReaction());
+        fetchPreviewCorrection(fullText);
       }
       return;
     }
@@ -615,6 +980,10 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
     setPlaybackTime(null);
     setIsPlaying(false);
     setSpeakCorrection(null);
+    setPreviewCorrection(null);
+    setNarratorReaction(null);
+    setHighlightMic(false);
+    setShowStartHint(false);
     await start(source);
   };
 
@@ -667,6 +1036,43 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
     if (initialTopic) startPractice(initialTopic);
   }, []);
 
+  React.useEffect(() => {
+    if (!initialLearnMode) return;
+
+    const clearHighlights = () => {
+      window.setTimeout(() => {
+        setHighlightMic(false);
+        setHighlightDiscover(false);
+      }, 10000);
+    };
+
+    if (initialLearnMode === 'speak') {
+      setInputMode('speak');
+      setLastSpeakWriteMode('speak');
+      setActiveTab('transcript');
+      setShowStartHint(true);
+      setHighlightMic(true);
+      clearHighlights();
+    } else if (initialLearnMode === 'vocab') {
+      const level = initialLearnLevel || 'A2';
+      const topic = `${level} French vocabulary and grammar`;
+      setVocabLevel(level);
+      setInputMode('speak');
+      setLastSpeakWriteMode('speak');
+      setOverallWeakness(topic);
+      setPracticeTopics([topic]);
+      loadPractice(topic);
+      clearHighlights();
+    } else if (initialLearnMode === 'discover') {
+      setInputMode('discover');
+      setHighlightDiscover(true);
+      clearHighlights();
+    }
+
+    onLearnModeHandled?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialLearnMode, initialLearnLevel]);
+
   const correctWriting = async () => {
     if (!writeText.trim()) return;
     setWriteCorrecting(true);
@@ -684,34 +1090,28 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
     setWriteCorrecting(false);
   };
 
-  // Estimate word timings for Parisian voice playback
-  const estimateWordTimings = (text) => {
-    // Better estimation: account for word length and typical speaking rate
-    const words = text.trim().split(/\s+/);
-    if (words.length === 0) return [];
+  // Estimate word timings for Parisian voice playback — removed; use speechHighlight lib
 
-    // Calculate total character length
-    const totalChars = words.reduce((sum, w) => sum + w.length, 0);
-
-    // Assume ~2.5 chars per 100ms (varying by word length)
-    // This gives longer words proportionally more time
-    const charDuration = 0.04; // 40ms per character
-
-    let currentTime = 0;
-    return words.map((word) => {
-      const duration = Math.max(0.1, word.length * charDuration); // min 100ms per word
-      const start = currentTime;
-      const end = currentTime + duration;
-      currentTime = end + 0.05; // 50ms gap between words for natural speech
-      return { word, start, end };
-    });
+  const finishWriteInput = () => {
+    const trimmed = writeText.trim();
+    if (!trimmed || trimmed === writeSubmittedText) return;
+    setWriteSubmittedText(trimmed);
+    setWriteCorrection(null);
+    setManualCorrection(null);
+    setPreviewCorrection(null);
+    setNarratorReaction(pickNarratorReaction());
+    fetchPreviewCorrection(writeText);
+    setWriteEditing(false);
   };
 
-  const isParisianWordActive = (wordIdx, estimatedWords) => {
-    if (parisianPlaybackTime === null || !estimatedWords || estimatedWords.length === 0) return false;
-    const w = estimatedWords[wordIdx];
-    if (!w) return false;
-    return parisianPlaybackTime >= w.start && parisianPlaybackTime < w.end;
+  const toggleCorrectionPlay = (text, narratorId) => {
+    if (wordPlayingRef.current && narrator === narratorId && parisianSpeakingText === text) {
+      stopParisianAudio();
+      return;
+    }
+    stopParisianAudio();
+    setNarrator(narratorId);
+    playParisianWord(text, narratorId);
   };
 
   const correctNow = async () => {
@@ -719,6 +1119,20 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
       ? writeText.trim()
       : utterances.map((u) => u.text).join(' ').trim();
     if (!text) return;
+    const readerId = narratorReaction?.id ?? correctionReaderId ?? pickNarratorReaction().id;
+    setCorrectionReaderId(readerId);
+    setNarrator(readerId);
+    setNarratorReaction(null);
+
+    if (
+      previewCorrection?.original?.trim() === text
+      && previewCorrection?.corrected?.trim()
+      && previewCorrection.corrected.trim() !== text
+    ) {
+      setManualCorrection(previewCorrection);
+      return;
+    }
+
     setManualCorrecting(true);
     setManualCorrection(null);
     try {
@@ -740,8 +1154,24 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
     setTime(0);
     setSpeakCorrection(null);
     setFetchingCorrection(false);
+    setNarratorReaction(null);
+    setCorrectionReaderId(null);
     setManualCorrection(null);
     setManualCorrecting(false);
+    setPreviewCorrection(null);
+    setFetchingPreview(false);
+    speakCorrectionUiRef.current = {
+      previewCorrection: null,
+      manualCorrection: null,
+      narratorReaction: null,
+      correctionReaderId: null,
+      manualCorrecting: false,
+      fetchingPreview: false,
+    };
+    setWriteText('');
+    setWriteCorrection(null);
+    setWriteCorrecting(false);
+    setWriteSubmittedText(null);
     prevLengthRef.current = 0;
     hadContentRef.current = false;
     prevPartialRef.current = '';
@@ -768,6 +1198,7 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
     <>
     {fullscreen && <div className="fixed inset-0 bg-navy/40 backdrop-blur-sm z-40" onClick={onClose} />}
     <motion.div
+      id="nativa-demo"
       layout
       initial={{ opacity: 0, y: fullscreen ? 0 : 30, scale: fullscreen ? 1 : 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -807,7 +1238,7 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
               { id: 'speak', label: 'Speak' },
               { id: 'write', label: 'Write' },
             ].map((m) => (
-              <button key={m.id} type="button" onClick={() => { setInputMode(m.id); setLastSpeakWriteMode(m.id); }}
+              <button key={m.id} type="button" onClick={() => (m.id === 'write' ? activateWriteMode() : activateSpeakMode())}
                 className={`relative z-10 font-display text-[14px] tracking-wide px-4 py-1.5 rounded-full capitalize transition-colors duration-200 ${lastSpeakWriteMode === m.id ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'}`}>
                 {m.label}
               </button>
@@ -818,12 +1249,18 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
           <span className="text-[14px] text-navy/40 font-display italic">or</span>
 
           {/* Discover button */}
-          <button type="button" onClick={() => setInputMode(inputMode === 'discover' ? 'speak' : 'discover')}
-            className={`relative inline-flex items-center gap-1.5 px-4 py-1.5 font-display text-[14px] tracking-wide rounded-full transition-colors duration-200 ${inputMode === 'discover' ? 'bg-wine text-ivory ring-2 ring-wine/30' : 'bg-wine text-ivory hover:bg-wine2'}`}>
+          <button type="button" onClick={() => {
+            setHighlightDiscover(false);
+            setInputMode(inputMode === 'discover' ? 'speak' : 'discover');
+          }}
+            className={`relative inline-flex items-center px-4 py-1.5 font-display text-[15px] tracking-wide rounded-full transition-all duration-300 ${
+              inputMode === 'discover'
+                ? 'bg-wine text-ivory ring-2 ring-wine/30'
+                : highlightDiscover
+                  ? 'bg-wine text-ivory ring-[3px] ring-wine/45 shadow-md scale-[1.03]'
+                  : 'bg-wine text-ivory hover:bg-wine2'
+            }`}>
             Discover a Parisian word
-            <svg width="7" height="7" viewBox="0 0 14 14" fill="none" aria-hidden>
-              <path d="M7 1v12m0 0L2 8m5 5l5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-            </svg>
           </button>
         </div>
 
@@ -844,22 +1281,22 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
       </div>
 
       {/* Tab switcher */}
-      {activeTab === 'practice' && (
+      {(activeTab === 'practice' || vocabLevel) && (
         <div className="flex border-b border-line mx-5">
           <button type="button" onClick={() => setActiveTab('transcript')}
             className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${activeTab === 'transcript' ? 'border-navy text-navy' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
-            Transcript
+            Chat
           </button>
           <button type="button" onClick={() => setActiveTab('practice')}
             className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${activeTab === 'practice' ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
-            Practice — {overallWeakness}
+            {vocabLevel ? `Vocab & grammar · ${vocabLevel}` : `Practice — ${overallWeakness}`}
           </button>
         </div>
       )}
 
       {/* Transcript / Write box */}
       <div className={`px-5 pt-4 pb-2${fullscreen ? ' flex-1 flex flex-col' : ''}`}>
-        <div className={`relative bg-ivory/60 border border-line/70 overflow-hidden${fullscreen ? ' flex-1 flex flex-col' : ' h-[320px]'}`}>
+        <div ref={writeBoxRef} className={`relative bg-ivory/60 border border-line/70 overflow-hidden${fullscreen ? ' flex-1 flex flex-col' : ' h-[320px]'}`}>
           {inputMode === 'discover' ? (
             <motion.div
               key="word-panel"
@@ -878,7 +1315,18 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
                         <span className="font-display text-[22px] font-bold text-wine italic leading-none">{wordData.word}</span>
                         <span className="text-[12px] text-navy/45">{wordData.meaning}</span>
                       </div>
-                      <p className="text-[12px] text-navy/60 italic mt-0.5 leading-snug">«{wordData.example}»</p>
+                      <p className="text-[12px] text-navy/60 italic mt-0.5 leading-snug">
+                        {wordPlaying && parisianSpeakingText === wordData.example ? (
+                          <HighlightedSpeech
+                            text={wordData.example}
+                            playbackTime={parisianPlaybackTime}
+                            timings={parisianTimings}
+                            quote
+                          />
+                        ) : (
+                          <>«{wordData.example}»</>
+                        )}
+                      </p>
                       <p className="text-[10px] text-navy/35 mt-0.5">{wordData.exampleTranslation}</p>
                     </div>
 
@@ -1045,8 +1493,19 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
               ) : null}
             </motion.div>
           ) : activeTab !== 'practice' && inputMode === 'write' ? (
-            <div className={`${transcriptHeight} flex flex-col relative border-2 border-wine/40 rounded-lg`}>
-              {!writeEditing && writeCorrection && writeCorrection.corrected?.trim() !== writeText.trim() ? (
+            <div className={`${transcriptHeight} flex flex-col relative`}>
+              {showChatDiff ? (
+                <div
+                  className="flex-1 px-4 pt-4 pb-4 overflow-y-auto scroll-premium cursor-text"
+                  onClick={() => { setWriteEditing(true); setTimeout(() => writeTextareaRef.current?.focus(), 0); }}
+                >
+                  <CorrectionBlock
+                    original={chatDiffCorrection.original}
+                    corrected={chatDiffCorrection.corrected}
+                    className="font-display text-[20px] leading-relaxed text-navy select-text"
+                  />
+                </div>
+              ) : !writeEditing && writeCorrection && writeCorrection.corrected?.trim() !== writeText.trim() ? (
                 <div
                   className="flex-1 px-4 pt-4 pb-4 overflow-y-auto scroll-premium cursor-text"
                   onClick={() => { setWriteEditing(true); setTimeout(() => writeTextareaRef.current?.focus(), 0); }}
@@ -1058,20 +1517,57 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
                   />
                 </div>
               ) : (
-                <textarea
-                  ref={writeTextareaRef}
-                  className="flex-1 w-full px-4 pt-4 pb-4 bg-transparent resize-none outline-none font-display text-[18px] leading-relaxed text-navy placeholder:text-navy/25 scroll-premium"
-                  spellCheck={false}
-                  value={writeText}
-                  onChange={(e) => { setWriteText(e.target.value); setWriteEditing(true); setWriteCorrection(null); }}
-                  onBlur={() => {
-                    if (writeCorrection && writeCorrection.corrected?.trim() !== writeText.trim()) {
-                      setWriteEditing(false);
-                    }
-                  }}
-                />
+                <div className="relative flex-1 flex flex-col min-h-0">
+                  {showWriteHint && (
+                    <motion.div
+                      key={writeHintKey}
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: [0, -2, 0] }}
+                      transition={{ duration: 0.25, y: { repeat: Infinity, duration: 1.8, ease: 'easeInOut' } }}
+                      className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 pointer-events-none"
+                    >
+                      <span className="font-display text-[12px] italic text-wine whitespace-nowrap">start writing</span>
+                      <svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden className="rotate-180">
+                        <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6"/>
+                      </svg>
+                    </motion.div>
+                  )}
+                  {showWriteHint && (
+                    <span key={writeHintKey} className="absolute top-3 left-3 right-3 bottom-3 rounded-lg border-2 border-wine/30 animate-pulse pointer-events-none" aria-hidden />
+                  )}
+                  <textarea
+                    ref={writeTextareaRef}
+                    className="flex-1 w-full px-4 pt-4 pb-4 bg-transparent resize-none outline-none font-display text-[20px] leading-relaxed text-navy placeholder:text-navy/30 scroll-premium relative z-[1]"
+                    placeholder="Write in French…"
+                    spellCheck={false}
+                    value={writeText}
+                    onChange={(e) => {
+                      setWriteText(e.target.value);
+                      setWriteEditing(true);
+                      setWriteCorrection(null);
+                      setNarratorReaction(null);
+                      setManualCorrection(null);
+                      setPreviewCorrection(null);
+                    }}
+                    onFocus={() => setShowWriteHint(false)}
+                    onBlur={() => {
+                      if (writeText.trim() && !manualCorrection && !narratorReaction) {
+                        setNarratorReaction(pickNarratorReaction());
+                        fetchPreviewCorrection(writeText);
+                        setWriteEditing(false);
+                      } else if (writeCorrection && writeCorrection.corrected?.trim() !== writeText.trim()) {
+                        setWriteEditing(false);
+                      }
+                    }}
+                  />
+                </div>
               )}
               {writeCorrecting && (
+                <div className="absolute bottom-2 right-3 pointer-events-none">
+                  <CorrectionLoading />
+                </div>
+              )}
+              {fetchingPreview && !showChatDiff && (
                 <div className="absolute bottom-2 right-3 pointer-events-none">
                   <CorrectionLoading />
                 </div>
@@ -1079,8 +1575,19 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
             </div>
           ) : activeTab !== 'practice' ? (
           <div ref={scrollRef} className={`scroll-premium px-4 pt-4 pb-4 ${transcriptHeight} overflow-y-auto`}>
-            {hasContent ? (
+            {showChatDiff ? (
+              <CorrectionBlock
+                original={chatDiffCorrection.original}
+                corrected={chatDiffCorrection.corrected}
+                className="font-display text-[20px] leading-relaxed text-navy select-text"
+              />
+            ) : hasContent ? (
               <>
+                {fetchingPreview && (
+                  <div className="mb-3 flex justify-end">
+                    <CorrectionLoading />
+                  </div>
+                )}
                 <p className="font-display text-[20px] leading-relaxed text-navy" spellCheck={false}>
                   {utterances.map((utt, idx) => {
                     const isLast = idx === utterances.length - 1;
@@ -1119,20 +1626,18 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
                             onClick={() => w.start != null && seekTo(w.start)}
                             style={{
                               cursor: w.start != null ? 'pointer' : undefined,
-                              transition: 'background 0.18s ease, color 0.18s ease, font-weight 0.18s ease',
+                              transition: 'background 0.18s ease',
                               borderRadius: '4px',
                               padding: '1px 3px',
                               marginRight: '1px',
                               display: 'inline-block',
                               background: isWordActive(i) ? 'rgba(139,30,45,0.12)' : 'transparent',
-                              color: isWordActive(i) ? '#8B1E2D' : 'inherit',
-                              fontWeight: isWordActive(i) ? 600 : 'inherit',
                             }}
                           >
                             {w.punctuated_word ?? w.word}
                           </span>
                         ))
-                      : <span style={uttActive ? { background: 'rgba(139,30,45,0.12)', color: '#8B1E2D', fontWeight: 600, borderRadius: '4px', padding: '1px 3px' } : undefined}>{utt.text}{' '}</span>;
+                      : <span style={uttActive ? { background: 'rgba(139,30,45,0.12)', borderRadius: '4px', padding: '1px 3px' } : undefined}>{utt.text}{' '}</span>;
 
                     return (
                       <React.Fragment key={utt.id}>
@@ -1270,6 +1775,15 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
         </div>
       </div>
 
+      {/* Léa / Jules reaction — after stop or finishing write */}
+      {narratorReaction && !manualCorrection && !manualCorrecting && (
+        <NarratorReactionPanel
+          reaction={narratorReaction}
+          onMakeParisien={correctNow}
+          loading={manualCorrecting}
+        />
+      )}
+
       {/* Manual correction panel — outside speech box so it's never clipped */}
       {(manualCorrecting || manualCorrection) && (
         <motion.div
@@ -1287,57 +1801,21 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
                   <p className="font-display text-[15px] text-green-700">✓ Parfait !</p>
                 ) : (
                   <p className="font-display text-[16px] leading-snug text-navy">
-                    {(() => {
-                      const estimatedWords = estimateWordTimings(manualCorrection.corrected);
-                      return manualCorrection.corrected.trim().split(/\s+/).map((word, i) => (
-                        <span
-                          key={i}
-                          style={{
-                            transition: 'background 0.18s ease, color 0.18s ease, font-weight 0.18s ease',
-                            borderRadius: '4px',
-                            padding: '1px 3px',
-                            marginRight: '1px',
-                            display: 'inline-block',
-                            background: isParisianWordActive(i, estimatedWords) ? 'rgba(139,30,45,0.12)' : 'transparent',
-                            color: isParisianWordActive(i, estimatedWords) ? '#8B1E2D' : 'inherit',
-                            fontWeight: isParisianWordActive(i, estimatedWords) ? 600 : 'inherit',
-                          }}
-                        >
-                          {word}
-                        </span>
-                      )).reduce((acc, el, i, arr) => i === 0 ? [el] : [...acc, ' ', el], []);
-                    })()}
+                    <HighlightedSpeech
+                      text={manualCorrection.corrected}
+                      playbackTime={wordPlaying && parisianSpeakingText === manualCorrection.corrected ? parisianPlaybackTime : null}
+                      timings={wordPlaying && parisianSpeakingText === manualCorrection.corrected ? parisianTimings : []}
+                    />
                   </p>
                 )}
               </div>
-              {/* Narrator portraits to play correction */}
-              {manualCorrection.corrected?.trim() !== manualCorrection.original?.trim() && (
-                <div className="flex gap-2 flex-shrink-0">
-                  {[
-                    { id: 'jules', src: '/assets/jules.png', label: 'Jules' },
-                    { id: 'lea',   src: '/assets/lea.png',   label: 'Léa'   },
-                  ].map((n) => (
-                    <div key={n.id} className="flex flex-col items-center gap-0.5">
-                      <button type="button"
-                        onClick={() => {
-                          if (wordPlayingRef.current && narrator === n.id) {
-                            stopParisianAudio();
-                          } else {
-                            stopParisianAudio();
-                            setNarrator(n.id);
-                            playParisianWord(manualCorrection.corrected, n.id);
-                          }
-                        }}
-                        className={`relative w-14 h-14 rounded-full overflow-hidden transition-all duration-200 ${wordPlaying && narrator === n.id ? 'ring-2 ring-wine scale-110' : 'ring-1 ring-line/40 opacity-60 hover:opacity-100 hover:scale-105'}`}>
-                        <img src={n.src} alt={n.label} className="w-full h-full object-cover object-top" />
-                        {wordPlaying && narrator === n.id && (
-                          <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
-                        )}
-                      </button>
-                      <span className="font-display text-[11px] text-navy/40">{n.label}</span>
-                    </div>
-                  ))}
-                </div>
+              {/* Narrator portrait to play correction */}
+              {manualCorrection.corrected?.trim() !== manualCorrection.original?.trim() && correctionReaderId && (
+                <NarratorPortraitPlay
+                  narratorId={correctionReaderId}
+                  playing={wordPlaying && narrator === correctionReaderId && parisianSpeakingText === manualCorrection.corrected}
+                  onClick={() => toggleCorrectionPlay(manualCorrection.corrected, correctionReaderId)}
+                />
               )}
             </div>
           ) : null}
@@ -1408,30 +1886,25 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
 
       {/* Bottom bar */}
       <div className="px-5 pb-5 flex items-center justify-between">
-        {/* Left: "Parisien !" — always visible in speak/write, color reflects recording state */}
+        {/* Left: "Parisien !" — speak mode fallback only (write uses Léa/Jules panel) */}
         <div>
-          {inputMode !== 'discover' && (() => {
-            const hasRecorded = inputMode === 'write'
-              ? writeText.trim().length > 0
-              : utterances.length > 0;
+          {inputMode === 'speak' && (() => {
+            const hasRecorded = utterances.length > 0;
             const hasCorrected = !!manualCorrection;
-            // dark = has content, finished recording, not yet corrected
-            const isDark = hasRecorded && !hasCorrected && !isLive;
-            const hintActive = showCorrectHint && isDark;
+            const isDark = hasRecorded && !hasCorrected && !isLive && !narratorReaction;
             return (
               <div className="relative">
-                {/* Floating hint above button — mirrors "start speaking" hint on mic */}
                 <button
                   type="button"
                   onClick={() => { setShowCorrectHint(false); correctNow(); }}
-                  disabled={manualCorrecting || !hasRecorded || isLive}
-                  className={`relative font-display text-[12px] italic px-4 py-1.5 rounded-full transition-all duration-200 ${
+                  disabled={manualCorrecting || !hasRecorded || isLive || !!narratorReaction}
+                  className={`relative font-display text-[14px] italic px-4 py-1.5 rounded-full transition-all duration-200 ${
                     isDark
                       ? 'bg-wine text-ivory hover:bg-wine2 cursor-pointer'
                       : 'bg-wine/10 text-wine/50 border border-wine/20 cursor-default'
                   } disabled:opacity-60`}
                 >
-                  Make it Parisien!
+                  Make it Parisien !
                 </button>
               </div>
             );
@@ -1471,15 +1944,14 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
                     Reset
                   </button>
                 )}
-                <button type="button" onClick={correctWriting} disabled={writeCorrecting}
-                  className="relative w-9 h-9 rounded-full bg-wine hover:bg-wine2 disabled:opacity-60 inline-flex items-center justify-center transition-colors"
-                  aria-label="Correct">
-                  {writeCorrecting && (
-                    <svg width="10" height="10" viewBox="0 0 14 14" fill="none" aria-hidden>
-                      <rect x="2" y="2" width="4" height="10" rx="1" fill="#F6F1E8" />
-                      <rect x="8" y="2" width="4" height="10" rx="1" fill="#F6F1E8" />
-                    </svg>
-                  )}
+                <button type="button" onClick={finishWriteInput}
+                  disabled={!writeText.trim() || writeText.trim() === writeSubmittedText}
+                  className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-full bg-wine hover:bg-wine2 disabled:bg-wine/10 disabled:text-wine/35 disabled:cursor-default transition-colors font-display text-[14px] italic text-ivory"
+                  aria-label="Fini">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
+                    <path d="M2 6.5l2.5 2.5L10 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Fini
                 </button>
               </div>
             )}
@@ -1500,7 +1972,7 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
                 {/* Microphone */}
                 <div className="relative flex flex-col items-center">
                   {/* Start speaking hint */}
-                  {showStartHint && !isRecording && (
+                  {(showStartHint || highlightMic) && !isRecording && (
                     <motion.div
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: [0, -3, 0] }}
@@ -1514,7 +1986,9 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
                     </motion.div>
                   )}
                   <button type="button" onClick={toggleRecording} disabled={status === 'connecting'}
-                    className="relative w-9 h-9 rounded-full bg-wine hover:bg-wine2 disabled:opacity-60 inline-flex items-center justify-center transition-colors"
+                    className={`relative w-9 h-9 rounded-full bg-wine hover:bg-wine2 disabled:opacity-60 inline-flex items-center justify-center transition-all ${
+                      highlightMic && !isRecording ? 'scale-110 shadow-md ring-2 ring-wine/35' : ''
+                    }`}
                     aria-label="Toggle recording">
                     {isRecording ? (
                       <svg width="10" height="10" viewBox="0 0 14 14" fill="none" aria-hidden>
@@ -1527,7 +2001,7 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
                       </svg>
                     )}
                     {/* Pulse ring when hint is showing */}
-                    {showStartHint && !isRecording && (
+                    {(showStartHint || highlightMic) && !isRecording && (
                       <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
                     )}
                     {isRecording && <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-50" />}
@@ -1555,67 +2029,73 @@ export function AudioDemoCard({ fullscreen = false, onClose, onOpenFullscreen, i
 }
 
 export default function Hero() {
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const learnMode = searchParams.get('learn');
+  const learnLevel = searchParams.get('level');
   const [introNarrator, setIntroNarrator] = React.useState(null);
-  const [introAudioUrl, setIntroAudioUrl] = React.useState(null);
   const [introPlaying, setIntroPlaying] = React.useState(null); // null | 'lea' | 'jules'
-  const audioRef = React.useRef(null);
+  const [introPlaybackTime, setIntroPlaybackTime] = React.useState(null);
+  const [introTimings, setIntroTimings] = React.useState([]);
+  const [introSpeechText, setIntroSpeechText] = React.useState(null);
+  const introCtxRef = React.useRef(null);
+  const introSourceRef = React.useRef(null);
+  const introSessionRef = React.useRef(0);
 
   const goToDashboard = (topic) => {
     const url = topic ? `/dashboard?topic=${encodeURIComponent(topic)}` : '/dashboard';
     window.open(url, '_blank');
   };
 
+  const stopIntroAudio = React.useCallback(() => {
+    try { introSourceRef.current?.stop(); } catch {}
+    introSourceRef.current = null;
+    setIntroPlaying(null);
+    setIntroPlaybackTime(null);
+    setIntroTimings([]);
+    setIntroSpeechText(null);
+  }, []);
+
   const playNarratorIntro = async (narrator) => {
     if (introPlaying === narrator.id) {
-      // Stop if clicking the same narrator
-      if (audioRef.current) audioRef.current.pause();
-      setIntroPlaying(null);
+      introSessionRef.current += 1;
+      stopIntroAudio();
       return;
     }
 
-    // Stop previous audio
-    if (audioRef.current) audioRef.current.pause();
+    introSessionRef.current += 1;
+    const session = introSessionRef.current;
+    stopIntroAudio();
+    setIntroPlaying(narrator.id);
+    setIntroSpeechText(narrator.intro);
 
     try {
-      // Generate TTS for the introduction
-      const res = await fetch('/api/elevenlabs-tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: narrator.intro,
-          narrator: narrator.id,
-        }),
-      });
+      const buf = await fetchNarratorAudio(narrator.intro, narrator.id);
+      if (session !== introSessionRef.current) return;
 
-      if (!res.ok) throw new Error('TTS failed');
-      const data = await res.json();
-      const url = data.audioUrl || data.url;
-
-      if (!url) throw new Error('No audio URL returned');
-
-      setIntroAudioUrl(url);
-      setIntroPlaying(narrator.id);
-
-      // Create and play audio
-      const audio = new Audio(url);
-      audioRef.current = audio;
-
-      // Resume AudioContext if needed
-      const ctx = audio.context || new (window.AudioContext || window.webkitAudioContext)();
+      if (!introCtxRef.current) introCtxRef.current = new AudioContext();
+      const ctx = introCtxRef.current;
       if (ctx.state === 'suspended') await ctx.resume();
 
-      audio.onended = () => {
-        setIntroPlaying(null);
-      };
+      const decoded = await ctx.decodeAudioData(buf.slice(0));
+      if (session !== introSessionRef.current) return;
 
-      audio.play().catch(err => {
-        console.error('Audio play error:', err);
-        setIntroPlaying(null);
+      setIntroTimings(buildWordTimings(narrator.intro, decoded.duration));
+      setIntroPlaybackTime(0);
+
+      await playDecodedBuffer(ctx, {
+        buffer: decoded,
+        narrator: narrator.id,
+        sourceRef: introSourceRef,
+        connectSource: connectNarratorSource,
+        onTimeUpdate: (t) => {
+          if (session !== introSessionRef.current) return;
+          setIntroPlaybackTime(t);
+          if (t == null) stopIntroAudio();
+        },
       });
     } catch (err) {
       console.error('Failed to play narrator intro:', err);
-      setIntroPlaying(null);
+      if (session === introSessionRef.current) stopIntroAudio();
     }
   };
 
@@ -1624,27 +2104,39 @@ export default function Hero() {
       id: 'lea',
       name: 'Léa',
       src: '/assets/lea.png',
-      intro: 'Bonjour! Je suis Léa, une jeune Parisienne de 24 ans. Je suis ici pour vous aider à apprendre le français authentique, comme on le parle vraiment à Paris. Bienvenue!'
+      intro: "Bonjour ! Moi c'est Léa, j'ai 24 ans et je suis parisienne. Je suis là pour t'aider à parler un français vrai, celui qu'on entend dans les cafés du 11e. Bienvenue !",
     },
     {
       id: 'jules',
       name: 'Jules',
       src: '/assets/jules.png',
-      intro: 'Salut! Moi c\'est Jules, j\'ai 26 ans et je suis né à Paris. Je vais vous accompagner dans votre apprentissage du français. Ensemble, on va rendre ça fun et naturel. Let\'s go!'
+      intro: "Salut ! Moi c'est Jules, 26 ans, né à Paris. Je vais t'accompagner pour que ton français sonne naturel, pas comme dans les manuels. Allez, on y va !",
     },
   ];
 
   React.useEffect(() => {
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
+      introSessionRef.current += 1;
+      try { introSourceRef.current?.stop(); } catch {}
+      introSourceRef.current = null;
     };
   }, []);
 
+  React.useEffect(() => {
+    if (!learnMode) return;
+    window.setTimeout(() => {
+      document.getElementById('nativa-demo')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 120);
+  }, [learnMode]);
+
+  const clearLearnParams = React.useCallback(() => {
+    if (searchParams.get('learn')) {
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
   return (
-    <section className="relative pt-12 pb-12 min-h-screen overflow-hidden flex items-center">
+    <section className="relative pt-12 pb-12 min-h-screen overflow-visible flex items-center">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0" style={{ background: 'radial-gradient(60% 80% at 80% 30%, rgba(217,196,162,0.30), transparent 60%), linear-gradient(180deg, #F6F1E8 0%, #F2EBDA 100%)' }} />
         <img src="/assets/paris-skyline.png" alt=""
@@ -1655,52 +2147,129 @@ export default function Hero() {
 
       <Container className="relative">
         <div className="grid lg:grid-cols-[1fr_1.5fr] gap-8 items-center h-[calc(100vh-96px)]">
-          <div className="relative flex flex-col justify-center items-center text-center">
+          <div className="relative flex flex-col justify-center items-center text-center overflow-visible">
             <h1 className="font-display text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-2">
               <Reveal delay={0.08}>Learn French</Reveal>
               <Reveal delay={0.18} className="text-wine italic">From Parisiens.</Reveal>
             </h1>
 
             {/* Jules et Léa — clickable introductions */}
-            <Reveal delay={0.25}>
-              <div className="mt-6 flex items-center gap-6">
-                {narrators.map((n) => (
+            <Reveal delay={0.25} className="overflow-visible">
+              <div className="mt-6 flex items-center justify-center gap-8 sm:gap-10 relative z-20 overflow-visible">
+                {narrators.map((n) => {
+                  const isPlaying = introPlaying === n.id;
+                  return (
                   <button
                     key={n.id}
+                    type="button"
                     onClick={() => playNarratorIntro(n)}
-                    className="group relative flex flex-col items-center gap-2 transition-transform hover:scale-110"
+                    className="group relative flex flex-col items-center gap-2"
+                    aria-label={`Listen to ${n.name}'s introduction`}
+                    aria-pressed={isPlaying}
                   >
-                    <div className="relative w-20 h-20 rounded-full overflow-hidden ring-2 ring-wine/40 group-hover:ring-wine transition-all shadow-sm group-hover:shadow-md">
-                      <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
-                      {/* Play button on hover */}
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                          <path d="M8 5v14l11-7z" fill="white" />
-                        </svg>
+                    <div className="relative w-24 h-24 sm:w-28 sm:h-28 overflow-visible">
+                      <AnimatePresence>
+                        {isPlaying && (
+                          <motion.div
+                            key={`intro-bubble-${n.id}`}
+                            initial={{ opacity: 0, y: 4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 4 }}
+                            transition={{ duration: 0.2 }}
+                            className={`absolute z-[100] pointer-events-none ${
+                              n.id === 'lea'
+                                ? 'right-full mr-3 sm:mr-4 -top-3 sm:-top-4 w-[min(200px,calc(100vw-2.5rem))] sm:w-[216px]'
+                                : 'left-full ml-3 sm:ml-4 -top-3 sm:-top-4 w-[min(220px,calc(100vw-2.5rem))] sm:w-[240px]'
+                            }`}
+                          >
+                            <div className={`relative rounded-2xl bg-white/95 backdrop-blur-sm border border-wine/15 shadow-[0_16px_48px_-12px_rgba(26,35,64,0.22)] text-left ${
+                              n.id === 'lea' ? 'px-3.5 py-3' : 'px-4 py-3.5'
+                            }`}>
+                              <p className={`tracking-[0.16em] uppercase text-wine/75 font-semibold mb-2 ${
+                                n.id === 'lea' ? 'text-[11px]' : 'text-[12px]'
+                              }`}>
+                                {n.name}
+                              </p>
+                              <p className={`font-display text-navy italic leading-snug ${
+                                n.id === 'lea' ? 'text-[14px] sm:text-[15px]' : 'text-[15px] sm:text-[16px]'
+                              }`}>
+                                {isPlaying && introSpeechText === n.intro ? (
+                                  <HighlightedSpeech
+                                    text={n.intro}
+                                    playbackTime={introPlaybackTime}
+                                    timings={introTimings}
+                                    quote
+                                  />
+                                ) : (
+                                  <>«{n.intro}»</>
+                                )}
+                              </p>
+                              <span
+                                className={`absolute top-[42%] -translate-y-1/2 w-2.5 h-2.5 bg-white/95 rotate-45 border-wine/15 ${
+                                  n.id === 'lea'
+                                    ? '-right-1 border-r border-t'
+                                    : '-left-1 border-l border-b'
+                                }`}
+                                aria-hidden
+                              />
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      <div className={`relative w-full h-full rounded-full overflow-hidden transition-shadow duration-300 ${
+                        isPlaying
+                          ? 'ring-[3px] ring-wine shadow-lg'
+                          : 'ring-2 ring-wine/40 group-hover:ring-wine shadow-sm group-hover:shadow-md'
+                      }`}>
+                        <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
+                        {isPlaying && (
+                          <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-35 pointer-events-none" />
+                        )}
+                        <div className={`absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity ${
+                          isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                        }`}>
+                          {isPlaying ? (
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="white" aria-hidden>
+                              <rect x="2" y="2" width="10" height="10" rx="1.5" fill="white" />
+                            </svg>
+                          ) : (
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="white" aria-hidden>
+                              <path d="M8 5v14l11-7z" fill="white" />
+                            </svg>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <span className="font-display text-[13px] text-wine font-medium">{n.name}</span>
+                    <span className={`font-display text-[14px] font-medium transition-colors ${
+                      isPlaying ? 'text-wine italic' : 'text-wine'
+                    }`}>{n.name}</span>
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </Reveal>
 
             <Reveal delay={0.35}>
               <p className="mt-6 max-w-[500px] text-[15px] leading-[1.6] text-navy/70">
-                We listen as you speak and correct your French in real time,
+                Nativa listens as you speak and correct your French in real time,
                 helping you express yourself with fluency and confidence.
               </p>
             </Reveal>
             <Reveal delay={0.42}>
               <div className="mt-8 flex items-center gap-3">
-                <ButtonPrimary onClick={() => goToDashboard()}>Rate your French</ButtonPrimary>
-                <ButtonGhost>Watch the demo</ButtonGhost>
+                <ButtonPrimary onClick={() => goToDashboard()}>They rate your French</ButtonPrimary>
               </div>
             </Reveal>
           </div>
 
           <div className="flex items-center justify-end h-full">
-            <AudioDemoCard onOpenFullscreen={(topic) => goToDashboard(topic)} />
+            <AudioDemoCard
+              onOpenFullscreen={(topic) => goToDashboard(topic)}
+              initialLearnMode={learnMode}
+              initialLearnLevel={learnLevel}
+              onLearnModeHandled={clearLearnParams}
+            />
           </div>
         </div>
       </Container>

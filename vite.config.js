@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { createHash } from 'crypto';
 import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
 
@@ -27,6 +28,33 @@ function readBody(req) {
     req.on('end', () => resolve(Buffer.concat(chunks).toString()));
     req.on('error', reject);
   });
+}
+
+function extractCorrectedFromRaw(raw, fallback = '') {
+  if (!raw || typeof raw !== 'string') return fallback;
+
+  let cleaned = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+
+  try {
+    const parsed = JSON.parse(cleaned);
+    if (typeof parsed.corrected === 'string' && parsed.corrected.trim()) {
+      return parsed.corrected.replace(/\\n/g, '\n').replace(/\\"/g, '"').trim();
+    }
+  } catch {
+    // fall through
+  }
+
+  const match = cleaned.match(/"corrected"\s*:\s*"((?:[^"\\]|\\.)*)(?:"|$)/s);
+  if (match?.[1]) {
+    try {
+      return JSON.parse(`"${match[1]}"`).trim();
+    } catch {
+      return match[1].replace(/\\n/g, '\n').replace(/\\"/g, '"').trim();
+    }
+  }
+
+  if (cleaned.startsWith('{')) return fallback;
+  return cleaned || fallback;
 }
 
 function deepgramKeyMiddleware(apiKey) {
@@ -116,11 +144,15 @@ function correctionMiddleware(apiKey) {
     let text = '';
     let register = 'Standard';
     let assessOnly = false;
+    let interviewReport = false;
+    let claimedLevel = '';
     try {
       const body = JSON.parse(await readBody(req));
       text = body.text || '';
       register = body.register || 'Standard';
       assessOnly = !!body.assessOnly;
+      interviewReport = !!body.interviewReport;
+      claimedLevel = body.claimedLevel || '';
     } catch {
       res.statusCode = 400;
       res.setHeader('Content-Type', 'application/json');
@@ -137,19 +169,44 @@ function correctionMiddleware(apiKey) {
 
     if (assessOnly) {
       try {
+        const isInterviewReport = interviewReport;
         const response = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
-            max_tokens: 120,
-            system: 'You are a French language expert. Assess the overall CEFR level of the spoken French (A1, A2, B1, B2, C1, or C2). Identify one key strength. Then give one concrete actionable tip specifically targeting the NEXT level up (A1→A2, A2→B1, B1→B2, B2→C1, C1→C2). The tip must be relevant to bridging exactly that gap. Respond with raw JSON only, no markdown: {"level":"B1","strength":"...","weakness":"..."}. Keep strength and weakness to max 7 words each. The "weakness" field must be a short positive actionable advice (e.g. "Practise subjunctive mood daily"), never a problem description.',
+            max_tokens: isInterviewReport ? 700 : 120,
+            system: isInterviewReport
+              ? `You are Léa and Jules, Parisian French coaches. A learner claimed CEFR level ${claimedLevel || 'unknown'} and answered interview questions in French. Assess their spoken French holistically. Return raw JSON only, no markdown: {"overallLevel":"B1","overallScore":72,"learnerGender":"woman","summary":"You're good at speaking — you don't hesitate and your accent sounds natural. But your grammar slips on past tenses, and you still sound a bit textbook rather than Parisian.","strengths":[{"label":"Speaking confidence","hint":"You aren't afraid to speak up","score":78},{"label":"Accent & pronunciation","hint":"How natural you sound","score":74},{"label":"Vocabulary","hint":"Words you know and use","score":68}],"weaknesses":[{"label":"Grammar accuracy","hint":"Verb forms, agreements, tenses","score":44},{"label":"Parisian style","hint":"Local register vs textbook French","score":40},{"label":"Natural flow","hint":"Rhythm and pace when you speak","score":46},{"label":"Local expressions","hint":"Idioms Parisians actually use","score":38}]}. Include exactly 3 strengths and 4 weaknesses using ONLY these exact labels (do not invent new ones). Each score is 0-100 (higher is better). Strength scores typically 58-92. Weakness scores typically 28-58. overallScore is 0-100. overallLevel is A1, A2, B1, B2, C1, or C2. learnerGender must be "woman" or "man" — infer from how the learner speaks about themselves (adjective/participle agreement, je suis né/née, je suis content/contente, etc.). summary: 2-3 warm sentences in plain English — start with what they do well, then "but" or "however" for what to improve. Keep hints under 8 words.`
+              : 'You are a French language expert. Assess the overall CEFR level of the spoken French (A1, A2, B1, B2, C1, or C2). Identify one key strength. Then give one concrete actionable tip specifically targeting the NEXT level up (A1→A2, A2→B1, B1→B2, B2→C1, C1→C2). The tip must be relevant to bridging exactly that gap. Respond with raw JSON only, no markdown: {"level":"B1","strength":"...","weakness":"..."}. Keep strength and weakness to max 7 words each. The "weakness" field must be a short positive actionable advice (e.g. "Practise subjunctive mood daily"), never a problem description.',
             messages: [{ role: 'user', content: text }],
           }),
         });
         const data = await response.json();
         let raw = data.content?.[0]?.text?.trim() || '{}';
         raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        if (isInterviewReport) {
+          let overallLevel = null;
+          let overallScore = null;
+          let summary = null;
+          let learnerGender = null;
+          let strengths = [];
+          let weaknesses = [];
+          try {
+            ({ overallLevel, overallScore, summary, learnerGender, strengths, weaknesses } = JSON.parse(raw));
+          } catch {}
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({
+            overallLevel,
+            overallScore,
+            summary,
+            learnerGender,
+            strengths: Array.isArray(strengths) ? strengths : [],
+            weaknesses: Array.isArray(weaknesses) ? weaknesses : [],
+          }));
+          return;
+        }
         let level = null, strength = null, weakness = null;
         try { ({ level, strength, weakness } = JSON.parse(raw)); } catch {}
         res.statusCode = 200;
@@ -158,12 +215,14 @@ function correctionMiddleware(apiKey) {
       } catch {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ level: null }));
+        res.end(JSON.stringify(interviewReport
+          ? { overallLevel: null, overallScore: null, summary: null, learnerGender: null, strengths: [], weaknesses: [] }
+          : { level: null }));
       }
       return;
     }
 
-    const sharedRules = 'STRICT RULES: (1) Return ONLY a raw JSON object — no markdown, no code fences, no notes, no explanations, nothing else. (2) Also assess the CEFR level of the original spoken French (A1, A2, B1, B2, C1, or C2). Output format: {"corrected": "...", "level": "B1"}';
+    const sharedRules = 'STRICT RULES: (1) Return ONLY a raw JSON object — no markdown, no code fences, no notes, no explanations, nothing else. (2) Correct ONLY the user text below — same scope, same number of ideas. (3) Preserve paragraph breaks inside the corrected string using \\n\\n. (4) Also assess the CEFR level of the original spoken French (A1, A2, B1, B2, C1, or C2). Output format: {"corrected": "...", "level": "B1"}';
     const systemPrompts = {
       Parisien: `Tu es un Parisien de 25 ans, branchée, qui corrige le français des gens pour qu'il sonne comme un vrai jeune Parisien. Réécris la phrase pour qu'elle soit naturelle, relax et authentiquement parisienne — comme si tu l'envoyais par texto à un pote. Utilise les vraies tournures des jeunes Parisiens : supprime le "ne" dans les négations (je sais pas, j'veux pas), contracte les mots (t'as, c'est, j'suis, y'a), utilise des mots du quotidien comme "genre", "carrément", "vachement", "trop", "c'est chelou", "ça me saoule", "c'est ouf". Garde le sens original mais rends-le cool et naturel. Ne traduis pas, ne changes pas la langue. ${sharedRules}`,
       Casual: `You are a French grammar corrector. Fix only grammar errors (verb forms, agreements) in casual spoken French. Keep the informal tone. ${sharedRules}`,
@@ -182,7 +241,7 @@ function correctionMiddleware(apiKey) {
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 256,
+          max_tokens: Math.min(1200, 180 + Math.ceil(text.length / 3)),
           system,
           messages: [{ role: 'user', content: text }],
         }),
@@ -190,16 +249,15 @@ function correctionMiddleware(apiKey) {
 
       const data = await response.json();
       let raw = data.content?.[0]?.text?.trim() || '{}';
-      // Strip markdown code fences if present
       raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-      let corrected = text;
+      let corrected = extractCorrectedFromRaw(raw, text);
       let level = null;
       try {
         const parsed = JSON.parse(raw);
-        corrected = parsed.corrected || text;
         level = parsed.level || null;
       } catch {
-        corrected = raw || text;
+        const levelMatch = raw.match(/"level"\s*:\s*"([A-C][12])"/);
+        if (levelMatch) level = levelMatch[1];
       }
 
       res.statusCode = 200;
@@ -213,30 +271,66 @@ function correctionMiddleware(apiKey) {
   };
 }
 
-// ElevenLabs voices — multilingual v2 model
+// ElevenLabs — Léa & Jules
+const NARRATOR_ALIASES = { jules: 'alex', lea: 'lea', stella: 'lea' };
+
 const ELEVENLABS_VOICES = {
-  lea:   'ebRwkdEFVZIx2A6YucFh', // Léa — custom Parisian female voice
-  jules: 'n1u6R6yj3qEpDLH3liBh', // Jules — custom Parisian male voice
+  lea: 'ebRwkdEFVZIx2A6YucFh',
+  alex: 'n1u6R6yj3qEpDLH3liBh',
 };
-const ELEVENLABS_VOICE_ID = ELEVENLABS_VOICES.lea; // default
+
+function normalizeNarrator(narrator) {
+  return NARRATOR_ALIASES[narrator] || narrator;
+}
+
+function narratorAudioFileName(narrator, text, voiceId) {
+  const hash = createHash('sha256').update(`${narrator}\0${voiceId}\0${text}`).digest('hex').slice(0, 20);
+  return `${narrator}-${hash}.mp3`;
+}
 
 function elevenLabsTtsMiddleware(apiKey) {
+  const AUDIO_DIR = resolve(process.cwd(), 'public', 'narrator-audio');
+  try {
+    if (!existsSync(AUDIO_DIR)) mkdirSync(AUDIO_DIR, { recursive: true });
+  } catch {}
+
   return async (req, res, next) => {
     if (req.url !== '/api/elevenlabs-tts' || req.method !== 'POST') { next(); return; }
-    let text = '', narrator = 'lea';
+    let text = '', narrator = 'stella';
     try {
       const body = JSON.parse(await readBody(req));
-      text = body.text || '';
-      narrator = body.narrator || 'lea';
+      text = (body.text || '').trim();
+      narrator = normalizeNarrator(body.narrator || 'stella');
     } catch {
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
     }
-    if (!apiKey || !text) {
+    if (!text) {
       res.statusCode = 400; res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ error: 'Missing ElevenLabs key or text' })); return;
+      res.end(JSON.stringify({ error: 'Missing text' })); return;
     }
-    const voiceId = ELEVENLABS_VOICES[narrator] || ELEVENLABS_VOICE_ID;
+    if (!ELEVENLABS_VOICES[narrator]) {
+      res.statusCode = 400; res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ error: 'Unknown narrator — use lea or jules only' })); return;
+    }
+    if (!apiKey) {
+      res.statusCode = 400; res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ error: 'Missing ElevenLabs key' })); return;
+    }
+
+    const voiceId = ELEVENLABS_VOICES[narrator];
+    const fileName = narratorAudioFileName(narrator, text, voiceId);
+    const filePath = resolve(AUDIO_DIR, fileName);
+
     try {
+      if (existsSync(filePath)) {
+        const cached = readFileSync(filePath);
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'audio/mpeg');
+        res.setHeader('X-Narrator-Audio-Cache', 'hit');
+        res.end(cached);
+        return;
+      }
+
       const response = await fetch(
         `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
         {
@@ -259,14 +353,95 @@ function elevenLabsTtsMiddleware(apiKey) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ error: err })); return;
       }
-      const buf = await response.arrayBuffer();
+      const buf = Buffer.from(await response.arrayBuffer());
+      writeFileSync(filePath, buf);
       res.statusCode = 200;
       res.setHeader('Content-Type', 'audio/mpeg');
-      res.end(Buffer.from(buf));
+      res.setHeader('X-Narrator-Audio-Cache', 'miss');
+      res.end(buf);
     } catch (err) {
       res.statusCode = 500; res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ error: err.message }));
     }
+  };
+}
+
+function interviewFeedbackMiddleware() {
+  const FILE = resolve(process.cwd(), 'data', 'interview-feedback.json');
+  const DEFAULT_FILE = resolve(process.cwd(), 'data', 'interview-feedback.json');
+
+  function readStore() {
+    try {
+      if (existsSync(FILE)) {
+        return JSON.parse(readFileSync(FILE, 'utf8'));
+      }
+    } catch (err) {
+      console.warn('[interview-feedback] read failed:', err.message);
+    }
+    return null;
+  }
+
+  function writeStore(data) {
+    try {
+      const dir = resolve(process.cwd(), 'data');
+      if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+      writeFileSync(FILE, JSON.stringify(data, null, 2));
+    } catch (err) {
+      console.warn('[interview-feedback] write failed:', err.message);
+    }
+  }
+
+  function loadStore() {
+    let store = readStore();
+    if (!store) {
+      store = JSON.parse(readFileSync(DEFAULT_FILE, 'utf8'));
+      writeStore(store);
+    }
+    return store;
+  }
+
+  return async (req, res, next) => {
+    if (req.url !== '/api/interview-feedback') {
+      next();
+      return;
+    }
+
+    if (req.method === 'GET') {
+      const store = loadStore();
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(store));
+      return;
+    }
+
+    if (req.method === 'POST') {
+      try {
+        const body = JSON.parse(await readBody(req));
+        const { questionId, judgment } = body;
+        if (!questionId || !Array.isArray(judgment) || judgment.length === 0) {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: 'questionId and judgment[] required' }));
+          return;
+        }
+        const store = loadStore();
+        store[questionId] = {
+          ...store[questionId],
+          judgment,
+        };
+        writeStore(store);
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ ok: true, questionId }));
+      } catch {
+        res.statusCode = 400;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: 'Invalid JSON' }));
+      }
+      return;
+    }
+
+    next();
   };
 }
 
@@ -362,7 +537,7 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey) {
       if (elevenLabsKey && parsed.example) {
         try {
           const elRes = await fetch(
-            `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`,
+            `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICES.stella}`,
             {
               method: 'POST',
               headers: { 'xi-api-key': elevenLabsKey, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg' },
@@ -389,7 +564,7 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey) {
         meaning: parsed.meaning,
         example: parsed.example,
         exampleTranslation: parsed.exampleTranslation,
-        voiceId: ELEVENLABS_VOICE_ID,
+        voiceId: ELEVENLABS_VOICES.stella,
         audioUrl,
         createdAt: new Date().toISOString(),
       };
@@ -454,6 +629,7 @@ export default defineConfig(() => {
         configureServer(server) {
           server.middlewares.use(deepgramKeyMiddleware(env.DEEPGRAM_API_KEY));
           server.middlewares.use(correctionMiddleware(env.ANTHROPIC_API_KEY));
+          server.middlewares.use(interviewFeedbackMiddleware());
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY));
@@ -462,6 +638,7 @@ export default defineConfig(() => {
         configurePreviewServer(server) {
           server.middlewares.use(deepgramKeyMiddleware(env.DEEPGRAM_API_KEY));
           server.middlewares.use(correctionMiddleware(env.ANTHROPIC_API_KEY));
+          server.middlewares.use(interviewFeedbackMiddleware());
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY));

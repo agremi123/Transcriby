@@ -4,3 +4,6 @@ dist
 .design-extract
 .env
 .env.local
+.checkpoints/
+public/narrator-audio/*.mp3
+public/word-audio/

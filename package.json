@@ -1,5 +1,5 @@
 {
-  "name": "transcriby",
+  "name": "nativa",
   "private": true,
   "version": "2.0.0",
   "type": "module",
@@ -12,6 +12,7 @@
     "@speechmatics/auth": "^0.1.0",
     "@speechmatics/browser-audio-input-react": "^2.0.3",
     "@speechmatics/real-time-client": "^8.3.2",
+    "@supabase/supabase-js": "^2.106.2",
     "framer-motion": "^11.11.17",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

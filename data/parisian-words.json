@@ -1,0 +1,332 @@
+[
+  {
+    "id": 1780138798129,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre",
+    "example": "T'as vu son nouveau style ? C'est vraiment chelou !",
+    "exampleTranslation": "Did you see his new style? It's really weird!",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T10:59:58.129Z"
+  },
+  {
+    "id": 1780138815688,
+    "word": "flâner",
+    "meaning": "to stroll aimlessly, to wander leisurely",
+    "example": "Le dimanche, j'aime flâner dans le Marais sans destination précise.",
+    "exampleTranslation": "On Sundays, I like to wander aimlessly through the Marais without any particular destination.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:00:15.688Z"
+  },
+  {
+    "id": 1780138932609,
+    "word": "chelou",
+    "meaning": "weird, strange, odd",
+    "example": "T'as vu son nouveau copain? Il est chelou, ce mec!",
+    "exampleTranslation": "Did you see her new boyfriend? That guy is weird!",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:02:12.609Z"
+  },
+  {
+    "id": 1780139103687,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre",
+    "example": "T'as vu comment il s'habille? C'est vraiment chelou comme truc.",
+    "exampleTranslation": "Did you see how he dresses? It's really a weird thing.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:05:03.687Z"
+  },
+  {
+    "id": 1780139486359,
+    "word": "flâner",
+    "meaning": "to stroll aimlessly, to wander leisurely",
+    "example": "Le dimanche, j'aime flâner dans les rues du Marais sans but précis.",
+    "exampleTranslation": "On Sundays, I like to stroll aimlessly through the streets of the Marais without any particular destination.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:11:26.359Z"
+  },
+  {
+    "id": 1780139731317,
+    "word": "chelou",
+    "meaning": "weird, strange, crazy (slang)",
+    "example": "T'as vu comment il s'est comporté hier? C'était vraiment chelou!",
+    "exampleTranslation": "Did you see how he acted yesterday? It was really weird!",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:15:31.317Z"
+  },
+  {
+    "id": 1780139974005,
+    "word": "chelou",
+    "meaning": "weird, strange, odd",
+    "example": "C'est vraiment chelou comme film, j'ai rien compris à la fin.",
+    "exampleTranslation": "That's a really weird film, I didn't understand anything at the end.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:19:34.005Z"
+  },
+  {
+    "id": 1780140223780,
+    "word": "chelou",
+    "meaning": "weird, strange, crazy (slang)",
+    "example": "T'as vu sa nouvelle coupe? C'est chelou!",
+    "exampleTranslation": "Did you see his new haircut? It's crazy!",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:23:43.780Z"
+  },
+  {
+    "id": 1780140353161,
+    "word": "flâner",
+    "meaning": "to stroll aimlessly, to wander leisurely",
+    "example": "Le dimanche, j'aime flâner dans les rues du Marais sans destination précise.",
+    "exampleTranslation": "On Sundays, I like to stroll through the streets of the Marais without any specific destination.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:25:53.161Z"
+  },
+  {
+    "id": 1780140365746,
+    "word": "flâner",
+    "meaning": "to stroll or wander aimlessly",
+    "example": "Le dimanche, j'aime flâner dans les ruelles du Marais avec un café à la main.",
+    "exampleTranslation": "On Sundays, I like to wander through the streets of the Marais with a coffee in hand.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:26:05.746Z"
+  },
+  {
+    "id": 1780140528018,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre",
+    "example": "T'as vu comment il s'est habillé ? C'est vraiment chelou comme truc.",
+    "exampleTranslation": "Did you see how he dressed? That's really a weird thing to do.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:28:48.018Z"
+  },
+  {
+    "id": 1780140534781,
+    "word": "flâner",
+    "meaning": "to stroll aimlessly, to wander leisurely",
+    "example": "Le dimanche, j'aime flâner dans le Marais sans vraiment de destination.",
+    "exampleTranslation": "On Sundays, I love strolling through the Marais without any real destination in mind.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:28:54.781Z"
+  },
+  {
+    "id": 1780141435621,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre",
+    "example": "T'as vu ce film? C'était vraiment chelou comme final.",
+    "exampleTranslation": "Did you see that movie? The ending was really weird.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:43:55.621Z"
+  },
+  {
+    "id": 1780141435629,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre (from 'louche' backwards)",
+    "example": "T'as vu son nouveau look ? C'est vraiment chelou !",
+    "exampleTranslation": "Did you see his new look? It's really weird!",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:43:55.629Z"
+  },
+  {
+    "id": 1780141634986,
+    "word": "chelou",
+    "meaning": "weird, strange, odd (verlan for 'louche')",
+    "example": "T'as vu comment il regarde son téléphone? C'est chelou, là.",
+    "exampleTranslation": "Did you see how he's looking at his phone? That's weird, man.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:47:14.986Z"
+  },
+  {
+    "id": 1780141648716,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre",
+    "example": "Ce mec est vraiment chelou avec ses histoires de complot.",
+    "exampleTranslation": "That guy is really weird with his conspiracy theories.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:47:28.716Z"
+  },
+  {
+    "id": 1780141680213,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre (slang)",
+    "example": "T'as vu comment il s'est habillé? C'est vraiment chelou!",
+    "exampleTranslation": "Did you see how he got dressed? That's really weird!",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:48:00.213Z"
+  },
+  {
+    "id": 1780142125221,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre (slang)",
+    "example": "T'as vu comment il s'habille? C'est vraiment chelou comme style.",
+    "exampleTranslation": "Did you see how he dresses? It's really a weird style.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T11:55:25.221Z"
+  },
+  {
+    "id": 1780142437283,
+    "word": "flâner",
+    "meaning": "to stroll aimlessly, to wander leisurely",
+    "example": "Le dimanche, j'aime flâner dans le Marais avec un café à la main.",
+    "exampleTranslation": "On Sundays, I like to stroll aimlessly through the Marais with a coffee in my hand.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T12:00:37.283Z"
+  },
+  {
+    "id": 1780144218881,
+    "word": "flâner",
+    "meaning": "to stroll aimlessly, to wander leisurely",
+    "example": "Le dimanche, j'aime flâner dans le Marais en prenant mon temps.",
+    "exampleTranslation": "On Sundays, I love to stroll through the Marais without rushing.",
+    "voiceId": "XB0fDUnXU5powFXDhCwa",
+    "audioUrl": null,
+    "createdAt": "2026-05-30T12:30:18.881Z"
+  },
+  {
+    "id": 1780146206008,
+    "word": "chelou",
+    "meaning": "weird, strange, crazy (slang)",
+    "example": "T'as vu son nouveau truc? C'est complètement chelou!",
+    "exampleTranslation": "Did you see his new thing? It's totally weird!",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780146206008-snus3.mp3",
+    "createdAt": "2026-05-30T13:03:26.008Z"
+  },
+  {
+    "id": 1780146305869,
+    "word": "chelou",
+    "meaning": "weird, strange (slang)",
+    "example": "T'as vu comment il était habillé? C'était vraiment chelou!",
+    "exampleTranslation": "Did you see how he was dressed? It was really weird!",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780146305865-l5ijb.mp3",
+    "createdAt": "2026-05-30T13:05:05.869Z"
+  },
+  {
+    "id": 1780146587712,
+    "word": "flâner",
+    "meaning": "to stroll or wander aimlessly",
+    "example": "Le dimanche, j'aime flâner dans les rues du Marais avec un café à la main.",
+    "exampleTranslation": "On Sundays, I love strolling through the streets of the Marais with a coffee in hand.",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780146587710-5a7pb.mp3",
+    "createdAt": "2026-05-30T13:09:47.712Z"
+  },
+  {
+    "id": 1780146740658,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre",
+    "example": "T'as vu comment il s'habille? C'est vraiment chelou comme style.",
+    "exampleTranslation": "Did you see how he dresses? That's a really weird style.",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780146740658-lkrys.mp3",
+    "createdAt": "2026-05-30T13:12:20.658Z"
+  },
+  {
+    "id": 1780146907346,
+    "word": "flâner",
+    "meaning": "to stroll aimlessly, to wander leisurely",
+    "example": "Le dimanche matin, j'aime flâner dans les rues du Marais avec un café à la main.",
+    "exampleTranslation": "On Sunday mornings, I like to stroll aimlessly through the streets of the Marais with a coffee in hand.",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780146907344-o9qyb.mp3",
+    "createdAt": "2026-05-30T13:15:07.346Z"
+  },
+  {
+    "id": 1780147000478,
+    "word": "flâner",
+    "meaning": "to stroll aimlessly, to wander leisurely",
+    "example": "Le dimanche, j'aime flâner dans les ruelles du Marais sans vraiment savoir où je vais.",
+    "exampleTranslation": "On Sundays, I like to stroll aimlessly through the streets of the Marais without really knowing where I'm going.",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780147000477-586es.mp3",
+    "createdAt": "2026-05-30T13:16:40.478Z"
+  },
+  {
+    "id": 1780147046009,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre",
+    "example": "Ce mec est vraiment chelou avec ses histoires de fantômes.",
+    "exampleTranslation": "That guy is really weird with his ghost stories.",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780147046008-aalxh.mp3",
+    "createdAt": "2026-05-30T13:17:26.009Z"
+  },
+  {
+    "id": 1780147126978,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre",
+    "example": "Ce mec est complètement chelou, il parle tout seul dans le métro.",
+    "exampleTranslation": "That guy is totally weird, he talks to himself on the subway.",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780147126977-qysk4.mp3",
+    "createdAt": "2026-05-30T13:18:46.978Z"
+  },
+  {
+    "id": 1780147343811,
+    "word": "flâner",
+    "meaning": "to stroll aimlessly, to wander leisurely",
+    "example": "Le dimanche matin, j'aime flâner le long de la Seine avec un café.",
+    "exampleTranslation": "On Sunday mornings, I like to stroll along the Seine with a coffee.",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780147343810-sswy3.mp3",
+    "createdAt": "2026-05-30T13:22:23.811Z"
+  },
+  {
+    "id": 1780147950883,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre (slang)",
+    "example": "T'as vu son nouveau look? C'est vraiment chelou!",
+    "exampleTranslation": "Did you see his new look? It's really weird!",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780147950880-7uk3p.mp3",
+    "createdAt": "2026-05-30T13:32:30.883Z"
+  },
+  {
+    "id": 1780148173453,
+    "word": "chelou",
+    "meaning": "weird, strange, crazy (slang)",
+    "example": "T'as vu comment il s'est habillé? C'est complètement chelou!",
+    "exampleTranslation": "Did you see how he dressed? That's totally weird!",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780148173450-ni9tj.mp3",
+    "createdAt": "2026-05-30T13:36:13.453Z"
+  },
+  {
+    "id": 1780148757816,
+    "word": "chelou",
+    "meaning": "weird, strange, bizarre",
+    "example": "T'as vu comment il s'est habillé? C'est vraiment chelou!",
+    "exampleTranslation": "Did you see how he dressed? That's really weird!",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780148757815-c5ept.mp3",
+    "createdAt": "2026-05-30T13:45:57.816Z"
+  },
+  {
+    "id": 1780148781827,
+    "word": "un truc de dingue",
+    "meaning": "a crazy/insane thing",
+    "example": "T'as vu ce concert? C'était un truc de dingue, la foule était en délire!",
+    "exampleTranslation": "Did you see that concert? It was absolutely insane, the crowd went wild!",
+    "voiceId": "ebRwkdEFVZIx2A6YucFh",
+    "audioUrl": "/word-audio/word-1780148781827-ehqht.mp3",
+    "createdAt": "2026-05-30T13:46:21.827Z"
+  }
+]

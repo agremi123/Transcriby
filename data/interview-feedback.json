@@ -1,0 +1,132 @@
+{
+  "name": {
+    "judgment": [
+      {
+        "narrator": "lea",
+        "text": "Bon, on t'a compris, mais là ça sonne pas parisien.",
+        "translation": "OK, we got you, but that doesn't sound Parisian."
+      },
+      {
+        "narrator": "jules",
+        "text": "Regarde comment on le dirait vraiment, tu vas voir la diff.",
+        "translation": "See how we'd really say it, you'll spot the difference."
+      }
+    ],
+    "congratulations": [
+      {
+        "narrator": "jules",
+        "text": "Nickel. Pour une intro, t'as l'air d'un vrai Parisien.",
+        "translation": "Nice. For an intro, you sound like a real Parisian."
+      },
+      {
+        "narrator": "lea",
+        "text": "Franchement, t'as assuré. On continue comme ça.",
+        "translation": "Honestly, you nailed it. Keep going like that."
+      }
+    ]
+  },
+  "origin": {
+    "judgment": [
+      {
+        "narrator": "jules",
+        "text": "On sait d'où tu viens, mais la forme… pas encore Paris.",
+        "translation": "We know where you're from, but the form… not Paris yet."
+      },
+      {
+        "narrator": "lea",
+        "text": "Pas grave. On te montre la version qu'on utiliserait ici.",
+        "translation": "No big deal. We'll show you the version we'd use here."
+      }
+    ],
+    "congratulations": [
+      {
+        "narrator": "lea",
+        "text": "C'est fluide. On dirait que t'as déjà vécu ici.",
+        "translation": "That's fluent. Sounds like you've already lived here."
+      },
+      {
+        "narrator": "jules",
+        "text": "Bien joué. T'as parlé de chez toi comme un local.",
+        "translation": "Well done. You talked about home like a local."
+      }
+    ]
+  },
+  "work": {
+    "judgment": [
+      {
+        "narrator": "lea",
+        "text": "L'idée est là, mais on entend encore l'école.",
+        "translation": "The idea is there, but we still hear school French."
+      },
+      {
+        "narrator": "jules",
+        "text": "Allez, on te file la tournure parisienne.",
+        "translation": "Come on, we'll give you the Parisian phrasing."
+      }
+    ],
+    "congratulations": [
+      {
+        "narrator": "jules",
+        "text": "Propre. T'as parlé de ta life sans forcer.",
+        "translation": "Clean. You talked about your life without forcing it."
+      },
+      {
+        "narrator": "lea",
+        "text": "Ça sonne naturel. Carrément crédible pour Paris.",
+        "translation": "That sounds natural. Totally credible for Paris."
+      }
+    ]
+  },
+  "why": {
+    "judgment": [
+      {
+        "narrator": "jules",
+        "text": "On sent la motivation, mais le français accroche encore.",
+        "translation": "We feel the motivation, but the French still catches."
+      },
+      {
+        "narrator": "lea",
+        "text": "T'inquiète, on te montre comment le dire ici.",
+        "translation": "Don't worry, we'll show you how to say it here."
+      }
+    ],
+    "congratulations": [
+      {
+        "narrator": "lea",
+        "text": "T'as convaincu. On dirait que Paris t'attend pour de vrai.",
+        "translation": "You convinced us. Sounds like Paris is really waiting for you."
+      },
+      {
+        "narrator": "jules",
+        "text": "Solide. T'as parlé de ton projet sans accent de manuel.",
+        "translation": "Solid. You talked about your goal without textbook vibes."
+      }
+    ]
+  },
+  "day": {
+    "judgment": [
+      {
+        "narrator": "lea",
+        "text": "Ta journée est claire, mais pas encore comme on la raconterait.",
+        "translation": "Your day is clear, but not how we'd tell it yet."
+      },
+      {
+        "narrator": "jules",
+        "text": "On corrige, et tu verras comment ça sonne à Paris.",
+        "translation": "We'll fix it, and you'll hear how it sounds in Paris."
+      }
+    ],
+    "congratulations": [
+      {
+        "narrator": "jules",
+        "text": "Du réveil au coucher, c'était fluide. Chapeau.",
+        "translation": "From wake-up to bedtime, that was fluent. Hats off."
+      },
+      {
+        "narrator": "lea",
+        "text": "T'as raconté ta journée comme si t'habitais le 11e.",
+        "translation": "You told your day like you live in the 11th arrondissement."
+      }
+    ]
+  }
+}
