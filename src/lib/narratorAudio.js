@@ -26,6 +26,19 @@ export function connectNarratorSource(ctx, source, narrator) {
   return gain;
 }
 
+export async function readNarratorAudioResponse(res) {
+  if (!res.ok) throw new Error('TTS unavailable');
+  const contentType = res.headers.get('Content-Type') || '';
+  if (contentType.includes('application/json')) {
+    const data = await res.json();
+    if (!data?.audioUrl) throw new Error('TTS unavailable');
+    const audioRes = await fetch(data.audioUrl);
+    if (!audioRes.ok) throw new Error('TTS unavailable');
+    return audioRes.arrayBuffer();
+  }
+  return res.arrayBuffer();
+}
+
 export async function fetchNarratorAudio(text, narrator) {
   let res = await fetch('/api/elevenlabs-tts', {
     method: 'POST',
@@ -33,13 +46,13 @@ export async function fetchNarratorAudio(text, narrator) {
     body: JSON.stringify({ text, narrator }),
   });
 
-  if (!res.ok) {
-    res = await fetch('/api/tts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, narrator }),
-    });
-  }
+  if (res.ok) return readNarratorAudioResponse(res);
+
+  res = await fetch('/api/tts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, narrator }),
+  });
 
   if (!res.ok) throw new Error('TTS unavailable');
   return res.arrayBuffer();

@@ -2,6 +2,10 @@ import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { getEnv } from './env.js';
+import {
+  getCachedNarratorAudioUrl,
+  saveNarratorAudio,
+} from './narrator-audio-cache.js';
 
 export const NARRATOR_ALIASES = { jules: 'alex', lea: 'lea', stella: 'lea' };
 
@@ -101,6 +105,16 @@ export async function handleElevenLabsTts(body) {
   }
 
   const voiceId = ELEVENLABS_VOICES[narrator];
+
+  const cachedUrl = await getCachedNarratorAudioUrl(narrator, voiceId, text);
+  if (cachedUrl) {
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json', 'X-Narrator-Audio-Cache': 'supabase-hit' },
+      body: { audioUrl: cachedUrl, cached: true },
+    };
+  }
+
   const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
     method: 'POST',
     headers: {
@@ -119,10 +133,21 @@ export async function handleElevenLabsTts(body) {
     return { statusCode: response.status, body: { error: await response.text() } };
   }
 
+  const buf = Buffer.from(await response.arrayBuffer());
+  const audioUrl = await saveNarratorAudio(narrator, voiceId, text, buf);
+
+  if (audioUrl) {
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json', 'X-Narrator-Audio-Cache': 'supabase-miss' },
+      body: { audioUrl, cached: false },
+    };
+  }
+
   return {
     statusCode: 200,
-    headers: { 'Content-Type': 'audio/mpeg' },
-    body: Buffer.from(await response.arrayBuffer()),
+    headers: { 'Content-Type': 'audio/mpeg', 'X-Narrator-Audio-Cache': 'direct' },
+    body: buf,
   };
 }
 
@@ -340,21 +365,26 @@ export async function handleWord() {
 
     let audioUrl = null;
     if (ELEVENLABS_API_KEY && parsed.example) {
-      try {
-        const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICES.lea}`, {
-          method: 'POST',
-          headers: { 'xi-api-key': ELEVENLABS_API_KEY, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
-          body: JSON.stringify({
-            text: parsed.example,
-            model_id: 'eleven_multilingual_v2',
-            voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
-          }),
-        });
-        if (elRes.ok) {
-          const audioBase64 = Buffer.from(await elRes.arrayBuffer()).toString('base64');
-          audioUrl = `data:audio/mpeg;base64,${audioBase64}`;
-        }
-      } catch {}
+      const cachedExampleUrl = await getCachedNarratorAudioUrl('lea', ELEVENLABS_VOICES.lea, parsed.example);
+      if (cachedExampleUrl) {
+        audioUrl = cachedExampleUrl;
+      } else {
+        try {
+          const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICES.lea}`, {
+            method: 'POST',
+            headers: { 'xi-api-key': ELEVENLABS_API_KEY, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
+            body: JSON.stringify({
+              text: parsed.example,
+              model_id: 'eleven_multilingual_v2',
+              voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
+            }),
+          });
+          if (elRes.ok) {
+            const buf = Buffer.from(await elRes.arrayBuffer());
+            audioUrl = await saveNarratorAudio('lea', ELEVENLABS_VOICES.lea, parsed.example, buf);
+          }
+        } catch {}
+      }
     }
 
     const entry = {

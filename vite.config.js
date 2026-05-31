@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
-import { createHash } from 'crypto';
 import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
+import { handleElevenLabsTts } from './server/handlers.js';
+import { sendHandlerResult } from './server/node-response.js';
 
 function readEnvFile(dir) {
   try {
@@ -271,96 +272,22 @@ function correctionMiddleware(apiKey) {
   };
 }
 
-// ElevenLabs — Léa & Jules
-const NARRATOR_ALIASES = { jules: 'alex', lea: 'lea', stella: 'lea' };
-
+// ElevenLabs — Léa & Jules (word discovery voice ids)
 const ELEVENLABS_VOICES = {
   lea: 'ebRwkdEFVZIx2A6YucFh',
   alex: 'n1u6R6yj3qEpDLH3liBh',
 };
 
-function normalizeNarrator(narrator) {
-  return NARRATOR_ALIASES[narrator] || narrator;
-}
-
-function narratorAudioFileName(narrator, text, voiceId) {
-  const hash = createHash('sha256').update(`${narrator}\0${voiceId}\0${text}`).digest('hex').slice(0, 20);
-  return `${narrator}-${hash}.mp3`;
-}
-
-function elevenLabsTtsMiddleware(apiKey) {
-  const AUDIO_DIR = resolve(process.cwd(), 'public', 'narrator-audio');
-  try {
-    if (!existsSync(AUDIO_DIR)) mkdirSync(AUDIO_DIR, { recursive: true });
-  } catch {}
-
+function elevenLabsTtsMiddleware(_apiKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/elevenlabs-tts' || req.method !== 'POST') { next(); return; }
-    let text = '', narrator = 'stella';
     try {
       const body = JSON.parse(await readBody(req));
-      text = (body.text || '').trim();
-      narrator = normalizeNarrator(body.narrator || 'stella');
-    } catch {
-      res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
-    }
-    if (!text) {
-      res.statusCode = 400; res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ error: 'Missing text' })); return;
-    }
-    if (!ELEVENLABS_VOICES[narrator]) {
-      res.statusCode = 400; res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ error: 'Unknown narrator — use lea or jules only' })); return;
-    }
-    if (!apiKey) {
-      res.statusCode = 400; res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ error: 'Missing ElevenLabs key' })); return;
-    }
-
-    const voiceId = ELEVENLABS_VOICES[narrator];
-    const fileName = narratorAudioFileName(narrator, text, voiceId);
-    const filePath = resolve(AUDIO_DIR, fileName);
-
-    try {
-      if (existsSync(filePath)) {
-        const cached = readFileSync(filePath);
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'audio/mpeg');
-        res.setHeader('X-Narrator-Audio-Cache', 'hit');
-        res.end(cached);
-        return;
-      }
-
-      const response = await fetch(
-        `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
-        {
-          method: 'POST',
-          headers: {
-            'xi-api-key': apiKey,
-            'Content-Type': 'application/json',
-            'Accept': 'audio/mpeg',
-          },
-          body: JSON.stringify({
-            text,
-            model_id: 'eleven_multilingual_v2',
-            voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
-          }),
-        }
-      );
-      if (!response.ok) {
-        const err = await response.text();
-        res.statusCode = response.status;
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ error: err })); return;
-      }
-      const buf = Buffer.from(await response.arrayBuffer());
-      writeFileSync(filePath, buf);
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'audio/mpeg');
-      res.setHeader('X-Narrator-Audio-Cache', 'miss');
-      res.end(buf);
+      const result = await handleElevenLabsTts(body);
+      sendHandlerResult(res, result);
     } catch (err) {
-      res.statusCode = 500; res.setHeader('Content-Type', 'application/json');
+      res.statusCode = 500;
+      res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ error: err.message }));
     }
   };

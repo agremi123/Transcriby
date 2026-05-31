@@ -8,7 +8,7 @@ import {
   Reveal,
   Star,
 } from './atoms';
-import { fetchNarratorAudio, connectNarratorSource } from '../lib/narratorAudio';
+import { fetchNarratorAudio, connectNarratorSource, readNarratorAudioResponse } from '../lib/narratorAudio';
 import { buildWordTimings, playDecodedBuffer } from '../lib/speechHighlight';
 import { HighlightedSpeech } from '../lib/HighlightedSpeech';
 
@@ -843,7 +843,9 @@ export function AudioDemoCard({
         return;
       }
 
-      const buf = await res.arrayBuffer();
+      const buf = res.headers.get('Content-Type')?.includes('application/json')
+        ? await readNarratorAudioResponse(res)
+        : await res.arrayBuffer();
       const decoded = await ctx.decodeAudioData(buf);
       setParisianTimings(buildWordTimings(text, decoded.duration));
 
