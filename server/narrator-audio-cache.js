@@ -3,32 +3,40 @@ import { getSupabaseAdmin } from './supabase.js';
 
 const BUCKET = 'narrator-audio';
 
-export function narratorStoragePath(narrator, voiceId, text) {
-  const hash = createHash('sha256').update(`${narrator}\0${voiceId}\0${text}`).digest('hex').slice(0, 20);
-  return `${narrator}/${hash}.mp3`;
+/** Single voice per character — always lea or jules in storage paths. */
+export function resolveNarrator(input = 'lea') {
+  const slug = input === 'jules' || input === 'alex' ? 'jules' : 'lea';
+  const voiceId = slug === 'jules' ? 'n1u6R6yj3qEpDLH3liBh' : 'ebRwkdEFVZIx2A6YucFh';
+  return { slug, voiceId };
 }
 
-export function getNarratorPublicUrl(narrator, voiceId, text) {
+export function narratorStoragePath(slug, voiceId, text) {
+  const hash = createHash('sha256').update(`${slug}\0${voiceId}\0${text.trim()}`).digest('hex').slice(0, 20);
+  return `${slug}/${hash}.mp3`;
+}
+
+export function getNarratorPublicUrl(slug, voiceId, text) {
   const supabase = getSupabaseAdmin();
   if (!supabase) return null;
-  const path = narratorStoragePath(narrator, voiceId, text);
+  const path = narratorStoragePath(slug, voiceId, text);
   return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
 }
 
-export async function getCachedNarratorAudioUrl(narrator, voiceId, text) {
-  const publicUrl = getNarratorPublicUrl(narrator, voiceId, text);
-  if (!publicUrl) return null;
-  try {
-    const res = await fetch(publicUrl, { method: 'HEAD' });
-    if (res.ok) return publicUrl;
-  } catch {}
-  return null;
-}
-
-export async function saveNarratorAudio(narrator, voiceId, text, buffer) {
+export async function getCachedNarratorAudio(slug, voiceId, text) {
   const supabase = getSupabaseAdmin();
   if (!supabase) return null;
-  const path = narratorStoragePath(narrator, voiceId, text);
+  const path = narratorStoragePath(slug, voiceId, text);
+  const { data, error } = await supabase.storage.from(BUCKET).download(path);
+  if (error || !data) return null;
+  const buffer = Buffer.from(await data.arrayBuffer());
+  const audioUrl = getNarratorPublicUrl(slug, voiceId, text);
+  return { buffer, audioUrl };
+}
+
+export async function saveNarratorAudio(slug, voiceId, text, buffer) {
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return null;
+  const path = narratorStoragePath(slug, voiceId, text);
   const { error } = await supabase.storage.from(BUCKET).upload(path, buffer, {
     contentType: 'audio/mpeg',
     upsert: true,
@@ -38,5 +46,5 @@ export async function saveNarratorAudio(narrator, voiceId, text, buffer) {
     console.warn('[narrator-audio] Supabase upload failed:', error.message);
     return null;
   }
-  return getNarratorPublicUrl(narrator, voiceId, text);
+  return getNarratorPublicUrl(slug, voiceId, text);
 }

@@ -26,6 +26,16 @@ export function connectNarratorSource(ctx, source, narrator) {
   return gain;
 }
 
+export function resolveClientNarrator(narrator = 'lea') {
+  return narrator === 'jules' || narrator === 'alex' ? 'jules' : 'lea';
+}
+
+const narratorAudioCache = new Map();
+
+function cacheKey(text, narrator) {
+  return `${resolveClientNarrator(narrator)}:${text.trim()}`;
+}
+
 export async function readNarratorAudioResponse(res) {
   if (!res.ok) throw new Error('TTS unavailable');
   const contentType = res.headers.get('Content-Type') || '';
@@ -40,22 +50,22 @@ export async function readNarratorAudioResponse(res) {
 }
 
 export async function fetchNarratorAudio(text, narrator) {
-  let res = await fetch('/api/elevenlabs-tts', {
+  const trimmed = text.trim();
+  const key = cacheKey(trimmed, narrator);
+  const cached = narratorAudioCache.get(key);
+  if (cached) return cached.slice(0);
+
+  const res = await fetch('/api/elevenlabs-tts', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, narrator }),
-  });
-
-  if (res.ok) return readNarratorAudioResponse(res);
-
-  res = await fetch('/api/tts', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, narrator }),
+    body: JSON.stringify({ text: trimmed, narrator: resolveClientNarrator(narrator) }),
   });
 
   if (!res.ok) throw new Error('TTS unavailable');
-  return res.arrayBuffer();
+
+  const buf = await readNarratorAudioResponse(res);
+  narratorAudioCache.set(key, buf.slice(0));
+  return buf;
 }
 
 function playBuffer(ctx, sourceRef, buffer, narrator, onSpeechTick) {

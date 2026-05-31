@@ -8,7 +8,7 @@ import {
   Reveal,
   Star,
 } from './atoms';
-import { fetchNarratorAudio, connectNarratorSource, readNarratorAudioResponse } from '../lib/narratorAudio';
+import { fetchNarratorAudio, connectNarratorSource, resolveClientNarrator } from '../lib/narratorAudio';
 import { buildWordTimings, playDecodedBuffer } from '../lib/speechHighlight';
 import { HighlightedSpeech } from '../lib/HighlightedSpeech';
 
@@ -810,7 +810,7 @@ export function AudioDemoCard({
   const playParisianWord = async (textOverride, narratorOverride) => {
     if (wordPlayingRef.current) { stopParisianAudio(); return; }
     const text = textOverride || wordData?.example;
-    const activeNarrator = narratorOverride || narrator;
+    const activeNarrator = resolveClientNarrator(narratorOverride || narrator);
     if (!text) return;
     setWordPlayError(null);
     wordPlayingRef.current = true;
@@ -823,30 +823,8 @@ export function AudioDemoCard({
       const ctx = wordAudioCtxRef.current;
       if (ctx.state === 'suspended') await ctx.resume();
 
-      let res = await fetch('/api/elevenlabs-tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, narrator: activeNarrator }),
-      });
-
-      if (!res.ok) {
-        res = await fetch('/api/tts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text, narrator: activeNarrator }),
-        });
-      }
-
-      if (!res.ok) {
-        setWordPlayError(`Audio unavailable (${res.status})`);
-        stopParisianAudio();
-        return;
-      }
-
-      const buf = res.headers.get('Content-Type')?.includes('application/json')
-        ? await readNarratorAudioResponse(res)
-        : await res.arrayBuffer();
-      const decoded = await ctx.decodeAudioData(buf);
+      const buf = await fetchNarratorAudio(text, activeNarrator);
+      const decoded = await ctx.decodeAudioData(buf.slice(0));
       setParisianTimings(buildWordTimings(text, decoded.duration));
 
       await playDecodedBuffer(ctx, {
@@ -862,7 +840,7 @@ export function AudioDemoCard({
       });
     } catch (err) {
       console.error('[play] failed:', err);
-      setWordPlayError('Playback failed — check console');
+      setWordPlayError('Audio unavailable — read the text on screen.');
       stopParisianAudio();
     }
   };

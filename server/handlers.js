@@ -3,8 +3,9 @@ import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { getEnv } from './env.js';
 import {
-  getCachedNarratorAudioUrl,
+  getCachedNarratorAudio,
   saveNarratorAudio,
+  resolveNarrator,
 } from './narrator-audio-cache.js';
 
 export const NARRATOR_ALIASES = { jules: 'alex', lea: 'lea', stella: 'lea' };
@@ -92,26 +93,25 @@ export async function handleTts(body) {
 export async function handleElevenLabsTts(body) {
   const { ELEVENLABS_API_KEY } = getEnv();
   const text = (body?.text || '').trim();
-  const narrator = normalizeNarrator(body?.narrator || 'stella');
+  const { slug, voiceId } = resolveNarrator(body?.narrator || 'lea');
 
   if (!text) {
     return { statusCode: 400, body: { error: 'Missing text' } };
-  }
-  if (!ELEVENLABS_VOICES[narrator]) {
-    return { statusCode: 400, body: { error: 'Unknown narrator — use lea or jules only' } };
   }
   if (!ELEVENLABS_API_KEY) {
     return { statusCode: 400, body: { error: 'Missing ElevenLabs key' } };
   }
 
-  const voiceId = ELEVENLABS_VOICES[narrator];
-
-  const cachedUrl = await getCachedNarratorAudioUrl(narrator, voiceId, text);
-  if (cachedUrl) {
+  const cached = await getCachedNarratorAudio(slug, voiceId, text);
+  if (cached) {
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Narrator-Audio-Cache': 'supabase-hit' },
-      body: { audioUrl: cachedUrl, cached: true },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Narrator-Audio-Cache': 'supabase-hit',
+        'X-Narrator-Voice': slug,
+      },
+      body: { audioUrl: cached.audioUrl, narrator: slug, cached: true },
     };
   }
 
@@ -125,7 +125,12 @@ export async function handleElevenLabsTts(body) {
     body: JSON.stringify({
       text,
       model_id: 'eleven_multilingual_v2',
-      voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
+      voice_settings: {
+        stability: 0.82,
+        similarity_boost: 0.88,
+        style: 0.08,
+        use_speaker_boost: true,
+      },
     }),
   });
 
@@ -134,19 +139,23 @@ export async function handleElevenLabsTts(body) {
   }
 
   const buf = Buffer.from(await response.arrayBuffer());
-  const audioUrl = await saveNarratorAudio(narrator, voiceId, text, buf);
+  const audioUrl = await saveNarratorAudio(slug, voiceId, text, buf);
 
   if (audioUrl) {
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Narrator-Audio-Cache': 'supabase-miss' },
-      body: { audioUrl, cached: false },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Narrator-Audio-Cache': 'supabase-miss',
+        'X-Narrator-Voice': slug,
+      },
+      body: { audioUrl, narrator: slug, cached: false },
     };
   }
 
   return {
     statusCode: 200,
-    headers: { 'Content-Type': 'audio/mpeg', 'X-Narrator-Audio-Cache': 'direct' },
+    headers: { 'Content-Type': 'audio/mpeg', 'X-Narrator-Audio-Cache': 'direct', 'X-Narrator-Voice': slug },
     body: buf,
   };
 }
@@ -365,23 +374,24 @@ export async function handleWord() {
 
     let audioUrl = null;
     if (ELEVENLABS_API_KEY && parsed.example) {
-      const cachedExampleUrl = await getCachedNarratorAudioUrl('lea', ELEVENLABS_VOICES.lea, parsed.example);
-      if (cachedExampleUrl) {
-        audioUrl = cachedExampleUrl;
+      const { slug, voiceId } = resolveNarrator('lea');
+      const cached = await getCachedNarratorAudio(slug, voiceId, parsed.example);
+      if (cached?.audioUrl) {
+        audioUrl = cached.audioUrl;
       } else {
         try {
-          const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICES.lea}`, {
+          const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
             method: 'POST',
             headers: { 'xi-api-key': ELEVENLABS_API_KEY, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
             body: JSON.stringify({
               text: parsed.example,
               model_id: 'eleven_multilingual_v2',
-              voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
+              voice_settings: { stability: 0.82, similarity_boost: 0.88, style: 0.08, use_speaker_boost: true },
             }),
           });
           if (elRes.ok) {
             const buf = Buffer.from(await elRes.arrayBuffer());
-            audioUrl = await saveNarratorAudio('lea', ELEVENLABS_VOICES.lea, parsed.example, buf);
+            audioUrl = await saveNarratorAudio(slug, voiceId, parsed.example, buf);
           }
         } catch {}
       }
