@@ -21,6 +21,7 @@ export function getEnv() {
   const fileEnv = readEnvFile();
   return {
     DEEPGRAM_API_KEY: process.env.DEEPGRAM_API_KEY || fileEnv.DEEPGRAM_API_KEY,
+    SPEECHMATICS_API_KEY: process.env.SPEECHMATICS_API_KEY || fileEnv.SPEECHMATICS_API_KEY,
     ELEVENLABS_API_KEY: process.env.ELEVENLABS_API_KEY || fileEnv.ELEVENLABS_API_KEY,
     ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || fileEnv.ANTHROPIC_API_KEY,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY || fileEnv.OPENAI_API_KEY,

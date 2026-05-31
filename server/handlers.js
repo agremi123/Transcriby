@@ -7,8 +7,29 @@ import {
   saveNarratorAudio,
   resolveNarrator,
 } from './narrator-audio-cache.js';
+import { buildCorrectionSystemPrompts } from './correctionPrompts.js';
+import { sanitizeParisianCorrection, parseCorrectionResponse } from '../src/lib/correctionFormat.js';
 
 export const NARRATOR_ALIASES = { jules: 'alex', lea: 'lea', stella: 'lea' };
+
+const CEFR_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+
+function normalizeLearnerLevel(level) {
+  const v = String(level || '').trim().toUpperCase();
+  return CEFR_LEVELS.includes(v) ? v : 'A2';
+}
+
+function learnerLevelContext(level) {
+  const l = normalizeLearnerLevel(level);
+  const idx = CEFR_LEVELS.indexOf(l);
+  if (idx <= 1) {
+    return `The learner's approximate level is ${l} (beginner). Use simple, encouraging French. Avoid slang they won't understand. Explain briefly when needed.`;
+  }
+  if (idx <= 3) {
+    return `The learner's approximate level is ${l} (intermediate). Balance clarity with natural Parisian expressions.`;
+  }
+  return `The learner's approximate level is ${l} (advanced). Be demanding — expect nuance, idioms, and authentic Parisian register.`;
+}
 
 export const ELEVENLABS_VOICES = {
   lea: 'ebRwkdEFVZIx2A6YucFh',
@@ -167,6 +188,8 @@ export async function handleCorrect(body) {
   const assessOnly = !!body?.assessOnly;
   const interviewReport = !!body?.interviewReport;
   const claimedLevel = body?.claimedLevel || '';
+  const learnerLevel = normalizeLearnerLevel(body?.learnerLevel || claimedLevel || 'A2');
+  const levelCtx = learnerLevelContext(learnerLevel);
 
   if (!ANTHROPIC_API_KEY || !text) {
     return { statusCode: 200, body: { corrected: text } };
@@ -183,7 +206,7 @@ export async function handleCorrect(body) {
           max_tokens: isInterviewReport ? 700 : 120,
           system: isInterviewReport
             ? `You are Léa and Jules, Parisian French coaches. A learner claimed CEFR level ${claimedLevel || 'unknown'} and answered interview questions in French. Assess their spoken French holistically. Return raw JSON only, no markdown: {"overallLevel":"B1","overallScore":72,"learnerGender":"woman","summary":"You're good at speaking — you don't hesitate and your accent sounds natural. But your grammar slips on past tenses, and you still sound a bit textbook rather than Parisian.","strengths":[{"label":"Speaking confidence","hint":"You aren't afraid to speak up","score":78},{"label":"Accent & pronunciation","hint":"How natural you sound","score":74},{"label":"Vocabulary","hint":"Words you know and use","score":68}],"weaknesses":[{"label":"Grammar accuracy","hint":"Verb forms, agreements, tenses","score":44},{"label":"Parisian style","hint":"Local register vs textbook French","score":40},{"label":"Natural flow","hint":"Rhythm and pace when you speak","score":46},{"label":"Local expressions","hint":"Idioms Parisians actually use","score":38}]}. Include exactly 3 strengths and 4 weaknesses using ONLY these exact labels (do not invent new ones). Each score is 0-100 (higher is better). Strength scores typically 58-92. Weakness scores typically 28-58. overallScore is 0-100. overallLevel is A1, A2, B1, B2, C1, or C2. learnerGender must be "woman" or "man" — infer from how the learner speaks about themselves (adjective/participle agreement, je suis né/née, je suis content/contente, etc.). summary: 2-3 warm sentences in plain English — start with what they do well, then "but" or "however" for what to improve. Keep hints under 8 words.`
-            : 'You are a French language expert. Assess the overall CEFR level of the spoken French (A1, A2, B1, B2, C1, or C2). Identify one key strength. Then give one concrete actionable tip specifically targeting the NEXT level up (A1→A2, A2→B1, B1→B2, B2→C1, C1→C2). The tip must be relevant to bridging exactly that gap. Respond with raw JSON only, no markdown: {"level":"B1","strength":"...","weakness":"..."}. Keep strength and weakness to max 7 words each. The "weakness" field must be a short positive actionable advice (e.g. "Practise subjunctive mood daily"), never a problem description.',
+            : `${levelCtx} You are a French language expert. Assess the overall CEFR level of the spoken French (A1, A2, B1, B2, C1, or C2). Identify one key strength. Then give one concrete actionable tip specifically targeting the NEXT level up (A1→A2, A2→B1, B1→B2, B2→C1, C1→C2). The tip must be relevant to bridging exactly that gap. Respond with raw JSON only, no markdown: {"level":"B1","strength":"...","weakness":"..."}. Keep strength and weakness to max 7 words each. The "weakness" field must be a short positive actionable advice (e.g. "Practise subjunctive mood daily"), never a problem description.`,
           messages: [{ role: 'user', content: text }],
         }),
       });
@@ -227,13 +250,7 @@ export async function handleCorrect(body) {
     }
   }
 
-  const sharedRules = 'STRICT RULES: (1) Return ONLY a raw JSON object — no markdown, no code fences, no notes, no explanations, nothing else. (2) Correct ONLY the user text below — same scope, same number of ideas. (3) Preserve paragraph breaks inside the corrected string using \\n\\n. (4) Also assess the CEFR level of the original spoken French (A1, A2, B1, B2, C1, or C2). Output format: {"corrected": "...", "level": "B1"}';
-  const systemPrompts = {
-    Parisien: `Tu es un Parisien de 25 ans, branchée, qui corrige le français des gens pour qu'il sonne comme un vrai jeune Parisien. Réécris la phrase pour qu'elle soit naturelle, relax et authentiquement parisienne — comme si tu l'envoyais par texto à un pote. Utilise les vraies tournures des jeunes Parisiens : supprime le "ne" dans les négations (je sais pas, j'veux pas), contracte les mots (t'as, c'est, j'suis, y'a), utilise des mots du quotidien comme "genre", "carrément", "vachement", "trop", "c'est chelou", "ça me saoule", "c'est ouf". Garde le sens original mais rends-le cool et naturel. Ne traduis pas, ne changes pas la langue. ${sharedRules}`,
-    Casual: `You are a French grammar corrector. Fix only grammar errors (verb forms, agreements) in casual spoken French. Keep the informal tone. ${sharedRules}`,
-    Standard: `You are a French grammar corrector. Fix only grammar errors (verb forms, agreements, prepositions) in spoken French. ${sharedRules}`,
-    Formal: `You are a French grammar corrector. Fix grammar errors and elevate register (formal vocabulary, no contractions) but never replace or guess words. ${sharedRules}`,
-  };
+  const systemPrompts = buildCorrectionSystemPrompts(levelCtx);
   const system = systemPrompts[register] || systemPrompts.Parisien;
 
   try {
@@ -246,7 +263,7 @@ export async function handleCorrect(body) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: Math.min(1200, 180 + Math.ceil(text.length / 3)),
+          max_tokens: Math.min(1400, 240 + Math.ceil(text.length / 2.5)),
         system,
         messages: [{ role: 'user', content: text }],
       }),
@@ -255,19 +272,21 @@ export async function handleCorrect(body) {
     const data = await response.json();
     let raw = data.content?.[0]?.text?.trim() || '{}';
     raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-    const corrected = extractCorrectedFromRaw(raw, text);
+    const parsed = parseCorrectionResponse(raw, text);
+    const corrected = sanitizeParisianCorrection(parsed.corrected);
+    const translation = parsed.translation;
     let level = null;
     try {
-      const parsed = JSON.parse(raw);
-      level = parsed.level || null;
+      const json = JSON.parse(raw);
+      level = json.level || null;
     } catch {
       const levelMatch = raw.match(/"level"\s*:\s*"([A-C][12])"/);
       if (levelMatch) level = levelMatch[1];
     }
 
-    return { statusCode: 200, body: { corrected, level } };
+    return { statusCode: 200, body: { corrected, translation, level } };
   } catch {
-    return { statusCode: 200, body: { corrected: text, level: null } };
+    return { statusCode: 200, body: { corrected: text, translation: null, level: null } };
   }
 }
 

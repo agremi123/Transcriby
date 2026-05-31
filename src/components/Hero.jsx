@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
-import { useDeepgramTranscription } from '../hooks/useDeepgramTranscription';
+import { useSpeechmaticsTranscription } from '../hooks/useSpeechmaticsTranscription';
 import {
   ButtonPrimary,
   Container,
@@ -10,7 +10,23 @@ import {
 } from './atoms';
 import { fetchNarratorAudio, connectNarratorSource, resolveClientNarrator } from '../lib/narratorAudio';
 import { buildWordTimings, playDecodedBuffer } from '../lib/speechHighlight';
+import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from '../lib/siteAudio';
 import { HighlightedSpeech } from '../lib/HighlightedSpeech';
+import { NarratorHoverText } from '../lib/NarratorHoverText';
+import { lookupNarratorTranslation } from '../lib/narratorTranslations';
+import { SpellcheckUnderline } from '../lib/SpellcheckUnderline';
+import { useLearnerProfile } from '../context/LearnerProfileContext';
+import { matchesCorrectionTarget, isStrictCorrectionMatch, wordDiff, buildCorrectionNarrationText, getDiffChangedIndices } from '../lib/correctionFormat';
+import { registerCorrectionKeyterms } from '../lib/deepgramKeyterms';
+import { saveCorrection } from '../lib/correctionsNotebook';
+import { bumpTargetProgressByTopic } from '../lib/targetProgress';
+import {
+  getAlreadyCorrectLine,
+  getNarratorIntro,
+  getRepeatFailLine,
+  getRepeatSuccessLine,
+  pickNarratorReaction,
+} from '../lib/narratorLevelAdapt';
 
 // Small TTS play button for corrections
 function TtsPlayButton({ text }) {
@@ -28,25 +44,30 @@ function TtsPlayButton({ text }) {
     setTimings([]);
   }, []);
 
+  React.useEffect(() => registerSiteAudioStop(stopAudio), [stopAudio]);
+
   React.useEffect(() => () => {
     try { sourceRef.current?.stop(); } catch {}
     ctxRef.current?.close().catch?.(() => {});
   }, []);
 
   const play = async () => {
-    stopAudio();
+    const session = beginSiteAudioPlayback();
     if (!ctxRef.current) ctxRef.current = new AudioContext();
     const ctx = ctxRef.current;
     setPlaying(true);
     try {
       const res = await fetch('/api/tts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
       const buf = await res.arrayBuffer();
+      if (!isSiteAudioPlaybackCurrent(session)) return;
       const decoded = await ctx.decodeAudioData(buf);
+      if (!isSiteAudioPlaybackCurrent(session)) return;
       setTimings(buildWordTimings(text, decoded.duration));
       setPlaybackTime(0);
       await playDecodedBuffer(ctx, {
         buffer: decoded,
         sourceRef,
+        playbackSession: session,
         onTimeUpdate: (t) => {
           setPlaybackTime(t);
           if (t == null) stopAudio();
@@ -83,17 +104,27 @@ function TtsPlayButton({ text }) {
   );
 }
 
-// Pulsing dots while correction loads
-function CorrectionLoading() {
+// Pulsing dots while Léa / Jules load a correction
+function CorrectionLoading({ className = '' }) {
   return (
-    <div className="flex items-center gap-1 py-1">
+    <div className={`flex items-center gap-1.5 py-1 ${className}`} aria-label="Loading">
       {[0, 1, 2].map((i) => (
         <span
           key={i}
-          className="w-1 h-1 rounded-full bg-wine/40"
+          className="w-1.5 h-1.5 rounded-full bg-wine/55"
           style={{ animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite` }}
         />
       ))}
+    </div>
+  );
+}
+
+function NarratorAnswerLoading({ narratorId, hideName = false }) {
+  const id = narratorId === 'jules' ? 'jules' : 'lea';
+  return (
+    <div className="flex items-center gap-4">
+      <NarratorPortrait narratorId={id} hideName={hideName} />
+      <CorrectionLoading />
     </div>
   );
 }
@@ -150,48 +181,6 @@ function PracticeExercise({ exercise, skillPct, onCorrect }) {
   );
 }
 
-function wordDiff(original, corrected) {
-  const ow = original.trim().split(/\s+/);
-  const cw = corrected.trim().split(/\s+/);
-  const norm = (s) => s.toLowerCase().replace(/[^a-zà-ÿ]/g, '');
-  const m = ow.length, n = cw.length;
-  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
-  for (let i = 1; i <= m; i++)
-    for (let j = 1; j <= n; j++)
-      dp[i][j] = norm(ow[i-1]) === norm(cw[j-1])
-        ? dp[i-1][j-1] + 1
-        : Math.max(dp[i-1][j], dp[i][j-1]);
-
-  const ops = [];
-  let i = m, j = n;
-  while (i > 0 || j > 0) {
-    if (i > 0 && j > 0 && norm(ow[i-1]) === norm(cw[j-1])) {
-      ops.unshift({ type: 'keep', oi: i-1, ci: j-1 }); i--; j--;
-    } else if (j > 0 && (i === 0 || dp[i][j-1] >= dp[i-1][j])) {
-      ops.unshift({ type: 'insert', ci: j-1 }); j--;
-    } else {
-      ops.unshift({ type: 'delete', oi: i-1 }); i--;
-    }
-  }
-
-  const result = [];
-  for (let k = 0; k < ops.length; k++) {
-    const op = ops[k];
-    if (op.type === 'keep') {
-      result.push({ word: ow[op.oi], struck: false, fix: null });
-    } else if (op.type === 'delete') {
-      const fixes = [];
-      let ahead = k + 1;
-      while (ahead < ops.length && ops[ahead].type === 'insert') {
-        fixes.push(cw[ops[ahead].ci]);
-        ahead++;
-      }
-      result.push({ word: ow[op.oi], struck: true, fix: fixes.length ? fixes.join(' ') : null });
-    }
-  }
-  return result;
-}
-
 function CorrectionBlock({ original, corrected, className }) {
   const diff = React.useMemo(() => wordDiff(original, corrected), [original, corrected]);
   const [tooltip, setTooltip] = React.useState(null);
@@ -226,17 +215,48 @@ function CorrectionBlock({ original, corrected, className }) {
         {diff.map((w, i) =>
           w.struck ? (
             <React.Fragment key={i}>
-              <span
-                className="cursor-help text-navy underline decoration-wine/75 decoration-wavy underline-offset-[5px]"
+              <SpellcheckUnderline
+                seed={w.word}
+                className="cursor-help text-navy"
                 onMouseEnter={(e) => handleEnter(e.currentTarget, w.fix)}
                 onMouseLeave={() => setTooltip(null)}
-              >{w.word}</span>{' '}
+              >{w.word}</SpellcheckUnderline>{' '}
             </React.Fragment>
           ) : (
             <React.Fragment key={i}>{w.word}{' '}</React.Fragment>
           )
         )}
       </p>
+    </div>
+  );
+}
+
+function LiveSpeechLine({ utterances, settledText, partialTranscript, correction, className = '' }) {
+  const partialTail = partialTranscript
+    ? <span className="text-navy/40 italic">{partialTranscript}</span>
+    : null;
+
+  const showLiveLine = Boolean(settledText || partialTranscript);
+
+  return (
+    <div className={`font-display text-[17px] leading-snug text-navy flex flex-col gap-2 ${className}`} spellCheck={false}>
+      {utterances.map((utt, idx) => {
+        const isLast = idx === utterances.length - 1;
+        const showDiff = isLast && correction && correction.original?.trim() === utt.text.replace(/[.!?,;:]$/, '').trim();
+        return (
+          <div key={utt.id} className="min-w-0">
+            {showDiff
+              ? <DiffText original={utt.text} corrected={correction.corrected} side="original" />
+              : <span>{utt.text}</span>}
+          </div>
+        );
+      })}
+      {showLiveLine && (
+        <div className="min-w-0">
+          {settledText && <span className="text-navy font-semibold">{settledText}{' '}</span>}
+          {partialTail}
+        </div>
+      )}
     </div>
   );
 }
@@ -316,77 +336,96 @@ const DEMO_NARRATORS = {
   jules: { id: 'jules', name: 'Jules', src: '/assets/jules.png' },
 };
 
-const NARRATOR_NEGATIVE_QUIPS = {
-  lea: [
-    'Mouais, pas terrible…',
-    'Euh… c\'est pas grave, mais on peut mieux faire.',
-    'Hmm, ça sonne un peu manuel, non ?',
-    'Bon, t\'as le droit à une correction.',
-    'Franchement, c\'est pas très parisien.',
-  ],
-  jules: [
-    'Mouais, bof…',
-    'Pas ouf, franchement.',
-    'Là, c\'est pas très parisien.',
-    'On va retaper ça, d\'accord ?',
-    'Hmm… j\'ai entendu mieux.',
-  ],
-};
-
-function pickNarratorReaction() {
-  const id = Math.random() < 0.5 ? 'lea' : 'jules';
-  const options = NARRATOR_NEGATIVE_QUIPS[id];
-  return {
-    id,
-    text: options[Math.floor(Math.random() * options.length)],
-  };
-}
-
-function NarratorPortraitPlay({ narratorId, playing, onClick }) {
+function NarratorPortrait({ narratorId, speaking, onReplay, hideName = false, size = 'md' }) {
   const n = DEMO_NARRATORS[narratorId];
   if (!n) return null;
+  const portraitSize = size === 'lg' ? 'w-16 h-16' : 'w-14 h-14';
+
+  const portraitBody = (
+    <div
+      className={`relative w-full h-full rounded-full overflow-hidden transition-all duration-200 ${
+        speaking ? 'ring-2 ring-wine scale-105 shadow-md' : 'ring-2 ring-wine/25 shadow-sm group-hover:ring-wine/45'
+      }`}
+    >
+      <img src={n.src} alt="" className="w-full h-full object-cover object-top" />
+      {speaking && (
+        <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-30 pointer-events-none" />
+      )}
+      {onReplay && (
+        <div className={`absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity duration-200 ${
+          speaking ? 'opacity-100' : 'opacity-0 group-hover:opacity-90 group-focus-visible:opacity-90'
+        }`}>
+          {speaking ? (
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="white" aria-hidden>
+              <rect x="2" y="2" width="10" height="10" rx="1.5" fill="white" />
+            </svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white" aria-hidden className="opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-200">
+              <path d="M8 5v14l11-7z" fill="white" />
+            </svg>
+          )}
+        </div>
+      )}
+    </div>
+  );
 
   return (
-    <div className="flex flex-col items-center gap-0.5 flex-shrink-0">
-      <button
-        type="button"
-        onClick={onClick}
-        className="group relative w-14 h-14 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-wine/40"
-        aria-label={playing ? `Stop ${n.name}` : `${n.name} reads the correction`}
-        title={playing ? 'Stop' : 'Play'}
-      >
-        <div className={`relative w-full h-full rounded-full overflow-hidden transition-all duration-200 ${
-          playing ? 'ring-2 ring-wine scale-105 shadow-md' : 'ring-2 ring-wine/25 shadow-sm group-hover:ring-wine/45'
-        }`}>
-          <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
-          {playing && (
-            <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-30 pointer-events-none" />
-          )}
-          <div className={`absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity ${
-            playing ? 'opacity-100' : 'opacity-75 group-hover:opacity-90'
-          }`}>
-            {playing ? (
-              <svg width="12" height="12" viewBox="0 0 14 14" fill="white" aria-hidden>
-                <rect x="2" y="2" width="10" height="10" rx="1.5" fill="white" />
-              </svg>
-            ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="white" aria-hidden>
-                <path d="M8 5v14l11-7z" fill="white" />
-              </svg>
-            )}
-          </div>
+    <div className={`flex flex-col items-center flex-shrink-0 ${hideName ? 'gap-0' : 'gap-1'}`}>
+      {onReplay ? (
+        <button
+          type="button"
+          onClick={onReplay}
+          className={`group relative ${portraitSize} rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-wine/40`}
+          aria-label={speaking ? `Stop ${n.name}` : `Replay ${n.name}'s correction`}
+          title={speaking ? 'Stop' : 'Replay'}
+        >
+          {portraitBody}
+        </button>
+      ) : (
+        <div className={`relative ${portraitSize}`} aria-hidden>
+          {portraitBody}
         </div>
-      </button>
-      <span className={`font-display text-[11px] transition-colors ${playing ? 'text-wine italic' : 'text-navy/45'}`}>
-        {n.name}
-      </span>
+      )}
+      {!hideName && (
+        <span className={`font-display text-[13px] sm:text-[14px] font-semibold transition-colors ${
+          speaking ? 'text-wine italic' : 'text-navy/60'
+        }`}>
+          {n.name}
+        </span>
+      )}
     </div>
   );
 }
 
-function NarratorReactionPanel({ reaction, onMakeParisien, loading }) {
+// Renders text with a red underline on changed words.
+// side='original' underlines words from the original that were changed.
+// side='corrected' underlines words in the corrected sentence that are new.
+function DiffText({ original, corrected, side, className = '' }) {
+  const { originalChanged, correctedChanged } = React.useMemo(
+    () => getDiffChangedIndices(original, corrected),
+    [original, corrected],
+  );
+  const text = side === 'original' ? original : corrected;
+  const changed = side === 'original' ? originalChanged : correctedChanged;
+  const words = (text || '').trim().split(/\s+/).filter(Boolean);
+  return (
+    <span className={className}>
+      {words.map((word, i) => (
+        <React.Fragment key={i}>
+          {i > 0 && ' '}
+          {changed.has(i)
+            ? <span style={{ textDecoration: 'underline solid #8B1E2D', textUnderlineOffset: '4px', textDecorationThickness: '2px' }}>{word}</span>
+            : word}
+        </React.Fragment>
+      ))}
+    </span>
+  );
+}
+
+function NarratorReactionPanel({ reaction, onDone }) {
   const n = DEMO_NARRATORS[reaction.id];
   const [speaking, setSpeaking] = React.useState(false);
+  const [audioLoading, setAudioLoading] = React.useState(true);
   const [playbackTime, setPlaybackTime] = React.useState(null);
   const [timings, setTimings] = React.useState([]);
   const ctxRef = React.useRef(null);
@@ -404,9 +443,13 @@ function NarratorReactionPanel({ reaction, onMakeParisien, loading }) {
     setTimings([]);
   }, []);
 
+  React.useEffect(() => registerSiteAudioStop(stopAudio), [stopAudio]);
+
   const playReactionAudio = React.useCallback(async () => {
-    stopAudio();
+    const siteSession = beginSiteAudioPlayback();
+    sessionRef.current += 1;
     const session = sessionRef.current;
+    setAudioLoading(true);
 
     try {
       if (!ctxRef.current) ctxRef.current = new AudioContext();
@@ -415,13 +458,14 @@ function NarratorReactionPanel({ reaction, onMakeParisien, loading }) {
 
       if (!decodedRef.current) {
         const buf = await fetchNarratorAudio(reaction.text, reaction.id);
-        if (sessionRef.current !== session) return;
+        if (sessionRef.current !== session || !isSiteAudioPlaybackCurrent(siteSession)) return;
         decodedRef.current = await ctx.decodeAudioData(buf);
       }
 
       const decoded = decodedRef.current;
-      if (sessionRef.current !== session) return;
+      if (sessionRef.current !== session || !isSiteAudioPlaybackCurrent(siteSession)) return;
 
+      setAudioLoading(false);
       setSpeaking(true);
       setTimings(buildWordTimings(reaction.text, decoded.duration));
       setPlaybackTime(0);
@@ -431,23 +475,29 @@ function NarratorReactionPanel({ reaction, onMakeParisien, loading }) {
         narrator: reaction.id,
         sourceRef,
         connectSource: connectNarratorSource,
+        playbackSession: siteSession,
         onTimeUpdate: (t) => {
           if (sessionRef.current !== session) return;
           setPlaybackTime(t);
           if (t == null) {
             setSpeaking(false);
             setPlaybackTime(null);
+            onDone?.();
           }
         },
       });
     } catch {
-      if (sessionRef.current === session) setSpeaking(false);
+      if (sessionRef.current === session) {
+        setAudioLoading(false);
+        setSpeaking(false);
+      }
     }
   }, [reaction.id, reaction.text, stopAudio]);
 
   React.useEffect(() => {
     decodedRef.current = null;
     hasAutoPlayedRef.current = false;
+    setAudioLoading(true);
   }, [reaction.id, reaction.text]);
 
   React.useEffect(() => {
@@ -464,18 +514,16 @@ function NarratorReactionPanel({ reaction, onMakeParisien, loading }) {
     else playReactionAudio();
   };
 
-  const handleMakeParisien = () => {
-    stopAudio();
-    onMakeParisien();
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className="mx-5 border border-line/50 border-t-0 bg-ivory/40 px-5 py-4"
+      className="mx-7 border border-line/50 border-t-0 bg-ivory/40 px-5 py-2.5"
     >
+      {audioLoading ? (
+        <NarratorAnswerLoading narratorId={reaction.id} />
+      ) : (
       <div className="flex items-center gap-4">
         <div className="flex flex-col items-center gap-1 shrink-0">
           <button
@@ -496,28 +544,136 @@ function NarratorReactionPanel({ reaction, onMakeParisien, loading }) {
           </button>
           <span className="font-display text-[11px] text-navy/45">{n.name}</span>
         </div>
-        <p className="flex-1 min-w-0 font-display text-[16px] italic text-navy leading-snug">
-          {speaking ? (
-            <HighlightedSpeech
-              text={reaction.text}
-              playbackTime={playbackTime}
-              timings={timings}
-            />
-          ) : (
-            reaction.text
-          )}
-        </p>
-        <button
-          type="button"
-          onClick={handleMakeParisien}
-          disabled={loading}
-          className="shrink-0 font-display text-[14px] italic px-4 py-2 rounded-full bg-wine text-ivory hover:bg-wine2 transition-all duration-200 hover:shadow-md disabled:opacity-60"
-        >
-          Make it Parisien !
-        </button>
+        <NarratorHoverText
+          text={reaction.text}
+          translation={reaction.translation ?? lookupNarratorTranslation(reaction.text)}
+          highlightSpeech={speaking}
+          speechPlaybackTime={playbackTime}
+          speechTimings={timings}
+          className="font-display text-[16px] italic text-navy leading-snug flex-1 min-w-0"
+          wrapperClassName="relative flex-1 min-w-0"
+        />
       </div>
+      )}
     </motion.div>
   );
+}
+
+function InlineCorrectionPlayer({ narratorId, text, original, onSave, onSkip }) {
+  const n = DEMO_NARRATORS[narratorId];
+  const [speaking, setSpeaking] = React.useState(false);
+  const ctxRef = React.useRef(null);
+  const sourceRef = React.useRef(null);
+  const decodedRef = React.useRef(null);
+  const sessionRef = React.useRef(0);
+
+  const stopAudio = React.useCallback(() => {
+    sessionRef.current += 1;
+    try { sourceRef.current?.stop(); } catch {}
+    sourceRef.current = null;
+    setSpeaking(false);
+  }, []);
+
+  React.useEffect(() => registerSiteAudioStop(stopAudio), [stopAudio]);
+
+  const play = React.useCallback(async (ctx) => {
+    const siteSession = beginSiteAudioPlayback();
+    sessionRef.current += 1;
+    const session = sessionRef.current;
+    try {
+      if (!decodedRef.current) {
+        const buf = await fetchNarratorAudio(text, narratorId);
+        if (sessionRef.current !== session || !isSiteAudioPlaybackCurrent(siteSession)) return;
+        decodedRef.current = await ctx.decodeAudioData(buf);
+      }
+      if (sessionRef.current !== session || !isSiteAudioPlaybackCurrent(siteSession)) return;
+      setSpeaking(true);
+      await playDecodedBuffer(ctx, {
+        buffer: decodedRef.current,
+        narrator: narratorId,
+        sourceRef,
+        connectSource: connectNarratorSource,
+        playbackSession: siteSession,
+        onTimeUpdate: (t) => {
+          if (sessionRef.current !== session) return;
+          if (t == null) setSpeaking(false);
+        },
+      });
+    } catch {
+      if (sessionRef.current === session) setSpeaking(false);
+    }
+  }, [narratorId, text]);
+
+  const replay = React.useCallback(() => {
+    const ctx = ctxRef.current;
+    if (!ctx) return;
+    if (speaking) { stopAudio(); return; }
+    play(ctx);
+  }, [speaking, play, stopAudio]);
+
+  React.useEffect(() => {
+    const ctx = new AudioContext();
+    ctxRef.current = ctx;
+    ctx.resume().then(() => play(ctx));
+    return () => { stopAudio(); ctx.close(); ctxRef.current = null; };
+  }, [narratorId, text]);
+
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex flex-col items-center gap-1.5 shrink-0">
+        <div className="flex gap-1.5">
+          <button
+            type="button"
+            onClick={onSave}
+            className="font-display text-[13px] px-2.5 py-0.5 rounded-full bg-wine text-ivory hover:bg-wine2 transition-colors"
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            onClick={onSkip}
+            className="font-display text-[13px] px-2.5 py-0.5 rounded-full border border-navy/20 text-navy/50 hover:border-navy/40 hover:text-navy/70 transition-colors"
+          >
+            Skip
+          </button>
+        </div>
+        <button
+          type="button"
+          onClick={replay}
+          className="relative group rounded-full focus:outline-none"
+          aria-label={speaking ? `Stop ${n?.name}` : `Replay ${n?.name}`}
+        >
+          <div className={`w-16 h-16 rounded-full overflow-hidden transition-all duration-300 ${speaking ? 'ring-2 ring-wine scale-105' : 'ring-2 ring-wine/25 hover:ring-wine/45 hover:scale-105'}`}>
+            <img src={n?.src} alt={n?.name} className="w-full h-full object-cover object-top" />
+          </div>
+          {/* Hover play overlay */}
+          <div className="absolute inset-0 rounded-full bg-navy/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+            {speaking ? (
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                <rect x="2" y="2" width="4" height="10" rx="1" fill="white"/>
+                <rect x="8" y="2" width="4" height="10" rx="1" fill="white"/>
+              </svg>
+            ) : (
+              <svg width="12" height="14" viewBox="0 0 10 12" fill="none">
+                <path d="M1 1l8 5-8 5V1z" fill="white"/>
+              </svg>
+            )}
+          </div>
+          {speaking && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-30" />}
+        </button>
+      </div>
+      <p className="font-display text-[18px] italic text-navy leading-snug flex-1 min-w-0 self-center">
+        <DiffText original={original} corrected={text} side="corrected" />
+      </p>
+    </div>
+  );
+}
+
+const RECORDING_STOP_GRACE_MS = 1500;
+const RECORDING_STOP_SETTLE_MS = 300;
+
+function wait(ms) {
+  return new Promise((resolve) => { window.setTimeout(resolve, ms); });
 }
 
 export function AudioDemoCard({
@@ -528,7 +684,9 @@ export function AudioDemoCard({
   initialLearnMode = null,
   initialLearnLevel = null,
   onLearnModeHandled,
+  onPracticeTopicHandled,
 }) {
+  const { effectiveLevel, gainExperience } = useLearnerProfile();
   const {
     utterances,
     partialTranscript,
@@ -540,7 +698,7 @@ export function AudioDemoCard({
     start,
     stop,
     reset,
-  } = useDeepgramTranscription();
+  } = useSpeechmaticsTranscription();
 
   const [time, setTime] = React.useState(0);
   const [register, setRegister] = React.useState('Standard');
@@ -574,9 +732,20 @@ export function AudioDemoCard({
   const [fetchingPreview, setFetchingPreview] = React.useState(false);
   const [narratorReaction, setNarratorReaction] = React.useState(null);
   const [correctionReaderId, setCorrectionReaderId] = React.useState(null);
+  const [sentenceCongrats, setSentenceCongrats] = React.useState(null);
+  const [correctionUtteranceId, setCorrectionUtteranceId] = React.useState(null);
+  const [awaitingRepeat, setAwaitingRepeat] = React.useState(false);
+  const [repeatFeedback, setRepeatFeedback] = React.useState(null);
+  const [repeatAttemptText, setRepeatAttemptText] = React.useState(null);
+  const [repeatUtteranceBase, setRepeatUtteranceBase] = React.useState(0);
+  const [originalUtteranceEnd, setOriginalUtteranceEnd] = React.useState(0);
+  const [showRepeatHint, setShowRepeatHint] = React.useState(false);
+  const [stoppingRecording, setStoppingRecording] = React.useState(false);
+  const stopRecordingSessionRef = React.useRef(0);
   const speakCorrectionUiRef = React.useRef({
     previewCorrection: null,
     manualCorrection: null,
+    sentenceCongrats: null,
     narratorReaction: null,
     correctionReaderId: null,
     manualCorrecting: false,
@@ -584,12 +753,16 @@ export function AudioDemoCard({
   });
   const [playbackTime, setPlaybackTime] = React.useState(null);
   const [isPlaying, setIsPlaying] = React.useState(false);
+  const [playingUtteranceId, setPlayingUtteranceId] = React.useState(null);
+  const [playbackWords, setPlaybackWords] = React.useState(null);
   const audioRef = React.useRef(null);
+  const recordingSessionRef = React.useRef(null);
 
   // Parisian voice playback timing
   const [parisianPlaybackTime, setParisianPlaybackTime] = React.useState(null);
   const [parisianTimings, setParisianTimings] = React.useState([]);
   const [parisianSpeakingText, setParisianSpeakingText] = React.useState(null);
+  const [narratorVoiceLoadingKey, setNarratorVoiceLoadingKey] = React.useState(null);
 
   // Word discovery
   const [wordData, setWordData] = React.useState(null);
@@ -614,6 +787,12 @@ export function AudioDemoCard({
   const wordAudioCtxRef = React.useRef(null);
   const wordAudioSrcRef = React.useRef(null);
   const utterancesRef = React.useRef([]); // sync ref to read current utterances immediately after stop()
+  const repeatUtteranceBaseRef = React.useRef(0);
+  const originalUtteranceEndRef = React.useRef(0);
+  const awaitingRepeatRef = React.useRef(false);
+  const checkRepeatAttemptRef = React.useRef(() => {});
+  const repeatAutoStoppingRef = React.useRef(false);
+  const correctionAudioPlayedRef = React.useRef(null);
 
 
   const prevPartialRef = React.useRef('');
@@ -628,7 +807,7 @@ export function AudioDemoCard({
   React.useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [utterances, settledText, partialTranscript]);
+  }, [utterances, settledText, partialTranscript, repeatAttemptText, repeatFeedback, isRecording, repeatUtteranceBase]);
 
   React.useEffect(() => {
     if (!partialTranscript) { setStableWordCount(0); prevPartialRef.current = ''; return; }
@@ -680,26 +859,62 @@ export function AudioDemoCard({
     speakCorrectionUiRef.current = {
       previewCorrection,
       manualCorrection,
+      sentenceCongrats,
       narratorReaction,
       correctionReaderId,
       manualCorrecting,
       fetchingPreview,
     };
-  }, [inputMode, previewCorrection, manualCorrection, narratorReaction, correctionReaderId, manualCorrecting, fetchingPreview]);
+  }, [inputMode, previewCorrection, manualCorrection, sentenceCongrats, narratorReaction, correctionReaderId, manualCorrecting, fetchingPreview]);
 
   const clearCorrectionUi = React.useCallback(() => {
     setPreviewCorrection(null);
     setManualCorrection(null);
+    setSentenceCongrats(null);
+    setCorrectionUtteranceId(null);
     setNarratorReaction(null);
     setCorrectionReaderId(null);
     setManualCorrecting(false);
     setFetchingPreview(false);
+    setAwaitingRepeat(false);
+    setRepeatFeedback(null);
+    setRepeatAttemptText(null);
+    setRepeatUtteranceBase(0);
+    setOriginalUtteranceEnd(0);
+    originalUtteranceEndRef.current = 0;
+    setShowRepeatHint(false);
+    correctionAudioPlayedRef.current = null;
+    setNarratorVoiceLoadingKey(null);
   }, []);
+
+  const prevUtteranceCountRef = React.useRef(0);
+
+  const getLatestSpeakUtterance = React.useCallback(() => {
+    const list = awaitingRepeat ? utterances.slice(0, originalUtteranceEnd) : utterances;
+    return list[list.length - 1] ?? null;
+  }, [utterances, awaitingRepeat, originalUtteranceEnd]);
+
+  const getLatestSpeakText = React.useCallback(
+    () => getLatestSpeakUtterance()?.text?.trim() || '',
+    [getLatestSpeakUtterance],
+  );
+
+  React.useEffect(() => {
+    if (awaitingRepeat) {
+      prevUtteranceCountRef.current = utterances.length;
+      return;
+    }
+    if (utterances.length > prevUtteranceCountRef.current && prevUtteranceCountRef.current > 0) {
+      clearCorrectionUi();
+    }
+    prevUtteranceCountRef.current = utterances.length;
+  }, [utterances.length, awaitingRepeat, clearCorrectionUi]);
 
   const restoreSpeakCorrectionUi = React.useCallback(() => {
     const s = speakCorrectionUiRef.current;
     setPreviewCorrection(s.previewCorrection);
     setManualCorrection(s.manualCorrection);
+    setSentenceCongrats(s.sentenceCongrats);
     setNarratorReaction(s.narratorReaction);
     setCorrectionReaderId(s.correctionReaderId);
     setManualCorrecting(s.manualCorrecting);
@@ -753,13 +968,13 @@ export function AudioDemoCard({
     return () => clearTimeout(t);
   }, [showWriteHint]);
 
-  // Show "Parisien !" hint once when audio has been recorded
-  // (isLive is derived below, so inline its parts here to avoid TDZ)
+  // Show "Parisien !" hint once when the latest sentence has been recorded
   React.useEffect(() => {
-    if (audioUrl && !isRecording && status !== 'connecting') {
+    const latest = utterances[utterances.length - 1];
+    if (latest?.audioUrl && !isRecording && status !== 'connecting') {
       setShowCorrectHint(true);
     }
-  }, [audioUrl, isRecording, status]);
+  }, [utterances, isRecording, status]);
 
   const correctWordSentence = async () => {
     if (!wordUserSentence.trim()) return;
@@ -773,6 +988,9 @@ export function AudioDemoCard({
       });
       const data = await res.json();
       setWordCorrection(data);
+      if (data?.corrected?.trim() && data.corrected.trim() !== wordUserSentence.trim()) {
+        registerCorrectionKeyterms(wordUserSentence, data.corrected);
+      }
     } catch {}
     setWordCorrecting(false);
   };
@@ -785,7 +1003,163 @@ export function AudioDemoCard({
     setParisianTimings([]);
     setParisianSpeakingText(null);
     setWordPlaying(false);
+    setNarratorVoiceLoadingKey(null);
   }, []);
+
+  const playNarratorLine = React.useCallback(async (line) => {
+    if (!line?.text) return;
+    const session = beginSiteAudioPlayback();
+    const activeNarrator = resolveClientNarrator(line.id);
+    const trimmed = line.text.trim();
+    setNarrator(activeNarrator);
+    setNarratorVoiceLoadingKey(`${activeNarrator}:${trimmed}`);
+    try {
+      if (!wordAudioCtxRef.current) wordAudioCtxRef.current = new AudioContext();
+      const ctx = wordAudioCtxRef.current;
+      if (ctx.state === 'suspended') await ctx.resume();
+      const buf = await fetchNarratorAudio(trimmed, activeNarrator);
+      if (!isSiteAudioPlaybackCurrent(session)) return;
+      const decoded = await ctx.decodeAudioData(buf.slice(0));
+      if (!isSiteAudioPlaybackCurrent(session)) return;
+      setNarratorVoiceLoadingKey(null);
+      wordPlayingRef.current = true;
+      setWordPlaying(true);
+      setParisianSpeakingText(trimmed);
+      setParisianTimings(buildWordTimings(trimmed, decoded.duration));
+      setParisianPlaybackTime(0);
+      await playDecodedBuffer(ctx, {
+        buffer: decoded,
+        narrator: activeNarrator,
+        sourceRef: wordAudioSrcRef,
+        connectSource: connectNarratorSource,
+        playbackSession: session,
+        onTimeUpdate: (t) => {
+          if (!wordPlayingRef.current) return;
+          setParisianPlaybackTime(t);
+          if (t == null) stopParisianAudio();
+        },
+      });
+    } catch {
+      stopParisianAudio();
+    }
+  }, [stopParisianAudio]);
+
+  const finalizeCorrection = React.useCallback((correction, readerId) => {
+    const corrected = correction.corrected?.trim() || '';
+    const original = correction.original?.trim() || '';
+    const targetUtteranceId = utterancesRef.current[utterancesRef.current.length - 1]?.id ?? null;
+    setCorrectionUtteranceId(targetUtteranceId);
+    setNarrator(readerId);
+    setNarratorReaction(null);
+    setPreviewCorrection(null);
+
+    if (matchesCorrectionTarget(original, corrected)) {
+      setManualCorrection(null);
+      setCorrectionReaderId(readerId);
+      setSentenceCongrats(getAlreadyCorrectLine(readerId));
+      setAwaitingRepeat(false);
+      setRepeatFeedback(null);
+      setRepeatAttemptText(null);
+      correctionAudioPlayedRef.current = null;
+      gainExperience(1);
+      return;
+    }
+
+    setSentenceCongrats(null);
+    setManualCorrection(correction);
+    setCorrectionReaderId(readerId);
+    if (corrected && corrected !== original) {
+      const narration = corrected;
+      setNarratorVoiceLoadingKey(`${resolveClientNarrator(readerId)}:${narration}`);
+      registerCorrectionKeyterms(original, corrected);
+    }
+    const needsRepeat = !isStrictCorrectionMatch(correction.original, correction.corrected);
+    setAwaitingRepeat(needsRepeat);
+    setRepeatFeedback(null);
+    setRepeatAttemptText(null);
+    const base = utterancesRef.current.length;
+    repeatUtteranceBaseRef.current = base;
+    setRepeatUtteranceBase(base);
+    originalUtteranceEndRef.current = base;
+    setOriginalUtteranceEnd(base);
+    if (!needsRepeat) {
+      correctionAudioPlayedRef.current = null;
+    }
+  }, [gainExperience]);
+
+  const applySpeakCorrection = React.useCallback(async (text) => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    const readerId = pickNarratorReaction(effectiveLevel).id;
+    setCorrectionReaderId(readerId);
+    setNarrator(readerId);
+    setManualCorrecting(true);
+    setNarratorReaction(null);
+    setPreviewCorrection(null);
+    try {
+      const res = await fetch('/api/correct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: trimmed, register: 'Parisien', learnerLevel: effectiveLevel }),
+      });
+      const data = await res.json();
+      const corrected = data.corrected?.trim() || trimmed;
+      finalizeCorrection({
+        original: trimmed,
+        corrected,
+        translation: data.translation?.trim() || null,
+      }, readerId);
+    } catch {
+      // keep UI usable if correction fails
+    } finally {
+      setManualCorrecting(false);
+    }
+  }, [effectiveLevel, finalizeCorrection]);
+
+  const checkRepeatAttempt = React.useCallback((repeatText) => {
+    const target = manualCorrection?.corrected;
+    const attempt = repeatText.trim();
+    if (!target || !attempt) return;
+    setRepeatAttemptText(attempt);
+    if (matchesCorrectionTarget(attempt, target)) {
+      gainExperience(1);
+      setRepeatFeedback('success');
+      setAwaitingRepeat(false);
+      setShowRepeatHint(false);
+      setSentenceCongrats(getRepeatSuccessLine(correctionReaderId));
+      return;
+    }
+    setRepeatFeedback('fail');
+    playNarratorLine(getRepeatFailLine(correctionReaderId));
+  }, [manualCorrection, correctionReaderId, gainExperience, playNarratorLine]);
+
+  React.useEffect(() => {
+    awaitingRepeatRef.current = awaitingRepeat;
+  }, [awaitingRepeat]);
+
+  React.useEffect(() => {
+    checkRepeatAttemptRef.current = checkRepeatAttempt;
+  }, [checkRepeatAttempt]);
+
+  const handleRepeatSpeechFinal = React.useCallback(async (utteranceText) => {
+    if (!awaitingRepeatRef.current || repeatAutoStoppingRef.current) return;
+    repeatAutoStoppingRef.current = true;
+    try {
+      stop();
+      checkRepeatAttemptRef.current(utteranceText);
+    } finally {
+      repeatAutoStoppingRef.current = false;
+    }
+  }, [stop]);
+
+  React.useEffect(() => {
+    if (inputMode === 'speak' && awaitingRepeat && !isRecording && repeatFeedback !== 'success') {
+      setShowRepeatHint(true);
+    } else {
+      setShowRepeatHint(false);
+    }
+  }, [inputMode, awaitingRepeat, isRecording, repeatFeedback]);
+
 
   const activateWriteMode = React.useCallback(() => {
     stopParisianAudio();
@@ -812,6 +1186,7 @@ export function AudioDemoCard({
     const text = textOverride || wordData?.example;
     const activeNarrator = resolveClientNarrator(narratorOverride || narrator);
     if (!text) return;
+    const session = beginSiteAudioPlayback();
     setWordPlayError(null);
     wordPlayingRef.current = true;
     setWordPlaying(true);
@@ -824,7 +1199,9 @@ export function AudioDemoCard({
       if (ctx.state === 'suspended') await ctx.resume();
 
       const buf = await fetchNarratorAudio(text, activeNarrator);
+      if (!isSiteAudioPlaybackCurrent(session)) return;
       const decoded = await ctx.decodeAudioData(buf.slice(0));
+      if (!isSiteAudioPlaybackCurrent(session)) return;
       setParisianTimings(buildWordTimings(text, decoded.duration));
 
       await playDecodedBuffer(ctx, {
@@ -832,6 +1209,7 @@ export function AudioDemoCard({
         narrator: activeNarrator,
         sourceRef: wordAudioSrcRef,
         connectSource: connectNarratorSource,
+        playbackSession: session,
         onTimeUpdate: (t) => {
           if (!wordPlayingRef.current) return;
           setParisianPlaybackTime(t);
@@ -856,7 +1234,7 @@ export function AudioDemoCard({
       const res = await fetch('/api/correct', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: fullText, register, assessOnly: true, includeTopics: true }),
+        body: JSON.stringify({ text: fullText, register, assessOnly: true, learnerLevel: effectiveLevel }),
       });
       const data = await res.json();
       setOverallLevel(data.level || null);
@@ -912,6 +1290,7 @@ export function AudioDemoCard({
     setCompletedInBatch((prev) => new Set([...prev, exerciseIndex]));
     const key = objective || overallWeakness || 'general';
     setSkillProgress((prev) => ({ ...prev, [key]: Math.min(100, (prev[key] || 0) + 5) }));
+    bumpTargetProgressByTopic(key, 5);
   };
 
   const fetchPreviewCorrection = async (text) => {
@@ -923,12 +1302,17 @@ export function AudioDemoCard({
       const res = await fetch('/api/correct', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: trimmed, register: 'Parisien' }),
+        body: JSON.stringify({ text: trimmed, register: 'Parisien', learnerLevel: effectiveLevel }),
       });
       const data = await res.json();
       const corrected = data.corrected?.trim() || trimmed;
       if (corrected !== trimmed) {
-        setPreviewCorrection({ original: trimmed, corrected });
+        setPreviewCorrection({
+          original: trimmed,
+          corrected,
+          translation: data.translation?.trim() || null,
+        });
+        registerCorrectionKeyterms(trimmed, corrected);
       }
     } catch {}
     setFetchingPreview(false);
@@ -943,28 +1327,111 @@ export function AudioDemoCard({
   const showChatDiff = chatDiffCorrection
     && chatDiffCorrection.corrected?.trim() !== chatDiffCorrection.original?.trim();
 
-  const toggleRecording = async () => {
-    if (isRecording) {
+  const hasSpeakCorrection = Boolean(
+    manualCorrection
+    && manualCorrection.corrected?.trim() !== manualCorrection.original?.trim()
+    && correctionReaderId,
+  );
+  const showSpeakCorrectionBar = inputMode === 'speak' && (manualCorrecting || hasSpeakCorrection);
+
+  const pendingNarratorId = correctionReaderId
+    ?? narratorReaction?.id
+    ?? pickNarratorReaction(effectiveLevel).id;
+
+  const manualCorrectionNarration = React.useMemo(() => {
+    if (!manualCorrection?.corrected?.trim()) return '';
+    if (manualCorrection.corrected.trim() === manualCorrection.original?.trim()) {
+      return manualCorrection.corrected.trim();
+    }
+    return manualCorrection.corrected.trim();
+  }, [manualCorrection]);
+
+  const correctionVoiceLoadingKey = manualCorrectionNarration && correctionReaderId
+    ? `${resolveClientNarrator(correctionReaderId)}:${manualCorrectionNarration}`
+    : null;
+  const isCorrectionVoiceLoading = Boolean(
+    correctionVoiceLoadingKey && narratorVoiceLoadingKey === correctionVoiceLoadingKey,
+  );
+
+  const repeatUtterances = utterances.slice(repeatUtteranceBase);
+  const mainUtterances = awaitingRepeat ? utterances.slice(0, originalUtteranceEnd) : utterances;
+  const showLiveTranscriptLine = !awaitingRepeat && (
+    settledText
+    || partialTranscript
+    || (isRecording && mainUtterances.length > 0)
+  );
+  const showRepeatLine = hasSpeakCorrection && awaitingRepeat && (isRecording || !!repeatAttemptText);
+
+  const getLiveSpeakText = React.useCallback((baseUtterances = utterances) => (
+    [
+      baseUtterances.map((u) => u.text).join(' '),
+      settledText,
+      partialTranscript,
+    ].filter(Boolean).join(' ').trim().replace(/\s+/g, ' ')
+  ), [utterances, settledText, partialTranscript]);
+
+  const stopRecordingWithGrace = React.useCallback(async () => {
+    if (!isRecording) return;
+    const session = ++stopRecordingSessionRef.current;
+    setStoppingRecording(true);
+    try {
+      await wait(RECORDING_STOP_GRACE_MS);
+      if (stopRecordingSessionRef.current !== session) return;
       await stop();
-      const fullText = utterances.map((u) => u.text).join(' ').trim();
-      if (fullText) {
-        setSpeakCorrection(null);
-        setManualCorrection(null);
-        setPreviewCorrection(null);
-        setNarratorReaction(pickNarratorReaction());
-        fetchPreviewCorrection(fullText);
+      await wait(RECORDING_STOP_SETTLE_MS);
+    } finally {
+      if (stopRecordingSessionRef.current === session) {
+        setStoppingRecording(false);
       }
+    }
+  }, [isRecording, stop]);
+
+  const toggleRecording = async () => {
+    if (stoppingRecording) return;
+    if (isRecording) {
+      if (awaitingRepeat && manualCorrection?.corrected) {
+        const repeatText = getLiveSpeakText(
+          utterances.slice(repeatUtteranceBaseRef.current),
+        );
+        await stopRecordingWithGrace();
+        if (repeatText) checkRepeatAttempt(repeatText);
+        return;
+      }
+
+      await stopRecordingWithGrace();
       return;
     }
     setTime(0);
     setPlaybackTime(null);
     setIsPlaying(false);
-    setSpeakCorrection(null);
-    setPreviewCorrection(null);
-    setNarratorReaction(null);
+    if (awaitingRepeat) {
+      const base = utterancesRef.current.length;
+      repeatUtteranceBaseRef.current = base;
+      setRepeatUtteranceBase(base);
+      setRepeatFeedback(null);
+      setRepeatAttemptText(null);
+      setShowRepeatHint(false);
+    } else {
+      setSpeakCorrection(null);
+      setPreviewCorrection(null);
+      setNarratorReaction(null);
+      setManualCorrection(null);
+      setSentenceCongrats(null);
+      setCorrectionUtteranceId(null);
+      setManualCorrecting(false);
+      setAwaitingRepeat(false);
+      setRepeatFeedback(null);
+      correctionAudioPlayedRef.current = null;
+    }
     setHighlightMic(false);
     setShowStartHint(false);
-    await start(source);
+    repeatAutoStoppingRef.current = false;
+    stopParisianAudio();
+    await start(awaitingRepeat ? {
+      utteranceEndMs: 1000,
+      endpointing: 500,
+      onSpeechFinal: handleRepeatSpeechFinal,
+    } : {});
   };
 
   const rafRef = React.useRef(null);
@@ -983,37 +1450,101 @@ export function AudioDemoCard({
     rafRef.current = requestAnimationFrame(tick);
   }, [stopRaf]);
 
-  const togglePlayback = () => {
-    if (!audioUrl) return;
-    if (isPlaying) {
+  const preparePlaybackWords = React.useCallback((utt, audio) => {
+    if (utt.words?.length > 0) {
+      setPlaybackWords(null);
+      return;
+    }
+    if (!audio) return;
+
+    const apply = () => {
+      if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+      const text = utt.text?.trim();
+      if (!text) return;
+      setPlaybackWords({
+        utteranceId: utt.id,
+        words: buildWordTimings(text, audio.duration).map((t) => ({
+          word: t.word,
+          punctuated_word: t.word,
+          start: t.start,
+          end: t.end,
+        })),
+      });
+    };
+
+    if (audio.readyState >= 1) apply();
+    else audio.addEventListener('loadedmetadata', apply, { once: true });
+  }, []);
+
+  const stopAllCardAudio = React.useCallback(() => {
+    recordingSessionRef.current = null;
+    stopParisianAudio();
+    stopRaf();
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    setIsPlaying(false);
+    setPlaybackTime(null);
+    setPlayingUtteranceId(null);
+    setPlaybackWords(null);
+  }, [stopParisianAudio, stopRaf]);
+
+  React.useEffect(() => registerSiteAudioStop(stopAllCardAudio), [stopAllCardAudio]);
+
+  const toggleUtterancePlayback = React.useCallback((utt) => {
+    if (!utt?.audioUrl || isRecording || status === 'connecting') return;
+    if (playingUtteranceId === utt.id && isPlaying) {
+      recordingSessionRef.current = null;
       audioRef.current?.pause();
       stopRaf();
       setIsPlaying(false);
-    } else {
-      if (!audioRef.current) {
-        audioRef.current = new Audio(audioUrl);
-        audioRef.current.onended = () => {
-          stopRaf();
-          setIsPlaying(false);
-          setPlaybackTime(null);
-        };
-      }
-      audioRef.current.play();
-      startRaf();
-      setIsPlaying(true);
+      return;
     }
-  };
 
-  React.useEffect(() => {
+    const session = beginSiteAudioPlayback();
+    recordingSessionRef.current = session;
     stopRaf();
-    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
-    setIsPlaying(false); setPlaybackTime(null);
-  }, [audioUrl]);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+
+    const audio = new Audio(utt.audioUrl);
+    audioRef.current = audio;
+    audio.onloadedmetadata = () => preparePlaybackWords(utt, audio);
+    audio.onended = () => {
+      recordingSessionRef.current = null;
+      stopRaf();
+      setIsPlaying(false);
+      setPlaybackTime(null);
+      setPlayingUtteranceId(null);
+      setPlaybackWords(null);
+    };
+
+    preparePlaybackWords(utt, audio);
+    if (!isSiteAudioPlaybackCurrent(session)) return;
+
+    setPlayingUtteranceId(utt.id);
+    setPlaybackTime(0);
+    audio.play().catch(() => {});
+    if (!isSiteAudioPlaybackCurrent(session)) {
+      audio.pause();
+      setPlayingUtteranceId(null);
+      return;
+    }
+    startRaf();
+    setIsPlaying(true);
+  }, [isRecording, status, isPlaying, playingUtteranceId, stopRaf, preparePlaybackWords, startRaf]);
 
   React.useEffect(() => () => stopRaf(), [stopRaf]);
 
   React.useEffect(() => {
-    if (initialTopic) startPractice(initialTopic);
+    if (!initialTopic) return;
+    setOverallWeakness(initialTopic);
+    setPracticeTopics([initialTopic]);
+    loadPractice(initialTopic);
+    onPracticeTopicHandled?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -1061,10 +1592,13 @@ export function AudioDemoCard({
       const res = await fetch('/api/correct', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: writeText, register }),
+        body: JSON.stringify({ text: writeText, register, learnerLevel: effectiveLevel }),
       });
       const data = await res.json();
       setWriteCorrection(data);
+      if (data?.corrected?.trim() && data.corrected.trim() !== writeText.trim()) {
+        registerCorrectionKeyterms(writeText, data.corrected);
+      }
       if (data.corrected?.trim() !== writeText.trim()) setWriteEditing(false);
     } catch {}
     setWriteCorrecting(false);
@@ -1079,27 +1613,89 @@ export function AudioDemoCard({
     setWriteCorrection(null);
     setManualCorrection(null);
     setPreviewCorrection(null);
-    setNarratorReaction(pickNarratorReaction());
+    setNarratorReaction(pickNarratorReaction(effectiveLevel));
     fetchPreviewCorrection(writeText);
     setWriteEditing(false);
   };
 
-  const toggleCorrectionPlay = (text, narratorId) => {
-    if (wordPlayingRef.current && narrator === narratorId && parisianSpeakingText === text) {
+  const replayCorrectionAudio = React.useCallback(() => {
+    if (!manualCorrectionNarration || !correctionReaderId) return;
+    if (
+      wordPlayingRef.current
+      && parisianSpeakingText === manualCorrectionNarration.trim()
+    ) {
       stopParisianAudio();
       return;
     }
-    stopParisianAudio();
-    setNarrator(narratorId);
-    playParisianWord(text, narratorId);
-  };
+    playNarratorLine({ id: correctionReaderId, text: manualCorrectionNarration });
+  }, [manualCorrectionNarration, correctionReaderId, parisianSpeakingText, stopParisianAudio, playNarratorLine]);
+
+  const [savingExpression, setSavingExpression] = React.useState(false);
+
+  const saveCurrentExpression = React.useCallback(async () => {
+    if (!manualCorrection?.corrected?.trim() || !correctionReaderId) return false;
+    setSavingExpression(true);
+    try {
+      const utt = utterances.find((u) => u.id === correctionUtteranceId)
+        ?? getLatestSpeakUtterance();
+      let originalAudioBlob = null;
+      if (utt?.audioUrl) {
+        try {
+          originalAudioBlob = await fetch(utt.audioUrl).then((r) => r.blob());
+        } catch {}
+      }
+      let correctedAudioBuffer = null;
+      try {
+        correctedAudioBuffer = await fetchNarratorAudio(
+          manualCorrection.corrected.trim(),
+          correctionReaderId,
+        );
+      } catch {}
+      await saveCorrection({
+        original: manualCorrection.original,
+        corrected: manualCorrection.corrected,
+        translation: manualCorrection.translation,
+        narratorId: correctionReaderId,
+        originalAudioBlob,
+        correctedAudioBuffer,
+      });
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setSavingExpression(false);
+    }
+  }, [
+    manualCorrection,
+    correctionReaderId,
+    correctionUtteranceId,
+    utterances,
+    getLatestSpeakUtterance,
+  ]);
+
+  React.useEffect(() => {
+    if (!manualCorrection?.corrected?.trim() || !correctionReaderId) return;
+    if (matchesCorrectionTarget(manualCorrection.original, manualCorrection.corrected)) return;
+    const key = `${correctionReaderId}:${manualCorrection.corrected.trim()}`;
+    if (correctionAudioPlayedRef.current === key) return;
+    correctionAudioPlayedRef.current = key;
+    playNarratorLine({ id: correctionReaderId, text: manualCorrection.corrected.trim() });
+  }, [manualCorrection, correctionReaderId, playNarratorLine]);
+
+  React.useEffect(() => {
+    if (!sentenceCongrats?.text || !correctionReaderId) return;
+    const key = `${correctionReaderId}:${sentenceCongrats.text}`;
+    if (correctionAudioPlayedRef.current === key) return;
+    correctionAudioPlayedRef.current = key;
+    playNarratorLine({ id: correctionReaderId, text: sentenceCongrats.text });
+  }, [sentenceCongrats, correctionReaderId, playNarratorLine]);
 
   const correctNow = async () => {
     const text = inputMode === 'write'
       ? writeText.trim()
-      : utterances.map((u) => u.text).join(' ').trim();
+      : getLatestSpeakText();
     if (!text) return;
-    const readerId = narratorReaction?.id ?? correctionReaderId ?? pickNarratorReaction().id;
+    const readerId = narratorReaction?.id ?? correctionReaderId ?? pickNarratorReaction(effectiveLevel).id;
     setCorrectionReaderId(readerId);
     setNarrator(readerId);
     setNarratorReaction(null);
@@ -1107,9 +1703,8 @@ export function AudioDemoCard({
     if (
       previewCorrection?.original?.trim() === text
       && previewCorrection?.corrected?.trim()
-      && previewCorrection.corrected.trim() !== text
     ) {
-      setManualCorrection(previewCorrection);
+      finalizeCorrection(previewCorrection, readerId);
       return;
     }
 
@@ -1119,15 +1714,24 @@ export function AudioDemoCard({
       const res = await fetch('/api/correct', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, register: 'Parisien' }),
+        body: JSON.stringify({ text, register: 'Parisien', learnerLevel: effectiveLevel }),
       });
       const data = await res.json();
-      setManualCorrection({ original: text, corrected: data.corrected });
+      finalizeCorrection(
+        {
+          original: text,
+          corrected: data.corrected?.trim() || text,
+          translation: data.translation?.trim() || null,
+        },
+        readerId,
+      );
     } catch {}
     setManualCorrecting(false);
   };
 
   const resetTranscript = () => {
+    stopRecordingSessionRef.current += 1;
+    setStoppingRecording(false);
     stopRaf();
     if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
     reset();
@@ -1137,12 +1741,24 @@ export function AudioDemoCard({
     setNarratorReaction(null);
     setCorrectionReaderId(null);
     setManualCorrection(null);
+    setSentenceCongrats(null);
+    setCorrectionUtteranceId(null);
     setManualCorrecting(false);
     setPreviewCorrection(null);
     setFetchingPreview(false);
+    setAwaitingRepeat(false);
+    setRepeatFeedback(null);
+    setRepeatAttemptText(null);
+    setRepeatUtteranceBase(0);
+    setOriginalUtteranceEnd(0);
+    originalUtteranceEndRef.current = 0;
+    setShowRepeatHint(false);
+    correctionAudioPlayedRef.current = null;
+    setNarratorVoiceLoadingKey(null);
     speakCorrectionUiRef.current = {
       previewCorrection: null,
       manualCorrection: null,
+      sentenceCongrats: null,
       narratorReaction: null,
       correctionReaderId: null,
       manualCorrecting: false,
@@ -1163,29 +1779,91 @@ export function AudioDemoCard({
     setWriteEditing(true);
     setPlaybackTime(null);
     setIsPlaying(false);
+    setPlayingUtteranceId(null);
     setShowCorrectHint(false);
   };
 
+  const hasRecordedAudio = utterances.some((u) => u.audioUrl);
   const mm = String(Math.floor(time / 60)).padStart(2, '0');
   const ss = String(time % 60).padStart(2, '0');
   const isLive = isRecording || status === 'connecting';
   const hasContent = utterances.length > 0 || !!partialTranscript || !!settledText;
   if (hasContent) hadContentRef.current = true;
 
-  const transcriptHeight = fullscreen ? 'flex-1' : 'h-[320px]';
+  const transcriptHeight = fullscreen ? 'flex-1' : 'h-[360px]';
+
+  const speakActionControls = inputMode === 'speak' ? (
+    <div className="flex items-center gap-6 shrink-0">
+      {utterances.length > 0 && (
+        hasRecordedAudio && !isLive ? (
+          <button type="button" onClick={resetTranscript}
+            className="relative w-11 h-11 rounded-full border border-navy/20 text-navy/50 hover:border-wine/40 hover:text-wine/70 inline-flex items-center justify-center transition-colors shrink-0"
+            aria-label="Reset recording">
+            <span className="text-[9px] tracking-widest uppercase leading-none">Reset</span>
+          </button>
+        ) : (
+          <span className="w-11 h-11 shrink-0 inline-block" aria-hidden />
+        )
+      )}
+      <div className="flex flex-row items-center gap-2">
+        {isRecording && (
+          <span className="font-display text-[14px] text-wine flex items-center gap-1 whitespace-nowrap">
+            <span className="w-1.5 h-1.5 rounded-full bg-wine animate-pulse" />
+            Recording
+          </span>
+        )}
+        <div className="relative flex flex-col items-center">
+          {(showStartHint || highlightMic || showRepeatHint) && !isRecording && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: [0, -3, 0] }}
+              transition={{ delay: 0.6, duration: 0.5, y: { repeat: Infinity, duration: 1.8, ease: 'easeInOut', delay: 1.1 } }}
+              className="absolute bottom-full mb-2 flex flex-col items-center gap-1 pointer-events-none"
+            >
+              <span className="font-display text-[11px] sm:text-[12px] italic text-wine whitespace-nowrap">
+                {showRepeatHint ? 'Repeat to gain experience' : 'Start speaking'}
+              </span>
+              <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6"/>
+              </svg>
+            </motion.div>
+          )}
+          <button type="button" onClick={toggleRecording} disabled={status === 'connecting' || manualCorrecting || stoppingRecording}
+            className={`relative w-11 h-11 rounded-full bg-wine hover:bg-wine2 disabled:opacity-60 inline-flex items-center justify-center transition-all ${
+              (highlightMic || showRepeatHint) && !isRecording ? 'scale-110 shadow-md ring-2 ring-wine/35' : ''
+            }`}
+            aria-label="Toggle recording">
+            {isRecording ? (
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden>
+                <rect x="2" y="2" width="10" height="10" rx="1.5" fill="#F6F1E8" />
+              </svg>
+            ) : (
+              <svg width="13" height="16" viewBox="0 0 16 20" fill="none" aria-hidden>
+                <rect x="5" y="1" width="6" height="11" rx="3" fill="#F6F1E8" />
+                <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="#F6F1E8" strokeWidth="1.4" strokeLinecap="round" />
+              </svg>
+            )}
+            {(showStartHint || highlightMic || showRepeatHint) && !isRecording && (
+              <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
+            )}
+            {isRecording && <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-50" />}
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null;
 
   return (
     <>
     {fullscreen && <div className="fixed inset-0 bg-navy/40 backdrop-blur-sm z-40" onClick={onClose} />}
     <motion.div
       id="nativa-demo"
-      layout
       initial={{ opacity: 0, y: fullscreen ? 0 : 30, scale: fullscreen ? 1 : 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={fullscreen
         ? 'fixed inset-6 z-50 bg-paper flex overflow-hidden'
-        : 'relative w-full max-w-[720px] bg-paper hairline'}
+        : 'relative w-full max-w-[640px] bg-paper hairline'}
       style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)' }}
     >
       {/* Close button in fullscreen */}
@@ -1201,14 +1879,9 @@ export function AudioDemoCard({
 
       {/* Main content column (2/3) */}
       <div className={fullscreen ? 'flex-[2] flex flex-col overflow-y-auto min-w-0' : 'contents'}>
-      {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3 border-b border-line">
-        {/* Left spacer for balance */}
-        <div className="flex-1" />
-
-        {/* Center: Speak/Write and Discover buttons */}
-        <div className="flex items-center gap-4">
-          {/* Speak / Write toggle */}
+      {/* Mode controls + speech box */}
+      <div className={`px-7 pt-4 flex flex-col gap-2.5${fullscreen ? ' flex-1 min-h-0' : ''}`}>
+        <div className="flex items-center justify-center gap-4 shrink-0">
           <div className="relative flex items-center rounded-full p-0.5 bg-wine/10">
             <div
               className="absolute top-0.5 bottom-0.5 rounded-full bg-wine transition-all duration-200"
@@ -1219,21 +1892,19 @@ export function AudioDemoCard({
               { id: 'write', label: 'Write' },
             ].map((m) => (
               <button key={m.id} type="button" onClick={() => (m.id === 'write' ? activateWriteMode() : activateSpeakMode())}
-                className={`relative z-10 font-display text-[14px] tracking-wide px-4 py-1.5 rounded-full capitalize transition-colors duration-200 ${lastSpeakWriteMode === m.id ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'}`}>
+                className={`relative z-10 font-display text-[15px] tracking-wide px-3.5 py-1 rounded-full capitalize transition-colors duration-200 ${lastSpeakWriteMode === m.id ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'}`}>
                 {m.label}
               </button>
             ))}
           </div>
 
-          {/* Or divider */}
           <span className="text-[14px] text-navy/40 font-display italic">or</span>
 
-          {/* Discover button */}
           <button type="button" onClick={() => {
             setHighlightDiscover(false);
             setInputMode(inputMode === 'discover' ? 'speak' : 'discover');
           }}
-            className={`relative inline-flex items-center px-4 py-1.5 font-display text-[15px] tracking-wide rounded-full transition-all duration-300 ${
+            className={`relative inline-flex items-center px-3.5 py-1 font-display text-[16px] tracking-wide rounded-full transition-all duration-300 ${
               inputMode === 'discover'
                 ? 'bg-wine text-ivory ring-2 ring-wine/30'
                 : highlightDiscover
@@ -1244,25 +1915,8 @@ export function AudioDemoCard({
           </button>
         </div>
 
-        {/* Right: Live indicator */}
-        <div className="flex-1 flex items-center justify-end gap-4">
-          {isLive ? (
-            <div className="flex items-center gap-2">
-              <span className="relative inline-flex">
-                <span className="w-2 h-2 rounded-full bg-wine" />
-                <span className="absolute inset-0 w-2 h-2 rounded-full bg-wine animate-ping opacity-60" />
-              </span>
-              <span className="text-[13px] text-navy">
-                {status === 'connecting' ? 'Connecting…' : 'Live'}
-              </span>
-            </div>
-          ) : null}
-        </div>
-      </div>
-
-      {/* Tab switcher */}
       {(activeTab === 'practice' || vocabLevel) && (
-        <div className="flex border-b border-line mx-5">
+        <div className="flex border-b border-line shrink-0">
           <button type="button" onClick={() => setActiveTab('transcript')}
             className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${activeTab === 'transcript' ? 'border-navy text-navy' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
             Chat
@@ -1274,9 +1928,7 @@ export function AudioDemoCard({
         </div>
       )}
 
-      {/* Transcript / Write box */}
-      <div className={`px-5 pt-4 pb-2${fullscreen ? ' flex-1 flex flex-col' : ''}`}>
-        <div ref={writeBoxRef} className={`relative bg-ivory/60 border border-line/70 overflow-hidden${fullscreen ? ' flex-1 flex flex-col' : ' h-[320px]'}`}>
+        <div ref={writeBoxRef} className={`relative bg-ivory/60 border border-line/70 overflow-hidden${fullscreen ? ' flex-1 flex flex-col min-h-0' : ' h-[360px]'}`}>
           {inputMode === 'discover' ? (
             <motion.div
               key="word-panel"
@@ -1383,12 +2035,13 @@ export function AudioDemoCard({
                         <button type="button"
                           onClick={async () => {
                             if (isRecording) {
-                              await stop();
+                              await stopRecordingWithGrace();
                               const newUtts = utterancesRef.current.slice(wordUtteranceBaseRef.current);
                               if (newUtts.length > 0) setWordUserSentence(newUtts.map(u => u.text).join(' '));
                             } else {
                               wordUtteranceBaseRef.current = utterancesRef.current.length;
                               setWordUserSentence(''); setWordCorrection(null);
+                              stopParisianAudio();
                               await start();
                             }
                           }}
@@ -1482,7 +2135,7 @@ export function AudioDemoCard({
                   <CorrectionBlock
                     original={chatDiffCorrection.original}
                     corrected={chatDiffCorrection.corrected}
-                    className="font-display text-[20px] leading-relaxed text-navy select-text"
+                    className="font-display text-[17px] leading-snug text-navy select-text"
                   />
                 </div>
               ) : !writeEditing && writeCorrection && writeCorrection.corrected?.trim() !== writeText.trim() ? (
@@ -1517,7 +2170,7 @@ export function AudioDemoCard({
                   )}
                   <textarea
                     ref={writeTextareaRef}
-                    className="flex-1 w-full px-4 pt-4 pb-4 bg-transparent resize-none outline-none font-display text-[20px] leading-relaxed text-navy placeholder:text-navy/30 scroll-premium relative z-[1]"
+                    className="flex-1 w-full px-4 pt-4 pb-4 bg-transparent resize-none outline-none font-display text-[17px] leading-snug text-navy placeholder:text-navy/30 scroll-premium relative z-[1]"
                     placeholder="Write in French…"
                     spellCheck={false}
                     value={writeText}
@@ -1532,7 +2185,7 @@ export function AudioDemoCard({
                     onFocus={() => setShowWriteHint(false)}
                     onBlur={() => {
                       if (writeText.trim() && !manualCorrection && !narratorReaction) {
-                        setNarratorReaction(pickNarratorReaction());
+                        setNarratorReaction(pickNarratorReaction(effectiveLevel));
                         fetchPreviewCorrection(writeText);
                         setWriteEditing(false);
                       } else if (writeCorrection && writeCorrection.corrected?.trim() !== writeText.trim()) {
@@ -1547,34 +2200,21 @@ export function AudioDemoCard({
                   <CorrectionLoading />
                 </div>
               )}
-              {fetchingPreview && !showChatDiff && (
-                <div className="absolute bottom-2 right-3 pointer-events-none">
-                  <CorrectionLoading />
-                </div>
-              )}
             </div>
           ) : activeTab !== 'practice' ? (
-          <div ref={scrollRef} className={`scroll-premium px-4 pt-4 pb-4 ${transcriptHeight} overflow-y-auto`}>
-            {showChatDiff ? (
-              <CorrectionBlock
-                original={chatDiffCorrection.original}
-                corrected={chatDiffCorrection.corrected}
-                className="font-display text-[20px] leading-relaxed text-navy select-text"
-              />
-            ) : hasContent ? (
+          <div className={`${transcriptHeight} flex flex-col min-h-0 overflow-hidden`}>
+          <div ref={scrollRef} className="scroll-premium flex-1 min-h-0 max-h-full px-3.5 pt-3 pb-6 overflow-y-auto overscroll-contain">
+            {hasContent ? (
               <>
-                {fetchingPreview && (
-                  <div className="mb-3 flex justify-end">
-                    <CorrectionLoading />
-                  </div>
-                )}
-                <p className="font-display text-[20px] leading-relaxed text-navy" spellCheck={false}>
-                  {utterances.map((utt, idx) => {
-                    const isLast = idx === utterances.length - 1;
-                    const uttWords = utt.words ?? [];
+                <div className="font-display text-[17px] leading-snug text-navy flex flex-col gap-2 min-w-0" spellCheck={false}>
+                  {mainUtterances.map((utt) => {
+                    const isPlayingThis = playingUtteranceId === utt.id && isPlaying;
+                    const uttWords = utt.words?.length > 0
+                      ? utt.words
+                      : (playbackWords?.utteranceId === utt.id ? playbackWords.words : []);
 
                     const isWordActive = (i) => {
-                      if (playbackTime === null || uttWords.length === 0) return false;
+                      if (playingUtteranceId !== utt.id || playbackTime === null || uttWords.length === 0) return false;
                       const w = uttWords[i];
                       if (!w) return false;
                       const nextStart = uttWords[i + 1]?.start;
@@ -1583,17 +2223,35 @@ export function AudioDemoCard({
                     };
 
                     const uttActive = uttWords.length === 0
+                      && playingUtteranceId === utt.id
                       && utt.endTime > utt.startTime
                       && playbackTime !== null
                       && playbackTime >= utt.startTime
                       && playbackTime <= utt.endTime + 0.5;
 
                     const seekTo = (time) => {
-                      if (!audioRef.current || !audioUrl) return;
+                      if (!utt.audioUrl || isLive) return;
+                      if (playingUtteranceId !== utt.id || !audioRef.current) {
+                        toggleUtterancePlayback(utt);
+                        window.setTimeout(() => {
+                          if (audioRef.current && playingUtteranceId === utt.id) {
+                            audioRef.current.currentTime = time;
+                            setPlaybackTime(time);
+                          }
+                        }, 0);
+                        return;
+                      }
                       audioRef.current.currentTime = time;
                       setPlaybackTime(time);
                       if (!isPlaying) {
-                        audioRef.current.play();
+                        const session = beginSiteAudioPlayback();
+                        recordingSessionRef.current = session;
+                        if (!isSiteAudioPlaybackCurrent(session)) return;
+                        audioRef.current.play().catch(() => {});
+                        if (!isSiteAudioPlaybackCurrent(session)) {
+                          audioRef.current.pause();
+                          return;
+                        }
                         startRaf();
                         setIsPlaying(true);
                       }
@@ -1617,53 +2275,123 @@ export function AudioDemoCard({
                             {w.punctuated_word ?? w.word}
                           </span>
                         ))
-                      : <span style={uttActive ? { background: 'rgba(139,30,45,0.12)', borderRadius: '4px', padding: '1px 3px' } : undefined}>{utt.text}{' '}</span>;
+                      : <span style={uttActive ? { background: 'rgba(139,30,45,0.12)', borderRadius: '4px', padding: '1px 3px' } : undefined}>{utt.text}</span>;
 
                     return (
-                      <React.Fragment key={utt.id}>
-                        {wordSpans}
-                        {isLast && settledText && <span className="text-navy font-semibold">{settledText}{' '}</span>}
-                        {isLast && partialTranscript && (() => {
-                          const ws = partialTranscript.trim().split(/\s+/).filter(Boolean);
-                          const stableCount = Math.max(ws.length - 1, 0);
-                          const stable = ws.slice(0, stableCount).join(' ');
-                          const live = ws.slice(stableCount).join(' ');
-                          return (
-                            <>
-                              {stable && <span className="text-navy font-semibold">{stable}{' '}</span>}
-                              {live && <span className="text-navy/40 italic">{live}</span>}
-                            </>
-                          );
-                        })()}
-                      </React.Fragment>
+                      <div key={utt.id} className="flex items-start gap-2 min-w-0">
+                        {utt.audioUrl && !isLive ? (
+                          <button
+                            type="button"
+                            onClick={() => toggleUtterancePlayback(utt)}
+                            className="inline-flex items-center justify-center w-5 h-5 mt-[0.32em] rounded-full bg-navy/20 hover:bg-navy/30 transition-colors shrink-0"
+                            aria-label="Play sentence"
+                          >
+                            {isPlayingThis ? (
+                              <svg width="6" height="8" viewBox="0 0 10 12" fill="none" aria-hidden>
+                                <rect x="1" y="1" width="3" height="10" rx="1" fill="white"/>
+                                <rect x="6" y="1" width="3" height="10" rx="1" fill="white"/>
+                              </svg>
+                            ) : (
+                              <svg width="6" height="8" viewBox="0 0 10 12" fill="none" aria-hidden>
+                                <path d="M1 1l8 5-8 5V1z" fill="white"/>
+                              </svg>
+                            )}
+                          </button>
+                        ) : (
+                          <span className="w-5 h-5 shrink-0" aria-hidden />
+                        )}
+                        <div className="min-w-0 flex-1">
+                          {wordSpans}
+                          {utt.id === correctionUtteranceId && sentenceCongrats && (
+                            <span className="inline-flex items-center gap-1 ml-1.5 align-middle whitespace-nowrap">
+                              <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 48 48"
+                                fill="none"
+                                stroke="#16a34a"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="shrink-0"
+                                aria-hidden
+                              >
+                                <path d="M42 12L18 36l-12-12" />
+                              </svg>
+                              <span className="parisian-exp-bump inline-flex items-center justify-center rounded-full border border-navy/15 bg-navy/[0.04] px-1.5 py-0.5 font-mono text-[9px] leading-none text-navy/45 tabular-nums">
+                                +1% Parisian
+                              </span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     );
                   })}
 
-                  {utterances.length === 0 && (
-                    <>
-                      {settledText && <span className="text-navy font-semibold">{settledText}{' '}</span>}
-                      {partialTranscript && (() => {
-                        const ws = partialTranscript.trim().split(/\s+/).filter(Boolean);
-                        const stableCount = Math.max(ws.length - 1, 0);
-                        const stable = ws.slice(0, stableCount).join(' ');
-                        const live = ws.slice(stableCount).join(' ');
-                        return (
-                          <>
-                            {stable && <span className="text-navy font-semibold">{stable}{' '}</span>}
-                            {live && <span className="text-navy/40 italic">{live}</span>}
-                          </>
-                        );
-                      })()}
-                    </>
+                  {showLiveTranscriptLine && (
+                    <div className="flex items-start gap-2 min-w-0">
+                      <span className="w-5 h-5 shrink-0" aria-hidden />
+                      <div className="min-w-0 flex-1">
+                        {settledText && <span className="text-navy font-semibold">{settledText}{' '}</span>}
+                        {partialTranscript && <span className="text-navy/40 italic">{partialTranscript}</span>}
+                      </div>
+                    </div>
                   )}
-                </p>
+                </div>
+                {showRepeatLine && (
+                  <div className="mt-2 flex items-start gap-2.5">
+                    {repeatFeedback === 'success' && !isRecording && (
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 48 48"
+                        fill="none"
+                        stroke="#16a34a"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="shrink-0 mt-1"
+                        aria-hidden
+                      >
+                        <path d="M42 12L18 36l-12-12" />
+                      </svg>
+                    )}
+                    {isRecording ? (
+                      <LiveSpeechLine
+                        utterances={repeatUtterances}
+                        settledText={settledText}
+                        partialTranscript={partialTranscript}
+                        className="min-w-0 flex-1"
+                      />
+                    ) : (
+                      <p className={`font-display text-[17px] leading-snug min-w-0 ${
+                        repeatFeedback === 'success' ? 'text-green-700' : 'text-navy/70'
+                      }`}>
+                        {repeatAttemptText}
+                      </p>
+                    )}
+                  </div>
+                )}
+                {repeatFeedback === 'success' && !isRecording && (
+                  <p className="mt-2 font-display text-[13px] italic text-green-700">+1% Parisian experience</p>
+                )}
+                {repeatFeedback === 'fail' && !isRecording && (
+                  <p className="mt-2 font-display text-[13px] italic text-wine/70">Not quite — try again.</p>
+                )}
               </>
             ) : (!isLive || !hadContentRef.current) && (
-              <p className="font-display text-[20px] leading-relaxed text-navy/30">
-                {isLive ? 'Start speaking…' : 'Press the mic to speak'}
-              </p>
+              isRecording ? (
+                <p className="font-display text-[17px] leading-snug text-navy/30">
+                  Start speaking…
+                </p>
+              ) : status !== 'connecting' ? (
+                <p className="font-display text-[17px] leading-snug text-navy/30">
+                  Press the mic to speak
+                </p>
+              ) : null
             )}
 
+          </div>
           </div>
           ) : null}
 
@@ -1759,47 +2487,8 @@ export function AudioDemoCard({
       {narratorReaction && !manualCorrection && !manualCorrecting && (
         <NarratorReactionPanel
           reaction={narratorReaction}
-          onMakeParisien={correctNow}
-          loading={manualCorrecting}
+          onDone={() => setNarratorReaction(null)}
         />
-      )}
-
-      {/* Manual correction panel — outside speech box so it's never clipped */}
-      {(manualCorrecting || manualCorrection) && (
-        <motion.div
-          initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-5 border border-line/50 border-t-0 bg-ivory/40 px-5 py-4"
-        >
-          {manualCorrecting ? (
-            <CorrectionLoading />
-          ) : manualCorrection ? (
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <span className="text-[9px] tracking-widest uppercase text-navy/35 block mb-1.5">Correction</span>
-                {manualCorrection.corrected?.trim() === manualCorrection.original?.trim() ? (
-                  <p className="font-display text-[15px] text-green-700">✓ Parfait !</p>
-                ) : (
-                  <p className="font-display text-[16px] leading-snug text-navy">
-                    <HighlightedSpeech
-                      text={manualCorrection.corrected}
-                      playbackTime={wordPlaying && parisianSpeakingText === manualCorrection.corrected ? parisianPlaybackTime : null}
-                      timings={wordPlaying && parisianSpeakingText === manualCorrection.corrected ? parisianTimings : []}
-                    />
-                  </p>
-                )}
-              </div>
-              {/* Narrator portrait to play correction */}
-              {manualCorrection.corrected?.trim() !== manualCorrection.original?.trim() && correctionReaderId && (
-                <NarratorPortraitPlay
-                  narratorId={correctionReaderId}
-                  playing={wordPlaying && narrator === correctionReaderId && parisianSpeakingText === manualCorrection.corrected}
-                  onClick={() => toggleCorrectionPlay(manualCorrection.corrected, correctionReaderId)}
-                />
-              )}
-            </div>
-          ) : null}
-        </motion.div>
       )}
 
       {/* Level assessment panel — also outside speech box */}
@@ -1807,7 +2496,7 @@ export function AudioDemoCard({
         <motion.div
           initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-5 border border-line/50 border-t-0 bg-ivory/40 px-6 py-5"
+          className="mx-7 border border-line/50 border-t-0 bg-ivory/40 px-6 py-5"
         >
           {assessingLevel ? (
             <div className="flex items-center justify-center"><CorrectionLoading /></div>
@@ -1865,68 +2554,171 @@ export function AudioDemoCard({
       )}
 
       {/* Bottom bar */}
-      <div className="px-5 pb-5 flex items-center justify-between">
-        {/* Left: "Parisien !" — speak mode fallback only (write uses Léa/Jules panel) */}
-        <div>
+      <div className="px-7 pt-2 pb-3 flex items-center justify-between gap-4 min-h-0 overflow-visible">
+        {/* Left: Parisien correction UI or "Make it Parisien !" */}
+        <div className="min-w-0 flex-1 overflow-visible">
           {inputMode === 'speak' && (() => {
             const hasRecorded = utterances.length > 0;
-            const hasCorrected = !!manualCorrection;
+            const hasCorrected = !!manualCorrection || !!sentenceCongrats;
             const isDark = hasRecorded && !hasCorrected && !isLive && !narratorReaction;
+            const isBarLineSpeaking = (lineText) => (
+              wordPlaying
+              && lineText
+              && parisianSpeakingText === lineText.trim()
+            );
+            const isCorrectionSpeaking = isBarLineSpeaking(manualCorrection?.corrected);
+            const isCongratsSpeaking = isBarLineSpeaking(sentenceCongrats?.text);
+
+            if (manualCorrecting) {
+              return (
+                <div className="flex items-start gap-2 min-w-0 w-full">
+                  <div className="flex flex-col items-stretch gap-1 w-[3.5rem] shrink-0">
+                    <div className="h-7 rounded-full bg-wine/10 animate-pulse" aria-hidden />
+                    <div className="h-7 rounded-full bg-navy/5 animate-pulse" aria-hidden />
+                  </div>
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <NarratorAnswerLoading narratorId={pendingNarratorId} hideName />
+                  </div>
+                </div>
+              );
+            }
+
+            if (hasSpeakCorrection) {
+              const repeatSucceeded = repeatFeedback === 'success';
+              return (
+                <div className="flex items-center gap-2 min-w-0 w-full">
+                  <div className="flex flex-col items-stretch gap-1 w-[3.5rem] shrink-0">
+                    <button
+                      type="button"
+                      disabled={savingExpression}
+                      onClick={async () => {
+                        const saved = await saveCurrentExpression();
+                        if (!saved) return;
+                        if (!repeatSucceeded) {
+                          await playNarratorLine({ id: correctionReaderId, text: 'Now try to repeat it.' });
+                        }
+                        setManualCorrection(null);
+                        setCorrectionReaderId(null);
+                        setSentenceCongrats(null);
+                        setRepeatFeedback(null);
+                      }}
+                      className="font-display text-[11px] leading-none w-full h-7 rounded-full border border-wine bg-wine text-ivory hover:bg-wine2 transition-colors text-center box-border disabled:opacity-60"
+                    >
+                      {savingExpression ? '…' : 'Save'}
+                    </button>
+                    {!repeatSucceeded && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setManualCorrection(null);
+                          setCorrectionReaderId(null);
+                        }}
+                        className="font-display text-[11px] leading-none w-full h-7 rounded-full border border-navy/20 text-navy/50 hover:border-navy/40 hover:text-navy/70 transition-colors text-center box-border"
+                      >
+                        Skip
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <NarratorPortrait
+                      narratorId={correctionReaderId}
+                      speaking={isCorrectionSpeaking || isCongratsSpeaking}
+                      onReplay={repeatSucceeded
+                        ? () => {
+                          if (!sentenceCongrats?.text || !correctionReaderId) return;
+                          playNarratorLine({ id: correctionReaderId, text: sentenceCongrats.text });
+                        }
+                        : replayCorrectionAudio}
+                      hideName
+                      size="lg"
+                    />
+                    <NarratorHoverText
+                      text={manualCorrection.corrected}
+                      translation={manualCorrection.translation}
+                      highlightSpeech={isCorrectionSpeaking}
+                      speechPlaybackTime={isCorrectionSpeaking ? parisianPlaybackTime : null}
+                      speechTimings={isCorrectionSpeaking ? parisianTimings : []}
+                      className="font-display text-[16px] italic text-navy leading-snug"
+                      wrapperClassName="relative flex-1 min-w-0"
+                      scrollable
+                      tooltipPosition="above"
+                    >
+                      {!isCorrectionSpeaking ? (
+                        <DiffText
+                          original={manualCorrection.original}
+                          corrected={manualCorrection.corrected}
+                          side="corrected"
+                          className="font-display text-[16px] italic text-navy leading-snug"
+                        />
+                      ) : null}
+                    </NarratorHoverText>
+                  </div>
+                </div>
+              );
+            }
+
+            if (sentenceCongrats) {
+              return (
+                <div className="flex items-center gap-2 min-w-0 w-full">
+                  <NarratorPortrait
+                    narratorId={correctionReaderId}
+                    speaking={isCongratsSpeaking}
+                    onReplay={() => {
+                      if (!sentenceCongrats?.text || !correctionReaderId) return;
+                      playNarratorLine({ id: correctionReaderId, text: sentenceCongrats.text });
+                    }}
+                    hideName
+                    size="lg"
+                  />
+                  <NarratorHoverText
+                    text={sentenceCongrats.text}
+                    translation={sentenceCongrats.translation}
+                    highlightSpeech={isCongratsSpeaking}
+                    speechPlaybackTime={isCongratsSpeaking ? parisianPlaybackTime : null}
+                    speechTimings={isCongratsSpeaking ? parisianTimings : []}
+                    className="font-display text-[16px] italic text-navy leading-snug"
+                    wrapperClassName="relative flex-1 min-w-0"
+                    scrollable
+                    tooltipPosition="above"
+                  />
+                </div>
+              );
+            }
+
             return (
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => { setShowCorrectHint(false); correctNow(); }}
-                  disabled={manualCorrecting || !hasRecorded || isLive || !!narratorReaction}
-                  className={`relative font-display text-[14px] italic px-4 py-1.5 rounded-full transition-all duration-200 ${
-                    isDark
-                      ? 'bg-wine text-ivory hover:bg-wine2 cursor-pointer'
-                      : 'bg-wine/10 text-wine/50 border border-wine/20 cursor-default'
-                  } disabled:opacity-60`}
-                >
-                  Make it Parisien !
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => { setShowCorrectHint(false); correctNow(); }}
+                disabled={manualCorrecting || !hasRecorded || isLive || !!narratorReaction}
+                className={`relative font-display text-[16px] italic px-4 h-10 rounded-full transition-all duration-200 whitespace-nowrap ${
+                  isDark
+                    ? 'bg-wine text-ivory hover:bg-wine2 cursor-pointer shadow-md'
+                    : 'bg-wine/10 text-wine/50 border border-wine/20 cursor-default'
+                } disabled:opacity-60`}
+              >
+                Make it Parisien !
+                {showCorrectHint && isDark && !manualCorrecting && (
+                  <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40 pointer-events-none" />
+                )}
+              </button>
             );
           })()}
         </div>
 
-        {/* Right: action buttons */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-end gap-2 min-h-[36px]">
-            {/* Play my audio (speak mode) */}
-            {inputMode === 'speak' && audioUrl && !isLive && (
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-[9px] tracking-widest uppercase text-navy/30">play my audio</span>
-                <button type="button" onClick={togglePlayback}
-                  className="relative w-9 h-9 rounded-full border border-navy/20 text-navy/50 hover:border-navy/40 hover:text-navy/80 inline-flex items-center justify-center transition-colors"
-                  aria-label="Play recording">
-                  {isPlaying ? (
-                    <svg width="10" height="10" viewBox="0 0 14 14" fill="none" aria-hidden>
-                      <rect x="2" y="2" width="4" height="10" rx="1" fill="currentColor" />
-                      <rect x="8" y="2" width="4" height="10" rx="1" fill="currentColor" />
-                    </svg>
-                  ) : (
-                    <svg width="10" height="12" viewBox="0 0 10 12" fill="none" aria-hidden>
-                      <path d="M1 1l8 5-8 5V1z" fill="currentColor" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-            )}
-
-            {/* Write mode: Reset + check button */}
-            {inputMode === 'write' && (
-              <div className="flex items-center gap-2">
+        {/* Right: Reset + Mic (always same slot in speak mode) */}
+        {inputMode === 'write' ? (
+        <div className="flex items-center gap-2 min-w-0 h-10 self-end shrink-0">
+          <div className="flex items-center gap-3 h-10">
+            <div className="flex items-center gap-3">
                 {writeText.trim().length > 0 && (
                   <button type="button" onClick={resetTranscript}
-                    className="text-[10px] tracking-widest uppercase text-navy/30 hover:text-navy/60 transition-colors self-center">
+                    className="text-[12px] tracking-widest uppercase text-navy/30 hover:text-navy/60 transition-colors self-center">
                     Reset
                   </button>
                 )}
                 <button type="button" onClick={finishWriteInput}
                   disabled={!writeText.trim() || writeText.trim() === writeSubmittedText}
-                  className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-full bg-wine hover:bg-wine2 disabled:bg-wine/10 disabled:text-wine/35 disabled:cursor-default transition-colors font-display text-[14px] italic text-ivory"
+                  className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-full bg-wine hover:bg-wine2 disabled:bg-wine/10 disabled:text-wine/35 disabled:cursor-default transition-colors font-display text-[16px] italic text-ivory"
                   aria-label="Fini">
                   <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
                     <path d="M2 6.5l2.5 2.5L10 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -1934,66 +2726,16 @@ export function AudioDemoCard({
                   Fini
                 </button>
               </div>
-            )}
-
-            {/* Speak mode: Reset X (next to mic) + Mic */}
-            {inputMode === 'speak' && (
-              <div className="flex items-center gap-2">
-                {/* Reset — circular X, only when audio has been recorded */}
-                {audioUrl && !isLive && (
-                  <button type="button" onClick={resetTranscript}
-                    className="relative w-9 h-9 rounded-full border border-navy/20 text-navy/50 hover:border-wine/40 hover:text-wine/70 inline-flex items-center justify-center transition-colors"
-                    aria-label="Reset recording">
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
-                      <path d="M1 1l8 8M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                    </svg>
-                  </button>
-                )}
-                {/* Microphone */}
-                <div className="relative flex flex-col items-center">
-                  {/* Start speaking hint */}
-                  {(showStartHint || highlightMic) && !isRecording && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: [0, -3, 0] }}
-                      transition={{ delay: 0.6, duration: 0.5, y: { repeat: Infinity, duration: 1.8, ease: 'easeInOut', delay: 1.1 } }}
-                      className="absolute bottom-full mb-2 flex flex-col items-center gap-1 pointer-events-none"
-                    >
-                      <span className="font-display text-[12px] italic text-wine whitespace-nowrap">start speaking</span>
-                      <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                        <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6"/>
-                      </svg>
-                    </motion.div>
-                  )}
-                  <button type="button" onClick={toggleRecording} disabled={status === 'connecting'}
-                    className={`relative w-9 h-9 rounded-full bg-wine hover:bg-wine2 disabled:opacity-60 inline-flex items-center justify-center transition-all ${
-                      highlightMic && !isRecording ? 'scale-110 shadow-md ring-2 ring-wine/35' : ''
-                    }`}
-                    aria-label="Toggle recording">
-                    {isRecording ? (
-                      <svg width="10" height="10" viewBox="0 0 14 14" fill="none" aria-hidden>
-                        <rect x="2" y="2" width="10" height="10" rx="1.5" fill="#F6F1E8" />
-                      </svg>
-                    ) : (
-                      <svg width="11" height="14" viewBox="0 0 16 20" fill="none" aria-hidden>
-                        <rect x="5" y="1" width="6" height="11" rx="3" fill="#F6F1E8" />
-                        <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="#F6F1E8" strokeWidth="1.4" strokeLinecap="round" />
-                      </svg>
-                    )}
-                    {/* Pulse ring when hint is showing */}
-                    {(showStartHint || highlightMic) && !isRecording && (
-                      <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
-                    )}
-                    {isRecording && <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-50" />}
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
+        ) : inputMode === 'speak' ? (
+        <div className="shrink-0 self-start">
+          {speakActionControls}
+        </div>
+        ) : null}
       </div>
 
-      {error && <p className="px-5 pb-2 text-[12px] text-wine">{error}</p>}
+      {error && <p className="px-7 pb-4 text-[12px] text-wine">{error}</p>}
       </div>{/* end main content column */}
 
       {/* Level sidebar (1/3) — fullscreen only */}
@@ -2009,9 +2751,11 @@ export function AudioDemoCard({
 }
 
 export default function Hero() {
+  const { effectiveLevel } = useLearnerProfile();
   const [searchParams, setSearchParams] = useSearchParams();
   const learnMode = searchParams.get('learn');
   const learnLevel = searchParams.get('level');
+  const practiceTopic = searchParams.get('practice');
   const [introNarrator, setIntroNarrator] = React.useState(null);
   const [introPlaying, setIntroPlaying] = React.useState(null); // null | 'lea' | 'jules'
   const [introPlaybackTime, setIntroPlaybackTime] = React.useState(null);
@@ -2035,6 +2779,8 @@ export default function Hero() {
     setIntroSpeechText(null);
   }, []);
 
+  React.useEffect(() => registerSiteAudioStop(stopIntroAudio), [stopIntroAudio]);
+
   const playNarratorIntro = async (narrator) => {
     if (introPlaying === narrator.id) {
       introSessionRef.current += 1;
@@ -2042,22 +2788,22 @@ export default function Hero() {
       return;
     }
 
+    const siteSession = beginSiteAudioPlayback();
     introSessionRef.current += 1;
     const session = introSessionRef.current;
-    stopIntroAudio();
     setIntroPlaying(narrator.id);
     setIntroSpeechText(narrator.intro);
 
     try {
       const buf = await fetchNarratorAudio(narrator.intro, narrator.id);
-      if (session !== introSessionRef.current) return;
+      if (session !== introSessionRef.current || !isSiteAudioPlaybackCurrent(siteSession)) return;
 
       if (!introCtxRef.current) introCtxRef.current = new AudioContext();
       const ctx = introCtxRef.current;
       if (ctx.state === 'suspended') await ctx.resume();
 
       const decoded = await ctx.decodeAudioData(buf.slice(0));
-      if (session !== introSessionRef.current) return;
+      if (session !== introSessionRef.current || !isSiteAudioPlaybackCurrent(siteSession)) return;
 
       setIntroTimings(buildWordTimings(narrator.intro, decoded.duration));
       setIntroPlaybackTime(0);
@@ -2067,6 +2813,7 @@ export default function Hero() {
         narrator: narrator.id,
         sourceRef: introSourceRef,
         connectSource: connectNarratorSource,
+        playbackSession: siteSession,
         onTimeUpdate: (t) => {
           if (session !== introSessionRef.current) return;
           setIntroPlaybackTime(t);
@@ -2079,20 +2826,18 @@ export default function Hero() {
     }
   };
 
-  const narrators = [
-    {
-      id: 'lea',
-      name: 'Léa',
-      src: '/assets/lea.png',
-      intro: "Bonjour ! Moi c'est Léa, j'ai 24 ans et je suis parisienne. Je suis là pour t'aider à parler un français vrai, celui qu'on entend dans les cafés du 11e. Bienvenue !",
-    },
-    {
-      id: 'jules',
-      name: 'Jules',
-      src: '/assets/jules.png',
-      intro: "Salut ! Moi c'est Jules, 26 ans, né à Paris. Je vais t'accompagner pour que ton français sonne naturel, pas comme dans les manuels. Allez, on y va !",
-    },
-  ];
+  const narrators = React.useMemo(() => (
+    ['lea', 'jules'].map((id) => {
+      const intro = getNarratorIntro(id, effectiveLevel);
+      return {
+        id,
+        name: id === 'lea' ? 'Léa' : 'Jules',
+        src: id === 'lea' ? '/assets/lea.png' : '/assets/jules.png',
+        intro: intro.text,
+        introTranslation: intro.translation,
+      };
+    })
+  ), [effectiveLevel]);
 
   React.useEffect(() => {
     return () => {
@@ -2109,10 +2854,24 @@ export default function Hero() {
     }, 120);
   }, [learnMode]);
 
+  React.useEffect(() => {
+    if (!practiceTopic) return;
+    window.setTimeout(() => {
+      document.getElementById('nativa-demo')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 120);
+  }, [practiceTopic]);
+
   const clearLearnParams = React.useCallback(() => {
     if (searchParams.get('learn')) {
       setSearchParams({}, { replace: true });
     }
+  }, [searchParams, setSearchParams]);
+
+  const clearPracticeParam = React.useCallback(() => {
+    if (!searchParams.get('practice')) return;
+    const next = new URLSearchParams(searchParams);
+    next.delete('practice');
+    setSearchParams(next, { replace: true });
   }, [searchParams, setSearchParams]);
 
   return (
@@ -2122,7 +2881,15 @@ export default function Hero() {
         <img src="/assets/paris-skyline.png" alt=""
           className="absolute right-0 bottom-0 w-[1280px] max-w-[70%] object-contain object-bottom-right select-none"
           style={{ opacity: 0.85, mixBlendMode: 'multiply' }} />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, #F2EBDA 0%, #F2EBDA 15%, rgba(242,235,218,0.96) 28%, rgba(242,235,218,0.82) 40%, rgba(242,235,218,0.55) 55%, rgba(242,235,218,0.2) 70%, rgba(242,235,218,0.0) 82%)' }} />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              radial-gradient(ellipse 52% 42% at 100% 0%, rgba(242,235,218,0.72) 0%, rgba(242,235,218,0.28) 42%, transparent 62%),
+              linear-gradient(90deg, #F2EBDA 0%, #F2EBDA 15%, rgba(242,235,218,0.96) 28%, rgba(242,235,218,0.82) 40%, rgba(242,235,218,0.55) 55%, rgba(242,235,218,0.2) 70%, rgba(242,235,218,0.0) 82%)
+            `,
+          }}
+        />
       </div>
 
       <Container className="relative">
@@ -2156,7 +2923,7 @@ export default function Hero() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 4 }}
                             transition={{ duration: 0.2 }}
-                            className={`absolute z-[100] pointer-events-none ${
+                            className={`absolute z-[100] ${
                               n.id === 'lea'
                                 ? 'right-full mr-3 sm:mr-4 -top-3 sm:-top-4 w-[min(200px,calc(100vw-2.5rem))] sm:w-[216px]'
                                 : 'left-full ml-3 sm:ml-4 -top-3 sm:-top-4 w-[min(220px,calc(100vw-2.5rem))] sm:w-[240px]'
@@ -2170,20 +2937,19 @@ export default function Hero() {
                               }`}>
                                 {n.name}
                               </p>
-                              <p className={`font-display text-navy italic leading-snug ${
-                                n.id === 'lea' ? 'text-[14px] sm:text-[15px]' : 'text-[15px] sm:text-[16px]'
-                              }`}>
-                                {isPlaying && introSpeechText === n.intro ? (
-                                  <HighlightedSpeech
-                                    text={n.intro}
-                                    playbackTime={introPlaybackTime}
-                                    timings={introTimings}
-                                    quote
-                                  />
-                                ) : (
-                                  <>«{n.intro}»</>
-                                )}
-                              </p>
+                              <NarratorHoverText
+                                text={n.intro}
+                                translation={n.introTranslation}
+                                quote
+                                highlightSpeech={isPlaying && introSpeechText === n.intro}
+                                speechPlaybackTime={introPlaybackTime}
+                                speechTimings={introTimings}
+                                className={`font-display text-navy italic leading-snug ${
+                                  n.id === 'lea' ? 'text-[14px] sm:text-[15px]' : 'text-[15px] sm:text-[16px]'
+                                }`}
+                                wrapperClassName="relative w-full"
+                                tooltipClassName="top-[calc(100%+6px)]"
+                              />
                               <span
                                 className={`absolute top-[42%] -translate-y-1/2 w-2.5 h-2.5 bg-white/95 rotate-45 border-wine/15 ${
                                   n.id === 'lea'
@@ -2237,8 +3003,40 @@ export default function Hero() {
               </p>
             </Reveal>
             <Reveal delay={0.42}>
-              <div className="mt-8 flex items-center gap-3">
-                <ButtonPrimary onClick={() => goToDashboard()}>They rate your French</ButtonPrimary>
+              <div className="mt-8 flex items-center">
+                <div className="relative inline-flex">
+                  <motion.div
+                    initial={{ opacity: 0, x: 4 }}
+                    animate={{ opacity: 1, x: [0, 1.5, 0] }}
+                    transition={{
+                      delay: 0.6,
+                      duration: 0.5,
+                      x: { repeat: Infinity, duration: 1.8, ease: 'easeInOut', delay: 1.1 },
+                    }}
+                    className="absolute right-full mr-2.5 inset-y-0 flex items-center gap-1 pointer-events-none"
+                  >
+                    <span className="font-display text-[11px] sm:text-[12px] italic text-wine leading-[1.25] text-right w-[132px]">
+                      Click here to gain
+                      <br />
+                      Parisian experience
+                    </span>
+                    <svg width="7" height="9" viewBox="0 0 10 8" fill="none" aria-hidden className="shrink-0 rotate-[-90deg]">
+                      <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6" />
+                    </svg>
+                  </motion.div>
+                  <div className="relative">
+                    <ButtonPrimary
+                      onClick={() => goToDashboard()}
+                      className="relative z-[1] rounded-full"
+                    >
+                      Judge my French
+                    </ButtonPrimary>
+                    <span
+                      className="absolute inset-0 rounded-full border-2 border-wine animate-ping-tight opacity-35 pointer-events-none"
+                      aria-hidden
+                    />
+                  </div>
+                </div>
               </div>
             </Reveal>
           </div>
@@ -2246,9 +3044,11 @@ export default function Hero() {
           <div className="flex items-center justify-end h-full">
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
+              initialTopic={practiceTopic}
               initialLearnMode={learnMode}
               initialLearnLevel={learnLevel}
               onLearnModeHandled={clearLearnParams}
+              onPracticeTopicHandled={clearPracticeParam}
             />
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { LevelAssessmentDashboard } from '../components/LevelAssessmentDashboard';
+import { useLearnerProfile } from '../context/LearnerProfileContext';
 import { LEVEL_ILLUSTRATIONS, LEVEL_CARD_IMAGES, LevelCardImage } from '../components/LevelIllustrations';
 
 const LEVELS = [
@@ -12,11 +13,13 @@ const LEVELS = [
 ];
 
 export default function Dashboard() {
+  const { setClaimedLevel } = useLearnerProfile();
   const [selectedLevel, setSelectedLevel] = React.useState(null);
 
   const selectedLevelData = LEVELS.find((l) => l.id === selectedLevel);
 
   const handleLevelSelect = (levelId) => {
+    setClaimedLevel(levelId);
     setSelectedLevel(levelId);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

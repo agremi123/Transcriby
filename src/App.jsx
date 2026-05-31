@@ -9,6 +9,11 @@ import Pricing from './components/Pricing';
 import Faq from './components/Faq';
 import { CTABanner, Footer } from './components/Footer';
 import Dashboard from './pages/Dashboard';
+import MyExpressions from './pages/MyExpressions';
+import MyTargets from './pages/MyTargets';
+import ParisianCornerBadge from './components/ParisianCornerBadge';
+import WelcomeOnboarding from './components/WelcomeOnboarding';
+import { LearnerProfileProvider } from './context/LearnerProfileContext';
 
 function LandingPage() {
   return (
@@ -30,10 +35,16 @@ function LandingPage() {
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
+      <LearnerProfileProvider>
+        <ParisianCornerBadge />
+        <WelcomeOnboarding />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/expressions" element={<MyExpressions />} />
+          <Route path="/targets" element={<MyTargets />} />
+        </Routes>
+      </LearnerProfileProvider>
     </BrowserRouter>
   );
 }

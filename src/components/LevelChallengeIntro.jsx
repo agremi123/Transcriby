@@ -2,43 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { fetchNarratorAudio, connectNarratorSource, NARRATORS } from '../lib/narratorAudio';
 import { buildWordTimings, playDecodedBuffer } from '../lib/speechHighlight';
-import { HighlightedSpeech } from '../lib/HighlightedSpeech';
-
-function buildChallengeScript(levelId) {
-  const levelLine = {
-    A1: "Tu t'es mis débutant… intéressant.",
-    A2: "Tu prétends être élémentaire ? On va voir.",
-    B1: "B1, tu dis ? Hmm, j'ai des doutes.",
-    B2: "Upper intermediate… la barre est haute, hein.",
-    C1: "C1 ? Là, y a pas le droit à l'erreur.",
-  }[levelId] || `Tu te mets ${levelId} ? On va vérifier.`;
-
-  return [
-    {
-      narrator: 'lea',
-      text: `Salut ! Bienvenue. ${levelLine}`,
-    },
-    {
-      narrator: 'jules',
-      text: "Exactement. Léa et moi, on veut savoir si ton français est vraiment à ce niveau.",
-    },
-    {
-      narrator: 'lea',
-      text: "Parle comme un vrai Parisien, pas comme dans un manuel. Accent, rythme, naturel.",
-    },
-    {
-      narrator: 'jules',
-      text: "On est sympas… mais si tu parles mal, on te le dira cash. Pas de complaisance.",
-    },
-    {
-      narrator: 'lea',
-      text: "Allez, montre-nous ce que tu sais faire. On t'écoute.",
-    },
-  ];
-}
+import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from '../lib/siteAudio';
+import { getLevelChallengeScript } from '../lib/narratorLevelAdapt';
+import { NarratorHoverText } from '../lib/NarratorHoverText';
 
 export function LevelChallengeIntro({ levelId, levelTitle, onStart, onBack }) {
-  const lines = React.useMemo(() => buildChallengeScript(levelId), [levelId]);
+  const lines = React.useMemo(() => getLevelChallengeScript(levelId), [levelId]);
   const [lineIndex, setLineIndex] = React.useState(-1);
   const [playing, setPlaying] = React.useState(false);
   const [finished, setFinished] = React.useState(false);
@@ -62,13 +31,15 @@ export function LevelChallengeIntro({ levelId, levelTitle, onStart, onBack }) {
     clearSpeechHighlight();
   }, [clearSpeechHighlight]);
 
+  React.useEffect(() => registerSiteAudioStop(stopAudio), [stopAudio]);
+
   const invalidateSession = React.useCallback(() => {
     sessionRef.current += 1;
     stopAudio();
   }, [stopAudio]);
 
-  const playDecodedLine = React.useCallback(async (ctx, line, decoded, isActive) => {
-    if (!isActive()) return;
+  const playDecodedLine = React.useCallback(async (ctx, line, decoded, isActive, siteSession) => {
+    if (!isActive() || !isSiteAudioPlaybackCurrent(siteSession)) return;
     setSpeechText(line.text);
     setSpeechTimings(buildWordTimings(line.text, decoded.duration));
     setSpeechPlaybackTime(0);
@@ -77,6 +48,7 @@ export function LevelChallengeIntro({ levelId, levelTitle, onStart, onBack }) {
       narrator: line.narrator,
       sourceRef,
       connectSource: connectNarratorSource,
+      playbackSession: siteSession,
       onTimeUpdate: (t) => {
         if (!isActive()) return;
         setSpeechPlaybackTime(t);
@@ -86,15 +58,15 @@ export function LevelChallengeIntro({ levelId, levelTitle, onStart, onBack }) {
   }, [clearSpeechHighlight]);
 
   const runDialogue = React.useCallback(async () => {
+    const siteSession = beginSiteAudioPlayback();
     const session = sessionRef.current + 1;
     sessionRef.current = session;
-    stopAudio();
     setError(null);
     setFinished(false);
     setLineIndex(-1);
     setPlaying(true);
 
-    const isActive = () => sessionRef.current === session;
+    const isActive = () => sessionRef.current === session && isSiteAudioPlaybackCurrent(siteSession);
 
     try {
       if (!ctxRef.current) ctxRef.current = new AudioContext();
@@ -110,7 +82,7 @@ export function LevelChallengeIntro({ levelId, levelTitle, onStart, onBack }) {
         if (!isActive()) break;
         const decoded = await ctx.decodeAudioData(buf.slice(0));
         if (!isActive()) break;
-        await playDecodedLine(ctx, line, decoded, isActive);
+        await playDecodedLine(ctx, line, decoded, isActive, siteSession);
       }
 
       if (isActive()) {
@@ -125,7 +97,7 @@ export function LevelChallengeIntro({ levelId, levelTitle, onStart, onBack }) {
         setPlaying(false);
       }
     }
-  }, [lines, stopAudio, playDecodedLine, clearSpeechHighlight]);
+  }, [lines, playDecodedLine, clearSpeechHighlight]);
 
   React.useEffect(() => {
     runDialogue();
@@ -134,9 +106,12 @@ export function LevelChallengeIntro({ levelId, levelTitle, onStart, onBack }) {
 
   const activeNarrator = lineIndex >= 0 ? lines[lineIndex]?.narrator : null;
   const lastLineByNarrator = React.useMemo(() => {
-    const map = { lea: null, jules: null };
+    const map = { lea: null, jules: null, leaTranslation: null, julesTranslation: null };
     lines.forEach((line, i) => {
-      if (i <= lineIndex) map[line.narrator] = line.text;
+      if (i <= lineIndex) {
+        map[line.narrator] = line.text;
+        map[`${line.narrator}Translation`] = line.translation;
+      }
     });
     return map;
   }, [lines, lineIndex]);
@@ -176,6 +151,7 @@ export function LevelChallengeIntro({ levelId, levelTitle, onStart, onBack }) {
             const n = NARRATORS[id];
             const isActive = playing && activeNarrator === id;
             const bubbleText = lastLineByNarrator[id];
+            const bubbleTranslation = lastLineByNarrator[`${id}Translation`];
             const highlightBubble = isActive && speechText && speechText === bubbleText;
 
             return (
@@ -213,17 +189,17 @@ export function LevelChallengeIntro({ levelId, levelTitle, onStart, onBack }) {
                   }`}
                 >
                   {bubbleText ? (
-                    highlightBubble ? (
-                      <HighlightedSpeech
-                        text={bubbleText}
-                        playbackTime={speechPlaybackTime}
-                        timings={speechTimings}
-                        quote
-                        className="font-display text-[15px] leading-snug text-navy italic"
-                      />
-                    ) : (
-                      <p className="font-display text-[15px] leading-snug text-navy italic">«{bubbleText}»</p>
-                    )
+                    <NarratorHoverText
+                      text={bubbleText}
+                      translation={bubbleTranslation}
+                      quote
+                      highlightSpeech={highlightBubble}
+                      speechPlaybackTime={speechPlaybackTime}
+                      speechTimings={speechTimings}
+                      className="font-display text-[15px] leading-snug text-navy italic"
+                      wrapperClassName="relative w-full"
+                      tooltipClassName="top-[calc(100%+6px)]"
+                    />
                   ) : (
                     <p className="text-[13px] text-navy/30 italic">…</p>
                   )}

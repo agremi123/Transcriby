@@ -5,6 +5,8 @@ import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { handleElevenLabsTts } from './server/handlers.js';
 import { sendHandlerResult } from './server/node-response.js';
+import { buildCorrectionSystemPrompts } from './server/correctionPrompts.js';
+import { sanitizeParisianCorrection, parseCorrectionResponse } from './src/lib/correctionFormat.js';
 
 function readEnvFile(dir) {
   try {
@@ -73,6 +75,47 @@ function deepgramKeyMiddleware(apiKey) {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ key: apiKey }));
+  };
+}
+
+function speechmaticsKeyMiddleware(apiKey) {
+  return async (req, res, next) => {
+    if (req.url !== '/api/speechmatics/key' || req.method !== 'GET') {
+      next();
+      return;
+    }
+    if (!apiKey) {
+      res.statusCode = 500;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ error: 'SPEECHMATICS_API_KEY is not configured' }));
+      return;
+    }
+    try {
+      // Exchange the static API key for a short-lived RT JWT
+      const tokenRes = await fetch('https://mp.speechmatics.com/v1/api_keys?type=rt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({ ttl: 3600 }),
+      });
+      if (!tokenRes.ok) {
+        const err = await tokenRes.text();
+        res.statusCode = tokenRes.status;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: `Speechmatics token error: ${err}` }));
+        return;
+      }
+      const { key_value } = await tokenRes.json();
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ key: key_value }));
+    } catch (e) {
+      res.statusCode = 500;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ error: e.message }));
+    }
   };
 }
 
@@ -223,13 +266,7 @@ function correctionMiddleware(apiKey) {
       return;
     }
 
-    const sharedRules = 'STRICT RULES: (1) Return ONLY a raw JSON object — no markdown, no code fences, no notes, no explanations, nothing else. (2) Correct ONLY the user text below — same scope, same number of ideas. (3) Preserve paragraph breaks inside the corrected string using \\n\\n. (4) Also assess the CEFR level of the original spoken French (A1, A2, B1, B2, C1, or C2). Output format: {"corrected": "...", "level": "B1"}';
-    const systemPrompts = {
-      Parisien: `Tu es un Parisien de 25 ans, branchée, qui corrige le français des gens pour qu'il sonne comme un vrai jeune Parisien. Réécris la phrase pour qu'elle soit naturelle, relax et authentiquement parisienne — comme si tu l'envoyais par texto à un pote. Utilise les vraies tournures des jeunes Parisiens : supprime le "ne" dans les négations (je sais pas, j'veux pas), contracte les mots (t'as, c'est, j'suis, y'a), utilise des mots du quotidien comme "genre", "carrément", "vachement", "trop", "c'est chelou", "ça me saoule", "c'est ouf". Garde le sens original mais rends-le cool et naturel. Ne traduis pas, ne changes pas la langue. ${sharedRules}`,
-      Casual: `You are a French grammar corrector. Fix only grammar errors (verb forms, agreements) in casual spoken French. Keep the informal tone. ${sharedRules}`,
-      Standard: `You are a French grammar corrector. Fix only grammar errors (verb forms, agreements, prepositions) in spoken French. ${sharedRules}`,
-      Formal: `You are a French grammar corrector. Fix grammar errors and elevate register (formal vocabulary, no contractions) but never replace or guess words. ${sharedRules}`,
-    };
+    const systemPrompts = buildCorrectionSystemPrompts();
     const system = systemPrompts[register] || systemPrompts.Parisien;
 
     try {
@@ -242,7 +279,7 @@ function correctionMiddleware(apiKey) {
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: Math.min(1200, 180 + Math.ceil(text.length / 3)),
+          max_tokens: Math.min(1400, 240 + Math.ceil(text.length / 2.5)),
           system,
           messages: [{ role: 'user', content: text }],
         }),
@@ -251,11 +288,13 @@ function correctionMiddleware(apiKey) {
       const data = await response.json();
       let raw = data.content?.[0]?.text?.trim() || '{}';
       raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-      let corrected = extractCorrectedFromRaw(raw, text);
+      const parsed = parseCorrectionResponse(raw, text);
+      const corrected = sanitizeParisianCorrection(parsed.corrected);
+      const translation = parsed.translation;
       let level = null;
       try {
-        const parsed = JSON.parse(raw);
-        level = parsed.level || null;
+        const json = JSON.parse(raw);
+        level = json.level || null;
       } catch {
         const levelMatch = raw.match(/"level"\s*:\s*"([A-C][12])"/);
         if (levelMatch) level = levelMatch[1];
@@ -263,11 +302,11 @@ function correctionMiddleware(apiKey) {
 
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ corrected, level }));
+      res.end(JSON.stringify({ corrected, translation, level }));
     } catch {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ corrected: text, level: null }));
+      res.end(JSON.stringify({ corrected: text, translation: null, level: null }));
     }
   };
 }
@@ -555,6 +594,7 @@ export default defineConfig(() => {
         name: 'api-middleware',
         configureServer(server) {
           server.middlewares.use(deepgramKeyMiddleware(env.DEEPGRAM_API_KEY));
+          server.middlewares.use(speechmaticsKeyMiddleware(env.SPEECHMATICS_API_KEY));
           server.middlewares.use(correctionMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(interviewFeedbackMiddleware());
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
@@ -564,6 +604,7 @@ export default defineConfig(() => {
         },
         configurePreviewServer(server) {
           server.middlewares.use(deepgramKeyMiddleware(env.DEEPGRAM_API_KEY));
+          server.middlewares.use(speechmaticsKeyMiddleware(env.SPEECHMATICS_API_KEY));
           server.middlewares.use(correctionMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(interviewFeedbackMiddleware());
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));

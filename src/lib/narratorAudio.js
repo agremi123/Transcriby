@@ -1,5 +1,6 @@
 import React from 'react';
 import { buildWordTimings, playDecodedBuffer } from './speechHighlight';
+import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from './siteAudio';
 
 export const NARRATORS = {
   lea: { id: 'lea', name: 'Léa', src: '/assets/lea.png' },
@@ -68,13 +69,14 @@ export async function fetchNarratorAudio(text, narrator) {
   return buf;
 }
 
-function playBuffer(ctx, sourceRef, buffer, narrator, onSpeechTick) {
+function playBuffer(ctx, sourceRef, buffer, narrator, onSpeechTick, playbackSession) {
   return playDecodedBuffer(ctx, {
     buffer,
     narrator,
     sourceRef,
     connectSource: connectNarratorSource,
     onTimeUpdate: onSpeechTick,
+    playbackSession,
   });
 }
 
@@ -114,13 +116,15 @@ export function useNarratorDialogue() {
     clearSpeechHighlight();
   }, [clearSpeechHighlight]);
 
+  React.useEffect(() => registerSiteAudioStop(stopAudio), [stopAudio]);
+
   const invalidateSession = React.useCallback(() => {
     sessionRef.current += 1;
     stopAudio();
   }, [stopAudio]);
 
-  const playDecodedLine = React.useCallback(async (ctx, line, decoded, isActive) => {
-    if (!isActive()) return;
+  const playDecodedLine = React.useCallback(async (ctx, line, decoded, isActive, siteSession) => {
+    if (!isActive() || !isSiteAudioPlaybackCurrent(siteSession)) return;
     setSpeechText(line.text);
     setSpeechTimings(buildWordTimings(line.text, decoded.duration));
     setSpeechPlaybackTime(0);
@@ -128,19 +132,19 @@ export function useNarratorDialogue() {
       if (!isActive()) return;
       setSpeechPlaybackTime(t);
       if (t == null) clearSpeechHighlight();
-    });
+    }, siteSession);
   }, [clearSpeechHighlight]);
 
   const playLines = React.useCallback(async (scriptLines) => {
+    const siteSession = beginSiteAudioPlayback();
     const session = sessionRef.current + 1;
     sessionRef.current = session;
-    stopAudio();
     setError(null);
     setLines(scriptLines);
     setLineIndex(-1);
     setPlaying(true);
 
-    const isActive = () => sessionRef.current === session;
+    const isActive = () => sessionRef.current === session && isSiteAudioPlaybackCurrent(siteSession);
 
     try {
       if (!ctxRef.current) ctxRef.current = new AudioContext();
@@ -157,7 +161,7 @@ export function useNarratorDialogue() {
         if (!isActive()) return false;
         const decoded = await ctx.decodeAudioData(buf.slice(0));
         if (!isActive()) return false;
-        await playDecodedLine(ctx, line, decoded, isActive);
+        await playDecodedLine(ctx, line, decoded, isActive, siteSession);
       }
 
       return isActive();
@@ -170,20 +174,20 @@ export function useNarratorDialogue() {
         setPlaying(false);
       }
     }
-  }, [stopAudio, rememberSpokenLine, playDecodedLine, clearSpeechHighlight]);
+  }, [rememberSpokenLine, playDecodedLine, clearSpeechHighlight]);
 
   const replayNarratorLine = React.useCallback(async (narratorId) => {
     const line = scriptLineByNarratorRef.current[narratorId];
     if (!line) return;
 
+    const siteSession = beginSiteAudioPlayback();
     const session = sessionRef.current + 1;
     sessionRef.current = session;
-    stopAudio();
     setError(null);
     setReplayNarrator(narratorId);
     setPlaying(true);
 
-    const isActive = () => sessionRef.current === session;
+    const isActive = () => sessionRef.current === session && isSiteAudioPlaybackCurrent(siteSession);
 
     try {
       if (!ctxRef.current) ctxRef.current = new AudioContext();
@@ -195,7 +199,7 @@ export function useNarratorDialogue() {
       if (!isActive()) return;
       const decoded = await ctx.decodeAudioData(buf.slice(0));
       if (!isActive()) return;
-      await playDecodedLine(ctx, line, decoded, isActive);
+      await playDecodedLine(ctx, line, decoded, isActive, siteSession);
     } catch {
       if (isActive()) setError('Audio unavailable — read the text on screen.');
     } finally {
@@ -205,20 +209,20 @@ export function useNarratorDialogue() {
         setPlaying(false);
       }
     }
-  }, [stopAudio, playDecodedLine, clearSpeechHighlight]);
+  }, [playDecodedLine, clearSpeechHighlight]);
 
   /** Play one line aloud without updating portrait bubble text. */
   const playNarratorLineAudioOnly = React.useCallback(async (line) => {
     if (!line?.text || !line?.narrator) return;
 
+    const siteSession = beginSiteAudioPlayback();
     const session = sessionRef.current + 1;
     sessionRef.current = session;
-    stopAudio();
     setError(null);
     setReplayNarrator(line.narrator);
     setPlaying(true);
 
-    const isActive = () => sessionRef.current === session;
+    const isActive = () => sessionRef.current === session && isSiteAudioPlaybackCurrent(siteSession);
 
     try {
       if (!ctxRef.current) ctxRef.current = new AudioContext();
@@ -230,7 +234,7 @@ export function useNarratorDialogue() {
       if (!isActive()) return;
       const decoded = await ctx.decodeAudioData(buf.slice(0));
       if (!isActive()) return;
-      await playDecodedLine(ctx, line, decoded, isActive);
+      await playDecodedLine(ctx, line, decoded, isActive, siteSession);
     } catch {
       if (isActive()) setError('Audio unavailable — read the text on screen.');
     } finally {
@@ -240,7 +244,7 @@ export function useNarratorDialogue() {
         setPlaying(false);
       }
     }
-  }, [stopAudio, playDecodedLine, clearSpeechHighlight]);
+  }, [playDecodedLine, clearSpeechHighlight]);
 
   React.useEffect(() => () => invalidateSession(), [invalidateSession]);
 

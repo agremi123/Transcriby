@@ -1,15 +1,22 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useDeepgramTranscription } from '../hooks/useDeepgramTranscription';
+import { useSpeechmaticsTranscription } from '../hooks/useSpeechmaticsTranscription';
 import { NARRATORS, useNarratorDialogue } from '../lib/narratorAudio';
 import { HighlightedSpeech } from '../lib/HighlightedSpeech';
+import { NarratorHoverText } from '../lib/NarratorHoverText';
+import { lookupNarratorTranslation } from '../lib/narratorTranslations';
 import { getQuestionFeedbackLines, mergeInterviewFeedback } from '../data/interviewFeedback';
 import {
+  buildCorrectionNarrationText,
   extractCorrectedFromRaw,
   prepareCorrectionForDisplay,
   splitCorrectionParagraphs,
 } from '../lib/correctionFormat';
+import { registerCorrectionKeyterms } from '../lib/deepgramKeyterms';
 import { detectLearnerGenderFromFrench, normalizeLearnerGender } from '../lib/learnerGender';
+import { useLearnerProfile } from '../context/LearnerProfileContext';
+import { getEffectiveLevel } from '../lib/learnerProfile';
+import { Logo } from './atoms';
 
 const PARISIAN_MASCOTS = {
   woman: '/assets/parisian-woman.png',
@@ -164,12 +171,12 @@ function normalizeForCompare(text) {
   return text.trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
-async function assessAnswer(text) {
+async function assessAnswer(text, learnerLevel) {
   try {
     const res = await fetch('/api/correct', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, assessOnly: true }),
+      body: JSON.stringify({ text, assessOnly: true, learnerLevel }),
     });
     const data = await res.json();
     return data.level || null;
@@ -178,19 +185,24 @@ async function assessAnswer(text) {
   }
 }
 
-async function fetchCorrection(text) {
+async function fetchCorrection(text, learnerLevel) {
   try {
     const res = await fetch('/api/correct', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, register: 'Parisien' }),
+      body: JSON.stringify({ text, register: 'Parisien', learnerLevel }),
     });
     const data = await res.json();
     const raw = data.corrected?.trim() || text.trim();
     const extracted = extractCorrectedFromRaw(raw, text.trim());
-    return prepareCorrectionForDisplay(text, extracted);
+    const display = prepareCorrectionForDisplay(text, extracted);
+    registerCorrectionKeyterms(text, display);
+    return {
+      corrected: display,
+      translation: data.translation?.trim() || null,
+    };
   } catch {
-    return text.trim();
+    return { corrected: text.trim(), translation: null };
   }
 }
 
@@ -204,7 +216,11 @@ function buildCorrectionPlayLine(original, corrected, questionIndex) {
   if (normalizeForCompare(orig) === normalizeForCompare(corr)) {
     return scriptLine('lea', "Grammaticalement, celle-là elle passe. Rien à redire.", 'Grammar-wise, that one works. Nothing to fix.');
   }
-  return scriptLine(getCorrectionReader(questionIndex), corr, 'The Parisian version.');
+  return scriptLine(
+    getCorrectionReader(questionIndex),
+    buildCorrectionNarrationText(orig, corr),
+    'The Parisian correction.',
+  );
 }
 
 function buildReadyFeedback(answer) {
@@ -340,12 +356,13 @@ async function fetchInterviewReport(answers, levelId, assessments) {
     const res = await fetch('/api/correct', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text: combined,
-        assessOnly: true,
-        interviewReport: true,
-        claimedLevel: levelId,
-      }),
+        body: JSON.stringify({
+          text: combined,
+          assessOnly: true,
+          interviewReport: true,
+          claimedLevel: levelId,
+          learnerLevel: levelId,
+        }),
     });
     const data = await res.json();
     const strengths = (data.strengths || []).map((t) => ({
@@ -455,37 +472,32 @@ function TraitGaugeRow({ label, hint, score, tone = 'neutral', levelId }) {
   );
 }
 
-function FrenchQuote({ text, className, highlightSpeech, playbackTime, timings, speechText }) {
+function FrenchQuote({ text, translation, className, highlightSpeech, playbackTime, timings, speechText }) {
   const paragraphs = splitCorrectionParagraphs(text);
 
   if (highlightSpeech && speechText) {
     return (
-      <HighlightedSpeech
+      <NarratorHoverText
         text={text.replace(/\n\n+/g, ' ')}
-        playbackTime={playbackTime}
-        timings={timings}
+        translation={translation}
+        highlightSpeech
+        speechPlaybackTime={playbackTime}
+        speechTimings={timings}
         quote
         className={className}
+        wrapperClassName="relative w-full min-w-0"
       />
     );
   }
 
   return (
-    <p className={className}>
-      «
-      {paragraphs.map((paragraph, index) => (
-        <React.Fragment key={index}>
-          {index > 0 ? (
-            <>
-              <br />
-              <br />
-            </>
-          ) : null}
-          {paragraph}
-        </React.Fragment>
-      ))}
-      »
-    </p>
+    <NarratorHoverText
+      text={paragraphs.join('\n\n')}
+      translation={translation}
+      quote
+      className={className}
+      wrapperClassName="relative w-full min-w-0"
+    />
   );
 }
 
@@ -622,6 +634,7 @@ function FrenchOpinionReport({
 function CorrectionPanel({
   original,
   corrected,
+  correctedTranslation,
   questionIndex,
   onPlay,
   playing,
@@ -652,19 +665,20 @@ function CorrectionPanel({
       <div className="px-3 py-3 space-y-2">
         {same ? (
           <div className="flex items-start gap-2.5">
-            {highlightSpeech ? (
-              <HighlightedSpeech
-                text={speechText}
-                playbackTime={speechPlaybackTime}
-                timings={speechTimings}
-                quote
-                className="font-display text-[14px] text-navy/65 italic flex-1"
-              />
-            ) : (
-              <p className="font-display text-[14px] text-navy/65 italic flex-1">
-                Rien à corriger, Léa valide celle-là.
-              </p>
-            )}
+            <NarratorHoverText
+              text={highlightSpeech ? speechText : 'Rien à corriger, Léa valide celle-là.'}
+              translation={
+                highlightSpeech
+                  ? lookupNarratorTranslation(speechText)
+                  : 'Nothing to fix — Léa approves that one.'
+              }
+              highlightSpeech={highlightSpeech}
+              speechPlaybackTime={speechPlaybackTime}
+              speechTimings={speechTimings}
+              quote={highlightSpeech}
+              className="font-display text-[14px] text-navy/65 italic flex-1"
+              wrapperClassName="relative flex-1 min-w-0"
+            />
             <button
               type="button"
               onClick={onPlay}
@@ -696,6 +710,7 @@ function CorrectionPanel({
               <div className="flex items-start gap-2.5">
                 <FrenchQuote
                   text={displayCorrected}
+                  translation={correctedTranslation}
                   highlightSpeech={highlightSpeech}
                   playbackTime={speechPlaybackTime}
                   timings={speechTimings}
@@ -814,17 +829,14 @@ function QuestionCard({ label, question, translation, step, total }) {
           )}
         </div>
         <div className="max-h-[min(30dvh,168px)] overflow-y-auto scroll-premium pr-0.5 -mr-0.5">
-          <p
-            lang="fr"
+          <NarratorHoverText
+            text={question}
+            translation={translation}
+            quote={false}
             className={`font-display text-navy break-words [overflow-wrap:anywhere] ${sizes.question}`}
-          >
-            {question}
-          </p>
-          {translation && (
-            <p className={`mt-1.5 text-navy/45 break-words [overflow-wrap:anywhere] ${sizes.translation}`}>
-              {translation}
-            </p>
-          )}
+            wrapperClassName="relative w-full min-w-0"
+            tooltipClassName="top-[calc(100%+6px)] text-[11px] sm:text-[12px]"
+          />
         </div>
       </div>
     </div>
@@ -990,7 +1002,7 @@ function NarratorLinePlayButton({ onClick, label, visible = true }) {
       onClick={onClick}
       tabIndex={visible ? 0 : -1}
       aria-hidden={!visible}
-      className={`w-7 h-7 rounded-full border border-wine/25 inline-flex items-center justify-center text-wine hover:bg-wine/5 transition-opacity ${
+      className={`shrink-0 w-7 h-7 rounded-full border border-wine/25 inline-flex items-center justify-center text-wine hover:bg-wine/5 transition-opacity -translate-y-px ${
         visible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
       }`}
       aria-label={label}
@@ -1047,29 +1059,20 @@ function NarratorPair({
             </div>
             <span className="font-display text-[14px] sm:text-[15px] text-navy">{n.name}</span>
             {bubbleText && (
-              <div className="group relative w-full max-w-[min(100%,240px)] px-1">
-                <div className="grid grid-cols-[28px_1fr_28px] items-start gap-0.5 w-full">
-                  <div aria-hidden className="w-7" />
-                  {highlightBubble ? (
-                    <HighlightedSpeech
+              <div className="w-full max-w-[min(100%,240px)] px-1">
+                <div className="flex justify-center w-full min-w-0">
+                  <div className="inline-flex items-center gap-3.5 max-w-full min-w-0">
+                    <NarratorHoverText
                       text={bubbleText}
-                      playbackTime={speechPlaybackTime}
-                      timings={speechTimings}
+                      translation={bubbleTranslation}
                       quote
-                      className={`font-display text-[14px] sm:text-[15px] leading-[1.35] text-navy/70 italic break-words text-center min-w-0 ${
-                        bubbleTranslation ? 'cursor-help underline decoration-wine/20 decoration-dotted underline-offset-2' : ''
-                      }`}
+                      highlightSpeech={highlightBubble}
+                      speechPlaybackTime={speechPlaybackTime}
+                      speechTimings={speechTimings}
+                      className="font-display text-[14px] sm:text-[15px] leading-[1.35] text-navy/70 italic break-words text-center min-w-0"
+                      wrapperClassName="relative min-w-0"
+                      tooltipClassName="top-[calc(100%+6px)] text-[11px] sm:text-[12px]"
                     />
-                  ) : (
-                    <p
-                      className={`font-display text-[14px] sm:text-[15px] leading-[1.35] text-navy/70 italic break-words text-center min-w-0 ${
-                        bubbleTranslation ? 'cursor-help underline decoration-wine/20 decoration-dotted underline-offset-2' : ''
-                      }`}
-                    >
-                      «{bubbleText}»
-                    </p>
-                  )}
-                  <div className="w-7 h-7 flex items-start justify-center pt-0.5">
                     <NarratorLinePlayButton
                       onClick={() => onReplay?.(id)}
                       label={`Replay ${n.name}`}
@@ -1077,14 +1080,6 @@ function NarratorPair({
                     />
                   </div>
                 </div>
-                {bubbleTranslation && (
-                  <p
-                    role="tooltip"
-                    className="absolute left-1/2 top-[calc(100%+6px)] z-30 w-max max-w-[min(240px,calc(100vw-3rem))] -translate-x-1/2 rounded-lg border border-line/60 bg-paper px-2.5 py-2 text-[11px] sm:text-[12px] leading-snug text-navy/70 shadow-md opacity-0 invisible transition-opacity duration-200 group-hover:opacity-100 group-hover:visible pointer-events-none text-center"
-                  >
-                    {bubbleTranslation}
-                  </p>
-                )}
               </div>
             )}
           </div>
@@ -1104,9 +1099,12 @@ function DashboardFrame({ children, levelId }) {
       <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[min(92vw,680px)] h-[280px] rounded-full bg-wine/[0.04] blur-3xl pointer-events-none" />
 
       <div className="relative max-w-[680px] mx-auto flex flex-col flex-1 min-h-0 w-full">
-        <p className="text-center text-[10px] tracking-[0.22em] uppercase text-wine font-semibold mb-2 shrink-0">
-          Parisian test · {levelId}
-        </p>
+        <div className="flex items-center justify-between gap-4 mb-2 shrink-0">
+          <Logo className="shrink-0" />
+          <p className="text-[10px] tracking-[0.22em] uppercase text-wine font-semibold text-right">
+            Parisian test · {levelId}
+          </p>
+        </div>
 
         <div className="relative flex flex-col flex-1 min-h-0">
           <div className="absolute -inset-[1px] rounded-[24px] sm:rounded-[28px] bg-gradient-to-br from-wine/25 via-line/30 to-navy/15" />
@@ -1124,6 +1122,8 @@ function DashboardFrame({ children, levelId }) {
 }
 
 export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
+  const { effectiveLevel, mergeInterviewReport, recordSample } = useLearnerProfile();
+  const learnerLevel = getEffectiveLevel({ assessedLevel: null, claimedLevel: levelId }) || effectiveLevel;
   const [phase, setPhase] = React.useState('intro');
   const [questionIndex, setQuestionIndex] = React.useState(0);
   const [writeText, setWriteText] = React.useState('');
@@ -1149,7 +1149,7 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
     start,
     stop,
     reset,
-  } = useDeepgramTranscription();
+  } = useSpeechmaticsTranscription();
 
   const utterancesRef = React.useRef(utterances);
   const settledRef = React.useRef(settledText);
@@ -1295,9 +1295,9 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
       return;
     }
 
-    const corrected = await fetchCorrection(trimmed);
+    const { corrected, translation } = await fetchCorrection(trimmed, learnerLevel);
     const hasMistake = hasParisianMistake(trimmed, corrected);
-    const assessed = await assessAnswer(trimmed);
+    const assessed = await assessAnswer(trimmed, learnerLevel);
     const feedbackLines = linesFromFeedback(
       getQuestionFeedbackLines(feedbackStore, currentQuestion.id, hasMistake),
     );
@@ -1307,6 +1307,7 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
     setLastFeedback({
       original: trimmed,
       corrected,
+      translation,
       hasMistake,
       assessedLevel: assessed,
       correctionShown: false,
@@ -1315,6 +1316,7 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
     setFeedbackReady(true);
 
     await playLines(feedbackLines);
+    recordSample(trimmed);
     setSubmitting(false);
   };
 
@@ -1346,8 +1348,8 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
       return;
     }
     setCorrecting(true);
-    const corrected = await fetchCorrection(lastFeedback.original);
-    setLastFeedback((prev) => ({ ...prev, corrected, correctionShown: true }));
+    const { corrected, translation } = await fetchCorrection(lastFeedback.original, learnerLevel);
+    setLastFeedback((prev) => ({ ...prev, corrected, translation, correctionShown: true }));
     setCorrecting(false);
   };
 
@@ -1364,8 +1366,9 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
     setReportLoading(true);
     const report = await fetchInterviewReport(answerList, levelId, levelAssessments);
     setInterviewReport(report);
+    mergeInterviewReport(report, levelId);
     setReportLoading(false);
-  }, [levelId]);
+  }, [levelId, mergeInterviewReport]);
 
   const handleContinue = async () => {
     if (playing || correcting) return;
@@ -1427,11 +1430,8 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
         Admin skip
       </button>
       <div className="text-center mb-3 shrink-0">
-        <h2 className="font-display text-[24px] sm:text-[28px] leading-[1.1] text-navy">
-          Léa & Jules · <span className="italic text-wine">interview</span>
-        </h2>
-        <p className="mt-1 text-[12px] sm:text-[13px] text-navy/55 max-w-[440px] mx-auto line-clamp-2">
-          You claimed <span className="font-medium text-navy">{levelTitle}</span>. Speak or write in French, they'll tell you what they think.
+        <p className="text-[12px] sm:text-[13px] text-navy/55 max-w-[440px] mx-auto line-clamp-2">
+          You claimed <span className="font-medium text-navy">{levelTitle}</span>. Speak or write in French — we&apos;ll tell you what we think.
         </p>
       </div>
 
@@ -1554,6 +1554,7 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
                   <CorrectionPanel
                     original={lastFeedback.original}
                     corrected={lastFeedback.corrected}
+                    correctedTranslation={lastFeedback.translation}
                     questionIndex={questionIndex}
                     onPlay={handlePlayCorrection}
                     playing={playing}

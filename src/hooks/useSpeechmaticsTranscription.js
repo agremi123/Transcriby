@@ -1,134 +1,347 @@
 import React from 'react';
 
-const SpeechRecognitionAPI =
-  typeof window !== 'undefined'
-    ? window.SpeechRecognition || window.webkitSpeechRecognition
-    : null;
+// Speechmatics Real-Time API — preserves casual/spoken French verbatim
+const SM_URL = 'wss://eu2.rt.speechmatics.com/v2';
+const FINAL_TRANSCRIPT_FLUSH_MS = 700;
+
+function wait(ms) {
+  return new Promise((resolve) => { window.setTimeout(resolve, ms); });
+}
+
+// Join Speechmatics results respecting punctuation (no space before , . ! ? etc.)
+function joinResults(results) {
+  let out = '';
+  for (const r of results) {
+    const content = r.alternatives?.[0]?.content ?? '';
+    if (!content) continue;
+    const isPunct = r.type === 'punctuation' || /^[.,!?;:»)}\]]+$/.test(content);
+    out = isPunct ? out + content : out ? out + ' ' + content : content;
+  }
+  return out.trim();
+}
+
+function ingestTranscriptWords(words, results) {
+  for (const r of results ?? []) {
+    const content = r.alternatives?.[0]?.content ?? '';
+    if (!content) continue;
+
+    if (r.type === 'punctuation') {
+      const last = words[words.length - 1];
+      if (last) last.punctuated_word = (last.punctuated_word ?? last.word) + content;
+      continue;
+    }
+
+    if (r.type !== 'word') continue;
+
+    words.push({
+      word: content,
+      punctuated_word: content,
+      start: r.start_time ?? 0,
+      end: r.end_time ?? r.start_time ?? 0,
+    });
+  }
+}
+
+function endsWithSentencePunctuation(text) {
+  return /[.!?,;:»)]$/.test(String(text || '').trim());
+}
+
+function ensureSentenceEnd(text) {
+  const trimmed = String(text || '').trim();
+  if (!trimmed) return trimmed;
+  return endsWithSentencePunctuation(trimmed) ? trimmed : `${trimmed}.`;
+}
+
+function appendPeriodToWords(words) {
+  if (!words.length) return;
+  const last = words[words.length - 1];
+  const visible = last.punctuated_word ?? last.word;
+  if (endsWithSentencePunctuation(visible)) return;
+  last.punctuated_word = `${visible}.`;
+}
 
 export function useSpeechmaticsTranscription() {
-  const recognitionRef = React.useRef(null);
+  const wsRef = React.useRef(null);
   const mediaRecorderRef = React.useRef(null);
   const audioChunksRef = React.useRef([]);
   const audioBlobUrlRef = React.useRef(null);
   const streamRef = React.useRef(null);
   const activeRef = React.useRef(false);
-  const accumulatedRef = React.useRef('');
+  const currentUtteranceRef = React.useRef('');
+  const currentWordsRef = React.useRef([]);
+  const utteranceStartRef = React.useRef(null);
+  const lastPartialRef = React.useRef('');
+  const settledTextRef = React.useRef('');
+  const partialTranscriptRef = React.useRef('');
+  const sessionOptionsRef = React.useRef({});
+  const stopInFlightRef = React.useRef(null);
 
-  const [finalTranscript, setFinalTranscript] = React.useState('');
+  // Pre-warm: fetch key + mic in background on mount
+  const cachedKeyRef = React.useRef(null);
+  const prewarmStreamRef = React.useRef(null);
+
+  React.useEffect(() => {
+    fetch('/api/speechmatics/key')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.key) cachedKeyRef.current = data.key; })
+      .catch(() => {});
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => { prewarmStreamRef.current = stream; })
+      .catch(() => {});
+
+    return () => {
+      if (prewarmStreamRef.current) {
+        prewarmStreamRef.current.getTracks().forEach(t => t.stop());
+        prewarmStreamRef.current = null;
+      }
+    };
+  }, []);
+
+  const [utterances, setUtterances] = React.useState([]);
   const [partialTranscript, setPartialTranscript] = React.useState('');
+  const [settledText, setSettledText] = React.useState('');
   const [status, setStatus] = React.useState('idle');
   const [error, setError] = React.useState(null);
   const [audioUrl, setAudioUrl] = React.useState(null);
 
-  const stop = React.useCallback(() => {
-    activeRef.current = false;
-
-    const recognition = recognitionRef.current;
-    recognitionRef.current = null;
-    if (recognition) {
-      try { recognition.abort(); } catch {}
-    }
-
-    const mr = mediaRecorderRef.current;
-    mediaRecorderRef.current = null;
-    if (mr && mr.state !== 'inactive') {
-      mr.addEventListener('stop', () => {
-        if (audioChunksRef.current.length === 0) return;
-        if (audioBlobUrlRef.current) URL.revokeObjectURL(audioBlobUrlRef.current);
-        const blob = new Blob(audioChunksRef.current, { type: mr.mimeType || 'audio/webm' });
-        const url = URL.createObjectURL(blob);
-        audioBlobUrlRef.current = url;
-        setAudioUrl(url);
-      }, { once: true });
-      mr.stop();
-    }
-
-    const stream = streamRef.current;
-    streamRef.current = null;
-    if (stream) stream.getTracks().forEach((t) => t.stop());
-
-    setStatus('idle');
-    setPartialTranscript('');
+  const notifySpeechFinal = React.useCallback((text) => {
+    const options = sessionOptionsRef.current;
+    if (!options.onSpeechFinal || !activeRef.current || options.speechFinalFired) return;
+    const trimmed = String(text || '').trim();
+    if (!trimmed) return;
+    options.speechFinalFired = true;
+    options.onSpeechFinal(trimmed);
   }, []);
 
-  const start = React.useCallback(async () => {
+  const stop = React.useCallback(() => {
+    const finalizeStop = async () => {
+      activeRef.current = false;
+      sessionOptionsRef.current = {};
+
+      const ws = wsRef.current;
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        try { ws.send(JSON.stringify({ message: 'EndOfStream', last_seq_no: 0 })); } catch {}
+      }
+
+      const mr = mediaRecorderRef.current;
+      mediaRecorderRef.current = null;
+
+      let sessionAudioUrl = null;
+      if (mr && mr.state !== 'inactive') {
+        sessionAudioUrl = await new Promise((resolve) => {
+          mr.addEventListener('stop', () => {
+            if (audioChunksRef.current.length === 0) {
+              resolve(null);
+              return;
+            }
+            if (audioBlobUrlRef.current) URL.revokeObjectURL(audioBlobUrlRef.current);
+            const blob = new Blob(audioChunksRef.current, { type: mr.mimeType || 'audio/webm' });
+            resolve(URL.createObjectURL(blob));
+          }, { once: true });
+          mr.stop();
+        });
+      }
+
+      if (sessionAudioUrl) {
+        audioBlobUrlRef.current = sessionAudioUrl;
+        setAudioUrl(sessionAudioUrl);
+      }
+
+      const stream = streamRef.current;
+      streamRef.current = null;
+      if (stream) stream.getTracks().forEach(t => t.stop());
+
+      // Keep the socket open briefly so final AddTranscript messages can land.
+      if (ws) await wait(FINAL_TRANSCRIPT_FLUSH_MS);
+      if (wsRef.current === ws) {
+        wsRef.current = null;
+        if (ws.readyState === WebSocket.OPEN) ws.close();
+      }
+
+      const confirmed = currentUtteranceRef.current.trim();
+      const partial = lastPartialRef.current.trim();
+      let leftover = partial.length > confirmed.length ? partial : confirmed;
+      if (!leftover) {
+        leftover = [settledTextRef.current, partialTranscriptRef.current].filter(Boolean).join(' ').trim();
+      }
+      const startTime = utteranceStartRef.current ?? 0;
+
+      currentUtteranceRef.current = '';
+      utteranceStartRef.current = null;
+      lastPartialRef.current = '';
+      settledTextRef.current = '';
+      partialTranscriptRef.current = '';
+
+      if (leftover) {
+        const needsPeriod = !endsWithSentencePunctuation(leftover);
+        const text = ensureSentenceEnd(leftover);
+        const words = [...currentWordsRef.current];
+        if (needsPeriod) appendPeriodToWords(words);
+        const utteranceStart = words[0]?.start ?? startTime;
+        const utteranceEnd = words[words.length - 1]?.end ?? utteranceStart;
+        setSettledText('');
+        setUtterances(prev => [...prev, {
+          id: Date.now() + Math.random(),
+          text,
+          startTime: utteranceStart,
+          endTime: utteranceEnd,
+          words,
+          audioUrl: sessionAudioUrl,
+        }]);
+      }
+
+      currentWordsRef.current = [];
+      setStatus('idle');
+      setPartialTranscript('');
+    };
+
+    return stopInFlightRef.current ?? (stopInFlightRef.current = finalizeStop().finally(() => {
+      stopInFlightRef.current = null;
+    }));
+  }, []);
+
+  const start = React.useCallback(async (options = {}) => {
     if (activeRef.current) return;
 
-    if (!SpeechRecognitionAPI) {
-      setError('Speech recognition requires Chrome or Edge.');
-      return;
-    }
+    sessionOptionsRef.current = { speechFinalFired: false, ...options };
 
     setError(null);
-    setFinalTranscript('');
-    setPartialTranscript('');
     setAudioUrl(null);
     audioChunksRef.current = [];
-    accumulatedRef.current = '';
+    currentUtteranceRef.current = '';
+    currentWordsRef.current = [];
+    utteranceStartRef.current = null;
+    settledTextRef.current = '';
+    partialTranscriptRef.current = '';
     setStatus('connecting');
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const [key, stream] = await Promise.all([
+        cachedKeyRef.current
+          ? Promise.resolve(cachedKeyRef.current)
+          : fetch('/api/speechmatics/key').then(async r => {
+              const data = await r.json().catch(() => ({}));
+              if (!r.ok) throw new Error(data.error || 'Failed to get Speechmatics API key');
+              if (!data?.key) throw new Error('Speechmatics API key missing — add SPEECHMATICS_API_KEY to .env');
+              return data.key;
+            }),
+        prewarmStreamRef.current
+          ? Promise.resolve(prewarmStreamRef.current)
+          : navigator.mediaDevices.getUserMedia({ audio: true }),
+      ]);
+
+      prewarmStreamRef.current = null;
+      cachedKeyRef.current = null;
+      fetch('/api/speechmatics/key')
+        .then(r => r.ok ? r.json() : null)
+        .then(data => { if (data?.key) cachedKeyRef.current = data.key; })
+        .catch(() => {});
+
       streamRef.current = stream;
 
-      // Audio recording for playback
-      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-        ? 'audio/webm;codecs=opus'
-        : MediaRecorder.isTypeSupported('audio/webm')
-          ? 'audio/webm'
-          : '';
-      const mr = mimeType
-        ? new MediaRecorder(stream, { mimeType })
-        : new MediaRecorder(stream);
-      mediaRecorderRef.current = mr;
-      mr.addEventListener('dataavailable', (e) => {
-        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      const ws = await new Promise((resolve, reject) => {
+        const socket = new WebSocket(`${SM_URL}?jwt=${key}`);
+        let settled = false;
+        const finish = (fn, val) => { if (!settled) { settled = true; fn(val); } };
+        socket.onopen = () => finish(resolve, socket);
+        socket.onerror = () => finish(reject, new Error('Connection to Speechmatics failed. Check your API key.'));
+        socket.onclose = e => finish(reject, new Error(`Speechmatics disconnected (${e.code}).`));
       });
-      mr.start();
 
-      // Web Speech API — more phonetic, less language-model "correction"
-      const recognition = new SpeechRecognitionAPI();
-      recognitionRef.current = recognition;
-      recognition.lang = 'fr-FR';
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.maxAlternatives = 1;
-
-      recognition.onresult = (event) => {
-        let interim = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const result = event.results[i];
-          if (result.isFinal) {
-            accumulatedRef.current += result[0].transcript;
-            setFinalTranscript(accumulatedRef.current);
-            setPartialTranscript('');
-          } else {
-            interim += result[0].transcript;
-            setPartialTranscript(interim);
-          }
-        }
-      };
-
-      recognition.onerror = (event) => {
-        if (event.error === 'aborted' || event.error === 'no-speech') return;
-        setError(
-          event.error === 'not-allowed'
-            ? 'Allow microphone access in your browser to continue.'
-            : `Recognition error: ${event.error}`,
-        );
-        stop();
-      };
-
-      // Web Speech stops automatically after silence — restart while active
-      recognition.onend = () => {
-        if (activeRef.current && recognitionRef.current === recognition) {
-          try { recognition.start(); } catch {}
-        }
-      };
-
-      recognition.start();
+      wsRef.current = ws;
       activeRef.current = true;
-      setStatus('recording');
+
+      // Send StartRecognition config
+      ws.send(JSON.stringify({
+        message: 'StartRecognition',
+        audio_format: {
+          type: 'file',
+        },
+        transcription_config: {
+          language: 'fr',
+          enable_partials: true,
+          max_delay: 1,
+          max_delay_mode: 'flexible',
+          operating_point: 'enhanced',
+        },
+      }));
+
+      ws.onclose = event => {
+        if (!activeRef.current) return;
+        if (event.code !== 1000 && event.code !== 1001) {
+          setError(`Speechmatics disconnected (${event.code}).`);
+          stop();
+        }
+      };
+
+      ws.onmessage = event => {
+        try {
+          const data = JSON.parse(event.data);
+
+          if (data.message === 'RecognitionStarted') {
+            // Now safe to start sending audio
+            setStatus('recording');
+
+            const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+              ? 'audio/webm;codecs=opus'
+              : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '';
+            const mr = mimeType
+              ? new MediaRecorder(stream, { mimeType })
+              : new MediaRecorder(stream);
+            mediaRecorderRef.current = mr;
+
+            mr.addEventListener('dataavailable', e => {
+              if (e.data.size > 0) {
+                audioChunksRef.current.push(e.data);
+                if (ws.readyState === WebSocket.OPEN) ws.send(e.data);
+              }
+            });
+            mr.start(100);
+            return;
+          }
+
+          if (data.message === 'AddPartialTranscript') {
+            const partial = joinResults(data.results ?? []);
+            if (!partial) return;
+            if (utteranceStartRef.current === null) utteranceStartRef.current = data.results?.[0]?.start_time ?? 0;
+            // partialTranscript is ONLY the new unstable words — settled text is shown separately
+            lastPartialRef.current = currentUtteranceRef.current
+              ? currentUtteranceRef.current + ' ' + partial
+              : partial;
+            setSettledText(currentUtteranceRef.current);
+            setPartialTranscript(partial);
+            settledTextRef.current = currentUtteranceRef.current;
+            partialTranscriptRef.current = partial;
+            return;
+          }
+
+          if (data.message === 'AddTranscript') {
+            const transcript = joinResults(data.results ?? []);
+            if (!transcript) return;
+            if (utteranceStartRef.current === null) utteranceStartRef.current = data.results?.[0]?.start_time ?? 0;
+            ingestTranscriptWords(currentWordsRef.current, data.results);
+
+            // Accumulate — don't push utterance yet, wait until stop()
+            currentUtteranceRef.current = currentUtteranceRef.current
+              ? currentUtteranceRef.current + ' ' + transcript
+              : transcript;
+
+            lastPartialRef.current = '';
+            setSettledText(currentUtteranceRef.current);
+            setPartialTranscript('');
+            settledTextRef.current = currentUtteranceRef.current;
+            partialTranscriptRef.current = '';
+            return;
+          }
+
+          if (data.message === 'Error') {
+            setError(data.reason || 'Speechmatics error.');
+            stop();
+          }
+        } catch {}
+      };
+
     } catch (err) {
       setError(
         err.name === 'NotAllowedError'
@@ -136,9 +349,10 @@ export function useSpeechmaticsTranscription() {
           : err.message || 'Unable to start recording',
       );
       setStatus('idle');
+      activeRef.current = false;
       stop();
     }
-  }, [stop]);
+  }, [stop, notifySpeechFinal]);
 
   React.useEffect(
     () => () => {
@@ -148,15 +362,38 @@ export function useSpeechmaticsTranscription() {
     [stop],
   );
 
+  const reset = React.useCallback(() => {
+    stop();
+    setUtterances((prev) => {
+      prev.forEach((u) => {
+        if (u.audioUrl) URL.revokeObjectURL(u.audioUrl);
+      });
+      return [];
+    });
+    setPartialTranscript('');
+    setSettledText('');
+    setAudioUrl(null);
+    if (audioBlobUrlRef.current) {
+      URL.revokeObjectURL(audioBlobUrlRef.current);
+      audioBlobUrlRef.current = null;
+    }
+    currentUtteranceRef.current = '';
+    currentWordsRef.current = [];
+    utteranceStartRef.current = null;
+    settledTextRef.current = '';
+    partialTranscriptRef.current = '';
+  }, [stop]);
+
   return {
-    finalTranscript,
+    utterances,
     partialTranscript,
-    liveTranscript: partialTranscript || finalTranscript,
+    settledText,
+    audioUrl,
     status,
     error,
-    audioUrl,
     isRecording: status === 'recording',
     start,
     stop,
+    reset,
   };
 }

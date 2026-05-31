@@ -1,6 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Logo, ButtonPrimary, Container } from './atoms';
+import ParisianCornerBadge from './ParisianCornerBadge';
+
+const navLinkClass = 'hidden sm:inline text-[14px] text-navy/80 hover:text-wine transition-colors';
 
 const links = [
   { label: 'Features', href: '#features' },
@@ -30,26 +34,19 @@ export default function Nav() {
     >
       <Container className="flex items-center justify-between h-[72px]">
         <Logo />
-        <div className="hidden md:flex items-center gap-9">
-          {links.map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
-              className="text-[14px] text-navy/80 hover:text-wine transition-colors duration-200 relative group"
-            >
-              {l.label}
-              <span className="absolute -bottom-1.5 left-0 right-0 h-px bg-wine scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-            </a>
-          ))}
-        </div>
-        <div className="flex items-center gap-3">
-          <a
-            href="#"
-            className="hidden sm:inline text-[14px] text-navy/80 hover:text-wine transition-colors"
-          >
+        <div />
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <Link to="/expressions" className={navLinkClass}>
+            My expressions
+          </Link>
+          <Link to="/targets" className={navLinkClass}>
+            My targets
+          </Link>
+          <a href="#" className={navLinkClass}>
             Log in
           </a>
-          <ButtonPrimary>They rate your French</ButtonPrimary>
+          <ParisianCornerBadge inline />
+          <ButtonPrimary>Judge my French</ButtonPrimary>
         </div>
       </Container>
     </motion.nav>

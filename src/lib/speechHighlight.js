@@ -1,3 +1,5 @@
+import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent } from './siteAudio';
+
 /** Build per-word start/end times, scaled to audio duration when known. */
 export function buildWordTimings(text, durationSec) {
   const safeText = text ?? '';
@@ -39,19 +41,42 @@ export function wordHighlightInlineStyle(isActive) {
 }
 
 /** Play decoded audio and emit elapsed seconds via onTimeUpdate (null when done). */
-export function playDecodedBuffer(ctx, { buffer, narrator, sourceRef, onTimeUpdate, connectSource }) {
+export function playDecodedBuffer(ctx, {
+  buffer,
+  narrator,
+  sourceRef,
+  onTimeUpdate,
+  connectSource,
+  playbackSession,
+}) {
+  const session = playbackSession ?? beginSiteAudioPlayback();
   const connect = connectSource || ((c, src) => {
     src.connect(c.destination);
     return null;
   });
 
   return new Promise((resolve) => {
+    if (!isSiteAudioPlaybackCurrent(session)) {
+      resolve();
+      return;
+    }
+
     const src = ctx.createBufferSource();
     src.buffer = buffer;
     connect(ctx, src, narrator);
 
     const startAt = ctx.currentTime;
     let rafId = null;
+    let settled = false;
+
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      stopTick();
+      onTimeUpdate?.(null);
+      if (sourceRef.current === src) sourceRef.current = null;
+      resolve();
+    };
 
     const stopTick = () => {
       if (rafId != null) {
@@ -61,20 +86,32 @@ export function playDecodedBuffer(ctx, { buffer, narrator, sourceRef, onTimeUpda
     };
 
     const tick = () => {
-      if (sourceRef.current !== src) return;
+      if (sourceRef.current !== src || !isSiteAudioPlaybackCurrent(session)) {
+        try { src.stop(); } catch {}
+        finish();
+        return;
+      }
       onTimeUpdate?.(ctx.currentTime - startAt);
       rafId = requestAnimationFrame(tick);
     };
 
     src.onended = () => {
-      stopTick();
-      onTimeUpdate?.(null);
-      if (sourceRef.current === src) sourceRef.current = null;
-      resolve();
+      finish();
     };
 
+    if (!isSiteAudioPlaybackCurrent(session)) {
+      resolve();
+      return;
+    }
+
     sourceRef.current = src;
-    src.start(0);
+    try {
+      src.start(0);
+    } catch {
+      if (sourceRef.current === src) sourceRef.current = null;
+      resolve();
+      return;
+    }
     rafId = requestAnimationFrame(tick);
   });
 }
