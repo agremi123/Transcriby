@@ -34,8 +34,22 @@ export function setTargetProgress(id, percent) {
   return all[id];
 }
 
+export const PARISIAN_XP_EVENT = 'nativa-parisian-xp';
+
+function parisianXpForBump(prev, next) {
+  if (next <= prev) return 0;
+  if (prev < 100 && next >= 100) return 4;
+  return 2;
+}
+
 export function bumpTargetProgress(id, amount = 5) {
-  return setTargetProgress(id, getTargetProgress(id) + amount);
+  const prev = getTargetProgress(id);
+  const next = setTargetProgress(id, prev + amount);
+  const xp = parisianXpForBump(prev, next);
+  if (xp > 0) {
+    window.dispatchEvent(new CustomEvent(PARISIAN_XP_EVENT, { detail: { amount: xp, targetId: id } }));
+  }
+  return next;
 }
 
 export function bumpTargetProgressByTopic(topic, amount = 5) {

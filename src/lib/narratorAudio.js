@@ -31,6 +31,51 @@ export function resolveClientNarrator(narrator = 'lea') {
   return narrator === 'jules' || narrator === 'alex' ? 'jules' : 'lea';
 }
 
+export function normalizeNarratorId(narrator) {
+  const id = String(narrator || '').trim().toLowerCase();
+  if (id === 'jules' || id === 'alex') return 'jules';
+  return 'lea';
+}
+
+// ── Persistent audio cache (IndexedDB) ──────────────────────────────────────
+const IDB_NAME = 'nativa-narrator-audio';
+const IDB_VERSION = 1;
+const IDB_STORE = 'audio';
+
+function openAudioCacheDb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => resolve(req.result);
+    req.onupgradeneeded = (e) => e.target.result.createObjectStore(IDB_STORE);
+  });
+}
+
+async function idbGet(key) {
+  try {
+    const db = await openAudioCacheDb();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get(key);
+      req.onsuccess = () => { db.close(); resolve(req.result ?? null); };
+      req.onerror = () => { db.close(); reject(req.error); };
+    });
+  } catch { return null; }
+}
+
+async function idbPut(key, value) {
+  try {
+    const db = await openAudioCacheDb();
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put(value, key);
+      tx.oncomplete = () => { db.close(); resolve(); };
+      tx.onerror = () => { db.close(); reject(tx.error); };
+    });
+  } catch {}
+}
+
+// ── In-memory L1 cache ───────────────────────────────────────────────────────
 const narratorAudioCache = new Map();
 
 function cacheKey(text, narrator) {
@@ -53,9 +98,19 @@ export async function readNarratorAudioResponse(res) {
 export async function fetchNarratorAudio(text, narrator) {
   const trimmed = text.trim();
   const key = cacheKey(trimmed, narrator);
-  const cached = narratorAudioCache.get(key);
-  if (cached) return cached.slice(0);
 
+  // L1 — in-memory
+  const memCached = narratorAudioCache.get(key);
+  if (memCached) return memCached.slice(0);
+
+  // L2 — IndexedDB (persists across reloads)
+  const stored = await idbGet(key);
+  if (stored) {
+    narratorAudioCache.set(key, stored);
+    return stored.slice(0);
+  }
+
+  // L3 — ElevenLabs API
   const res = await fetch('/api/elevenlabs-tts', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -66,6 +121,7 @@ export async function fetchNarratorAudio(text, narrator) {
 
   const buf = await readNarratorAudioResponse(res);
   narratorAudioCache.set(key, buf.slice(0));
+  idbPut(key, buf.slice(0)); // fire-and-forget — don't block playback
   return buf;
 }
 
@@ -89,6 +145,7 @@ export function useNarratorDialogue() {
   const [playing, setPlaying] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [replayNarrator, setReplayNarrator] = React.useState(null);
+  const [spokenLinesByNarrator, setSpokenLinesByNarrator] = React.useState({ lea: null, jules: null });
   const [lastLineByNarrator, setLastLineByNarrator] = React.useState({ lea: null, jules: null });
   const [lastTranslationByNarrator, setLastTranslationByNarrator] = React.useState({ lea: null, jules: null });
   const [speechPlaybackTime, setSpeechPlaybackTime] = React.useState(null);
@@ -103,10 +160,24 @@ export function useNarratorDialogue() {
   }, []);
 
   const rememberSpokenLine = React.useCallback((line) => {
-    scriptLineByNarratorRef.current[line.narrator] = line;
-    setLastLineByNarrator((prev) => ({ ...prev, [line.narrator]: line.text }));
-    if (line.translation) {
-      setLastTranslationByNarrator((prev) => ({ ...prev, [line.narrator]: line.translation }));
+    const narrator = normalizeNarratorId(line?.narrator);
+    const text = String(line?.text ?? '').trim();
+    if (!text) return;
+
+    const normalized = {
+      narrator,
+      text,
+      translation: line?.translation ?? null,
+    };
+
+    scriptLineByNarratorRef.current = {
+      ...scriptLineByNarratorRef.current,
+      [narrator]: normalized,
+    };
+    setSpokenLinesByNarrator((prev) => ({ ...prev, [narrator]: normalized }));
+    setLastLineByNarrator((prev) => ({ ...prev, [narrator]: text }));
+    if (normalized.translation) {
+      setLastTranslationByNarrator((prev) => ({ ...prev, [narrator]: normalized.translation }));
     }
   }, []);
 
@@ -121,7 +192,18 @@ export function useNarratorDialogue() {
   const invalidateSession = React.useCallback(() => {
     sessionRef.current += 1;
     stopAudio();
+    setPlaying(false);
+    setReplayNarrator(null);
   }, [stopAudio]);
+
+  const pauseNarratorPlayback = invalidateSession;
+
+  const clearNarratorLines = React.useCallback(() => {
+    scriptLineByNarratorRef.current = { lea: null, jules: null };
+    setSpokenLinesByNarrator({ lea: null, jules: null });
+    setLastLineByNarrator({ lea: null, jules: null });
+    setLastTranslationByNarrator({ lea: null, jules: null });
+  }, []);
 
   const playDecodedLine = React.useCallback(async (ctx, line, decoded, isActive, siteSession) => {
     if (!isActive() || !isSiteAudioPlaybackCurrent(siteSession)) return;
@@ -177,8 +259,9 @@ export function useNarratorDialogue() {
   }, [rememberSpokenLine, playDecodedLine, clearSpeechHighlight]);
 
   const replayNarratorLine = React.useCallback(async (narratorId) => {
-    const line = scriptLineByNarratorRef.current[narratorId];
-    if (!line) return;
+    const id = normalizeNarratorId(narratorId);
+    const line = scriptLineByNarratorRef.current[id];
+    if (!line || line.narrator !== id) return;
 
     const siteSession = beginSiteAudioPlayback();
     const session = sessionRef.current + 1;
@@ -248,7 +331,8 @@ export function useNarratorDialogue() {
 
   React.useEffect(() => () => invalidateSession(), [invalidateSession]);
 
-  const activeNarrator = replayNarrator || (lineIndex >= 0 ? lines[lineIndex]?.narrator : null);
+  const activeNarrator = replayNarrator
+    || (lineIndex >= 0 ? normalizeNarratorId(lines[lineIndex]?.narrator) : null);
 
   return {
     playLines,
@@ -260,9 +344,12 @@ export function useNarratorDialogue() {
     speechPlaybackTime,
     speechTimings,
     speechText,
+    spokenLinesByNarrator,
     lastLineByNarrator,
     lastTranslationByNarrator,
+    clearNarratorLines,
     invalidateSession,
+    pauseNarratorPlayback,
     stopAudio,
   };
 }

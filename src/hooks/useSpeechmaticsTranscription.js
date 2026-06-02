@@ -1,4 +1,8 @@
 import React from 'react';
+import FRENCH_CASUAL_VOCAB from '../lib/frenchCasualVocab.js';
+import { joinTranscriptSegments } from '../lib/transcriptJoin.js';
+
+const CASUAL_ADDITIONAL_VOCAB = FRENCH_CASUAL_VOCAB.map(w => ({ content: w }));
 
 // Speechmatics Real-Time API — preserves casual/spoken French verbatim
 const SM_URL = 'wss://eu2.rt.speechmatics.com/v2';
@@ -49,14 +53,18 @@ function endsWithSentencePunctuation(text) {
 function ensureSentenceEnd(text) {
   const trimmed = String(text || '').trim();
   if (!trimmed) return trimmed;
-  return endsWithSentencePunctuation(trimmed) ? trimmed : `${trimmed}.`;
+  const core = trimmed.trimEnd();
+  return endsWithSentencePunctuation(core) ? core : `${core}.`;
 }
 
 function appendPeriodToWords(words) {
   if (!words.length) return;
   const last = words[words.length - 1];
-  const visible = last.punctuated_word ?? last.word;
-  if (endsWithSentencePunctuation(visible)) return;
+  const visible = String(last.punctuated_word ?? last.word).trimEnd();
+  if (endsWithSentencePunctuation(visible)) {
+    last.punctuated_word = visible;
+    return;
+  }
   last.punctuated_word = `${visible}.`;
 }
 
@@ -163,7 +171,7 @@ export function useSpeechmaticsTranscription() {
       const partial = lastPartialRef.current.trim();
       let leftover = partial.length > confirmed.length ? partial : confirmed;
       if (!leftover) {
-        leftover = [settledTextRef.current, partialTranscriptRef.current].filter(Boolean).join(' ').trim();
+        leftover = joinTranscriptSegments(settledTextRef.current, partialTranscriptRef.current);
       }
       const startTime = utteranceStartRef.current ?? 0;
 
@@ -264,6 +272,7 @@ export function useSpeechmaticsTranscription() {
           max_delay: 1,
           max_delay_mode: 'flexible',
           operating_point: 'enhanced',
+          additional_vocab: CASUAL_ADDITIONAL_VOCAB,
         },
       }));
 
@@ -306,9 +315,7 @@ export function useSpeechmaticsTranscription() {
             if (!partial) return;
             if (utteranceStartRef.current === null) utteranceStartRef.current = data.results?.[0]?.start_time ?? 0;
             // partialTranscript is ONLY the new unstable words — settled text is shown separately
-            lastPartialRef.current = currentUtteranceRef.current
-              ? currentUtteranceRef.current + ' ' + partial
-              : partial;
+            lastPartialRef.current = joinTranscriptSegments(currentUtteranceRef.current, partial);
             setSettledText(currentUtteranceRef.current);
             setPartialTranscript(partial);
             settledTextRef.current = currentUtteranceRef.current;
@@ -323,9 +330,10 @@ export function useSpeechmaticsTranscription() {
             ingestTranscriptWords(currentWordsRef.current, data.results);
 
             // Accumulate — don't push utterance yet, wait until stop()
-            currentUtteranceRef.current = currentUtteranceRef.current
-              ? currentUtteranceRef.current + ' ' + transcript
-              : transcript;
+            currentUtteranceRef.current = joinTranscriptSegments(
+              currentUtteranceRef.current,
+              transcript,
+            );
 
             lastPartialRef.current = '';
             setSettledText(currentUtteranceRef.current);

@@ -69,6 +69,66 @@ const TARGETS_BY_TRANSITION = {
   ],
 };
 
+/** Extra subjects for the Listening pillar (merged into transition targets). */
+const LISTENING_ADDONS = {
+  'A1-A2': [
+    { id: 'a1-a2-listen-greetings', category: 'Listening', label: 'Greetings in context', description: 'Catch salut, bonjour, and ça va in real exchanges.', topic: 'French listening greetings A1' },
+    { id: 'a1-a2-listen-cafe', category: 'Listening', label: 'Café orders', description: 'Follow a short order at the comptoir.', topic: 'French listening café ordering A1' },
+    { id: 'a1-a2-listen-time', category: 'Listening', label: 'Times & schedules', description: 'Understand hours, days, and simple appointments.', topic: 'French listening telling time A1' },
+  ],
+  'A2-B1': [
+    { id: 'a2-b1-listen-metro', category: 'Listening', label: 'Metro announcements', description: 'Decode RER and métro PA in Paris.', topic: 'French listening metro announcements Paris' },
+    { id: 'a2-b1-listen-opinions', category: 'Listening', label: 'Opinions & debates', description: 'Follow agree/disagree in short clips.', topic: 'French listening opinions B1' },
+    { id: 'a2-b1-listen-travel', category: 'Listening', label: 'Travel dialogues', description: 'Tickets, delays, and station chatter.', topic: 'French listening travel transport A2' },
+  ],
+  'B1-B2': [
+    { id: 'b1-b2-listen-news', category: 'Listening', label: 'News headlines', description: 'Grasp the gist of radio and TV briefs.', topic: 'French listening news headlines B2' },
+    { id: 'b1-b2-listen-story', category: 'Listening', label: 'Storytelling clips', description: 'Track narrative past tenses in audio.', topic: 'French listening storytelling B2' },
+    { id: 'b1-b2-listen-debate', category: 'Listening', label: 'Debate excerpts', description: 'Follow structured arguments and rebuttals.', topic: 'French listening debate B2' },
+  ],
+  'B2-C1': [
+    { id: 'b2-c1-listen-irony', category: 'Listening', label: 'Tone & irony', description: 'Hear understatement and dry humour.', topic: 'French listening irony tone C1' },
+    { id: 'b2-c1-listen-culture', category: 'Listening', label: 'Cultural references', description: 'Catch refs and shared Paris culture in audio.', topic: 'French listening cultural references C1' },
+    { id: 'b2-c1-listen-spontaneous', category: 'Listening', label: 'Fast conversation', description: 'Keep up with unscripted native speed.', topic: 'French listening spontaneous speech C1' },
+  ],
+  'C1-C2': [
+    { id: 'c1-c2-listen-slang', category: 'Listening', label: 'Street Parisian', description: 'Understand casual café and banlieue speech.', topic: 'French listening Parisian slang C2' },
+    { id: 'c1-c2-listen-wordplay', category: 'Listening', label: 'Wordplay & puns', description: 'Catch double meanings in comedy clips.', topic: 'French listening wordplay C2' },
+    { id: 'c1-c2-listen-micro', category: 'Listening', label: 'Fine pronunciation', description: 'Train ear on liaisons and vowel nuance.', topic: 'French listening liaison intonation C2' },
+  ],
+};
+
+export const PATH_CATEGORIES = ['Grammar', 'Vocabulary', 'Speaking', 'Listening'];
+
+/** @deprecated use PATH_CATEGORIES */
+export const TARGET_CATEGORIES = PATH_CATEGORIES;
+
+export function normalizePathCategory(category) {
+  if (category === 'Parisian') return 'Speaking';
+  if (PATH_CATEGORIES.includes(category)) return category;
+  return 'Grammar';
+}
+
+function enrichTarget(target) {
+  return {
+    ...target,
+    pathCategory: normalizePathCategory(target.category),
+  };
+}
+
+function mergeTransitionTargets(key) {
+  const base = TARGETS_BY_TRANSITION[key] || [];
+  const listening = LISTENING_ADDONS[key] || [];
+  return [...base, ...listening].map(enrichTarget);
+}
+
+export function groupTargetsByPath(targets) {
+  return PATH_CATEGORIES.reduce((acc, cat) => {
+    acc[cat] = targets.filter((t) => t.pathCategory === cat);
+    return acc;
+  }, {});
+}
+
 function transitionKey(currentLevel, nextLevel) {
   return `${currentLevel}-${nextLevel}`;
 }
@@ -91,7 +151,7 @@ export function getLevelTargets(currentLevel, parisianPercent = 0) {
       nextLevel: null,
       nextRole: null,
       transitionKey: null,
-      targets: TARGETS_BY_TRANSITION['C1-C2'],
+      targets: mergeTransitionTargets('C1-C2'),
       atMaxLevel: true,
       progress: progression.progress,
     };
@@ -104,28 +164,37 @@ export function getLevelTargets(currentLevel, parisianPercent = 0) {
     nextLevel,
     nextRole: getLevelRole(nextLevel),
     transitionKey: key,
-    targets: TARGETS_BY_TRANSITION[key] || [],
+    targets: mergeTransitionTargets(key),
     atMaxLevel: false,
     progress: progression.progress,
   };
 }
 
+function allTargetsFlat() {
+  const keys = [...new Set([
+    ...Object.keys(TARGETS_BY_TRANSITION),
+    ...Object.keys(LISTENING_ADDONS),
+  ])];
+  const seen = new Set();
+  const out = [];
+  for (const key of keys) {
+    for (const t of mergeTransitionTargets(key)) {
+      if (seen.has(t.id)) continue;
+      seen.add(t.id);
+      out.push(t);
+    }
+  }
+  return out;
+}
+
 export function findTargetByTopic(topic) {
   const needle = String(topic || '').trim().toLowerCase();
   if (!needle) return null;
-  for (const list of Object.values(TARGETS_BY_TRANSITION)) {
-    const hit = list.find((t) => t.topic.toLowerCase() === needle || t.id === needle);
-    if (hit) return hit;
-  }
-  return null;
+  return allTargetsFlat().find(
+    (t) => t.topic.toLowerCase() === needle || t.id === needle,
+  ) || null;
 }
 
 export function findTargetById(id) {
-  for (const list of Object.values(TARGETS_BY_TRANSITION)) {
-    const hit = list.find((t) => t.id === id);
-    if (hit) return hit;
-  }
-  return null;
+  return allTargetsFlat().find((t) => t.id === id) || null;
 }
-
-export const TARGET_CATEGORIES = ['Grammar', 'Vocabulary', 'Speaking', 'Parisian'];

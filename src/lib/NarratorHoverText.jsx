@@ -118,19 +118,15 @@ export function NarratorHoverText({
     : '';
 
   const hasCustomContent = children != null && children !== false;
-  const content = hasCustomContent ? children : (highlightSpeech ? (
+  const content = hasCustomContent ? children : (
     <HighlightedSpeech
       text={text}
-      playbackTime={speechPlaybackTime}
+      playbackTime={highlightSpeech ? speechPlaybackTime : null}
       timings={speechTimings}
       quote={quote}
       className={`${className} ${hintClass}`.trim()}
     />
-  ) : quote ? (
-    <p className={`${className} ${hintClass}`.trim()}>«{text}»</p>
-  ) : (
-    <p className={`${className} ${hintClass}`.trim()}>{text}</p>
-  ));
+  );
 
   const tooltipPositionClass = tooltipPosition === 'above'
     ? 'bottom-[calc(100%+8px)] top-auto'

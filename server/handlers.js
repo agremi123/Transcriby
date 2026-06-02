@@ -187,6 +187,7 @@ export async function handleCorrect(body) {
   const register = body?.register || 'Standard';
   const assessOnly = !!body?.assessOnly;
   const interviewReport = !!body?.interviewReport;
+  const dimensionBreakdown = !!body?.dimensionBreakdown;
   const claimedLevel = body?.claimedLevel || '';
   const learnerLevel = normalizeLearnerLevel(body?.learnerLevel || claimedLevel || 'A2');
   const levelCtx = learnerLevelContext(learnerLevel);
@@ -197,9 +198,39 @@ export async function handleCorrect(body) {
 
   if (assessOnly) {
     try {
+      if (dimensionBreakdown) {
+        const dimensionPrompt = `${levelCtx} You are a French language expert. Assess this spoken French answer on three dimensions separately. Clarity = how clear and understandable the response is. Grammar = grammatical accuracy (verbs, agreements, tenses). Vocabulary = range and appropriateness of word choice. Return raw JSON only, no markdown: {"clarity":"B1","grammar":"A2","vocabulary":"B1"}. Each value must be exactly one of: A1, A2, B1, B2, C1, C2.`;
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': ANTHROPIC_API_KEY,
+            'anthropic-version': '2023-06-01',
+            'anthropic-beta': 'prompt-caching-2024-07-31',
+          },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 80,
+            system: [{ type: 'text', text: dimensionPrompt, cache_control: { type: 'ephemeral' } }],
+            messages: [{ role: 'user', content: text }],
+          }),
+        });
+        const data = await response.json();
+        let raw = data.content?.[0]?.text?.trim() || '{}';
+        raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        let clarity = null;
+        let grammar = null;
+        let vocabulary = null;
+        try { ({ clarity, grammar, vocabulary } = JSON.parse(raw)); } catch {}
+        return {
+          statusCode: 200,
+          body: { clarity, grammar, vocabulary },
+        };
+      }
+
       const isInterviewReport = interviewReport;
       const assessSystemPrompt = isInterviewReport
-        ? `You are Léa and Jules, Parisian French coaches. A learner claimed CEFR level ${claimedLevel || 'unknown'} and answered interview questions in French. Assess their spoken French holistically. Return raw JSON only, no markdown: {"overallLevel":"B1","overallScore":72,"learnerGender":"woman","summary":"You're good at speaking — you don't hesitate and your accent sounds natural. But your grammar slips on past tenses, and you still sound a bit textbook rather than Parisian.","strengths":[{"label":"Speaking confidence","hint":"You aren't afraid to speak up","score":78},{"label":"Accent & pronunciation","hint":"How natural you sound","score":74},{"label":"Vocabulary","hint":"Words you know and use","score":68}],"weaknesses":[{"label":"Grammar accuracy","hint":"Verb forms, agreements, tenses","score":44},{"label":"Parisian style","hint":"Local register vs textbook French","score":40},{"label":"Natural flow","hint":"Rhythm and pace when you speak","score":46},{"label":"Local expressions","hint":"Idioms Parisians actually use","score":38}]}. Include exactly 3 strengths and 4 weaknesses using ONLY these exact labels (do not invent new ones). Each score is 0-100 (higher is better). Strength scores typically 58-92. Weakness scores typically 28-58. overallScore is 0-100. overallLevel is A1, A2, B1, B2, C1, or C2. learnerGender must be "woman" or "man" — infer from how the learner speaks about themselves (adjective/participle agreement, je suis né/née, je suis content/contente, etc.). summary: 2-3 warm sentences in plain English — start with what they do well, then "but" or "however" for what to improve. Keep hints under 8 words.`
+        ? `You are Léa and Jules, Parisian French coaches. A learner claimed CEFR level ${claimedLevel || 'unknown'} and answered interview questions in French. Assess their spoken French holistically. Return raw JSON only, no markdown: {"overallLevel":"B1","overallScore":72,"learnerGender":"woman","summary":"","strengths":[{"label":"Vocabulary Variety","hint":"Range and precision of word choice","score":78},{"label":"Accent & pronunciation","hint":"How natural you sound","score":74},{"label":"Flow and rhythm","hint":"Pace and continuity when you speak","score":68},{"label":"Listening skills","hint":"Following spoken French","score":66}],"weaknesses":[{"label":"Grammar accuracy","hint":"Verb forms, agreements, tenses","score":44},{"label":"Parisian style","hint":"Local register vs textbook French","score":40},{"label":"Conjugation skills","hint":"Verb forms in context","score":46},{"label":"Cultural Understanding","hint":"References, tone, and local context","score":38}]}. Include exactly 4 strengths and 4 weaknesses. Use ONLY these exact labels (do not invent new ones): Grammar accuracy, Vocabulary Variety, Parisian style, Conjugation skills, Accent & pronunciation, Flow and rhythm, Listening skills, Cultural Understanding. Each label may appear at most once in the whole response. Each score is 0-100 (higher is better). Strength scores typically 58-92. Weakness scores typically 28-58. overallScore is 0-100. overallLevel is A1, A2, B1, B2, C1, or C2. learnerGender must be "woman" or "man" — infer from how the learner speaks about themselves (adjective/participle agreement, je suis né/née, je suis content/contente, etc.). summary may be empty. Keep hints under 8 words.`
         : `${levelCtx} You are a French language expert. Assess the overall CEFR level of the spoken French (A1, A2, B1, B2, C1, or C2). Identify one key strength. Then give one concrete actionable tip specifically targeting the NEXT level up (A1→A2, A2→B1, B1→B2, B2→C1, C1→C2). The tip must be relevant to bridging exactly that gap. Respond with raw JSON only, no markdown: {"level":"B1","strength":"...","weakness":"..."}. Keep strength and weakness to max 7 words each. The "weakness" field must be a short positive actionable advice (e.g. "Practise subjunctive mood daily"), never a problem description.`;
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -211,7 +242,7 @@ export async function handleCorrect(body) {
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: isInterviewReport ? 700 : 120,
+          max_tokens: isInterviewReport ? 950 : 120,
           system: [{ type: 'text', text: assessSystemPrompt, cache_control: { type: 'ephemeral' } }],
           messages: [{ role: 'user', content: text }],
         }),

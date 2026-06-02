@@ -1,34 +1,39 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSpeechmaticsTranscription } from '../hooks/useSpeechmaticsTranscription';
-import { NARRATORS, useNarratorDialogue } from '../lib/narratorAudio';
+import { NARRATORS, normalizeNarratorId, useNarratorDialogue } from '../lib/narratorAudio';
 import { HighlightedSpeech } from '../lib/HighlightedSpeech';
 import { NarratorHoverText } from '../lib/NarratorHoverText';
-import { lookupNarratorTranslation } from '../lib/narratorTranslations';
-import { getQuestionFeedbackLines, mergeInterviewFeedback } from '../data/interviewFeedback';
+import {
+  lookupNarratorTranslation,
+  registerNarratorLineTranslations,
+  resolveNarratorTranslation,
+} from '../lib/narratorTranslations';
+import { getAskerPerformanceLine, mergeInterviewFeedback } from '../data/interviewFeedback';
 import {
   buildCorrectionNarrationText,
   extractCorrectedFromRaw,
+  isStrictCorrectionMatch,
+  matchesCorrectionTarget,
   prepareCorrectionForDisplay,
   splitCorrectionParagraphs,
 } from '../lib/correctionFormat';
+import { DiffText } from '../lib/DiffText';
 import { registerCorrectionKeyterms } from '../lib/deepgramKeyterms';
 import { detectLearnerGenderFromFrench, normalizeLearnerGender } from '../lib/learnerGender';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
 import { getEffectiveLevel } from '../lib/learnerProfile';
 import { Logo } from './atoms';
+import { joinTranscriptSegments, segmentNeedsLeadingSpace } from '../lib/transcriptJoin';
 
 const PARISIAN_MASCOTS = {
   woman: '/assets/parisian-woman.png',
   man: '/assets/parisian-man.png',
 };
 
-const READY_PROMPT = {
-  id: 'ready',
-  narrator: 'jules',
-  question: "T'es prêt ?",
-  translation: 'Are you ready?',
-};
+/** Shown on a fully correct answer; profile bar gains CORRECT_ANSWER_PERCENT_BUMP. */
+const CORRECT_ANSWER_PARISIAN_PTS = 50;
+const CORRECT_ANSWER_PERCENT_BUMP = 5;
 
 const LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 
@@ -39,12 +44,31 @@ const INTRO_AUDIO_DELAY_MS = 1600;
 const RECORDING_STOP_GRACE_MS = 900;
 const RECORDING_STOP_SETTLE_MS = 150;
 
+const MIN_ANSWER_LINES = 3;
+
+function countAnswerLines(text, utteranceCount = 0) {
+  const trimmed = text?.trim() || '';
+  if (!trimmed && utteranceCount === 0) return 0;
+
+  const byNewline = trimmed.split(/\n+/).map((line) => line.trim()).filter(Boolean);
+  const bySentence = trimmed
+    .split(/(?<=[.!?…])\s+|\n+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+
+  return Math.max(byNewline.length, bySentence.length, utteranceCount);
+}
+
+function hasMinimumAnswerLines(text, utteranceCount = 0) {
+  return countAnswerLines(text, utteranceCount) >= MIN_ANSWER_LINES;
+}
+
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function scriptLine(narrator, text, translation) {
-  return { narrator, text, translation };
+  return { narrator: normalizeNarratorId(narrator), text, translation };
 }
 
 const INTRO_QUESTIONS = [
@@ -79,6 +103,51 @@ const INTRO_QUESTIONS = [
     translation: 'Tell me about a typical day, from waking up to going to bed.',
   },
 ];
+
+function formatQuestionCounter(step, total = INTRO_QUESTIONS.length) {
+  return `Question ${step}/${total}`;
+}
+
+function QuestionProgressBadge({ step, total = INTRO_QUESTIONS.length, className = '', align = 'left', overlay = false, compact = false }) {
+  const pill = (
+    <div className={`inline-flex items-center rounded-full border border-line/70 bg-paper ${
+      compact ? 'gap-2 pl-2.5 pr-3 py-1' : 'gap-2.5 pl-3 pr-3.5 py-1.5'
+    }`}>
+      <span className={`tracking-[0.22em] uppercase text-wine font-semibold leading-none ${
+        compact ? 'text-[8px]' : 'text-[9px]'
+      }`}>
+        Question
+      </span>
+      <span className={`font-display text-wine tabular-nums leading-none ${
+        compact ? 'text-[14px] sm:text-[15px]' : 'text-[16px] sm:text-[17px]'
+      }`}>
+        <span className="font-semibold">{step}</span>
+        <span className="text-wine/35 font-normal">/</span>
+        <span className="text-wine/75">{total}</span>
+      </span>
+    </div>
+  );
+
+  if (overlay) {
+    return (
+      <div
+        className={`shrink-0 ${className}`.trim()}
+        aria-label={formatQuestionCounter(step, total)}
+      >
+        {pill}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`flex shrink-0 pointer-events-none ${align === 'left' ? 'justify-start' : 'justify-center'} ${className}`.trim()}
+      aria-label={formatQuestionCounter(step, total)}
+    >
+      {pill}
+    </div>
+  );
+}
 
 const DEV_SKIP_ANSWERS = {
   A1: [
@@ -131,39 +200,18 @@ function buildDevSkipInterviewData(levelId, existingAnswers = [], existingAssess
   return { answers, assessments };
 }
 
-function buildIntroScript(levelId) {
-  const levelLines = {
-    A1: {
-      fr: "Tu t'es mis débutant… intéressant.",
-      en: 'You put yourself as a beginner… interesting.',
-    },
-    A2: {
-      fr: 'Tu prétends être élémentaire ? On va voir.',
-      en: 'You claim elementary level? We\'ll see.',
-    },
-    B1: {
-      fr: "B1, tu dis ? Hmm, j'ai des doutes.",
-      en: 'B1, you say? Hmm, I have doubts.',
-    },
-    B2: {
-      fr: 'Upper intermediate… la barre est haute, hein.',
-      en: 'Upper intermediate… the bar is high, huh.',
-    },
-    C1: {
-      fr: "C1 ? Là, y a pas le droit à l'erreur.",
-      en: 'C1? No room for mistakes there.',
-    },
-  };
-  const level = levelLines[levelId] || {
-    fr: `Tu te mets ${levelId} ? On va vérifier.`,
-    en: `You claim ${levelId}? Let's check.`,
-  };
-
+function buildIntroScript() {
   return [
-    scriptLine('lea', `Salut ! Bienvenue. ${level.fr}`, `Hi! Welcome. ${level.en}`),
-    scriptLine('jules', "On va te poser quelques questions perso, réponds en français, naturellement.", "We're going to ask you a few personal questions, answer in French, naturally."),
-    scriptLine('lea', "Parle ou écris, comme tu veux. Quand t'as fini, tu appuies sur stop.", "Speak or write, however you like. When you're done, press stop."),
-    scriptLine('jules', "On te dira ce qu'on en pense. Et après, on te propose la version parisienne.", "We'll tell you what we think. Then we'll give you the Parisian version."),
+    scriptLine(
+      'lea',
+      "Salut — cinq questions perso pour voir si ton français est assez parisien.",
+      'Hi — five personal questions to see if your French is Parisian enough.',
+    ),
+    scriptLine(
+      'jules',
+      "Réponds en français, naturellement ; après chaque réponse, on te dit où tu en es.",
+      'Answer in French, naturally; after each answer, we tell you where you stand.',
+    ),
   ];
 }
 
@@ -223,23 +271,66 @@ function buildCorrectionPlayLine(original, corrected, questionIndex) {
   );
 }
 
-function buildReadyFeedback(answer) {
-  const lower = answer.toLowerCase();
-  const eager = /oui|prêt|pret|yes|ok|allons|let'?s|carrément|carrement|vas-y/.test(lower);
-  if (eager) {
-    return [
-      scriptLine('jules', "Bien. Pas de pression… enfin si, un peu.", 'Good. No pressure… well, a little.'),
-      scriptLine('lea', "Première question, fais-toi plaize.", 'First question, enjoy yourself.'),
-    ];
+function buildAskerCorrectionLine(original, corrected, askerId = 'lea') {
+  const orig = original.trim();
+  const corr = (corrected || orig).trim();
+  if (normalizeForCompare(orig) === normalizeForCompare(corr)) {
+    return scriptLine(
+      askerId,
+      "Franchement, celle-là elle passe. Rien à changer.",
+      'Honestly, that one works. Nothing to change.',
+    );
   }
-  return [
-    scriptLine('lea', "Tu hésites déjà ? On est pas si méchants.", 'Hesitating already? We\'re not that mean.'),
-    scriptLine('jules', "Allez, on attaque quand même.", 'Come on, we\'re starting anyway.'),
-  ];
+  return scriptLine(
+    askerId,
+    buildCorrectionNarrationText(orig, corr),
+    'The Parisian correction.',
+  );
+}
+
+function buildAskerCorrectionReadLine(original, corrected, askerId = 'lea') {
+  const orig = original.trim();
+  const corr = (corrected || orig).trim();
+  if (normalizeForCompare(orig) === normalizeForCompare(corr)) {
+    return scriptLine(
+      askerId,
+      "Franchement, c'est déjà bon. On change rien.",
+      'Honestly, it is already good. No change.',
+    );
+  }
+  return scriptLine(askerId, corr, null);
 }
 
 function hasParisianMistake(original, corrected) {
-  return normalizeForCompare(original) !== normalizeForCompare(corrected);
+  const orig = String(original || '').trim();
+  const corr = String(corrected || '').trim();
+  if (!corr || isStrictCorrectionMatch(orig, corr)) return false;
+  if (matchesCorrectionTarget(orig, corr)) return false;
+  return true;
+}
+
+function AnswerSuccessBadge({ points = CORRECT_ANSWER_PARISIAN_PTS, compact = false }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 ml-2 align-middle whitespace-nowrap">
+      <svg
+        width={compact ? 16 : 18}
+        height={compact ? 16 : 18}
+        viewBox="0 0 48 48"
+        fill="none"
+        stroke="#16a34a"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="shrink-0"
+        aria-hidden
+      >
+        <path d="M42 12L18 36l-12-12" />
+      </svg>
+      <span className="parisian-exp-bump inline-flex items-center justify-center rounded-full border border-green-600/20 bg-green-600/[0.06] px-1.5 py-0.5 font-mono text-[9px] sm:text-[10px] leading-none text-green-700 tabular-nums">
+        +{points} pts Parisian
+      </span>
+    </span>
+  );
 }
 
 function linesFromFeedback(rawLines) {
@@ -247,9 +338,11 @@ function linesFromFeedback(rawLines) {
 }
 
 function getSpeakText(utterances, settledText, partialTranscript) {
-  const base = utterances.map((u) => u.text).join(' ');
-  const tail = [settledText, partialTranscript].filter(Boolean).join(' ');
-  return [base, tail].filter(Boolean).join(' ').trim();
+  return joinTranscriptSegments(
+    utterances.map((u) => u.text).join(' '),
+    settledText,
+    partialTranscript,
+  );
 }
 
 function computeFinalLevel(levelId, assessments) {
@@ -260,29 +353,200 @@ function computeFinalLevel(levelId, assessments) {
   return LEVEL_ORDER[Math.min(avgIdx, LEVEL_ORDER.length - 1)] || levelId || 'A2';
 }
 
-function buildFinalScript(levelId, assessments) {
+/** One sentence each — played at the end before the rating card. */
+function buildFinalVerdictLines(levelId, assessments) {
   const finalLevel = computeFinalLevel(levelId, assessments);
   const claimedIdx = LEVEL_ORDER.indexOf(levelId);
-  const avgIdx = LEVEL_ORDER.indexOf(finalLevel);
+  const assessedIdx = LEVEL_ORDER.indexOf(finalLevel);
 
-  if (avgIdx >= claimedIdx) {
+  if (assessedIdx >= claimedIdx) {
     return [
-      scriptLine('lea', `Bon. Globalement, on te situe plutôt ${finalLevel}. Pas mal.`, `OK. Overall, we'd place you around ${finalLevel}. Not bad.`),
+      scriptLine(
+        'lea',
+        `Bon. On te situe plutôt ${finalLevel}.`,
+        `OK. We place you around ${finalLevel}.`,
+      ),
       scriptLine(
         'jules',
-        levelId === finalLevel ? "T'avais visé juste. Rare, ça." : `Tu t'étais vendu ${levelId}, honnêtement, ${finalLevel} c'est plus crédible.`,
-        levelId === finalLevel ? 'You aimed right. That\'s rare.' : `You sold yourself as ${levelId}, honestly ${finalLevel} is more believable.`,
+        levelId === finalLevel
+          ? "T'avais visé juste. Rare, ça."
+          : `Honnêtement, ${finalLevel} — c'est plus crédible.`,
+        levelId === finalLevel
+          ? 'You aimed right. That\'s rare.'
+          : `Honestly, ${finalLevel} — that's more believable.`,
       ),
-      scriptLine('lea', "Continue avec Nativa, et parle comme à Paris, pas comme à l'école.", 'Keep going with Nativa, and speak like Paris, not like school.'),
     ];
   }
 
   return [
-    scriptLine('jules', `Alors… tu pensais être ${levelId} ? On est plutôt ${finalLevel}, clairement.`, `So… you thought you were ${levelId}? We're seeing ${finalLevel}, clearly.`),
-    scriptLine('lea', "Pas de honte, au moins maintenant tu sais. Et nous, on est pas méchants… enfin, pas toujours.", 'No shame, at least now you know. And we\'re not mean… well, not always.'),
-    scriptLine('jules', "Reviens t'entraîner. Paris t'attend, mais fais tes devoirs.", 'Come back and practice. Paris is waiting, but do your homework.'),
+    scriptLine(
+      'jules',
+      `On est plutôt ${finalLevel}, clairement.`,
+      `We're seeing ${finalLevel}, clearly.`,
+    ),
+    scriptLine(
+      'lea',
+      'Au moins maintenant tu sais où tu en es.',
+      'At least now you know where you stand.',
+    ),
   ];
 }
+
+function getVerdictMood(claimedLevel, assessedLevel, overallScore = 50) {
+  const claimedIdx = LEVEL_ORDER.indexOf(claimedLevel);
+  const assessedIdx = LEVEL_ORDER.indexOf(assessedLevel);
+  if (assessedIdx >= claimedIdx || clampScore(overallScore) >= 58) return 'Pas mal !';
+  return 'Pas ouf..';
+}
+
+const VERDICT_TRAIT_COUNT = 4;
+
+/** Min score (inclusive) for each CEFR band on a trait gauge. */
+const TRAIT_LEVEL_MIN_SCORE = [0, 17, 34, 51, 67, 84];
+
+const INTERVIEW_TRAIT_LABELS = [
+  'Grammar accuracy',
+  'Vocabulary Variety',
+  'Parisian style',
+  'Conjugation skills',
+  'Accent & pronunciation',
+  'Flow and rhythm',
+  'Listening skills',
+  'Cultural Understanding',
+];
+
+const TRAIT_HINTS = {
+  'Grammar accuracy': 'Verb forms, agreements, tenses',
+  'Vocabulary Variety': 'Range and precision of word choice',
+  'Parisian style': 'Local register vs textbook French',
+  'Conjugation skills': 'Verb forms in context',
+  'Accent & pronunciation': 'How natural you sound',
+  'Flow and rhythm': 'Pace and continuity when you speak',
+  'Listening skills': 'Following spoken French',
+  'Cultural Understanding': 'References, tone, and local context',
+};
+
+const STRENGTH_TRAIT_FALLBACK = [
+  'Vocabulary Variety',
+  'Accent & pronunciation',
+  'Flow and rhythm',
+  'Listening skills',
+];
+
+const WEAKNESS_TRAIT_FALLBACK = [
+  'Grammar accuracy',
+  'Parisian style',
+  'Conjugation skills',
+  'Cultural Understanding',
+];
+
+function getTraitLevelFromScore(score) {
+  const s = clampScore(score);
+  for (let i = LEVEL_ORDER.length - 1; i >= 0; i--) {
+    if (s >= TRAIT_LEVEL_MIN_SCORE[i]) return LEVEL_ORDER[i];
+  }
+  return 'A1';
+}
+
+function getTraitProgressToNextLevel(score) {
+  const s = clampScore(score);
+  const level = getTraitLevelFromScore(s);
+  const idx = LEVEL_ORDER.indexOf(level);
+  if (idx >= LEVEL_ORDER.length - 1) {
+    return { level, nextLevel: null, percentToNext: 0, progressInBand: 1 };
+  }
+  const nextLevel = LEVEL_ORDER[idx + 1];
+  const bandMin = TRAIT_LEVEL_MIN_SCORE[idx];
+  const bandMax = TRAIT_LEVEL_MIN_SCORE[idx + 1];
+  const progressInBand = Math.min(1, Math.max(0, (s - bandMin) / (bandMax - bandMin)));
+  const percentToNext = Math.round((1 - progressInBand) * 100);
+  return {
+    level,
+    nextLevel,
+    percentToNext: Math.max(1, Math.min(99, percentToNext)),
+    progressInBand,
+  };
+}
+
+function padTraitsToCount(traits, count, fallbackLabels, defaultScore) {
+  const out = (traits || [])
+    .filter((t) => t?.label && INTERVIEW_TRAIT_LABELS.includes(t.label))
+    .map((t) => ({
+      label: t.label,
+      hint: t.hint || TRAIT_HINTS[t.label] || '',
+      score: clampScore(t.score, defaultScore),
+    }));
+  const used = new Set(out.map((t) => t.label));
+  for (const label of fallbackLabels) {
+    if (out.length >= count) break;
+    if (used.has(label)) continue;
+    used.add(label);
+    out.push({
+      label,
+      hint: TRAIT_HINTS[label] || '',
+      score: defaultScore,
+    });
+  }
+  return out.slice(0, count);
+}
+
+function normalizeVerdictTraits(report) {
+  return {
+    ...report,
+    strengths: padTraitsToCount(
+      report.strengths,
+      VERDICT_TRAIT_COUNT,
+      STRENGTH_TRAIT_FALLBACK,
+      clampScore((report.overallScore ?? 55) + 12, 72),
+    ),
+    weaknesses: padTraitsToCount(
+      report.weaknesses,
+      VERDICT_TRAIT_COUNT,
+      WEAKNESS_TRAIT_FALLBACK,
+      clampScore((report.overallScore ?? 55) - 14, 42),
+    ),
+  };
+}
+
+function enrichReportForVerdict(report, claimedLevel, assessments) {
+  const lines = buildFinalVerdictLines(claimedLevel, assessments);
+  const lea = lines.find((l) => l.narrator === 'lea');
+  const jules = lines.find((l) => l.narrator === 'jules');
+  return normalizeVerdictTraits({
+    ...report,
+    summary: null,
+    verdictMood: getVerdictMood(claimedLevel, report.overallLevel, report.overallScore),
+    leaVerdict: lea?.text ?? '',
+    julesVerdict: jules?.text ?? '',
+    leaVerdictTranslation: lea?.translation ?? null,
+    julesVerdictTranslation: jules?.translation ?? null,
+  });
+}
+
+/** Admin skip — lands on this rating preview (temporary). */
+const ADMIN_SKIP_VERDICT_REPORT = {
+  overallLevel: 'B1',
+  overallScore: 68,
+  parisianPercent: 74,
+  learnerGender: 'woman',
+  verdictMood: 'Pas mal !',
+  leaVerdict: 'Bon. On te situe plutôt B1.',
+  julesVerdict: "T'avais visé juste. Rare, ça.",
+  leaVerdictTranslation: 'OK. We place you around B1.',
+  julesVerdictTranslation: 'You aimed right. That\'s rare.',
+  strengths: [
+    { label: 'Vocabulary Variety', hint: 'Range and precision of word choice', score: 82 },
+    { label: 'Accent & pronunciation', hint: 'How natural you sound', score: 76 },
+    { label: 'Flow and rhythm', hint: 'Pace and continuity when you speak', score: 74 },
+    { label: 'Listening skills', hint: 'Following spoken French', score: 70 },
+  ],
+  weaknesses: [
+    { label: 'Grammar accuracy', hint: 'Verb forms, agreements, tenses', score: 44 },
+    { label: 'Parisian style', hint: 'Local register vs textbook French', score: 46 },
+    { label: 'Conjugation skills', hint: 'Verb forms in context', score: 48 },
+    { label: 'Cultural Understanding', hint: 'References, tone, and local context', score: 40 },
+  ],
+};
 
 function clampScore(value, fallback = 50) {
   const n = Number(value);
@@ -292,15 +556,18 @@ function clampScore(value, fallback = 50) {
 
 function buildFallbackSummary(strengths, weaknesses, overallLevel) {
   const strengthPhrase = {
-    'Speaking confidence': 'speaking — you jump in without hesitating',
+    'Vocabulary Variety': 'the range of words you use',
     'Accent & pronunciation': 'your accent — it sounds natural',
-    'Vocabulary': 'the words you use',
+    'Flow and rhythm': 'how smoothly you speak',
+    'Listening skills': 'how you follow spoken French',
+    'Conjugation skills': 'your verb forms in context',
+    'Cultural Understanding': 'how you pick up cultural nuance',
   };
   const weaknessPhrase = {
     'Grammar accuracy': 'your grammar slips sometimes',
     'Parisian style': 'you still sound textbook rather than Parisian',
-    'Natural flow': 'your rhythm feels a bit stiff',
-    'Local expressions': 'you miss the idioms locals use',
+    'Conjugation skills': 'verb forms still need work',
+    'Cultural Understanding': 'local references still feel thin',
   };
 
   const s0 = strengthPhrase[strengths[0]?.label] || 'speaking';
@@ -325,17 +592,16 @@ function buildFallbackReport(answers, assessments, levelId) {
   const answerBonus = Math.min(answers.length * 2, 8);
   const overallScore = clampScore(baseScore + answerBonus, 55);
 
-  const strengths = [
-    { label: 'Speaking confidence', hint: "You aren't afraid to speak up", score: clampScore(overallScore + 14, 72) },
-    { label: 'Accent & pronunciation', hint: 'How natural you sound', score: clampScore(overallScore + 8, 68) },
-    { label: 'Vocabulary', hint: 'Words you know and use', score: clampScore(overallScore + 4, 65) },
-  ];
-  const weaknesses = [
-    { label: 'Parisian style', hint: 'Local register vs textbook French', score: clampScore(overallScore - 18, 42) },
-    { label: 'Grammar accuracy', hint: 'Verb forms, agreements, tenses', score: clampScore(overallScore - 12, 48) },
-    { label: 'Natural flow', hint: 'Rhythm and pace when you speak', score: clampScore(overallScore - 10, 45) },
-    { label: 'Local expressions', hint: 'Idioms Parisians actually use', score: clampScore(overallScore - 20, 38) },
-  ];
+  const strengths = STRENGTH_TRAIT_FALLBACK.map((label, i) => ({
+    label,
+    hint: TRAIT_HINTS[label],
+    score: clampScore(overallScore + 14 - i * 2, 72),
+  }));
+  const weaknesses = WEAKNESS_TRAIT_FALLBACK.map((label, i) => ({
+    label,
+    hint: TRAIT_HINTS[label],
+    score: clampScore(overallScore - 12 - i * 2, 42),
+  }));
 
   return {
     overallLevel,
@@ -395,14 +661,14 @@ async function fetchInterviewReport(answers, levelId, assessments) {
       weaknesses: weaknesses.length ? weaknesses : fallback.weaknesses,
     };
     report.parisianPercent = computeParisianPercent(report);
-    return report;
+    return enrichReportForVerdict(report, levelId, assessments);
   } catch {
-    return buildFallbackReport(answers, assessments, levelId);
+    return enrichReportForVerdict(buildFallbackReport(answers, assessments, levelId), levelId, assessments);
   }
 }
 
 function computeParisianPercent(report) {
-  const parisianLabels = ['Parisian style', 'Natural flow', 'Local expressions', 'Accent & pronunciation'];
+  const parisianLabels = ['Parisian style', 'Flow and rhythm', 'Cultural Understanding', 'Accent & pronunciation'];
   const traits = [
     ...(report.strengths || []).filter((t) => parisianLabels.includes(t.label)),
     ...(report.weaknesses || []).filter((t) => parisianLabels.includes(t.label)),
@@ -426,47 +692,84 @@ function buildLearnPathUrl(mode, levelId) {
 }
 
 const TRAIT_IMPROVE_MODE = {
-  'Speaking confidence': 'speak',
-  'Accent & pronunciation': 'speak',
-  'Vocabulary': 'vocab',
   'Grammar accuracy': 'vocab',
+  'Vocabulary Variety': 'vocab',
   'Parisian style': 'discover',
-  'Natural flow': 'speak',
-  'Local expressions': 'discover',
+  'Conjugation skills': 'vocab',
+  'Accent & pronunciation': 'speak',
+  'Flow and rhythm': 'speak',
+  'Listening skills': 'speak',
+  'Cultural Understanding': 'discover',
 };
 
-function TraitGaugeRow({ label, hint, score, tone = 'neutral', levelId }) {
-  const barColor = tone === 'strength' ? 'bg-green-600/75' : tone === 'weakness' ? 'bg-wine/75' : 'bg-navy/60';
-  const numericScore = clampScore(score);
+function CircledLevel({ level, size = 'sm', compact = false }) {
+  const sizeClass = size === 'lg'
+    ? compact
+      ? 'w-[4.25rem] h-[4.25rem] sm:w-[4.75rem] sm:h-[4.75rem] text-[1.65rem] sm:text-[1.8rem] text-navy'
+      : 'w-[4.75rem] h-[4.75rem] sm:w-[5.25rem] sm:h-[5.25rem] text-[1.85rem] sm:text-[2rem] text-navy'
+    : size === 'md'
+      ? 'w-9 h-9 text-[13px] text-navy'
+      : compact
+        ? 'w-6 h-6 text-[9px] text-navy'
+        : 'w-6 h-6 text-[10px] text-navy';
+  const borderClass = size === 'lg' ? 'border-2 border-navy' : 'border border-navy/20';
+
+  return (
+    <span
+      className={`inline-flex items-center justify-center rounded-full bg-paper font-display font-semibold tabular-nums leading-none shrink-0 ${sizeClass} ${borderClass}`}
+      aria-label={`Level ${level}`}
+    >
+      {level}
+    </span>
+  );
+}
+
+function TraitGaugeRow({ label, score, tone = 'neutral', compact = false }) {
+  const barColor = tone === 'strength' ? 'bg-green-600' : tone === 'weakness' ? 'bg-wine' : 'bg-navy/60';
+  const { level: traitLevel, nextLevel, progressInBand } = getTraitProgressToNextLevel(score);
   const improveMode = TRAIT_IMPROVE_MODE[label] || 'speak';
-  const improveHref = buildLearnPathUrl(improveMode, levelId);
+  const reachHref = nextLevel ? buildLearnPathUrl(improveMode, nextLevel) : null;
+  const percentReached = Math.round(progressInBand * 100);
+  const barFillWidth = nextLevel ? percentReached : 100;
 
   return (
     <div className="space-y-1.5">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <span className="text-[13px] font-medium text-navy leading-snug">{label}</span>
-          {hint ? (
-            <p className="text-[11px] text-navy/45 leading-snug mt-0.5">{hint}</p>
-          ) : null}
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[13px] font-mono tabular-nums text-navy/55">
-            {numericScore}
-          </span>
-          <a
-            href={improveHref}
-            className="text-[11px] font-display px-2.5 py-1 rounded-full border border-wine/25 text-wine/65 hover:bg-wine hover:text-ivory hover:border-wine hover:shadow-sm transition-all duration-200"
-          >
-            Improve
-          </a>
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+          <span className={`font-medium text-navy leading-snug ${compact ? 'text-[13px]' : 'text-[13px]'}`}>{label}</span>
+          <CircledLevel level={traitLevel} size="sm" compact={compact} />
         </div>
       </div>
-      <div className="h-2 rounded-full bg-navy/8 overflow-hidden">
-        <div
-          className={`h-full rounded-full transition-all duration-700 ${barColor}`}
-          style={{ width: `${score}%` }}
-        />
+      <div className="flex items-center gap-2">
+        <div className={`relative flex-1 min-w-0 rounded-full bg-navy/8 overflow-hidden ${compact ? 'h-3.5' : 'h-3.5 sm:h-4'}`}>
+          {nextLevel ? (
+            <div
+              className={`absolute inset-y-0 left-0 flex items-center justify-end rounded-full px-2 transition-all duration-700 ${barColor}`}
+              style={{ width: `${Math.max(barFillWidth, percentReached > 0 ? 16 : 0)}%` }}
+            >
+              {percentReached > 0 ? (
+                <span className="text-[10px] sm:text-[11px] font-semibold text-ivory tabular-nums leading-none">
+                  {percentReached}%
+                </span>
+              ) : null}
+            </div>
+          ) : (
+            <>
+              <div className={`absolute inset-0 rounded-full ${barColor}`} />
+              <span className="absolute inset-0 flex items-center justify-center text-[10px] sm:text-[11px] font-semibold text-ivory tabular-nums leading-none">
+                100%
+              </span>
+            </>
+          )}
+        </div>
+        {nextLevel && reachHref ? (
+          <a
+            href={reachHref}
+            className="text-[12px] font-display px-3 py-1.5 rounded-full border border-wine/25 text-wine/65 hover:bg-wine hover:text-ivory hover:border-wine hover:shadow-sm transition-all duration-200 shrink-0 whitespace-nowrap"
+          >
+            Reach {nextLevel}
+          </a>
+        ) : null}
       </div>
     </div>
   );
@@ -501,14 +804,121 @@ function FrenchQuote({ text, translation, className, highlightSpeech, playbackTi
   );
 }
 
+function VerdictResultsTitle({ compact = false }) {
+  return (
+    <header className="text-center shrink-0 w-full">
+      <h2
+        className={`font-display leading-[1.06] tracking-[-0.02em] text-navy ${
+          compact
+            ? 'text-[clamp(1.85rem,3.8vw,2.35rem)]'
+            : 'text-[clamp(2.25rem,4.5vw,3.25rem)]'
+        }`}
+      >
+        Tes <span className="text-wine italic">résultats</span>
+      </h2>
+      <div className={`bg-wine mx-auto ${compact ? 'w-16 h-0.5 mt-1.5' : 'w-20 h-1 mt-2 sm:mt-2.5'}`} aria-hidden />
+    </header>
+  );
+}
+
+function VerdictNarratorColumn({
+  narratorId,
+  line,
+  translation,
+  compact,
+  isSpeaking,
+  isOtherSpeaking,
+  onToggleReplay,
+  replayDisabled,
+  speechPlaybackTime,
+  speechTimings,
+  speechText,
+}) {
+  const n = NARRATORS[narratorId];
+  const highlightLine = Boolean(
+    isSpeaking
+    && line
+    && speechText
+    && speechText === line,
+  );
+
+  return (
+    <div
+      className={`flex flex-col items-center text-center min-w-0 transition-all duration-500 ease-out ${
+        compact ? 'gap-2.5' : 'gap-3'
+      } ${isSpeaking ? 'z-20' : isOtherSpeaking ? 'z-0 opacity-45 scale-[0.97]' : 'z-10'}`}
+    >
+      <motion.div
+        className="relative shrink-0 overflow-visible pt-4 sm:pt-5"
+        animate={
+          isSpeaking
+            ? { scale: 1.1, y: -6 }
+            : { scale: 1, y: 0 }
+        }
+        transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+        style={{ transformOrigin: 'center bottom' }}
+      >
+        <div
+          className={`rounded-full overflow-hidden transition-shadow duration-500 ${
+            compact ? 'w-[6.75rem] h-[6.75rem] sm:w-[7.5rem] sm:h-[7.5rem]' : 'w-32 h-32 sm:w-36 sm:h-36'
+          } ${
+            isSpeaking
+              ? 'ring-4 ring-wine shadow-[0_18px_36px_-10px_rgba(122,31,46,0.36)]'
+              : 'ring-2 ring-wine/25'
+          }`}
+        >
+          <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
+        </div>
+      </motion.div>
+      <span className={`font-display text-navy/60 ${compact ? 'text-[15px] sm:text-[16px]' : 'text-[15px] sm:text-[16px]'}`}>{n.name}</span>
+      {line ? (
+        <div className="w-full flex justify-center px-1">
+          <div className="inline-flex min-w-0 max-w-[min(100%,300px)] items-start gap-1.5">
+            {!replayDisabled ? (
+              <div className="flex shrink-0 items-center self-start -mt-2">
+                <NarratorLinePlayButton
+                  onClick={() => onToggleReplay?.(narratorId)}
+                  label={`Replay ${n.name}`}
+                  isPlaying={highlightLine}
+                />
+              </div>
+            ) : null}
+            <NarratorHoverText
+              text={line}
+              translation={translation}
+              quote
+              highlightSpeech={highlightLine}
+              speechPlaybackTime={speechPlaybackTime}
+              speechTimings={speechTimings}
+              className={`font-display italic leading-[1.35] transition-colors ${
+                compact ? 'text-[14px] sm:text-[15px]' : 'text-[14px] sm:text-[16px]'
+              } ${isSpeaking ? 'text-wine' : 'text-navy/80'}`}
+              wrapperClassName="relative min-w-0 flex-1 text-left"
+              tooltipClassName="top-[calc(100%+6px)] text-[12px] z-[60]"
+            />
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function FrenchOpinionReport({
   report,
   loading,
   claimedLevel,
+  compact = false,
+  activeNarrator = null,
+  playing = false,
+  speechPlaybackTime,
+  speechTimings,
+  speechText,
+  onToggleReplay,
+  replayDisabled = false,
 }) {
   if (loading) {
     return (
-      <div className="w-full max-w-[440px] mx-auto rounded-2xl border border-line/60 bg-white/90 px-5 py-8 flex justify-center">
+      <div className="w-full max-w-[560px] mx-auto rounded-2xl border border-line/60 bg-white/90 px-5 py-10 flex justify-center">
         <ProcessDots />
       </div>
     );
@@ -516,116 +926,99 @@ function FrenchOpinionReport({
 
   if (!report) return null;
 
-  const claimVerdict = computeClaimVerdict(claimedLevel, report.overallLevel);
-  const parisianPercent = report.parisianPercent ?? computeParisianPercent(report);
-  const isParisian = parisianPercent >= 92;
-  const learnerGender = report.learnerGender || 'woman';
-  const mascotSrc = PARISIAN_MASCOTS[learnerGender] || PARISIAN_MASCOTS.woman;
+  const level = report.overallLevel || claimedLevel || 'B1';
+  const mood = report.verdictMood || getVerdictMood(claimedLevel, level, report.overallScore);
+  const moodClass = mood === 'Pas mal !' ? 'text-wine' : 'text-navy/70';
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-[440px] mx-auto rounded-2xl border border-wine/15 bg-white/95 shadow-sm overflow-hidden text-left"
+      className="w-full max-w-[560px] mx-auto rounded-2xl border border-wine/15 bg-white/95 shadow-sm overflow-hidden text-left"
     >
-      <div className="px-5 py-4 border-b border-wine/10 bg-wine/[0.04]">
-        <div className="flex items-start justify-between gap-4">
+      <div className={`border-b border-wine/10 bg-gradient-to-b from-ivory/50 to-paper/80 overflow-visible ${
+        compact ? 'px-4 sm:px-6 py-4 sm:py-5' : 'px-4 sm:px-6 py-7 sm:py-8'
+      }`}>
+        <div className={`grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end ${
+          compact ? 'gap-3 sm:gap-4' : 'gap-4 sm:gap-6'
+        }`}>
+          <VerdictNarratorColumn
+            narratorId="lea"
+            line={report.leaVerdict}
+            translation={report.leaVerdictTranslation}
+            compact={compact}
+            isSpeaking={playing && activeNarrator === 'lea'}
+            isOtherSpeaking={playing && activeNarrator === 'jules'}
+            onToggleReplay={onToggleReplay}
+            replayDisabled={replayDisabled}
+            speechPlaybackTime={speechPlaybackTime}
+            speechTimings={speechTimings}
+            speechText={speechText}
+          />
+          <div className={`flex flex-col items-center justify-center text-center shrink-0 self-center ${compact ? 'gap-1.5 px-0.5' : 'gap-2 px-1 sm:px-2'}`}>
+            <CircledLevel level={level} size="lg" compact={compact} />
+            <p className={`font-display italic leading-none ${moodClass} ${
+              compact ? 'text-[18px] sm:text-[21px]' : 'text-[20px] sm:text-[24px]'
+            }`}>
+              {mood}
+            </p>
+          </div>
+          <VerdictNarratorColumn
+            narratorId="jules"
+            line={report.julesVerdict}
+            translation={report.julesVerdictTranslation}
+            compact={compact}
+            isSpeaking={playing && activeNarrator === 'jules'}
+            isOtherSpeaking={playing && activeNarrator === 'lea'}
+            onToggleReplay={onToggleReplay}
+            replayDisabled={replayDisabled}
+            speechPlaybackTime={speechPlaybackTime}
+            speechTimings={speechTimings}
+            speechText={speechText}
+          />
+        </div>
+      </div>
+
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${
+        compact ? 'gap-4 px-4 sm:px-6 py-4 sm:py-5' : 'gap-5 px-5 py-5'
+      }`}>
+        {report.strengths?.length > 0 ? (
           <div className="min-w-0">
-            <p className="font-display text-[18px] sm:text-[20px] text-navy leading-snug">
-              Léa and Jules{' '}
-              {claimVerdict.agree ? (
-                <span className="text-green-700">agree</span>
-              ) : (
-                <span className="text-wine">disagree</span>
-              )}
-              , you&apos;re{' '}
-              <span className="text-wine font-semibold">{claimVerdict.level}</span>.
+            <p className={`text-[10px] tracking-[0.14em] uppercase text-green-700/80 font-semibold ${compact ? 'mb-2' : 'mb-3'}`}>
+              Strengths
             </p>
-            {!claimVerdict.agree ? (
-              <p className="text-[12px] text-navy/50 mt-1">
-                You claimed {claimVerdict.claimedLevel}
-              </p>
-            ) : null}
-          </div>
-          <div className="text-right shrink-0">
-            <p className="text-[9px] tracking-widest uppercase text-navy/35 mb-0.5">Overall</p>
-            <p className="font-display text-[28px] text-wine leading-none tabular-nums">
-              {report.overallScore}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {report.summary ? (
-        <div className="px-5 py-4 border-b border-wine/8 bg-ivory/30">
-          <p className="text-[14px] text-navy/85 leading-relaxed font-display italic">
-            {report.summary}
-          </p>
-        </div>
-      ) : null}
-
-      <div className="px-5 py-4 space-y-5">
-        {report.strengths?.length > 0 && (
-          <div>
-            <p className="text-[10px] tracking-[0.14em] uppercase text-green-700/80 font-semibold mb-3">
-              What you do well
-            </p>
-            <div className="space-y-3">
+            <div className={compact ? 'space-y-2.5' : 'space-y-3'}>
               {report.strengths.map((t) => (
-                <TraitGaugeRow key={t.label} label={t.label} hint={t.hint} score={t.score} tone="strength" levelId={claimedLevel} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {report.weaknesses?.length > 0 && (
-          <div>
-            <p className="text-[10px] tracking-[0.14em] uppercase text-wine/80 font-semibold mb-3">
-              What to improve
-            </p>
-            <div className="space-y-3">
-              {report.weaknesses.map((t) => (
-                <TraitGaugeRow key={t.label} label={t.label} hint={t.hint} score={t.score} tone="weakness" levelId={claimedLevel} />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="px-5 py-4 border-t border-wine/10 bg-gradient-to-br from-wine/[0.03] to-ivory/50">
-        <div className="flex items-start gap-4">
-          <div className="shrink-0 w-[88px] sm:w-[96px]">
-            <img
-              src={mascotSrc}
-              alt={learnerGender === 'man' ? 'Parisian man' : 'Parisian woman'}
-              className="w-full h-auto rounded-lg border border-line/40 shadow-sm"
-            />
-          </div>
-
-          <div className="flex-1 min-w-0 space-y-3">
-            <div>
-              <div className="flex items-baseline justify-between gap-2 mb-1.5">
-                <p className="text-[11px] text-navy/55">
-                  {isParisian ? 'You sound Parisian' : 'On your way to Parisian'}
-                </p>
-                <p className="font-display text-[22px] text-wine leading-none tabular-nums">
-                  {parisianPercent}%
-                </p>
-              </div>
-              <div className="h-2.5 rounded-full bg-navy/8 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-wine/60 to-wine transition-all duration-700"
-                  style={{ width: `${parisianPercent}%` }}
+                <TraitGaugeRow
+                  key={t.label}
+                  label={t.label}
+                  score={t.score}
+                  tone="strength"
+                  compact={compact}
                 />
-              </div>
-              <p className="text-[10px] text-navy/40 mt-1.5">
-                {isParisian
-                  ? 'Nativa verdict: tu sonnes parisien·ne.'
-                  : `${100 - parisianPercent}% left before you sound fully Parisian.`}
-              </p>
+              ))}
             </div>
           </div>
-        </div>
+        ) : null}
+
+        {report.weaknesses?.length > 0 ? (
+          <div className={`min-w-0 sm:border-l sm:border-wine/10 ${compact ? 'sm:pl-3.5' : 'sm:pl-5'}`}>
+            <p className={`text-[10px] tracking-[0.14em] uppercase text-wine/80 font-semibold ${compact ? 'mb-2' : 'mb-3'}`}>
+              Weaknesses
+            </p>
+            <div className={compact ? 'space-y-2.5' : 'space-y-3'}>
+              {report.weaknesses.map((t) => (
+                <TraitGaugeRow
+                  key={t.label}
+                  label={t.label}
+                  score={t.score}
+                  tone="weakness"
+                  compact={compact}
+                />
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     </motion.div>
   );
@@ -761,9 +1154,9 @@ function ProcessDots({ className = '' }) {
   );
 }
 
-function SpeakWriteToggle({ mode, onChange, disabled }) {
+function SpeakWriteToggle({ mode, onChange, disabled, compact = false, className = '' }) {
   return (
-    <div className="relative flex items-center rounded-full p-0.5 bg-wine/10 w-fit mx-auto">
+    <div className={`relative flex items-center rounded-full p-0.5 bg-navy/[0.06] w-fit shrink-0 ${className}`.trim()}>
       <div
         className="absolute top-0.5 bottom-0.5 rounded-full bg-wine transition-all duration-200"
         style={{
@@ -780,9 +1173,9 @@ function SpeakWriteToggle({ mode, onChange, disabled }) {
           type="button"
           disabled={disabled}
           onClick={() => onChange(m.id)}
-          className={`relative z-10 font-display text-[13px] tracking-wide px-4 py-1.5 rounded-full capitalize transition-colors duration-200 disabled:opacity-40 ${
-            mode === m.id ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'
-          }`}
+          className={`relative z-10 font-display tracking-wide rounded-full capitalize transition-colors duration-200 disabled:opacity-40 ${
+            compact ? 'text-[12px] px-3 py-1' : 'text-[13px] px-4 py-1.5'
+          } ${mode === m.id ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'}`}
         >
           {m.label}
         </button>
@@ -791,52 +1184,106 @@ function SpeakWriteToggle({ mode, onChange, disabled }) {
   );
 }
 
-function questionTypography(question, translation) {
+function questionLineTypography(question, translation) {
   const totalChars = question.length + (translation?.length || 0);
   if (totalChars > 100 || question.length > 58) {
-    return {
-      question: 'text-[13px] sm:text-[14px] leading-[1.35]',
-      translation: 'text-[11px] sm:text-[12px] leading-[1.35]',
-    };
+    return 'text-[13px] sm:text-[14px] leading-[1.35]';
   }
   if (totalChars > 70 || question.length > 44) {
-    return {
-      question: 'text-[14px] sm:text-[15px] leading-[1.35]',
-      translation: 'text-[11px] sm:text-[12px] leading-[1.35]',
-    };
+    return 'text-[14px] sm:text-[15px] leading-[1.35]';
   }
-  return {
-    question: 'text-[15px] sm:text-[17px] leading-[1.3]',
-    translation: 'text-[12px] sm:text-[13px] leading-[1.35]',
-  };
+  return 'text-[15px] sm:text-[17px] leading-[1.3]';
 }
 
-function QuestionCard({ label, question, translation, step, total }) {
-  const sizes = questionTypography(question, translation);
+function getNarratorSpeechContainerClass(compact = false) {
+  return `rounded-xl bg-ivory/40 border border-line/60 shadow-[0_2px_12px_-8px_rgba(26,35,64,0.12)] w-full min-w-0 ${
+    compact ? 'px-3 py-2.5' : 'px-3.5 py-3'
+  }`;
+}
+
+function CorrectionLabelBadge({ compact = false }) {
+  return (
+    <div
+      className={`inline-flex items-center justify-center rounded-full border border-line/70 bg-paper whitespace-nowrap ${
+        compact ? 'px-2.5 py-1' : 'px-3 py-1.5'
+      }`}
+      aria-label="Correction"
+    >
+      <span
+        className={`tracking-[0.22em] uppercase text-wine font-semibold leading-none ${
+          compact ? 'text-[8px]' : 'text-[9px]'
+        }`}
+      >
+        Correction
+      </span>
+    </div>
+  );
+}
+
+function CorrectionDisplayBar({
+  text,
+  translation,
+  onReplay,
+  replayDisabled = false,
+  playing = false,
+  speechPlaybackTime,
+  speechTimings,
+  speechText,
+  replayLabel = 'Replay correction',
+  compact = false,
+}) {
+  const highlightBubble = playing && speechText && speechText === text;
+  const lineMetricsClass = compact
+    ? 'text-[14px] sm:text-[15px] leading-[1.45]'
+    : 'text-[16px] sm:text-[18px] leading-[1.45]';
+  const lineBodyClass = compact ? 'text-navy/70 italic' : 'text-navy/80 italic';
 
   return (
-    <div className="relative w-full min-w-0 rounded-xl bg-white/90 border border-wine/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
-      <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-wine/30 to-transparent" />
-      <div className="px-3.5 sm:px-4 pt-3 pb-2.5 flex flex-col min-h-0">
-        <div className="flex items-start justify-between gap-2 mb-2 shrink-0">
-          <span className="text-[9px] tracking-[0.14em] uppercase text-wine/80 font-semibold min-w-0 break-words leading-tight">
-            {label}
-          </span>
-          {total != null && (
-            <span className="text-[10px] text-navy/35 tabular-nums shrink-0 pt-0.5">
-              {step}/{total}
-            </span>
-          )}
-        </div>
-        <div className="max-h-[min(30dvh,168px)] overflow-y-auto scroll-premium pr-0.5 -mr-0.5">
-          <NarratorHoverText
-            text={question}
-            translation={translation}
-            quote={false}
-            className={`font-display text-navy break-words [overflow-wrap:anywhere] ${sizes.question}`}
-            wrapperClassName="relative w-full min-w-0"
-            tooltipClassName="top-[calc(100%+6px)] text-[11px] sm:text-[12px]"
-          />
+    <div
+      className={`w-full shrink-0 pointer-events-auto ${compact ? 'mb-1' : 'mb-1.5'}`}
+      aria-live="polite"
+    >
+      <div
+        className={`rounded-xl bg-ivory/40 border border-line/60 shadow-[0_2px_12px_-8px_rgba(26,35,64,0.12)] w-full min-w-0 overflow-visible ${
+          compact ? 'px-3 py-3' : 'px-4 py-3.5'
+        }`}
+      >
+        <div className={`flex items-start w-full min-w-0 ${compact ? 'gap-3' : 'gap-4'}`}>
+          <div
+            className={`flex shrink-0 items-center ${compact ? 'gap-2' : 'gap-2.5'} pt-0.5`}
+            aria-label="Correction controls"
+          >
+            <CorrectionLabelBadge compact={compact} />
+            {!replayDisabled && (
+              <NarratorLinePlayButton
+                onClick={onReplay}
+                label={replayLabel}
+                isPlaying={highlightBubble}
+              />
+            )}
+          </div>
+
+          <div
+            className={`flex-1 min-w-0 border-l border-line/55 ${
+              compact ? 'pl-3' : 'pl-4'
+            }`}
+          >
+            <NarratorHoverText
+              text={text}
+              translation={translation}
+              quote
+              highlightSpeech={highlightBubble}
+              speechPlaybackTime={speechPlaybackTime}
+              speechTimings={speechTimings}
+              scrollable
+              scrollClassName={`overflow-y-auto scroll-premium overscroll-contain w-full min-w-0 ${
+                compact ? 'max-h-[min(22dvh,120px)]' : 'max-h-[min(28dvh,168px)]'
+              }`}
+              className={`font-display break-words text-left [overflow-wrap:anywhere] [hyphens:auto] ${lineBodyClass} ${lineMetricsClass}`}
+              wrapperClassName="relative flex flex-col items-stretch text-left min-w-0 w-full overflow-visible"
+              tooltipClassName="top-[calc(100%+6px)] text-[11px] sm:text-[12px] z-[60]"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -856,17 +1303,30 @@ function AnswerInput({
   status,
   onToggleRecording,
   disabled,
-  onWriteSubmit,
+  onWriteFinish,
+  writeFinishDisabled = false,
+  leftAction = null,
+  underlineCorrection = null,
   showMicHint = false,
-  micHintText = 'answer them here',
-  stopHintText = "press when you're done",
+  micHintText = 'Answer them here',
+  stopHintText = "Press when you're done",
+  minAnswerLines = MIN_ANSWER_LINES,
+  answerLineCount = 0,
+  showMinLinesHint = false,
+  questionStep,
+  questionTotal = INTRO_QUESTIONS.length,
+  showQuestionProgress = false,
+  headerRightAction = null,
+  showAnswerSuccess = false,
+  parisianPointsAward = CORRECT_ANSWER_PARISIAN_PTS,
+  compact = false,
 }) {
   const hasSpeakContent = getSpeakText(utterances, settledText, partialTranscript).length > 0;
   const micActive = isRecording || isStoppingRecording;
   const micHighlighted = showMicHint && inputMode === 'speak' && !micActive && !hasSpeakContent;
   const stopHighlighted = showMicHint && inputMode === 'speak' && micActive;
 
-  const hintBubble = (text) => (
+  const micHint = (text) => (
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: [0, -4, 0] }}
@@ -874,214 +1334,493 @@ function AnswerInput({
         opacity: { duration: 0.4 },
         y: { repeat: Infinity, duration: 1.8, ease: 'easeInOut', delay: 0.2 },
       }}
-      className="absolute bottom-full mb-2 right-0 flex flex-col items-end gap-1 pointer-events-none z-20"
+      className="flex flex-col items-center pointer-events-none"
     >
-      <span className="font-display text-[12px] italic text-wine whitespace-nowrap bg-paper/95 px-2.5 py-1 rounded-full border border-wine/20 shadow-sm">
+      <span className={`font-display italic text-wine whitespace-nowrap text-center leading-none bg-paper/95 rounded-full border border-wine/20 shadow-sm ${
+        compact ? 'text-[11px] px-2.5 py-1' : 'text-[12px] px-3 py-1.5'
+      }`}>
         {text}
       </span>
-      <svg width="10" height="8" viewBox="0 0 10 8" fill="none" className="mr-3">
-        <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.65" />
+      <svg
+        width="10"
+        height="8"
+        viewBox="0 0 10 8"
+        fill="none"
+        aria-hidden
+        className="block shrink-0 -mt-px"
+      >
+        <path d="M5 8L0 0H10L5 8Z" fill="#8B1E2D" opacity="0.65" />
       </svg>
     </motion.div>
   );
 
+  const linesRemaining = Math.max(0, minAnswerLines - answerLineCount);
+  const meetsMinLines = answerLineCount >= minAnswerLines;
+  const liveSpeakText = getSpeakText(utterances, settledText, partialTranscript);
+  const lastSpeakTextRef = React.useRef('');
+  if (liveSpeakText) lastSpeakTextRef.current = liveSpeakText;
+  const visibleSpeakText = liveSpeakText || (isStoppingRecording ? lastSpeakTextRef.current : '');
+  const hasVisibleSpeakContent = visibleSpeakText.length > 0;
+  const showCorrectionUnderline = Boolean(
+    underlineCorrection?.original
+    && underlineCorrection?.corrected
+    && visibleSpeakText.trim() === underlineCorrection.original.trim(),
+  );
+  const correctedForUnderline = showCorrectionUnderline
+    ? prepareCorrectionForDisplay(underlineCorrection.original, underlineCorrection.corrected)
+    : '';
+
   return (
-    <div className="mt-3 space-y-2.5 shrink-0">
-      <SpeakWriteToggle mode={inputMode} onChange={onInputModeChange} disabled={disabled} />
+    <div className="flex flex-col shrink-0 w-full">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 w-full shrink-0">
+        <div className="justify-self-start min-w-0">
+          {showQuestionProgress && questionStep ? (
+            <QuestionProgressBadge
+              step={questionStep}
+              total={questionTotal}
+              overlay
+              compact={compact}
+            />
+          ) : null}
+        </div>
+        <SpeakWriteToggle mode={inputMode} onChange={onInputModeChange} disabled={disabled} compact={compact} />
+        <div className="justify-self-end min-w-0 flex justify-end">
+          {headerRightAction}
+        </div>
+      </div>
 
       {inputMode === 'write' ? (
-        <>
-          <label className="sr-only" htmlFor="assessment-answer">Your answer</label>
-          <textarea
-            id="assessment-answer"
-            value={writeText}
-            onChange={(e) => onWriteTextChange(e.target.value)}
-            onKeyDown={(e) => {
-              if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                e.preventDefault();
-                onWriteSubmit?.();
-              }
-            }}
-            onBlur={() => {
-              if (writeText.trim()) onWriteSubmit?.();
-            }}
-            placeholder="Écris ta réponse en français…"
-            rows={3}
-            disabled={disabled}
-            className="w-full px-4 py-3 rounded-xl bg-ivory/50 border border-line/60 font-display text-[16px] leading-relaxed text-navy placeholder:text-navy/25 outline-none focus:border-wine/35 focus:ring-2 focus:ring-wine/10 transition-all resize-none disabled:opacity-60"
-          />
-        </>
-      ) : (
-        <div
-          className={`relative rounded-xl bg-ivory/50 min-h-[104px] px-4 py-3 transition-all duration-500 ${
-            micHighlighted || stopHighlighted
-              ? 'border-2 border-wine/45 ring-2 ring-wine/15 shadow-[0_0_24px_-4px_rgba(139,30,45,0.25)]'
-              : 'border border-line/60'
-          }`}
-        >
-          <p className="font-display text-[18px] sm:text-[19px] leading-relaxed text-navy min-h-[44px] max-h-[72px] overflow-y-auto break-words">
-            {hasSpeakContent ? (
-              <>
-                {utterances.map((u) => (
-                  <span key={u.id}>{u.text}{' '}</span>
-                ))}
-                {settledText && <span className="font-semibold">{settledText}{' '}</span>}
-                {partialTranscript && (
-                  <span className="text-navy/40 italic">{partialTranscript}</span>
-                )}
-              </>
-            ) : (
-              <span className="text-navy/30 italic inline-flex items-center min-h-[28px]">
-                {isStoppingRecording ? (
-                  <ProcessDots />
-                ) : isRecording ? (
-                  'Parle maintenant…'
-                ) : (
-                  'Appuie sur le micro pour répondre'
-                )}
-              </span>
-            )}
-          </p>
-          <div className="flex items-center justify-end gap-2 mt-2">
-            {(status === 'connecting' || micActive) && (
-              <span className="text-[11px] text-wine/70 mr-auto inline-flex items-center min-h-[14px]">
-                {status === 'connecting' ? (
-                  'Connecting…'
-                ) : isStoppingRecording ? (
-                  <ProcessDots />
-                ) : (
-                  'Live'
-                )}
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={onToggleRecording}
-              disabled={disabled || status === 'connecting' || isStoppingRecording}
-              className={`relative w-10 h-10 rounded-full inline-flex items-center justify-center transition-all duration-300 ${
-                stopHighlighted
-                  ? 'bg-wine text-ivory scale-110 shadow-md ring-2 ring-wine/30'
-                  : micActive
-                    ? 'bg-wine text-ivory'
-                    : micHighlighted
-                      ? 'bg-wine text-ivory scale-110 shadow-md ring-2 ring-wine/30'
-                      : 'border border-wine/50 text-wine hover:border-wine hover:bg-wine/5'
-              } disabled:opacity-40`}
-              aria-label={micActive ? 'Stop recording' : 'Start recording'}
+        <div className={`relative overflow-visible ${compact ? 'mt-3' : 'mt-3.5'} ${compact ? 'pb-12' : 'pb-14'}`}>
+          <div className="rounded-xl bg-ivory/40 border border-line/60">
+            <div
+              className={`px-4 overflow-y-auto scroll-premium ${
+                compact ? 'pt-3 pb-5 min-h-[7.5rem] max-h-[7.5rem]' : 'pt-3 pb-6 min-h-[9.75rem] max-h-[9.75rem]'
+              }`}
             >
-              {micActive ? (
-                <svg width="10" height="10" viewBox="0 0 14 14" fill="none" aria-hidden>
-                  <rect x="2" y="2" width="10" height="10" rx="1.5" fill="currentColor" />
-                </svg>
+              {disabled ? (
+                <p
+                  className={`font-display leading-[1.45] text-navy break-words whitespace-pre-wrap ${
+                    compact ? 'text-[16px] sm:text-[17px]' : 'text-[18px] sm:text-[19px]'
+                  }`}
+                >
+                  {showCorrectionUnderline ? (
+                    <DiffText
+                      original={underlineCorrection.original}
+                      corrected={correctedForUnderline}
+                      side="original"
+                    />
+                  ) : (
+                    <>
+                      {writeText}
+                      {showAnswerSuccess && (
+                        <AnswerSuccessBadge points={parisianPointsAward} compact={compact} />
+                      )}
+                    </>
+                  )}
+                </p>
               ) : (
-                <svg width="11" height="14" viewBox="0 0 16 20" fill="none" aria-hidden>
-                  <rect x="5" y="1" width="6" height="11" rx="3" fill="currentColor" />
-                  <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                </svg>
-              )}
-              {(micHighlighted || stopHighlighted) && (
                 <>
-                  <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-50" />
-                  <span className="absolute inset-0 rounded-full border border-wine animate-pulse opacity-30" />
+                  <label className="sr-only" htmlFor="assessment-answer">Your answer</label>
+                  <textarea
+                    id="assessment-answer"
+                    value={writeText}
+                    onChange={(e) => onWriteTextChange(e.target.value)}
+                    onKeyDown={(e) => {
+                      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                        e.preventDefault();
+                        onWriteFinish?.();
+                      }
+                    }}
+                    placeholder="Écris ta réponse en français…"
+                    rows={compact ? 4 : 5}
+                    className={`w-full bg-transparent font-display leading-[1.45] text-navy placeholder:text-navy/25 outline-none resize-none ${
+                      compact ? 'text-[16px] sm:text-[17px] min-h-[6.5rem]' : 'text-[18px] sm:text-[19px] min-h-[8.25rem]'
+                    }`}
+                  />
                 </>
               )}
-              {micHighlighted && hintBubble(micHintText)}
-              {stopHighlighted && hintBubble(stopHintText)}
-            </button>
+            </div>
+          </div>
+
+          {leftAction ? (
+            <div className={`absolute left-0 bottom-0 z-10 ${compact ? 'pl-2 pb-1' : 'pl-2.5 pb-1.5'}`}>
+              {leftAction}
+            </div>
+          ) : null}
+
+          {!disabled && (
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 z-10">
+              <button
+                type="button"
+                onClick={onWriteFinish}
+                disabled={writeFinishDisabled}
+                className={`inline-flex items-center gap-1.5 rounded-full border-2 border-paper font-display italic transition-colors shadow-[0_2px_10px_-4px_rgba(26,35,64,0.18)] ${
+                  compact ? 'px-3.5 h-10 text-[15px]' : 'px-4 h-11 text-[16px]'
+                } ${
+                  writeFinishDisabled
+                    ? 'bg-wine/15 text-wine/35 cursor-default'
+                    : 'bg-wine text-ivory hover:bg-wine2'
+                }`}
+                aria-label="Fini"
+              >
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
+                  <path
+                    d="M2 6.5l2.5 2.5L10 3"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Fini
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className={`relative overflow-visible ${compact ? 'mt-3' : 'mt-3.5'} ${compact ? 'pb-12' : 'pb-14'}`}>
+          <div
+            className={`rounded-xl bg-ivory/40 border transition-colors duration-300 ${
+              micHighlighted || stopHighlighted
+                ? 'border-wine/45'
+                : 'border-line/60'
+            }`}
+          >
+            <div className={`px-4 overflow-y-auto scroll-premium ${
+              compact ? 'pt-3 pb-5 min-h-[7.5rem] max-h-[7.5rem]' : 'pt-3 pb-6 min-h-[9.75rem] max-h-[9.75rem]'
+            }`}>
+              <p className={`font-display leading-[1.4] text-navy break-words ${
+                compact ? 'text-[16px] sm:text-[17px]' : 'text-[18px] sm:text-[19px] leading-[1.45]'
+              }`}>
+                {hasVisibleSpeakContent ? (
+                  <>
+                    {showCorrectionUnderline ? (
+                      <DiffText
+                        original={underlineCorrection.original}
+                        corrected={correctedForUnderline}
+                        side="original"
+                      />
+                    ) : (
+                      utterances.map((u) => (
+                        <span key={u.id}>{u.text}{' '}</span>
+                      ))
+                    )}
+                    {!showCorrectionUnderline && settledText && (
+                      <span className="font-semibold">
+                        {settledText}
+                        {partialTranscript && segmentNeedsLeadingSpace(partialTranscript) ? ' ' : null}
+                      </span>
+                    )}
+                    {!showCorrectionUnderline && partialTranscript && (
+                      <span className="text-navy/40 italic">{partialTranscript}</span>
+                    )}
+                    {!showCorrectionUnderline && !liveSpeakText && visibleSpeakText && (
+                      <span className="text-navy/70">{visibleSpeakText}</span>
+                    )}
+                    {showAnswerSuccess && hasVisibleSpeakContent && (
+                      <AnswerSuccessBadge points={parisianPointsAward} compact={compact} />
+                    )}
+                  </>
+                ) : status === 'connecting' ? (
+                  <ProcessDots />
+                ) : null}
+              </p>
+            </div>
+          </div>
+
+          {leftAction ? (
+            <div className={`absolute left-0 bottom-0 z-10 ${compact ? 'pl-2 pb-1' : 'pl-2.5 pb-1.5'}`}>
+              {leftAction}
+            </div>
+          ) : null}
+
+          {/* Mic is absolutely positioned so it never moves */}
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-0 z-10">
+            <div className="relative flex flex-col items-center">
+              <div className={`absolute left-1/2 -translate-x-1/2 ${compact ? '-top-[46px]' : '-top-[56px]'}`}>
+                {micHighlighted && micHint(micHintText)}
+                {stopHighlighted && micHint(stopHintText)}
+              </div>
+              <button
+                type="button"
+                onClick={onToggleRecording}
+                disabled={disabled || status === 'connecting' || isStoppingRecording}
+                className={`relative w-11 h-11 rounded-full inline-flex items-center justify-center border-2 border-paper text-ivory transition-colors duration-300 shadow-[0_2px_10px_-4px_rgba(26,35,64,0.18)] ${
+                  micActive || stopHighlighted
+                    ? 'bg-wine'
+                    : micHighlighted
+                      ? 'bg-wine2'
+                      : 'bg-wine hover:bg-wine2'
+                } disabled:opacity-40`}
+                aria-label={micActive ? 'Stop recording' : 'Start recording'}
+              >
+                {micActive ? (
+                  <svg width="10" height="10" viewBox="0 0 14 14" fill="none" aria-hidden>
+                    <rect x="2" y="2" width="10" height="10" rx="1.5" fill="currentColor" />
+                  </svg>
+                ) : (
+                  <svg width="11" height="14" viewBox="0 0 16 20" fill="none" aria-hidden>
+                    <rect x="5" y="1" width="6" height="11" rx="3" fill="currentColor" />
+                    <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                )}
+                {(micHighlighted || stopHighlighted) && (
+                  <span className="absolute inset-0 rounded-full border border-wine/40 animate-ping-narrator pointer-events-none" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
+      )}
+
+      {(showMinLinesHint || (answerLineCount > 0 && !meetsMinLines)) && (
+        <p
+          className={`text-center text-[12px] italic ${
+            showMinLinesHint && !meetsMinLines ? 'text-wine' : 'text-navy/45'
+          }`}
+          role="status"
+        >
+          {meetsMinLines
+            ? 'Enough lines — you can submit your answer.'
+            : `At least ${minAnswerLines} lines to continue (${answerLineCount}/${minAnswerLines})${
+                linesRemaining === 1 ? ' — one more line.' : ''
+              }`}
+        </p>
       )}
     </div>
   );
 }
 
-function NarratorLinePlayButton({ onClick, label, visible = true }) {
+function NarratorLinePlayButton({ onClick, label, isPlaying = false, className = '' }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      tabIndex={visible ? 0 : -1}
-      aria-hidden={!visible}
-      className={`shrink-0 w-7 h-7 rounded-full border border-wine/25 inline-flex items-center justify-center text-wine hover:bg-wine/5 transition-opacity -translate-y-px ${
-        visible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-      }`}
-      aria-label={label}
-      title={label}
+      className={`shrink-0 w-7 h-7 rounded-full border border-wine/25 inline-flex items-center justify-center text-wine hover:bg-wine/5 transition-colors ${className}`.trim()}
+      aria-label={isPlaying ? `Pause ${label}` : label}
+      title={isPlaying ? 'Pause' : label}
     >
-      <svg width="9" height="11" viewBox="0 0 11 13" fill="none" aria-hidden>
-        <path d="M0 0 L11 6.5 L0 13 Z" fill="currentColor" opacity="0.75" />
-      </svg>
+      {isPlaying ? (
+        <svg width="8" height="10" viewBox="0 0 10 12" fill="none" aria-hidden>
+          <rect x="1" y="1" width="3" height="10" rx="0.75" fill="currentColor" opacity="0.8" />
+          <rect x="6" y="1" width="3" height="10" rx="0.75" fill="currentColor" opacity="0.8" />
+        </svg>
+      ) : (
+        <svg width="9" height="11" viewBox="0 0 11 13" fill="none" aria-hidden>
+          <path d="M0 0 L11 6.5 L0 13 Z" fill="currentColor" opacity="0.75" />
+        </svg>
+      )}
     </button>
   );
 }
 
 function NarratorPair({
   activeNarrator,
+  spokenLinesByNarrator,
   lastLineByNarrator,
   lastTranslationByNarrator,
   playing,
-  askerId,
-  onReplay,
+  featuredId,
+  currentQuestion = null,
+  onToggleReplay,
   replayDisabled,
   speechPlaybackTime,
   speechTimings,
   speechText,
+  suppressNarratorLineId = null,
+  speechInContainer = true,
+  compact = false,
+  heroMode = false,
+  duoProminent = false,
 }) {
+  const hasFeatured = Boolean(featuredId);
+  const narratorIds = heroMode && featuredId ? [featuredId] : ['lea', 'jules'];
+  const largePortrait = (heroMode && hasFeatured) || duoProminent;
+
   return (
-    <div className="grid grid-cols-2 gap-4 sm:gap-8 shrink-0">
-      {(['lea', 'jules']).map((id) => {
+    <div className={`shrink-0 justify-items-center w-full overflow-visible ${
+      heroMode
+        ? 'flex flex-col items-center'
+        : `grid grid-cols-2 ${
+            duoProminent
+              ? compact ? 'gap-4 sm:gap-8' : 'gap-6 sm:gap-10'
+              : compact ? 'gap-2 sm:gap-6' : 'gap-4 sm:gap-12'
+          }`
+    }`}>
+      {narratorIds.map((id) => {
         const n = NARRATORS[id];
+        const isFeatured = featuredId === id;
+        const isOther = hasFeatured && !isFeatured;
+        const isSoloHero = heroMode && isFeatured;
         const isSpeaking = playing && activeNarrator === id;
-        const isAsking = !playing && askerId === id;
-        const bubbleText = lastLineByNarrator[id];
-        const bubbleTranslation = lastTranslationByNarrator?.[id];
-        const highlightBubble = isSpeaking && speechText && speechText === bubbleText;
+        const spokenLine = spokenLinesByNarrator?.[id];
+        const ownsLine = spokenLine?.narrator === id;
+        const lineText = ownsLine ? spokenLine.text : null;
+        const lineTranslation = ownsLine
+          ? resolveNarratorTranslation(lineText, spokenLine.translation ?? lastTranslationByNarrator?.[id])
+          : null;
+        const isQuestionLine = Boolean(
+          currentQuestion
+          && currentQuestion.narrator === id
+          && lineText
+          && lineText.trim() === currentQuestion.question.trim(),
+        );
+        const highlightBubble = playing
+          && activeNarrator === id
+          && ownsLine
+          && speechText
+          && lineText
+          && speechText === lineText;
+        const questionTypeClass = isQuestionLine
+          ? questionLineTypography(currentQuestion.question, currentQuestion.translation)
+          : '';
+        const lineMetricsClass = isQuestionLine
+          ? questionTypeClass
+          : isSoloHero || duoProminent
+            ? 'text-[16px] sm:text-[18px] leading-[1.35]'
+            : 'text-[14px] sm:text-[15px] leading-[1.35]';
+        const playAlignClass = lineMetricsClass.includes('leading-[1.3]')
+          ? 'h-[1.3em]'
+          : 'h-[1.35em]';
+        const lineBodyClass = isQuestionLine
+          ? 'text-navy not-italic'
+          : `${isSoloHero || duoProminent ? 'text-navy/80' : 'text-navy/70'} italic`;
+        const hideLineForCorrection = suppressNarratorLineId === id;
+        const columnGapClass = hideLineForCorrection
+          ? compact ? 'gap-0.5' : 'gap-1'
+          : isSoloHero || duoProminent
+            ? compact ? 'gap-2' : 'gap-3'
+            : compact ? 'gap-1.5' : 'gap-2.5';
 
         return (
-          <div key={id} className="flex flex-col items-center gap-2">
-            <div className="relative">
+          <div
+            key={id}
+            className={`flex flex-col items-center text-center w-full min-w-0 overflow-visible isolate transition-all duration-500 ease-out ${columnGapClass} ${
+              isSoloHero || duoProminent ? 'max-w-md' : ''
+            } ${
+              isFeatured ? 'z-10' : 'z-0'
+            } ${isOther ? 'opacity-40 scale-[0.9] sm:scale-[0.88]' : 'opacity-100 scale-100'}`}
+          >
+            <motion.div
+              className={`relative shrink-0 overflow-visible ${
+                isSoloHero
+                  ? 'pt-7 sm:pt-8'
+                  : duoProminent
+                    ? 'pt-6 sm:pt-7'
+                    : isFeatured
+                      ? compact ? 'pt-5 sm:pt-6' : 'pt-6 sm:pt-7'
+                      : compact ? 'pt-4 sm:pt-5' : 'pt-5 sm:pt-6'
+              }`}
+              animate={
+                isSpeaking
+                  ? {
+                      scale: isSoloHero ? 1.14 : largePortrait ? 1.12 : isFeatured ? 1.12 : 1.08,
+                      y: 0,
+                    }
+                  : { scale: 1, y: 0 }
+              }
+              transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+              style={{ transformOrigin: 'center bottom' }}
+            >
               <div
-                className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden transition-all duration-300 ${
+                className={`rounded-full overflow-hidden transition-shadow duration-500 ${
+                  isSoloHero
+                    ? 'w-40 h-40 sm:w-48 sm:h-48 shadow-[0_16px_40px_-10px_rgba(122,31,46,0.32)]'
+                    : duoProminent
+                    ? 'w-32 h-32 sm:w-40 sm:h-40 shadow-[0_14px_36px_-10px_rgba(122,31,46,0.3)]'
+                    : isFeatured
+                    ? compact
+                      ? 'w-24 h-24 sm:w-28 sm:h-28 shadow-[0_10px_28px_-8px_rgba(122,31,46,0.28)]'
+                      : 'w-28 h-28 sm:w-32 sm:h-32 shadow-[0_12px_32px_-8px_rgba(122,31,46,0.28)]'
+                    : compact
+                      ? 'w-16 h-16 sm:w-20 sm:h-20'
+                      : 'w-[4.5rem] h-[4.5rem] sm:w-24 sm:h-24'
+                } ${
                   isSpeaking
-                    ? 'ring-[3px] ring-wine shadow-lg scale-105'
-                    : isAsking
-                      ? 'ring-2 ring-wine/50 shadow-md'
-                      : bubbleText
-                        ? 'ring-1 ring-line/60'
-                        : 'ring-1 ring-line/40 opacity-85'
+                    ? isSoloHero
+                      ? 'ring-4 ring-wine shadow-[0_24px_48px_-12px_rgba(122,31,46,0.42)]'
+                      : 'ring-4 ring-wine shadow-[0_18px_36px_-10px_rgba(122,31,46,0.36)]'
+                    : isSoloHero || duoProminent
+                      ? 'ring-[3px] ring-wine/70'
+                      : isFeatured
+                      ? 'ring-[3px] ring-wine/70'
+                      : lineText
+                        ? 'ring-2 ring-line/60'
+                        : 'ring-2 ring-line/40'
                 }`}
               >
                 <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
               </div>
-              {isSpeaking && (
-                <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-25" />
-              )}
-            </div>
-            <span className="font-display text-[14px] sm:text-[15px] text-navy">{n.name}</span>
-            {bubbleText && (
-              <div className="w-full max-w-[min(100%,240px)] px-1">
-                <div className="flex justify-center w-full min-w-0">
-                  <div className="inline-flex items-center gap-3.5 max-w-full min-w-0">
-                    <NarratorHoverText
-                      text={bubbleText}
-                      translation={bubbleTranslation}
-                      quote
-                      highlightSpeech={highlightBubble}
-                      speechPlaybackTime={speechPlaybackTime}
-                      speechTimings={speechTimings}
-                      className="font-display text-[14px] sm:text-[15px] leading-[1.35] text-navy/70 italic break-words text-center min-w-0"
-                      wrapperClassName="relative min-w-0"
-                      tooltipClassName="top-[calc(100%+6px)] text-[11px] sm:text-[12px]"
-                    />
-                    <NarratorLinePlayButton
-                      onClick={() => onReplay?.(id)}
-                      label={`Replay ${n.name}`}
-                      visible={!playing && !replayDisabled}
-                    />
-                  </div>
+            </motion.div>
+            <span
+              className={`font-display text-center w-full transition-all duration-500 ${
+                isSoloHero || duoProminent
+                  ? 'text-[18px] sm:text-[20px] text-navy'
+                  : isFeatured
+                  ? compact ? 'text-[15px] sm:text-[16px] text-navy' : 'text-[17px] sm:text-[18px] text-navy'
+                  : compact ? 'text-[13px] sm:text-[14px] text-navy/55' : 'text-[14px] sm:text-[15px] text-navy/55'
+              }`}
+            >
+              {n.name}
+            </span>
+            {lineText && !hideLineForCorrection && (() => {
+              const useSpeechContainer = speechInContainer;
+              const lineRow = (
+                <div
+                  className={`flex w-full min-w-0 ${lineMetricsClass} ${
+                    useSpeechContainer
+                      ? 'items-center gap-2'
+                      : `inline-flex items-start gap-1.5 max-w-full ${
+                        isSoloHero || duoProminent ? 'max-w-lg' : 'max-w-[min(100%,320px)]'
+                      }`
+                  }`}
+                >
+                  {!replayDisabled && (
+                    <div className={`flex shrink-0 ${useSpeechContainer ? 'items-center self-start pt-0.5' : `items-center ${playAlignClass}`}`}>
+                      <NarratorLinePlayButton
+                        onClick={() => onToggleReplay?.(id)}
+                        label={`Replay ${n.name}`}
+                        isPlaying={highlightBubble}
+                      />
+                    </div>
+                  )}
+                  <NarratorHoverText
+                    text={lineText}
+                    translation={lineTranslation}
+                    quote={!isQuestionLine}
+                    highlightSpeech={highlightBubble}
+                    speechPlaybackTime={speechPlaybackTime}
+                    speechTimings={speechTimings}
+                    scrollable={isQuestionLine || useSpeechContainer}
+                    scrollClassName={`overflow-y-auto scroll-premium overscroll-contain w-full ${
+                      compact ? 'max-h-[min(18dvh,100px)]' : useSpeechContainer
+                        ? 'max-h-[min(18dvh,100px)] sm:max-h-[min(26dvh,152px)]'
+                        : 'max-h-[min(28dvh,160px)]'
+                    }`}
+                    className={`font-display break-words [overflow-wrap:anywhere] [hyphens:auto] ${lineBodyClass} ${
+                      useSpeechContainer ? 'text-left' : 'text-center'
+                    }`}
+                    wrapperClassName={`relative flex flex-col min-w-0 overflow-visible flex-1 w-full ${
+                      useSpeechContainer
+                        ? 'items-stretch text-left'
+                        : 'items-center text-center'
+                    }`}
+                    tooltipClassName="top-[calc(100%+6px)] text-[11px] sm:text-[12px] z-[60]"
+                  />
                 </div>
-              </div>
-            )}
+              );
+              return (
+                <div className="w-full flex justify-center px-1 overflow-visible">
+                  {useSpeechContainer ? (
+                    <div className={`w-full min-w-0 ${compact ? 'max-w-[min(100%,340px)]' : 'max-w-xl'}`}>
+                      <div className={getNarratorSpeechContainerClass(compact)}>{lineRow}</div>
+                    </div>
+                  ) : (
+                    lineRow
+                  )}
+                </div>
+              );
+            })()}
           </div>
         );
       })}
@@ -1089,40 +1828,80 @@ function NarratorPair({
   );
 }
 
-function DashboardFrame({ children, levelId }) {
+function DashboardFrame({ portraitArea, mainArea, embedded = false, verdictOnly = false }) {
   return (
     <section
       id="learning-dashboard"
-      className="relative flex flex-col min-h-screen max-h-[100dvh] overflow-hidden px-4 sm:px-6 py-3 sm:py-4"
+      className={
+        embedded
+          ? `relative flex flex-col flex-1 min-h-0 overflow-hidden pb-1 ${verdictOnly ? 'px-3 sm:px-4' : 'px-4 sm:px-6'}`
+          : 'relative flex flex-col min-h-screen max-h-[100dvh] overflow-hidden px-4 sm:px-6 py-3 sm:py-4'
+      }
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-paper via-ivory/30 to-paper pointer-events-none" />
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[min(92vw,680px)] h-[280px] rounded-full bg-wine/[0.04] blur-3xl pointer-events-none" />
+      <div className="absolute inset-0 bg-paper pointer-events-none" />
+      {!embedded && (
+        <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[min(92vw,680px)] h-[280px] rounded-full bg-navy/[0.03] blur-3xl pointer-events-none" />
+      )}
 
       <div className="relative max-w-[680px] mx-auto flex flex-col flex-1 min-h-0 w-full">
-        <div className="flex items-center justify-between gap-4 mb-2 shrink-0">
-          <Logo className="shrink-0" />
-          <p className="text-[10px] tracking-[0.22em] uppercase text-wine font-semibold text-right">
-            Parisian test · {levelId}
+        {!embedded && !verdictOnly && (
+          <div className="flex items-center justify-between gap-4 mb-2 shrink-0">
+            <Logo className="shrink-0" />
+            <p className="text-[10px] tracking-[0.22em] uppercase text-wine font-semibold text-right">
+              Parisian test
+            </p>
+          </div>
+        )}
+
+        {embedded && !verdictOnly && (
+          <p className="text-[10px] tracking-[0.22em] uppercase text-wine font-semibold text-right mb-1 shrink-0">
+            Parisian test
           </p>
-        </div>
+        )}
 
         <div className="relative flex flex-col flex-1 min-h-0">
-          <div className="absolute -inset-[1px] rounded-[24px] sm:rounded-[28px] bg-gradient-to-br from-wine/25 via-line/30 to-navy/15" />
-          <div className="absolute -top-2 left-6 w-12 h-12 border-l-2 border-t-2 border-wine/20 rounded-tl-2xl pointer-events-none" />
-          <div className="absolute -bottom-2 right-6 w-12 h-12 border-r-2 border-b-2 border-wine/20 rounded-br-2xl pointer-events-none" />
+          {verdictOnly ? (
+            <div className="relative flex flex-col flex-1 min-h-0 overflow-x-hidden overflow-y-auto w-full">
+              {mainArea}
+            </div>
+          ) : (
+            <>
+              {!embedded && (
+                <div className="absolute -inset-[1px] rounded-[24px] sm:rounded-[28px] bg-gradient-to-br from-line/25 via-line/15 to-navy/10" />
+              )}
 
-          <div className="relative rounded-[23px] sm:rounded-[27px] bg-paper/95 backdrop-blur-sm border border-white/60 shadow-[0_32px_64px_-24px_rgba(26,35,64,0.22)] overflow-hidden flex flex-col flex-1 min-h-0">
-            <div className="h-1 bg-gradient-to-r from-transparent via-wine/70 to-transparent shrink-0" />
-            <div className="px-4 sm:px-7 py-4 sm:py-5 flex flex-col flex-1 min-h-0 overflow-y-auto">{children}</div>
-          </div>
+              <div className={`relative rounded-[23px] sm:rounded-[27px] overflow-hidden flex flex-col flex-1 min-h-0 ${
+                embedded
+                  ? 'bg-paper border border-line/50 shadow-[0_10px_28px_-18px_rgba(139,30,45,0.08)]'
+                  : 'bg-paper/98 backdrop-blur-sm border border-white/60 shadow-[0_20px_48px_-24px_rgba(26,35,64,0.16)]'
+              }`}>
+                <div
+                  className={`relative z-10 shrink-0 overflow-visible ${
+                    embedded ? 'px-4 sm:px-6 pt-2 sm:pt-3' : 'px-4 sm:px-7 pt-4 sm:pt-5'
+                  }`}
+                >
+                  {portraitArea}
+                </div>
+                <div
+                  className={`relative flex flex-col flex-1 min-h-0 overflow-x-hidden overflow-y-auto ${
+                    embedded ? 'px-4 sm:px-6 pb-2.5' : 'px-4 sm:px-7 pb-4 sm:pb-5'
+                  }`}
+                >
+                  {mainArea}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </section>
   );
 }
 
-export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
-  const { effectiveLevel, mergeInterviewReport, recordSample } = useLearnerProfile();
+export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, onVerdictViewChange }) {
+  const skipToVerdictRef = React.useRef(false);
+  const verdictPlayedRef = React.useRef(false);
+  const { effectiveLevel, mergeInterviewReport, recordSample, gainExperience } = useLearnerProfile();
   const learnerLevel = getEffectiveLevel({ assessedLevel: null, claimedLevel: levelId }) || effectiveLevel;
   const [phase, setPhase] = React.useState('intro');
   const [questionIndex, setQuestionIndex] = React.useState(0);
@@ -1139,6 +1918,7 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
   const [interviewReport, setInterviewReport] = React.useState(null);
   const [reportLoading, setReportLoading] = React.useState(false);
   const [feedbackStore, setFeedbackStore] = React.useState(() => mergeInterviewFeedback());
+  const [answerRejectedShort, setAnswerRejectedShort] = React.useState(false);
 
   const {
     utterances,
@@ -1170,13 +1950,51 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
     speechPlaybackTime,
     speechTimings,
     speechText,
+    spokenLinesByNarrator,
     lastLineByNarrator,
     lastTranslationByNarrator,
+    clearNarratorLines,
     invalidateSession,
+    pauseNarratorPlayback,
   } = useNarratorDialogue();
+
+  const toggleNarratorReplay = React.useCallback((narratorId) => {
+    const spokenLine = spokenLinesByNarrator?.[narratorId];
+    const lineText = spokenLine?.narrator === narratorId ? spokenLine.text : null;
+    const isLinePlaying = Boolean(
+      playing
+      && activeNarrator === narratorId
+      && speechText
+      && lineText
+      && speechText === lineText,
+    );
+    if (isLinePlaying) {
+      pauseNarratorPlayback();
+      return;
+    }
+    replayNarratorLine(narratorId);
+  }, [
+    playing,
+    activeNarrator,
+    speechText,
+    spokenLinesByNarrator,
+    pauseNarratorPlayback,
+    replayNarratorLine,
+  ]);
 
   const currentQuestion = INTRO_QUESTIONS[questionIndex];
   const isLastQuestion = questionIndex >= INTRO_QUESTIONS.length - 1;
+
+  const playQuestionAtIndex = React.useCallback(async (index) => {
+    const question = INTRO_QUESTIONS[index];
+    if (!question) return;
+    clearNarratorLines();
+    await playLines([{
+      narrator: question.narrator,
+      text: question.question,
+      translation: question.translation,
+    }]);
+  }, [playLines, clearNarratorLines]);
 
   const clearAnswer = React.useCallback(() => {
     setWriteText('');
@@ -1215,6 +2033,29 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
   }, [inputMode, writeText, stopRecordingForSubmit]);
 
   React.useEffect(() => {
+    registerNarratorLineTranslations([
+      ...buildIntroScript(),
+      ...INTRO_QUESTIONS.map((q) => ({ text: q.question, translation: q.translation })),
+    ]);
+  }, []);
+
+  React.useEffect(() => {
+    const lines = [];
+    for (const entry of Object.values(feedbackStore)) {
+      for (const [key, group] of Object.entries(entry || {})) {
+        if (key === 'askerPerformance' && group && typeof group === 'object') {
+          for (const variant of Object.values(group)) {
+            if (variant?.text) lines.push(variant);
+          }
+          continue;
+        }
+        if (Array.isArray(group)) lines.push(...group);
+      }
+    }
+    registerNarratorLineTranslations(lines);
+  }, [feedbackStore]);
+
+  React.useEffect(() => {
     let cancelled = false;
     fetch('/api/interview-feedback')
       .then((res) => (res.ok ? res.json() : null))
@@ -1230,21 +2071,43 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
   }, [playing, isRecording, stop]);
 
   React.useEffect(() => {
+    onVerdictViewChange?.(phase === 'complete');
+  }, [phase, onVerdictViewChange]);
+
+  React.useEffect(() => {
+    if (phase !== 'complete') {
+      verdictPlayedRef.current = false;
+    }
+  }, [phase]);
+
+  React.useEffect(() => {
+    if (phase !== 'complete' || reportLoading || !interviewReport) return;
+    if (verdictPlayedRef.current) return;
+    verdictPlayedRef.current = true;
+
+    const lines = buildFinalVerdictLines(levelId, assessments);
+    registerNarratorLineTranslations(lines);
+    let cancelled = false;
+    (async () => {
+      await playLines(lines);
+      if (cancelled) return;
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [phase, reportLoading, interviewReport, levelId, assessments, playLines]);
+
+  React.useEffect(() => {
     let cancelled = false;
     setIntroDelaying(true);
     (async () => {
       await wait(INTRO_AUDIO_DELAY_MS);
-      if (cancelled) return;
+      if (cancelled || skipToVerdictRef.current) return;
       setIntroDelaying(false);
-      await playLines(buildIntroScript(levelId));
-      if (cancelled) return;
-      setPhase('ready');
-      setInputMode('speak');
-      await playLines([{
-        narrator: READY_PROMPT.narrator,
-        text: READY_PROMPT.question,
-        translation: READY_PROMPT.translation,
-      }]);
+      await playLines(buildIntroScript());
+      if (cancelled || skipToVerdictRef.current) return;
+      clearAnswer();
+      setPhase('intro_ack');
     })();
     return () => {
       cancelled = true;
@@ -1253,54 +2116,76 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  React.useEffect(() => {
-    if (phase !== 'answering' || questionIndex === 0) return;
-    clearAnswer();
-    playLines([{
-      narrator: currentQuestion.narrator,
-      text: currentQuestion.question,
-      translation: currentQuestion.translation,
-    }]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questionIndex, phase]);
+  const handleCompris = async () => {
+    if (playing) return;
 
-  const handleReadyDone = async () => {
-    if (submitting || playing) return;
-    setSubmitting(true);
-    const trimmed = await resolveAnswerText();
-    if (!trimmed) {
-      setSubmitting(false);
+    if (phase === 'intro_ack') {
+      clearAnswer();
+      setAnswerRejectedShort(false);
+      setInputMode('speak');
+      setPhase('awaiting_ack');
+      await playQuestionAtIndex(0);
       return;
     }
 
-    await playLines(buildReadyFeedback(trimmed));
+    if (phase !== 'awaiting_ack') return;
     clearAnswer();
+    setAnswerRejectedShort(false);
+    setInputMode('speak');
     setPhase('answering');
-    await playLines([{
-      narrator: INTRO_QUESTIONS[0].narrator,
-      text: INTRO_QUESTIONS[0].question,
-      translation: INTRO_QUESTIONS[0].translation,
-    }]);
-    setSubmitting(false);
   };
 
-  const handleDone = async () => {
+  const draftAnswerText = inputMode === 'write'
+    ? writeText
+    : getSpeakText(utterances, settledText, partialTranscript);
+  const draftAnswerLineCount = countAnswerLines(
+    draftAnswerText.trim(),
+    inputMode === 'speak' ? utterances.length : 0,
+  );
+  const draftMeetsMinLines = hasMinimumAnswerLines(
+    draftAnswerText.trim(),
+    inputMode === 'speak' ? utterances.length : 0,
+  );
+
+  React.useEffect(() => {
+    if (phase !== 'answering') setAnswerRejectedShort(false);
+  }, [phase, questionIndex]);
+
+  React.useEffect(() => {
+    if (draftMeetsMinLines) setAnswerRejectedShort(false);
+  }, [draftMeetsMinLines]);
+
+  const handleDone = async (providedText = null) => {
     if (submitting || playing || phase !== 'answering') return;
     setSubmitting(true);
     setFeedbackReady(false);
     setLastFeedback(null);
-    const trimmed = await resolveAnswerText();
+    const trimmed = (providedText ?? await resolveAnswerText()).trim();
     if (!trimmed) {
       setSubmitting(false);
       return;
     }
 
+    const utteranceCount = inputMode === 'speak' ? utterancesRef.current.length : 0;
+    if (!hasMinimumAnswerLines(trimmed, utteranceCount)) {
+      setAnswerRejectedShort(true);
+      setSubmitting(false);
+      return;
+    }
+
+    setAnswerRejectedShort(false);
+
     const { corrected, translation } = await fetchCorrection(trimmed, learnerLevel);
     const hasMistake = hasParisianMistake(trimmed, corrected);
     const assessed = await assessAnswer(trimmed, learnerLevel);
-    const feedbackLines = linesFromFeedback(
-      getQuestionFeedbackLines(feedbackStore, currentQuestion.id, hasMistake),
+    const performanceLine = getAskerPerformanceLine(
+      feedbackStore,
+      currentQuestion.id,
+      currentQuestion.narrator,
+      hasMistake,
+      inputMode,
     );
+    const feedbackLines = linesFromFeedback([performanceLine]);
 
     setAnswers((prev) => [...prev, trimmed]);
     setAssessments((prev) => [...prev, assessed]);
@@ -1312,45 +2197,71 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
       assessedLevel: assessed,
       correctionShown: false,
     });
-    setPhase('feedback');
+    setPhase('review');
     setFeedbackReady(true);
 
+    // Ensure only one visible reaction line (the asker).
+    clearNarratorLines();
     await playLines(feedbackLines);
     recordSample(trimmed);
+
+    if (!hasMistake) {
+      gainExperience(CORRECT_ANSWER_PERCENT_BUMP);
+      setPhase('feedback');
+    }
+
     setSubmitting(false);
+  };
+
+  const handleMakeParisian = async () => {
+    if (playing || correcting || phase !== 'review' || !lastFeedback?.original) return;
+    if (!lastFeedback.hasMistake) {
+      setPhase('feedback');
+      return;
+    }
+
+    setCorrecting(true);
+    try {
+      // Get a fresh correction and then read the corrected sentence plainly.
+      const { corrected } = await fetchCorrection(lastFeedback.original, learnerLevel);
+      const correctedDisplay = prepareCorrectionForDisplay(lastFeedback.original, corrected);
+      setLastFeedback((prev) => ({
+        ...prev,
+        corrected: correctedDisplay,
+        correctionShown: true,
+      }));
+
+      clearNarratorLines();
+      await playLines([buildAskerCorrectionReadLine(
+        lastFeedback.original,
+        correctedDisplay,
+        currentQuestion?.narrator || 'lea',
+      )]);
+      setPhase('feedback');
+    } finally {
+      setCorrecting(false);
+    }
   };
 
   const submitCurrentAnswer = async () => {
     if (submitting || playing || stoppingRecording) return;
-    if (phase === 'ready') await handleReadyDone();
-    else if (phase === 'answering') await handleDone();
+    if (phase === 'answering') await handleDone();
   };
 
   const toggleRecording = async () => {
     if (playing || submitting || stoppingRecording) return;
     if (isRecording) {
       const text = await stopRecordingForSubmit();
-      if (text) await submitCurrentAnswer();
+      if (text) {
+        if (hasMinimumAnswerLines(text, utterancesRef.current.length)) {
+          await handleDone(text);
+        } else {
+          setAnswerRejectedShort(true);
+        }
+      }
       return;
     }
     await start();
-  };
-
-  const handleCorrect = async () => {
-    if (
-      correcting
-      || playing
-      || phase !== 'feedback'
-      || !lastFeedback?.original
-      || !lastFeedback?.hasMistake
-      || lastFeedback.correctionShown
-    ) {
-      return;
-    }
-    setCorrecting(true);
-    const { corrected, translation } = await fetchCorrection(lastFeedback.original, learnerLevel);
-    setLastFeedback((prev) => ({ ...prev, corrected, translation, correctionShown: true }));
-    setCorrecting(false);
   };
 
   const handlePlayCorrection = async () => {
@@ -1378,28 +2289,36 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
 
     if (isLastQuestion) {
       setPhase('complete');
-      const reportPromise = loadInterviewReport(answers, assessments);
-      await playLines(buildFinalScript(levelId, assessments));
-      await reportPromise;
+      await loadInterviewReport(answers, assessments);
       return;
     }
 
     clearAnswer();
     setFeedbackReady(false);
-    setQuestionIndex((i) => i + 1);
-    setPhase('answering');
+    setAnswerRejectedShort(false);
+    const nextIndex = questionIndex + 1;
+    setQuestionIndex(nextIndex);
+    clearNarratorLines();
+    setPhase('awaiting_ack');
+    await playQuestionAtIndex(nextIndex);
   };
 
   const inputDisabled = submitting || playing || stoppingRecording;
-  const showMicHint = (phase === 'ready' || phase === 'answering') && !playing && !submitting && !stoppingRecording;
+  const showMicHint = phase === 'answering' && !playing && !submitting && !stoppingRecording;
 
   const trySubmitWrite = () => {
     if (submitting || playing || !writeText.trim()) return;
+    if (!hasMinimumAnswerLines(writeText.trim())) {
+      setAnswerRejectedShort(true);
+      return;
+    }
     submitCurrentAnswer();
   };
 
   const skipToLearnOptions = React.useCallback(async () => {
+    skipToVerdictRef.current = true;
     invalidateSession();
+    clearNarratorLines();
     if (isRecording) stop();
     setIntroDelaying(false);
     setSubmitting(false);
@@ -1408,69 +2327,211 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
     setFeedbackReady(false);
     setCorrecting(false);
     setPhase('complete');
+    setReportLoading(false);
+    const adminReport = enrichReportForVerdict(ADMIN_SKIP_VERDICT_REPORT, levelId, assessments);
+    setInterviewReport(adminReport);
+    mergeInterviewReport(adminReport, levelId);
+  }, [invalidateSession, clearNarratorLines, isRecording, stop, mergeInterviewReport, levelId]);
 
-    const { answers: skipAnswers, assessments: skipAssessments } = buildDevSkipInterviewData(
-      levelId,
-      answers,
-      assessments,
-    );
-    setAnswers(skipAnswers);
-    setAssessments(skipAssessments);
-    await loadInterviewReport(skipAnswers, skipAssessments);
-  }, [invalidateSession, isRecording, stop, loadInterviewReport, levelId, answers, assessments]);
+  const isVerdictView = phase === 'complete';
+  const showQuestionProgress = phase === 'awaiting_ack' || phase === 'answering' || phase === 'review' || phase === 'feedback';
+  const questionStep = questionIndex + 1;
+  const feedbackAskerName = currentQuestion
+    ? NARRATORS[currentQuestion.narrator].name
+    : 'Léa';
+  const isIntroFlow = phase === 'intro' || phase === 'intro_ack';
+  const showHeroPortrait = Boolean(
+    currentQuestion
+    && (phase === 'awaiting_ack' || phase === 'answering' || phase === 'review' || phase === 'feedback'),
+  );
+  const showCompris = phase === 'intro_ack' || (phase === 'awaiting_ack' && currentQuestion);
+  const showFeedbackCompris = phase === 'feedback' && feedbackReady && !playing && !correcting;
+  const suppressNarratorLineId = lastFeedback?.correctionShown && currentQuestion?.narrator
+    ? currentQuestion.narrator
+    : null;
+  const correctionDisplayText = lastFeedback?.correctionShown && lastFeedback?.corrected != null && lastFeedback?.original
+    ? prepareCorrectionForDisplay(lastFeedback.original, lastFeedback.corrected)
+    : null;
+  const correctionDisplay = correctionDisplayText
+    ? {
+        text: correctionDisplayText,
+        translation: lastFeedback.translation,
+        onReplay: () => {
+          const isCorrectionPlaying = playing
+            && speechText
+            && speechText === correctionDisplayText;
+          if (isCorrectionPlaying) {
+            pauseNarratorPlayback();
+            return;
+          }
+          replayNarratorLine(currentQuestion.narrator);
+        },
+        replayDisabled: submitting || correcting,
+        playing,
+        speechPlaybackTime,
+        speechTimings,
+        speechText,
+        replayLabel: `Replay ${NARRATORS[currentQuestion.narrator].name}`,
+      }
+    : null;
+
+  const adminSkipButton = isVerdictView ? (
+    <button
+      type="button"
+      onClick={skipToLearnOptions}
+      className="fixed top-[4.75rem] right-5 sm:right-8 z-30 text-[10px] tracking-[0.16em] uppercase text-navy/30 hover:text-wine/80 transition-colors"
+      title="Admin: jump to rating screen"
+    >
+      Admin skip
+    </button>
+  ) : (
+    <button
+      type="button"
+      onClick={skipToLearnOptions}
+      className="absolute top-2 right-4 sm:right-6 z-20 text-[10px] tracking-[0.16em] uppercase text-navy/30 hover:text-wine/80 transition-colors"
+      title="Admin: jump to rating screen"
+    >
+      Admin skip
+    </button>
+  );
 
   return (
-    <DashboardFrame levelId={levelId}>
-      <button
-        type="button"
-        onClick={skipToLearnOptions}
-        className="absolute top-3 right-4 sm:right-6 z-20 text-[10px] tracking-[0.16em] uppercase text-navy/30 hover:text-wine/80 transition-colors"
-        title="Admin: skip interview and open learn options"
-      >
-        Admin skip
-      </button>
-      <div className="text-center mb-3 shrink-0">
-        <p className="text-[12px] sm:text-[13px] text-navy/55 max-w-[440px] mx-auto line-clamp-2">
-          You claimed <span className="font-medium text-navy">{levelTitle}</span>. Speak or write in French — we&apos;ll tell you what we think.
-        </p>
-      </div>
+    <DashboardFrame
+      embedded={embedded}
+      verdictOnly={isVerdictView}
+      portraitArea={!isVerdictView ? (
+        <>
+      {adminSkipButton}
 
-      <NarratorPair
-        activeNarrator={activeNarrator}
-        lastLineByNarrator={lastLineByNarrator}
-        lastTranslationByNarrator={lastTranslationByNarrator}
-        playing={playing}
-        speechPlaybackTime={speechPlaybackTime}
-        speechTimings={speechTimings}
-        speechText={speechText}
-        onReplay={replayNarratorLine}
-        replayDisabled={submitting || correcting}
-        askerId={
-          phase === 'ready'
-            ? READY_PROMPT.narrator
-            : phase === 'answering'
-              ? currentQuestion?.narrator
-              : null
-        }
-      />
-
+        <section
+          className={`relative shrink-0 w-full overflow-visible transition-all duration-500 ${
+            isIntroFlow
+              ? 'pb-2'
+              : showHeroPortrait
+                ? correctionDisplay ? 'pb-0' : 'pb-0.5'
+                : 'pb-0.5'
+          }`}
+          aria-label="Interview prompt"
+        >
+          <NarratorPair
+            compact={embedded}
+            heroMode={showHeroPortrait}
+            duoProminent={isIntroFlow}
+            activeNarrator={activeNarrator}
+            spokenLinesByNarrator={spokenLinesByNarrator}
+            lastLineByNarrator={lastLineByNarrator}
+            lastTranslationByNarrator={lastTranslationByNarrator}
+            playing={playing}
+            speechPlaybackTime={speechPlaybackTime}
+            speechTimings={speechTimings}
+            speechText={speechText}
+            onToggleReplay={toggleNarratorReplay}
+            replayDisabled={submitting || correcting}
+            suppressNarratorLineId={suppressNarratorLineId}
+            featuredId={
+              currentQuestion
+              && (phase === 'awaiting_ack' || phase === 'answering' || phase === 'review' || phase === 'feedback')
+                ? currentQuestion.narrator
+                : null
+            }
+            currentQuestion={
+              currentQuestion
+              && (phase === 'awaiting_ack' || phase === 'answering')
+                ? currentQuestion
+                : null
+            }
+          />
+          {correctionDisplay?.text ? (
+            <CorrectionDisplayBar
+              text={correctionDisplay.text}
+              translation={correctionDisplay.translation}
+              onReplay={correctionDisplay.onReplay}
+              replayDisabled={correctionDisplay.replayDisabled}
+              playing={correctionDisplay.playing}
+              speechPlaybackTime={correctionDisplay.speechPlaybackTime}
+              speechTimings={correctionDisplay.speechTimings}
+              speechText={correctionDisplay.speechText}
+              replayLabel={correctionDisplay.replayLabel}
+              compact={embedded}
+            />
+          ) : null}
+        </section>
+        </>
+      ) : null}
+      mainArea={isVerdictView ? (
+        <>
+          {adminSkipButton}
+          <div className="flex flex-1 flex-col items-center justify-center min-h-0 w-full gap-3 sm:gap-4 py-1 pb-2 overflow-y-auto">
+            <VerdictResultsTitle compact={embedded} />
+            <FrenchOpinionReport
+              report={interviewReport}
+              loading={reportLoading}
+              claimedLevel={levelId}
+              compact={embedded}
+              activeNarrator={activeNarrator}
+              playing={playing}
+              speechPlaybackTime={speechPlaybackTime}
+              speechTimings={speechTimings}
+              speechText={speechText}
+              onToggleReplay={toggleNarratorReplay}
+              replayDisabled={reportLoading}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+      <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
       <AnimatePresence mode="wait">
-        {phase === 'ready' && (
+        {showCompris && (
           <motion.div
-            key="ready"
+            key={phase === 'intro_ack' ? 'intro-ack' : `ack-${questionIndex}`}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.35 }}
-            className="mt-3 flex flex-col flex-1 min-h-0 gap-2"
+            className={`flex shrink-0 flex-col items-center w-full ${
+              phase === 'awaiting_ack'
+                ? embedded ? 'mt-5 sm:mt-6' : 'mt-6 sm:mt-7'
+                : embedded ? 'mt-5 sm:mt-6' : 'mt-6 sm:mt-8'
+            }`}
           >
-            <QuestionCard
-              label={`${NARRATORS.jules.name} asks`}
-              question={READY_PROMPT.question}
-              translation={READY_PROMPT.translation}
-            />
-            <div className="shrink-0 mt-auto pt-1">
+            <NarratorHoverText
+              text="Compris"
+              translation="Understood"
+              tooltipPosition="below"
+              wrapperClassName="relative inline-flex"
+            >
+              <button
+                type="button"
+                onClick={handleCompris}
+                disabled={playing}
+                className={`bg-wine text-ivory rounded-full font-display hover:bg-wine2 transition-all disabled:opacity-40 ${
+                  embedded
+                    ? 'px-10 py-3 text-[16px] min-w-[168px]'
+                    : 'px-14 py-3.5 text-[18px] sm:text-[19px] min-w-[200px]'
+                }`}
+              >
+                Compris
+              </button>
+            </NarratorHoverText>
+          </motion.div>
+        )}
+
+        {(phase === 'answering' || phase === 'review' || phase === 'feedback') && currentQuestion && (
+          <motion.div
+            key={`q-${questionIndex}-${phase}`}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.35 }}
+            className={`flex flex-col shrink-0 w-full gap-4 ${
+              correctionDisplay
+                ? embedded ? 'mt-1' : 'mt-2'
+                : embedded ? 'mt-4' : 'mt-7'
+            }`}
+          >
             <AnswerInput
+              compact={embedded}
               inputMode={inputMode}
               onInputModeChange={setInputMode}
               writeText={writeText}
@@ -1481,160 +2542,97 @@ export function LevelAssessmentDashboard({ levelId, levelTitle, onBack }) {
               isRecording={isRecording}
               isStoppingRecording={stoppingRecording}
               status={status}
-              onToggleRecording={toggleRecording}
-              disabled={inputDisabled}
-              onWriteSubmit={trySubmitWrite}
-              showMicHint={showMicHint && !inputDisabled}
-              micHintText="say if you're ready"
-            />
-            <div className="mt-3 shrink-0">
-              <button
-                type="button"
-                onClick={onBack}
-                className="text-[12px] text-navy/40 hover:text-navy/65 transition-colors"
-              >
-                ← Pick another level
-              </button>
-            </div>
-            </div>
-          </motion.div>
-        )}
-
-        {(phase === 'answering' || phase === 'feedback') && currentQuestion && (
-          <motion.div
-            key={`q-${questionIndex}-${phase}`}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.35 }}
-            className="mt-3 flex flex-col flex-1 min-h-0 gap-2"
-          >
-            <QuestionCard
-              label={`Q${questionIndex + 1} · ${NARRATORS[currentQuestion.narrator].name}`}
-              question={currentQuestion.question}
-              translation={currentQuestion.translation}
-              step={questionIndex + 1}
-              total={INTRO_QUESTIONS.length}
-            />
-
-            {phase === 'answering' && (
-              <div className="shrink-0 mt-auto pt-1">
-                <AnswerInput
-                  inputMode={inputMode}
-                  onInputModeChange={setInputMode}
-                  writeText={writeText}
-                  onWriteTextChange={setWriteText}
-                  utterances={utterances}
-                  settledText={settledText}
-                  partialTranscript={partialTranscript}
-                  isRecording={isRecording}
-                  isStoppingRecording={stoppingRecording}
-                  status={status}
-                  onToggleRecording={toggleRecording}
-                  disabled={inputDisabled}
-                  onWriteSubmit={trySubmitWrite}
-                  showMicHint={showMicHint && !inputDisabled}
-                  micHintText="answer them here"
-                />
-                <div className="mt-3 shrink-0">
+              onToggleRecording={
+                phase === 'answering' && !inputDisabled ? toggleRecording : () => {}
+              }
+              disabled={phase !== 'answering' || inputDisabled}
+              onWriteFinish={trySubmitWrite}
+              writeFinishDisabled={
+                inputDisabled || !draftMeetsMinLines || !writeText.trim()
+              }
+              showMicHint={phase === 'answering' && showMicHint && !inputDisabled}
+              micHintText="Answer them here"
+              minAnswerLines={MIN_ANSWER_LINES}
+              answerLineCount={draftAnswerLineCount}
+              showMinLinesHint={phase === 'answering' && answerRejectedShort}
+              questionStep={questionStep}
+              questionTotal={INTRO_QUESTIONS.length}
+              showQuestionProgress={showQuestionProgress}
+              underlineCorrection={lastFeedback?.hasMistake ? lastFeedback : null}
+              showAnswerSuccess={
+                Boolean(
+                  lastFeedback
+                  && !lastFeedback.hasMistake
+                  && (phase === 'review' || phase === 'feedback'),
+                )
+              }
+              parisianPointsAward={CORRECT_ANSWER_PARISIAN_PTS}
+              leftAction={
+                phase === 'review' && !lastFeedback?.correctionShown && lastFeedback?.hasMistake ? (
                   <button
                     type="button"
-                    onClick={onBack}
-                    className="text-[12px] text-navy/40 hover:text-navy/65 transition-colors"
+                    onClick={handleMakeParisian}
+                    disabled={playing || correcting}
+                    className="font-display italic text-[13px] px-4 py-2 rounded-full transition-colors whitespace-nowrap shadow-[0_10px_28px_-16px_rgba(139,30,45,0.38)] bg-wine hover:bg-wine2 text-ivory disabled:opacity-50"
                   >
-                    ← Pick another level
+                    Make it Parisian
                   </button>
-                </div>
-              </div>
-            )}
-
-            {phase === 'feedback' && feedbackReady && (
-              <div className="mt-3 flex flex-col items-center gap-3 w-full shrink-0">
-                {lastFeedback?.hasMistake && lastFeedback?.correctionShown && lastFeedback.corrected != null && (
-                  <CorrectionPanel
-                    original={lastFeedback.original}
-                    corrected={lastFeedback.corrected}
-                    correctedTranslation={lastFeedback.translation}
-                    questionIndex={questionIndex}
-                    onPlay={handlePlayCorrection}
-                    playing={playing}
-                    playDisabled={correcting || submitting}
-                    speechPlaybackTime={speechPlaybackTime}
-                    speechTimings={speechTimings}
-                    speechText={speechText}
-                  />
-                )}
-                {lastFeedback?.hasMistake && !lastFeedback?.correctionShown ? (
-                  <>
-                    <p className="text-[12px] text-navy/50 italic text-center">
-                      {playing ? 'Léa & Jules are reacting…' : 'Want to see how a Parisian would say it?'}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={handleCorrect}
-                      disabled={playing || correcting || submitting}
-                      className="px-8 py-2.5 bg-wine text-ivory rounded-full font-display text-[14px] hover:bg-wine2 transition-all disabled:opacity-40 min-w-[200px]"
-                    >
-                      {correcting ? '…' : 'See Parisian correction'}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-[12px] text-navy/50 italic text-center">
-                      {playing ? 'Léa & Jules are reacting…' : 'Ready for the next one?'}
-                    </p>
+                ) : null
+              }
+              headerRightAction={
+                showFeedbackCompris ? (
+                  <NarratorHoverText
+                    text={isLastQuestion ? 'See my rating' : 'Next question'}
+                    translation={isLastQuestion ? 'View your level rating' : 'Continue to the next question'}
+                    tooltipPosition="below"
+                    wrapperClassName="relative inline-flex"
+                  >
                     <button
                       type="button"
                       onClick={handleContinue}
                       disabled={playing || correcting}
-                      className="px-8 py-2.5 bg-navy text-ivory rounded-full font-display text-[14px] hover:bg-navy/90 transition-all disabled:opacity-40 min-w-[160px]"
+                      className={`bg-navy text-ivory rounded-full font-display hover:bg-navy/90 transition-all disabled:opacity-40 whitespace-nowrap ${
+                        embedded
+                          ? 'px-3.5 py-1.5 text-[12px] sm:text-[13px]'
+                          : 'px-5 py-2 text-[14px] sm:text-[15px]'
+                      }`}
                     >
-                      {isLastQuestion ? 'See final verdict' : 'Continue'}
+                      {isLastQuestion ? 'See my rating' : 'Next question'}
                     </button>
-                  </>
-                )}
-              </div>
+                  </NarratorHoverText>
+                ) : null
+              }
+            />
+
+            {phase === 'feedback' && feedbackReady && !lastFeedback?.hasMistake && (
+              <p className={`shrink-0 text-[12px] text-navy/50 italic text-center ${embedded ? 'mt-1' : 'mt-2'}`}>
+                {playing
+                  ? `${feedbackAskerName} is reviewing how you ${inputMode === 'write' ? 'wrote' : 'spoke'}…`
+                  : 'Nickel — no correction needed.'}
+              </p>
             )}
           </motion.div>
         )}
 
-        {phase === 'intro' && (
+        {phase === 'intro' && introDelaying && (
           <motion.p
             key="intro-wait"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mt-4 text-center text-[13px] text-navy/45 italic shrink-0"
+            className={`text-center text-[13px] text-navy/45 italic shrink-0 ${embedded ? 'mt-2' : 'mt-4'}`}
           >
-            {introDelaying ? 'Léa & Jules are getting ready…' : playing ? 'Listen…' : 'Starting your interview…'}
+            Léa & Jules are getting ready…
           </motion.p>
         )}
 
-        {phase === 'complete' && (
-          <motion.div
-            key="complete"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-4 flex flex-col items-center gap-5 shrink-0 w-full"
-          >
-            <div className="text-center space-y-2">
-              <p className="font-display text-[20px] text-navy">Interview terminée.</p>
-              <p className="text-[13px] text-navy/55 max-w-[400px] mx-auto">
-                Léa & Jules rated your French — here&apos;s what stood out.
-              </p>
-            </div>
-
-            <FrenchOpinionReport
-              report={interviewReport}
-              loading={reportLoading}
-              claimedLevel={levelId}
-            />
-          </motion.div>
-        )}
       </AnimatePresence>
+      </div>
 
       {error && (
         <p className="mt-6 text-center text-[13px] text-wine/75">{error}</p>
       )}
-    </DashboardFrame>
+        </>
+      )}
+    />
   );
 }

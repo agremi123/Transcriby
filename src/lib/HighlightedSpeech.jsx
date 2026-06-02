@@ -20,13 +20,11 @@ export function HighlightedSpeech({
     </span>
   ));
 
-  if (quote) {
-    return (
-      <span className={className}>
-        «{body}»
-      </span>
-    );
-  }
-
-  return <span className={className}>{body}</span>;
+  return (
+    <p className={className}>
+      {quote ? '«' : null}
+      {body}
+      {quote ? '»' : null}
+    </p>
+  );
 }

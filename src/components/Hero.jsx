@@ -5,6 +5,7 @@ import { useSpeechmaticsTranscription } from '../hooks/useSpeechmaticsTranscript
 import {
   ButtonPrimary,
   Container,
+  ParisianExperienceHint,
   Reveal,
   Star,
 } from './atoms';
@@ -16,10 +17,12 @@ import { NarratorHoverText } from '../lib/NarratorHoverText';
 import { lookupNarratorTranslation } from '../lib/narratorTranslations';
 import { SpellcheckUnderline } from '../lib/SpellcheckUnderline';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
-import { matchesCorrectionTarget, isStrictCorrectionMatch, wordDiff, buildCorrectionNarrationText, getDiffChangedIndices } from '../lib/correctionFormat';
+import { matchesCorrectionTarget, isStrictCorrectionMatch, wordDiff, buildCorrectionNarrationText } from '../lib/correctionFormat';
+import { DiffText } from '../lib/DiffText';
 import { registerCorrectionKeyterms } from '../lib/deepgramKeyterms';
 import { saveCorrection } from '../lib/correctionsNotebook';
 import { bumpTargetProgressByTopic } from '../lib/targetProgress';
+import { joinTranscriptSegments, segmentNeedsLeadingSpace } from '../lib/transcriptJoin';
 import {
   getAlreadyCorrectLine,
   getNarratorIntro,
@@ -115,6 +118,64 @@ function CorrectionLoading({ className = '' }) {
           style={{ animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite` }}
         />
       ))}
+    </div>
+  );
+}
+
+/** Play control or spinner — vertically centered on the first text line (leading-snug). */
+function TranscriptAudioSlot({ mode, isPlaying, onPlay }) {
+  const inner = (() => {
+    if (mode === 'loading') {
+      return (
+        <span
+          className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-navy/10"
+          aria-label="Transcribing"
+        >
+          <span
+            className="w-2.5 h-2.5 rounded-full border-[1.5px] border-navy/15 border-t-wine animate-spin"
+            aria-hidden
+          />
+        </span>
+      );
+    }
+
+    if (mode === 'play') {
+      return (
+        <button
+          type="button"
+          onClick={onPlay}
+          className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-navy/20 hover:bg-navy/30 transition-colors"
+          aria-label={isPlaying ? 'Pause sentence' : 'Play sentence'}
+        >
+          {isPlaying ? (
+            <svg width="6" height="8" viewBox="0 0 10 12" fill="none" aria-hidden>
+              <rect x="1" y="1" width="3" height="10" rx="1" fill="white"/>
+              <rect x="6" y="1" width="3" height="10" rx="1" fill="white"/>
+            </svg>
+          ) : (
+            <svg width="6" height="8" viewBox="0 0 10 12" fill="none" aria-hidden>
+              <path d="M1 1l8 5-8 5V1z" fill="white"/>
+            </svg>
+          )}
+        </button>
+      );
+    }
+
+    return <span className="w-5 h-5" aria-hidden />;
+  })();
+
+  return (
+    <div className="h-[1.375em] w-5 shrink-0 flex items-center justify-center self-start">
+      {inner}
+    </div>
+  );
+}
+
+function TranscriptSentenceRow({ gutter, children }) {
+  return (
+    <div className="flex gap-2 min-w-0 items-start">
+      {gutter}
+      <div className="min-w-0 flex-1 leading-snug">{children}</div>
     </div>
   );
 }
@@ -253,7 +314,12 @@ function LiveSpeechLine({ utterances, settledText, partialTranscript, correction
       })}
       {showLiveLine && (
         <div className="min-w-0">
-          {settledText && <span className="text-navy font-semibold">{settledText}{' '}</span>}
+          {settledText && (
+            <span className="text-navy font-semibold">
+              {settledText}
+              {partialTranscript && segmentNeedsLeadingSpace(partialTranscript) ? ' ' : null}
+            </span>
+          )}
           {partialTail}
         </div>
       )}
@@ -394,31 +460,6 @@ function NarratorPortrait({ narratorId, speaking, onReplay, hideName = false, si
         </span>
       )}
     </div>
-  );
-}
-
-// Renders text with a red underline on changed words.
-// side='original' underlines words from the original that were changed.
-// side='corrected' underlines words in the corrected sentence that are new.
-function DiffText({ original, corrected, side, className = '' }) {
-  const { originalChanged, correctedChanged } = React.useMemo(
-    () => getDiffChangedIndices(original, corrected),
-    [original, corrected],
-  );
-  const text = side === 'original' ? original : corrected;
-  const changed = side === 'original' ? originalChanged : correctedChanged;
-  const words = (text || '').trim().split(/\s+/).filter(Boolean);
-  return (
-    <span className={className}>
-      {words.map((word, i) => (
-        <React.Fragment key={i}>
-          {i > 0 && ' '}
-          {changed.has(i)
-            ? <span style={{ textDecoration: 'underline solid #8B1E2D', textUnderlineOffset: '4px', textDecorationThickness: '2px' }}>{word}</span>
-            : word}
-        </React.Fragment>
-      ))}
-    </span>
   );
 }
 
@@ -1363,11 +1404,11 @@ export function AudioDemoCard({
   const showRepeatLine = hasSpeakCorrection && awaitingRepeat && (isRecording || !!repeatAttemptText);
 
   const getLiveSpeakText = React.useCallback((baseUtterances = utterances) => (
-    [
+    joinTranscriptSegments(
       baseUtterances.map((u) => u.text).join(' '),
       settledText,
       partialTranscript,
-    ].filter(Boolean).join(' ').trim().replace(/\s+/g, ' ')
+    ).replace(/\s+/g, ' ')
   ), [utterances, settledText, partialTranscript]);
 
   const stopRecordingWithGrace = React.useCallback(async () => {
@@ -1492,7 +1533,7 @@ export function AudioDemoCard({
   React.useEffect(() => registerSiteAudioStop(stopAllCardAudio), [stopAllCardAudio]);
 
   const toggleUtterancePlayback = React.useCallback((utt) => {
-    if (!utt?.audioUrl || isRecording || status === 'connecting') return;
+    if (!utt?.audioUrl) return;
     if (playingUtteranceId === utt.id && isPlaying) {
       recordingSessionRef.current = null;
       audioRef.current?.pause();
@@ -1534,7 +1575,7 @@ export function AudioDemoCard({
     }
     startRaf();
     setIsPlaying(true);
-  }, [isRecording, status, isPlaying, playingUtteranceId, stopRaf, preparePlaybackWords, startRaf]);
+  }, [isPlaying, playingUtteranceId, stopRaf, preparePlaybackWords, startRaf]);
 
   React.useEffect(() => () => stopRaf(), [stopRaf]);
 
@@ -2230,7 +2271,7 @@ export function AudioDemoCard({
                       && playbackTime <= utt.endTime + 0.5;
 
                     const seekTo = (time) => {
-                      if (!utt.audioUrl || isLive) return;
+                      if (!utt.audioUrl) return;
                       if (playingUtteranceId !== utt.id || !audioRef.current) {
                         toggleUtterancePlayback(utt);
                         window.setTimeout(() => {
@@ -2277,65 +2318,59 @@ export function AudioDemoCard({
                         ))
                       : <span style={uttActive ? { background: 'rgba(139,30,45,0.12)', borderRadius: '4px', padding: '1px 3px' } : undefined}>{utt.text}</span>;
 
+                    const utteranceSlotMode = utt.audioUrl
+                      ? 'play'
+                      : stoppingRecording ? 'loading' : 'empty';
+
                     return (
-                      <div key={utt.id} className="flex items-start gap-2 min-w-0">
-                        {utt.audioUrl && !isLive ? (
-                          <button
-                            type="button"
-                            onClick={() => toggleUtterancePlayback(utt)}
-                            className="inline-flex items-center justify-center w-5 h-5 mt-[0.32em] rounded-full bg-navy/20 hover:bg-navy/30 transition-colors shrink-0"
-                            aria-label="Play sentence"
-                          >
-                            {isPlayingThis ? (
-                              <svg width="6" height="8" viewBox="0 0 10 12" fill="none" aria-hidden>
-                                <rect x="1" y="1" width="3" height="10" rx="1" fill="white"/>
-                                <rect x="6" y="1" width="3" height="10" rx="1" fill="white"/>
-                              </svg>
-                            ) : (
-                              <svg width="6" height="8" viewBox="0 0 10 12" fill="none" aria-hidden>
-                                <path d="M1 1l8 5-8 5V1z" fill="white"/>
-                              </svg>
-                            )}
-                          </button>
-                        ) : (
-                          <span className="w-5 h-5 shrink-0" aria-hidden />
+                      <TranscriptSentenceRow
+                        key={utt.id}
+                        gutter={(
+                          <TranscriptAudioSlot
+                            mode={utteranceSlotMode}
+                            isPlaying={isPlayingThis}
+                            onPlay={() => toggleUtterancePlayback(utt)}
+                          />
                         )}
-                        <div className="min-w-0 flex-1">
-                          {wordSpans}
-                          {utt.id === correctionUtteranceId && sentenceCongrats && (
-                            <span className="inline-flex items-center gap-1 ml-1.5 align-middle whitespace-nowrap">
-                              <svg
-                                width="18"
-                                height="18"
-                                viewBox="0 0 48 48"
-                                fill="none"
-                                stroke="#16a34a"
-                                strokeWidth="3"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="shrink-0"
-                                aria-hidden
-                              >
-                                <path d="M42 12L18 36l-12-12" />
-                              </svg>
-                              <span className="parisian-exp-bump inline-flex items-center justify-center rounded-full border border-navy/15 bg-navy/[0.04] px-1.5 py-0.5 font-mono text-[9px] leading-none text-navy/45 tabular-nums">
-                                +1% Parisian
-                              </span>
+                      >
+                        {wordSpans}
+                        {utt.id === correctionUtteranceId && sentenceCongrats && (
+                          <span className="inline-flex items-center gap-1 ml-1.5 align-middle whitespace-nowrap">
+                            <svg
+                              width="18"
+                              height="18"
+                              viewBox="0 0 48 48"
+                              fill="none"
+                              stroke="#16a34a"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="shrink-0"
+                              aria-hidden
+                            >
+                              <path d="M42 12L18 36l-12-12" />
+                            </svg>
+                            <span className="parisian-exp-bump inline-flex items-center justify-center rounded-full border border-navy/15 bg-navy/[0.04] px-1.5 py-0.5 font-mono text-[9px] leading-none text-navy/45 tabular-nums">
+                              +1% Parisian
                             </span>
-                          )}
-                        </div>
-                      </div>
+                          </span>
+                        )}
+                      </TranscriptSentenceRow>
                     );
                   })}
 
                   {showLiveTranscriptLine && (
-                    <div className="flex items-start gap-2 min-w-0">
-                      <span className="w-5 h-5 shrink-0" aria-hidden />
-                      <div className="min-w-0 flex-1">
-                        {settledText && <span className="text-navy font-semibold">{settledText}{' '}</span>}
-                        {partialTranscript && <span className="text-navy/40 italic">{partialTranscript}</span>}
-                      </div>
-                    </div>
+                    <TranscriptSentenceRow
+                      gutter={<TranscriptAudioSlot mode="loading" />}
+                    >
+                      {settledText && (
+                        <span className="text-navy font-semibold">
+                          {settledText}
+                          {partialTranscript && segmentNeedsLeadingSpace(partialTranscript) ? ' ' : null}
+                        </span>
+                      )}
+                      {partialTranscript && <span className="text-navy/40 italic">{partialTranscript}</span>}
+                    </TranscriptSentenceRow>
                   )}
                 </div>
                 {showRepeatLine && (
@@ -3005,28 +3040,11 @@ export default function Hero() {
             <Reveal delay={0.42}>
               <div className="mt-8 flex items-center">
                 <div className="relative inline-flex">
-                  <motion.div
-                    initial={{ opacity: 0, x: 4 }}
-                    animate={{ opacity: 1, x: [0, 1.5, 0] }}
-                    transition={{
-                      delay: 0.6,
-                      duration: 0.5,
-                      x: { repeat: Infinity, duration: 1.8, ease: 'easeInOut', delay: 1.1 },
-                    }}
-                    className="absolute right-full mr-2.5 inset-y-0 flex items-center gap-1 pointer-events-none"
-                  >
-                    <span className="font-display text-[11px] sm:text-[12px] italic text-wine leading-[1.25] text-right w-[132px]">
-                      Click here to gain
-                      <br />
-                      Parisian experience
-                    </span>
-                    <svg width="7" height="9" viewBox="0 0 10 8" fill="none" aria-hidden className="shrink-0 rotate-[-90deg]">
-                      <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6" />
-                    </svg>
-                  </motion.div>
+                  <ParisianExperienceHint />
                   <div className="relative">
                     <ButtonPrimary
                       onClick={() => goToDashboard()}
+                      showArrow={false}
                       className="relative z-[1] rounded-full"
                     >
                       Judge my French

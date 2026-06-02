@@ -65,7 +65,7 @@ export function ProficiencyLevels() {
             </Reveal>
             <Reveal delay={0.2}>
               <h2 className="font-display text-[52px] md:text-[64px] leading-[0.95] tracking-[-0.015em] text-wine italic mb-8">
-                French?
+                French&nbsp;?
               </h2>
             </Reveal>
             <Reveal delay={0.3}>

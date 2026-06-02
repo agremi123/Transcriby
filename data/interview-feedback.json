@@ -1,5 +1,15 @@
 {
   "name": {
+    "askerPerformance": {
+      "judgment": {
+        "text": "Pour te présenter, on t'a bien suivie à l'oral, mais tu parles encore un peu comme à l'école.",
+        "translation": "For your intro, we followed you fine when you spoke, but you still sound a bit like school French."
+      },
+      "congratulations": {
+        "text": "Franchement, à l'oral t'assures — t'as une bonne présence, c'est clair et naturel.",
+        "translation": "Honestly, you speak well — you've got a good presence, it's clear and natural."
+      }
+    },
     "judgment": [
       {
         "narrator": "lea",
@@ -26,6 +36,16 @@
     ]
   },
   "origin": {
+    "askerPerformance": {
+      "judgment": {
+        "text": "On a pigé d'où tu viens, mais à l'oral ça accroche encore — pas le rythme parisien.",
+        "translation": "We got where you're from, but when you speak it still catches — not the Parisian rhythm."
+      },
+      "congratulations": {
+        "text": "Bien parlé : t'as raconté chez toi avec du flow, on t'a suivi sans effort.",
+        "translation": "Well spoken: you talked about home with flow, we followed you effortlessly."
+      }
+    },
     "judgment": [
       {
         "narrator": "jules",
@@ -52,6 +72,16 @@
     ]
   },
   "work": {
+    "askerPerformance": {
+      "judgment": {
+        "text": "Ton quotidien, on l'a compris, mais à l'oral tu sonnes encore un peu figé.",
+        "translation": "We understood your daily life, but when you speak you still sound a bit stiff."
+      },
+      "congratulations": {
+        "text": "À l'oral c'est carré : tu parles de ta vie sans forcer, ça sonne vrai.",
+        "translation": "Spoken delivery is solid: you talk about your life without forcing it, it sounds real."
+      }
+    },
     "judgment": [
       {
         "narrator": "lea",
@@ -78,6 +108,16 @@
     ]
   },
   "why": {
+    "askerPerformance": {
+      "judgment": {
+        "text": "On sent pourquoi tu apprends le français, mais à l'oral tu restes un peu timide sur le registre.",
+        "translation": "We feel why you're learning French, but when you speak you're still a bit timid on register."
+      },
+      "congratulations": {
+        "text": "Tu t'es exprimé clairement à l'oral — on a cru ton projet, sans accent de manuel.",
+        "translation": "You expressed yourself clearly when speaking — we believed your goal, no textbook accent."
+      }
+    },
     "judgment": [
       {
         "narrator": "jules",
@@ -104,6 +144,16 @@
     ]
   },
   "day": {
+    "askerPerformance": {
+      "judgment": {
+        "text": "Ta journée est claire, mais racontée à l'oral comme dans un cours — pas encore notre façon.",
+        "translation": "Your day is clear, but told aloud like in class — not our way yet."
+      },
+      "congratulations": {
+        "text": "Du réveil au coucher, t'as tenu le récit à l'oral sans perdre le fil — chapeau.",
+        "translation": "From wake-up to bedtime, you held the story when speaking without losing the thread — hats off."
+      }
+    },
     "judgment": [
       {
         "narrator": "lea",

@@ -31,12 +31,12 @@ export function isTimedWordActive(timings, index, playbackTime) {
 
 export function wordHighlightInlineStyle(isActive) {
   return {
-    transition: 'background 0.18s ease',
-    borderRadius: '4px',
-    padding: '1px 2px',
-    marginRight: '1px',
+    transition: 'background-color 0.18s ease',
+    borderRadius: '2px',
     display: 'inline',
-    background: isActive ? 'rgba(139,30,45,0.12)' : 'transparent',
+    backgroundColor: isActive ? 'rgba(139, 30, 45, 0.14)' : 'transparent',
+    boxDecorationBreak: 'clone',
+    WebkitBoxDecorationBreak: 'clone',
   };
 }
 

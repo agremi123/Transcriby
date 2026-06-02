@@ -1,9 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 export function Logo({ className = '' }) {
   return (
-    <a href="#" className={`flex items-center gap-2.5 ${className}`}>
+    <Link to="/" className={`flex items-center gap-2.5 ${className}`}>
       <svg width="34" height="22" viewBox="0 0 34 22" fill="none" aria-hidden>
         {[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31].map((x, i) => {
           const h = [6, 10, 16, 12, 20, 14, 8, 18, 14, 20, 10, 16, 8, 12, 18, 10][i];
@@ -13,34 +14,77 @@ export function Logo({ className = '' }) {
         })}
       </svg>
       <span className="font-display text-[26px] leading-none text-navy">Nativa</span>
-    </a>
+    </Link>
   );
 }
 
-export function ButtonPrimary({ children, className = '', ...rest }) {
+export function ButtonPrimary({ children, className = '', to, showArrow = true, ...rest }) {
+  const cls = `group inline-flex items-center gap-2.5 bg-wine hover:bg-wine2 text-ivory px-5 py-3 text-[14px] font-medium transition-colors duration-200 ${className}`;
+  const inner = (
+    <>
+      <span>{children}</span>
+      {showArrow ? (
+        <svg
+          className="transition-transform duration-300 group-hover:translate-x-0.5"
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          aria-hidden
+        >
+          <path
+            d="M1 7h12m0 0L8 2m5 5l-5 5"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      ) : null}
+    </>
+  );
+
+  if (to) {
+    return (
+      <Link to={to} className={cls}>
+        {inner}
+      </Link>
+    );
+  }
+
   return (
     <button
       type="button"
       {...rest}
-      className={`group inline-flex items-center gap-2.5 bg-wine hover:bg-wine2 text-ivory px-5 py-3 text-[14px] font-medium transition-colors duration-200 ${className}`}
+      className={cls}
     >
-      <span>{children}</span>
-      <svg
-        className="transition-transform duration-300 group-hover:translate-x-0.5"
-        width="14"
-        height="14"
-        viewBox="0 0 14 14"
-        fill="none"
-        aria-hidden
-      >
-        <path
-          d="M1 7h12m0 0L8 2m5 5l-5 5"
-          stroke="currentColor"
-          strokeWidth="1.4"
-          strokeLinecap="round"
-        />
-      </svg>
+      {inner}
     </button>
+  );
+}
+
+/** Animated hint pointing at a CTA (e.g. How to reach B2). */
+export function ParisianExperienceHint({ className = '' }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 4 }}
+      animate={{ opacity: 1, x: [0, 1.5, 0] }}
+      transition={{
+        delay: 0.6,
+        duration: 0.5,
+        x: { repeat: Infinity, duration: 1.8, ease: 'easeInOut', delay: 1.1 },
+      }}
+      className={`absolute right-full mr-2.5 inset-y-0 flex items-center gap-1 pointer-events-none ${className}`.trim()}
+      aria-hidden
+    >
+      <span className="font-display text-[11px] sm:text-[12px] italic text-wine leading-[1.25] text-right w-[132px]">
+        Click here to gain
+        <br />
+        Parisian experience
+      </span>
+      <svg width="7" height="9" viewBox="0 0 10 8" fill="none" className="shrink-0 rotate-[-90deg]">
+        <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6" />
+      </svg>
+    </motion.div>
   );
 }
 

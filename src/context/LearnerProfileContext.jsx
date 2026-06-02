@@ -8,6 +8,7 @@ import {
   loadLearnerProfile,
   saveLearnerProfile,
 } from '../lib/learnerProfile';
+import { PARISIAN_XP_EVENT } from '../lib/targetProgress';
 
 const LearnerProfileContext = React.createContext(null);
 
@@ -18,6 +19,22 @@ export function LearnerProfileProvider({ children }) {
   React.useEffect(() => {
     setProfile(loadLearnerProfile());
   }, []);
+
+  const gainExperience = React.useCallback((amount = 1) => {
+    const next = gainParisianExperience(loadLearnerProfile(), amount);
+    setProfile(next);
+    setExperienceHighlightTick((tick) => tick + 1);
+    return next;
+  }, []);
+
+  React.useEffect(() => {
+    const onParisianXp = (event) => {
+      const amount = Number(event?.detail?.amount) || 0;
+      if (amount > 0) gainExperience(amount);
+    };
+    window.addEventListener(PARISIAN_XP_EVENT, onParisianXp);
+    return () => window.removeEventListener(PARISIAN_XP_EVENT, onParisianXp);
+  }, [gainExperience]);
 
   const refreshProfile = React.useCallback(() => {
     setProfile(loadLearnerProfile());
@@ -78,13 +95,6 @@ export function LearnerProfileProvider({ children }) {
   const mergeInterviewReport = React.useCallback((report, claimedLevel) => {
     const next = applyInterviewReport(loadLearnerProfile(), report, claimedLevel);
     setProfile(next);
-    return next;
-  }, []);
-
-  const gainExperience = React.useCallback((amount = 1) => {
-    const next = gainParisianExperience(loadLearnerProfile(), amount);
-    setProfile(next);
-    setExperienceHighlightTick((tick) => tick + 1);
     return next;
   }, []);
 

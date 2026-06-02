@@ -221,7 +221,6 @@ export default function WelcomeOnboarding() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           className="w-full max-w-[600px] rounded-2xl border border-line/80 bg-paper shadow-[0_24px_64px_rgba(26,35,64,0.18)] overflow-visible"
         >
-          <div className="h-1 bg-gradient-to-r from-transparent via-wine/70 to-transparent" />
 
           <div className="px-6 sm:px-8 pt-6 pb-7">
             <div className="flex items-center justify-between gap-3 mb-5">

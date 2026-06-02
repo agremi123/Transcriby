@@ -21,13 +21,13 @@ function ParisianScoreFlip({ value, scoreAnim }) {
   }, [scoreAnim]);
 
   return (
-    <div className="relative h-[18px] w-[2.85rem] overflow-hidden shrink-0" aria-live="polite">
+    <div className="relative h-[18px] w-[3.1rem] overflow-hidden shrink-0" aria-live="polite">
       <AnimatePresence mode="wait">
         {scoreAnim ? (
           showNew ? (
             <motion.span
               key={`new-${scoreAnim.from}-${scoreAnim.to}`}
-              className="absolute inset-x-0 top-0 flex items-center font-stat text-[13px] sm:text-[14px] text-wine tabular-nums leading-none"
+              className="absolute inset-x-0 top-0 flex items-center font-stat text-[14px] sm:text-[15px] text-wine tabular-nums leading-none"
               initial={{ opacity: 0, scale: 0.45, y: 14 }}
               animate={{ opacity: 1, scale: [0.45, 1.24, 0.96, 1], y: [14, -3, 1, 0] }}
               transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
@@ -37,7 +37,7 @@ function ParisianScoreFlip({ value, scoreAnim }) {
           ) : (
             <motion.span
               key={`old-${scoreAnim.from}-${scoreAnim.to}`}
-              className="absolute inset-x-0 top-0 flex items-center font-stat text-[13px] sm:text-[14px] text-wine tabular-nums leading-none"
+              className="absolute inset-x-0 top-0 flex items-center font-stat text-[14px] sm:text-[15px] text-wine tabular-nums leading-none"
               initial={{ opacity: 1, scale: 1, y: 0 }}
               animate={{ opacity: 0, scale: 0.35, y: -6, filter: 'blur(3px)' }}
               exit={{ opacity: 0, scale: 0.2 }}
@@ -49,7 +49,7 @@ function ParisianScoreFlip({ value, scoreAnim }) {
         ) : (
           <motion.span
             key={`static-${value}`}
-            className="absolute inset-x-0 top-0 flex items-center font-stat text-[13px] sm:text-[14px] text-wine tabular-nums leading-none"
+            className="absolute inset-x-0 top-0 flex items-center font-stat text-[14px] sm:text-[15px] text-wine tabular-nums leading-none"
             initial={false}
             animate={{ opacity: 1, scale: 1, y: 0 }}
           >
@@ -61,7 +61,7 @@ function ParisianScoreFlip({ value, scoreAnim }) {
   );
 }
 
-function ParisianProfileSquare({ className = '' }) {
+export function ParisianProfileSquare({ className = '' }) {
   const { profile, effectiveLevel, experienceHighlightTick } = useLearnerProfile();
   const prevPercentRef = React.useRef(null);
   const [scoreAnim, setScoreAnim] = React.useState(null);
@@ -114,43 +114,44 @@ function ParisianProfileSquare({ className = '' }) {
     <motion.div
       animate={scoreAnim ? { scale: [1, 1.1, 1.02, 1] } : { scale: 1 }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      className={`w-[92px] h-[68px] sm:w-[100px] sm:h-[72px] shrink-0 rounded-lg border bg-paper/95 overflow-hidden shadow-[0_2px_10px_rgba(26,35,64,0.1)] flex flex-col ${
+      className={`w-[118px] h-[74px] sm:w-[132px] sm:h-[78px] shrink-0 rounded-lg border bg-paper/95 overflow-hidden shadow-[0_2px_10px_rgba(26,35,64,0.1)] flex flex-col ${
         scoreAnim ? 'parisian-badge-score-pop border-wine/35 ring-2 ring-wine/20' : 'border-line/80'
       } ${className}`}
       aria-label={`${profile.name}, ${currentRole}, ${parisianPercent}% Parisian`}
     >
-      <div className="flex items-center gap-1.5 px-1.5 pt-1.5 min-h-0">
+      <div className="flex items-start gap-2 px-2 pt-2 pr-2.5 min-h-0 flex-1">
         <img
           src={mascotSrc}
           alt=""
-          className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 rounded-md border border-line/50 object-cover object-top"
+          className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-md border border-line/50 object-cover object-top"
         />
-        <ParisianScoreFlip value={parisianPercent} scoreAnim={scoreAnim} />
+        <p className="min-w-0 flex-1 text-[9px] sm:text-[10.5px] text-navy/55 leading-[1.2] line-clamp-2">
+          <span className="underline decoration-navy/35 underline-offset-[2px]">{currentRole}</span>
+          <span className="text-navy/40"> ({effectiveLevel})</span>
+        </p>
       </div>
 
-      <p className="px-1.5 mt-0.5 text-[9px] sm:text-[10px] text-navy/55 leading-[1.15] line-clamp-2 min-h-0 flex-1">
-        <span className="underline decoration-navy/35 underline-offset-[2px]">{currentRole}</span>
-        <span className="text-navy/40"> ({effectiveLevel})</span>
-      </p>
-
-      <div className="px-1.5 pb-1.5 mt-auto">
-        <div className="h-1.5 rounded-full bg-line/70 overflow-hidden">
+      <div className="flex items-center gap-2 px-2 pr-2.5 pb-2 pt-1 mt-auto">
+        <div className="h-2 flex-1 min-w-0 rounded-full bg-line/70 overflow-hidden">
           <div
             className={`h-full rounded-full bg-wine ${scoreAnim ? 'transition-all duration-700 ease-out' : 'transition-all duration-500'}`}
             style={{ width: `${parisianPercent}%` }}
           />
         </div>
+        <ParisianScoreFlip value={parisianPercent} scoreAnim={scoreAnim} />
       </div>
     </motion.div>
   );
 }
+
+const NAV_LAYOUT_ROUTES = ['/', '/dashboard', '/expressions', '/targets'];
 
 export default function ParisianCornerBadge({ inline = false }) {
   const { pathname } = useLocation();
 
   if (inline) return <ParisianProfileSquare />;
 
-  if (pathname === '/') return null;
+  if (NAV_LAYOUT_ROUTES.includes(pathname)) return null;
 
   return (
     <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-30">

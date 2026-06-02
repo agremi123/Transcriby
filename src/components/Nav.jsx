@@ -1,21 +1,63 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Logo, ButtonPrimary, Container } from './atoms';
+import { Logo, ButtonPrimary, Container, ParisianExperienceHint } from './atoms';
 import ParisianCornerBadge from './ParisianCornerBadge';
+import { useLearnerProfile } from '../context/LearnerProfileContext';
+import { getNextLevel } from '../lib/levelTargets';
 
-const navLinkClass = 'hidden sm:inline text-[14px] text-navy/80 hover:text-wine transition-colors';
+function NavReachNextLevel() {
+  const { pathname } = useLocation();
+  const { effectiveLevel } = useLearnerProfile();
+  const nextLevel = getNextLevel(effectiveLevel);
+  const isActive = pathname === '/targets';
+  const ariaLabel = nextLevel ? `How to reach ${nextLevel}` : 'How to keep improving';
 
-const links = [
-  { label: 'Features', href: '#features' },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'Testimonials', href: '#testimonials' },
-  { label: 'About', href: '#about' },
-  { label: 'FAQ', href: '#faq' },
-];
+  const pillClass = `inline-flex items-center rounded-full border font-display transition-all duration-200 whitespace-nowrap ${
+    isActive
+      ? 'border-wine bg-wine text-ivory shadow-sm'
+      : 'border-wine/25 text-wine/65 hover:bg-wine hover:text-ivory hover:border-wine hover:shadow-sm'
+  }`;
+
+  const pill = nextLevel ? (
+    <span className={`${pillClass} gap-2 px-3 py-1.5 text-[12px] sm:text-[13px]`}>
+      <span className="tracking-[0.14em] uppercase font-medium leading-none text-[10px] opacity-90">
+        How to reach
+      </span>
+      <span className="font-semibold tabular-nums leading-none">{nextLevel}</span>
+    </span>
+  ) : (
+    <span className={`${pillClass} px-3 py-1.5 text-[12px]`}>
+      <span className="tracking-[0.14em] uppercase font-medium leading-none text-[10px]">
+        How to keep improving
+      </span>
+    </span>
+  );
+
+  return (
+    <div className="relative hidden sm:inline-flex items-center">
+      <ParisianExperienceHint />
+      <div className="relative">
+        <Link
+          to="/targets"
+          aria-label={ariaLabel}
+          className="relative z-[1] inline-flex whitespace-nowrap"
+        >
+          {pill}
+        </Link>
+        <span
+          className="absolute inset-0 rounded-full border-2 border-wine animate-ping-tight opacity-35 pointer-events-none"
+          aria-hidden
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function Nav() {
+  const { pathname } = useLocation();
   const [scrolled, setScrolled] = React.useState(false);
+  const onJudgePage = pathname === '/dashboard';
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -36,17 +78,11 @@ export default function Nav() {
         <Logo />
         <div />
         <div className="flex items-center gap-2.5 sm:gap-3">
-          <Link to="/expressions" className={navLinkClass}>
-            My expressions
-          </Link>
-          <Link to="/targets" className={navLinkClass}>
-            My targets
-          </Link>
-          <a href="#" className={navLinkClass}>
-            Log in
-          </a>
+          <NavReachNextLevel />
           <ParisianCornerBadge inline />
-          <ButtonPrimary>Judge my French</ButtonPrimary>
+          {!onJudgePage && (
+            <ButtonPrimary to="/dashboard" showArrow={false}>Judge my French</ButtonPrimary>
+          )}
         </div>
       </Container>
     </motion.nav>

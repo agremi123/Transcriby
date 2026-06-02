@@ -65,7 +65,7 @@ export default function Onboarding() {
           className="text-center mb-20"
         >
           <h1 className="font-display text-[56px] md:text-[64px] leading-[1.1] tracking-[-0.02em] text-[#1A2340] mb-4">
-            How's your <span className="italic text-[#8B1E2D]">French</span>?
+            How&apos;s your <span className="italic text-[#8B1E2D]">French</span>&nbsp;?
           </h1>
           <p className="text-[18px] text-[#5B5047] max-w-2xl mx-auto leading-relaxed">
             Discover your natural French level by exploring what you can already do. No tests, just honest conversations.
