@@ -98,15 +98,18 @@ const LISTENING_ADDONS = {
   ],
 };
 
-export const PATH_CATEGORIES = ['Grammar', 'Vocabulary', 'Speaking', 'Listening'];
+export const PATH_CATEGORIES = ['Reading', 'Listening', 'Writing', 'Speaking'];
 
 /** @deprecated use PATH_CATEGORIES */
 export const TARGET_CATEGORIES = PATH_CATEGORIES;
 
 export function normalizePathCategory(category) {
-  if (category === 'Parisian') return 'Speaking';
-  if (PATH_CATEGORIES.includes(category)) return category;
-  return 'Grammar';
+  if (category === 'Grammar')    return 'Writing';
+  if (category === 'Vocabulary') return 'Reading';
+  if (category === 'Speaking')   return 'Speaking';
+  if (category === 'Listening')  return 'Listening';
+  if (category === 'Parisian')   return 'Speaking';
+  return 'Writing';
 }
 
 function enrichTarget(target) {

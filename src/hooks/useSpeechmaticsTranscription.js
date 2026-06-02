@@ -234,12 +234,15 @@ export function useSpeechmaticsTranscription() {
               if (!data?.key) throw new Error('Speechmatics API key missing — add SPEECHMATICS_API_KEY to .env');
               return data.key;
             }),
-        prewarmStreamRef.current
+        options.stream
+          ? Promise.resolve(options.stream)
+          : prewarmStreamRef.current
           ? Promise.resolve(prewarmStreamRef.current)
           : navigator.mediaDevices.getUserMedia({ audio: true }),
       ]);
 
-      prewarmStreamRef.current = null;
+      // Only consume the pre-warm stream when using mic (not when caller supplied a stream)
+      if (!options.stream) prewarmStreamRef.current = null;
       cachedKeyRef.current = null;
       fetch('/api/speechmatics/key')
         .then(r => r.ok ? r.json() : null)

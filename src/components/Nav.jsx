@@ -1,37 +1,23 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Logo, ButtonPrimary, Container, ParisianExperienceHint } from './atoms';
+import { Logo, ButtonPrimary, Container, NAV_CTA_CLASS, ParisianExperienceHint } from './atoms';
 import ParisianCornerBadge from './ParisianCornerBadge';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
 import { getNextLevel } from '../lib/levelTargets';
 
 function NavReachNextLevel() {
-  const { pathname } = useLocation();
   const { effectiveLevel } = useLearnerProfile();
   const nextLevel = getNextLevel(effectiveLevel);
-  const isActive = pathname === '/targets';
   const ariaLabel = nextLevel ? `How to reach ${nextLevel}` : 'How to keep improving';
 
-  const pillClass = `inline-flex items-center rounded-full border font-display transition-all duration-200 whitespace-nowrap ${
-    isActive
-      ? 'border-wine bg-wine text-ivory shadow-sm'
-      : 'border-wine/25 text-wine/65 hover:bg-wine hover:text-ivory hover:border-wine hover:shadow-sm'
-  }`;
-
   const pill = nextLevel ? (
-    <span className={`${pillClass} gap-2 px-3 py-1.5 text-[12px] sm:text-[13px]`}>
-      <span className="tracking-[0.14em] uppercase font-medium leading-none text-[10px] opacity-90">
-        How to reach
-      </span>
-      <span className="font-semibold tabular-nums leading-none">{nextLevel}</span>
+    <span className={`${NAV_CTA_CLASS} gap-2`}>
+      <span>How to reach</span>
+      <span className="font-semibold tabular-nums">{nextLevel}</span>
     </span>
   ) : (
-    <span className={`${pillClass} px-3 py-1.5 text-[12px]`}>
-      <span className="tracking-[0.14em] uppercase font-medium leading-none text-[10px]">
-        How to keep improving
-      </span>
-    </span>
+    <span className={NAV_CTA_CLASS}>How to keep improving</span>
   );
 
   return (

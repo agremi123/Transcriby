@@ -1,70 +1,16 @@
 import React from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
-import { isProfileSetupComplete, PARISIAN_MASCOTS } from '../lib/learnerProfile';
-import { getRoleProgression } from '../lib/narratorLevelAdapt';
+import { getLevelBadgeSrc, isProfileSetupComplete } from '../lib/learnerProfile';
+import { getNextLevel } from '../lib/levelTargets';
 
 const SCORE_ANIM_MS = 950;
-
-function ParisianScoreFlip({ value, scoreAnim }) {
-  const [showNew, setShowNew] = React.useState(false);
-
-  React.useEffect(() => {
-    if (!scoreAnim) {
-      setShowNew(false);
-      return undefined;
-    }
-    setShowNew(false);
-    const t = window.setTimeout(() => setShowNew(true), 240);
-    return () => window.clearTimeout(t);
-  }, [scoreAnim]);
-
-  return (
-    <div className="relative h-[18px] w-[3.1rem] overflow-hidden shrink-0" aria-live="polite">
-      <AnimatePresence mode="wait">
-        {scoreAnim ? (
-          showNew ? (
-            <motion.span
-              key={`new-${scoreAnim.from}-${scoreAnim.to}`}
-              className="absolute inset-x-0 top-0 flex items-center font-stat text-[14px] sm:text-[15px] text-wine tabular-nums leading-none"
-              initial={{ opacity: 0, scale: 0.45, y: 14 }}
-              animate={{ opacity: 1, scale: [0.45, 1.24, 0.96, 1], y: [14, -3, 1, 0] }}
-              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {scoreAnim.to}%
-            </motion.span>
-          ) : (
-            <motion.span
-              key={`old-${scoreAnim.from}-${scoreAnim.to}`}
-              className="absolute inset-x-0 top-0 flex items-center font-stat text-[14px] sm:text-[15px] text-wine tabular-nums leading-none"
-              initial={{ opacity: 1, scale: 1, y: 0 }}
-              animate={{ opacity: 0, scale: 0.35, y: -6, filter: 'blur(3px)' }}
-              exit={{ opacity: 0, scale: 0.2 }}
-              transition={{ duration: 0.22, ease: [0.4, 0, 1, 1] }}
-            >
-              {scoreAnim.from}%
-            </motion.span>
-          )
-        ) : (
-          <motion.span
-            key={`static-${value}`}
-            className="absolute inset-x-0 top-0 flex items-center font-stat text-[14px] sm:text-[15px] text-wine tabular-nums leading-none"
-            initial={false}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-          >
-            {value}%
-          </motion.span>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
 
 export function ParisianProfileSquare({ className = '' }) {
   const { profile, effectiveLevel, experienceHighlightTick } = useLearnerProfile();
   const prevPercentRef = React.useRef(null);
-  const [scoreAnim, setScoreAnim] = React.useState(null);
+  const [scoreAnim, setScoreAnim] = React.useState(false);
   const scoreAnimTimerRef = React.useRef(null);
 
   const parisianPercent = Math.max(0, Math.min(100, profile.parisianPercent ?? 0));
@@ -77,17 +23,13 @@ export function ParisianProfileSquare({ className = '' }) {
 
     if (!experienceHighlightTick) return undefined;
 
-    const to = parisianPercent;
-    setScoreAnim((current) => {
-      const from = current?.to ?? prevPercentRef.current;
-      if (from === to) return current;
-      return { from, to };
-    });
+    if (prevPercentRef.current === parisianPercent) return undefined;
 
+    setScoreAnim(true);
     if (scoreAnimTimerRef.current) window.clearTimeout(scoreAnimTimerRef.current);
     scoreAnimTimerRef.current = window.setTimeout(() => {
-      setScoreAnim(null);
-      prevPercentRef.current = to;
+      setScoreAnim(false);
+      prevPercentRef.current = parisianPercent;
       scoreAnimTimerRef.current = null;
     }, SCORE_ANIM_MS);
 
@@ -107,38 +49,55 @@ export function ParisianProfileSquare({ className = '' }) {
 
   if (!isProfileSetupComplete(profile)) return null;
 
-  const mascotSrc = PARISIAN_MASCOTS[profile.gender] || PARISIAN_MASCOTS.woman;
-  const { currentRole } = getRoleProgression(parisianPercent, effectiveLevel);
+  const level = effectiveLevel || 'A1';
+  const nextLevel = getNextLevel(level);
+  const badgeSrc = getLevelBadgeSrc(level);
 
   return (
     <motion.div
-      animate={scoreAnim ? { scale: [1, 1.1, 1.02, 1] } : { scale: 1 }}
+      animate={scoreAnim ? { scale: [1, 1.08, 1.02, 1] } : { scale: 1 }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      className={`w-[118px] h-[74px] sm:w-[132px] sm:h-[78px] shrink-0 rounded-lg border bg-paper/95 overflow-hidden shadow-[0_2px_10px_rgba(26,35,64,0.1)] flex flex-col ${
-        scoreAnim ? 'parisian-badge-score-pop border-wine/35 ring-2 ring-wine/20' : 'border-line/80'
+      className={`w-[96px] sm:w-[112px] shrink-0 flex flex-col items-stretch gap-0 bg-transparent ${
+        scoreAnim ? 'parisian-badge-score-pop' : ''
       } ${className}`}
-      aria-label={`${profile.name}, ${currentRole}, ${parisianPercent}% Parisian`}
+      aria-label={`${profile.name}, level ${level}, ${parisianPercent}% Parisian progress`}
     >
-      <div className="flex items-start gap-2 px-2 pt-2 pr-2.5 min-h-0 flex-1">
-        <img
-          src={mascotSrc}
-          alt=""
-          className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-md border border-line/50 object-cover object-top"
-        />
-        <p className="min-w-0 flex-1 text-[9px] sm:text-[10.5px] text-navy/55 leading-[1.2] line-clamp-2">
-          <span className="underline decoration-navy/35 underline-offset-[2px]">{currentRole}</span>
-          <span className="text-navy/40"> ({effectiveLevel})</span>
-        </p>
-      </div>
+      <img
+        src={badgeSrc}
+        alt=""
+        className="w-[96px] h-[96px] sm:w-[112px] sm:h-[112px] object-contain object-center"
+        style={{ mixBlendMode: 'multiply' }}
+      />
 
-      <div className="flex items-center gap-2 px-2 pr-2.5 pb-2 pt-1 mt-auto">
-        <div className="h-2 flex-1 min-w-0 rounded-full bg-line/70 overflow-hidden">
+      <div className="flex items-center gap-1 w-full -mt-3.5 sm:-mt-4">
+        <span className="text-[8px] sm:text-[9px] font-mono font-medium text-wine/70 tabular-nums leading-none shrink-0">
+          {level}
+        </span>
+        <div className="relative flex-1 min-w-0 h-2 rounded-full bg-wine/20 overflow-hidden">
           <div
-            className={`h-full rounded-full bg-wine ${scoreAnim ? 'transition-all duration-700 ease-out' : 'transition-all duration-500'}`}
-            style={{ width: `${parisianPercent}%` }}
-          />
+            className={`relative h-full rounded-full bg-wine flex items-center justify-center overflow-hidden ${
+              scoreAnim ? 'transition-all duration-700 ease-out' : 'transition-all duration-500'
+            }`}
+            style={{
+              width: `${parisianPercent}%`,
+              minWidth: parisianPercent > 0 ? '1.35rem' : 0,
+            }}
+          >
+            <span className="text-[7px] sm:text-[8px] font-mono font-semibold tabular-nums leading-none text-ivory whitespace-nowrap px-0.5">
+              {parisianPercent}%
+            </span>
+          </div>
+          {parisianPercent === 0 && (
+            <span className="absolute inset-0 flex items-center justify-center text-[7px] sm:text-[8px] font-mono font-semibold tabular-nums leading-none text-wine/65 pointer-events-none">
+              0%
+            </span>
+          )}
         </div>
-        <ParisianScoreFlip value={parisianPercent} scoreAnim={scoreAnim} />
+        {nextLevel ? (
+          <span className="text-[8px] sm:text-[9px] font-mono font-medium text-wine/70 tabular-nums leading-none shrink-0">
+            {nextLevel}
+          </span>
+        ) : null}
       </div>
     </motion.div>
   );

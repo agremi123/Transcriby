@@ -18,8 +18,11 @@ export function Logo({ className = '' }) {
   );
 }
 
+export const NAV_CTA_CLASS =
+  'inline-flex items-center gap-2.5 rounded-full bg-wine hover:bg-wine2 text-ivory px-5 py-3 text-[14px] font-medium font-display transition-colors duration-200 whitespace-nowrap';
+
 export function ButtonPrimary({ children, className = '', to, showArrow = true, ...rest }) {
-  const cls = `group inline-flex items-center gap-2.5 bg-wine hover:bg-wine2 text-ivory px-5 py-3 text-[14px] font-medium transition-colors duration-200 ${className}`;
+  const cls = `group ${NAV_CTA_CLASS} ${className}`;
   const inner = (
     <>
       <span>{children}</span>

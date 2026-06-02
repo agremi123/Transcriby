@@ -206,6 +206,15 @@ export function applyInterviewReport(profile, report, claimedLevel) {
   });
 }
 
+const LEVEL_BADGE_ASSETS = new Set(['a1', 'a2', 'b1', 'b2', 'c1']);
+
+/** Public badge PNG for a CEFR level (`/badge-a1.png`, etc.). C2 maps to C1 asset. */
+export function getLevelBadgeSrc(level) {
+  const id = normalizeLevel(level).toLowerCase();
+  const file = LEVEL_BADGE_ASSETS.has(id) ? id : 'c1';
+  return `/badge-${file}.png`;
+}
+
 // Legacy exports used by ParisianCornerBadge
 export function getStoredLearnerGender() {
   return loadLearnerProfile().gender;
