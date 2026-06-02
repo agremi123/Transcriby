@@ -15,6 +15,8 @@ const LEVEL_INDEX = Object.fromEntries(CEFR_LEVELS.map((l, i) => [l, i]));
 
 const DEFAULT_PROFILE = {
   name: '',
+  email: '',
+  authMethod: null,
   gender: null,
   claimedLevel: null,
   assessedLevel: null,
@@ -88,15 +90,29 @@ export function loadLearnerProfile() {
 }
 
 export function isProfileSetupComplete(profile) {
-  return !!(
-    profile?.name?.trim()
-    && profile?.gender
-    && profile?.claimedLevel
-  );
+  const hasLevel = !!profile?.claimedLevel;
+  const hasGoogle = profile?.authMethod === 'google' && !!profile?.name?.trim();
+  const hasEmail = profile?.authMethod === 'email'
+    && !!String(profile?.email || '').trim()
+    && !!profile?.name?.trim();
+  return hasLevel && (hasGoogle || hasEmail);
 }
 
 export function needsWelcomeOnboarding(profile) {
   return !isProfileSetupComplete(profile);
+}
+
+/** Clear onboarding choices so the welcome modal can run again. */
+export function resetWelcomeOnboarding(profile) {
+  return saveLearnerProfile({
+    ...profile,
+    name: '',
+    email: '',
+    authMethod: null,
+    gender: null,
+    claimedLevel: null,
+    parisianPercent: 0,
+  });
 }
 
 function finalizeProfile(profile) {
@@ -109,6 +125,10 @@ function finalizeProfile(profile) {
     parisianPercent: Math.max(0, Math.min(100, Number(profile.parisianPercent) || 0)),
     sampleCount: Math.max(0, Number(profile.sampleCount) || 0),
     name: String(profile.name || '').trim().slice(0, 48),
+    email: String(profile.email || '').trim().slice(0, 120),
+    authMethod: profile.authMethod === 'google' || profile.authMethod === 'email'
+      ? profile.authMethod
+      : null,
   };
   return {
     ...normalized,

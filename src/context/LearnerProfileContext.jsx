@@ -6,6 +6,7 @@ import {
   getEffectiveLevel,
   getInitialParisianPercent,
   loadLearnerProfile,
+  resetWelcomeOnboarding as resetWelcomeOnboardingProfile,
   saveLearnerProfile,
 } from '../lib/learnerProfile';
 import { PARISIAN_XP_EVENT } from '../lib/targetProgress';
@@ -40,18 +41,23 @@ export function LearnerProfileProvider({ children }) {
     setProfile(loadLearnerProfile());
   }, []);
 
+  const resetWelcomeOnboarding = React.useCallback(() => {
+    setProfile(resetWelcomeOnboardingProfile(loadLearnerProfile()));
+  }, []);
+
   const setGender = React.useCallback((gender) => {
     setProfile(saveLearnerProfile({ ...loadLearnerProfile(), gender }));
   }, []);
 
-  const completeOnboarding = React.useCallback((claimedLevel, gender, name) => {
+  const completeOnboarding = React.useCallback((claimedLevel, { name, email, authMethod } = {}) => {
     const current = loadLearnerProfile();
     const level = claimedLevel;
     setProfile(saveLearnerProfile({
       ...current,
       claimedLevel: level,
-      gender: gender || current.gender,
       name: String(name || '').trim().slice(0, 48),
+      email: String(email || '').trim().slice(0, 120),
+      authMethod: authMethod === 'google' || authMethod === 'email' ? authMethod : null,
       parisianPercent: getInitialParisianPercent(level),
     }));
   }, []);
@@ -111,7 +117,8 @@ export function LearnerProfileProvider({ children }) {
     mergeInterviewReport,
     gainExperience,
     refreshProfile,
-  }), [profile, effectiveLevel, experienceHighlightTick, setGender, completeOnboarding, setClaimedLevel, recordSample, mergeInterviewReport, gainExperience, refreshProfile]);
+    resetWelcomeOnboarding,
+  }), [profile, effectiveLevel, experienceHighlightTick, setGender, completeOnboarding, setClaimedLevel, recordSample, mergeInterviewReport, gainExperience, refreshProfile, resetWelcomeOnboarding]);
 
   return (
     <LearnerProfileContext.Provider value={value}>

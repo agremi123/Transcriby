@@ -1,13 +1,21 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
-import { PARISIAN_MASCOTS, needsWelcomeOnboarding } from '../lib/learnerProfile';
+import {
+  getLevelBadgeSrc,
+  isProfileSetupComplete,
+  needsWelcomeOnboarding,
+} from '../lib/learnerProfile';
 import { LEVEL_PICKER, WELCOME_LEVEL_LINES, getLevelPickMockery } from '../lib/narratorLevelAdapt';
 import { fetchNarratorAudio, connectNarratorSource, NARRATORS } from '../lib/narratorAudio';
 import { buildWordTimings, playDecodedBuffer } from '../lib/speechHighlight';
 import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from '../lib/siteAudio';
 import { NarratorHoverText } from '../lib/NarratorHoverText';
-import { Logo } from './atoms';
+import { Logo, NAV_CTA_CLASS } from './atoms';
+
+const BADGE_IMG_CLASS =
+  'w-[140px] h-[140px] sm:w-[168px] sm:h-[168px] object-contain object-center pointer-events-none';
+const SELECTED_BADGE_LAYOUT = 'selected-welcome-badge';
 
 const WELCOME_LINES_BY_NARRATOR = Object.fromEntries(
   WELCOME_LEVEL_LINES.map((line) => [line.narrator, line]),
@@ -16,8 +24,10 @@ const WELCOME_LINES_BY_NARRATOR = Object.fromEntries(
 export default function WelcomeOnboarding() {
   const { profile, completeOnboarding } = useLearnerProfile();
   const [pickedLevel, setPickedLevel] = React.useState(profile.claimedLevel);
-  const [pickedGender, setPickedGender] = React.useState(profile.gender);
-  const [learnerName, setLearnerName] = React.useState(profile.name || '');
+  const [levelLocked, setLevelLocked] = React.useState(false);
+  const [showEmailForm, setShowEmailForm] = React.useState(false);
+  const [emailInput, setEmailInput] = React.useState(profile.email || '');
+  const [authError, setAuthError] = React.useState(null);
   const [linesByNarrator, setLinesByNarrator] = React.useState(WELCOME_LINES_BY_NARRATOR);
   const [activeSpeakingNarrator, setActiveSpeakingNarrator] = React.useState(null);
   const [playing, setPlaying] = React.useState(false);
@@ -30,6 +40,7 @@ export default function WelcomeOnboarding() {
   const sourceRef = React.useRef(null);
   const sessionRef = React.useRef(0);
   const hasAutoPlayedRef = React.useRef(false);
+  const hadCompletedOnboardingRef = React.useRef(false);
 
   const stopAudio = React.useCallback(() => {
     sessionRef.current += 1;
@@ -155,6 +166,17 @@ export default function WelcomeOnboarding() {
   }, []);
 
   React.useEffect(() => {
+    const needs = needsWelcomeOnboarding(profile);
+    if (!needs && isProfileSetupComplete(profile)) {
+      hadCompletedOnboardingRef.current = true;
+    }
+    if (needs && hadCompletedOnboardingRef.current) {
+      hadCompletedOnboardingRef.current = false;
+      hasAutoPlayedRef.current = false;
+    }
+  }, [profile]);
+
+  React.useEffect(() => {
     if (!needsWelcomeOnboarding(profile) || hasAutoPlayedRef.current) return;
     hasAutoPlayedRef.current = true;
     const t = window.setTimeout(() => { playWelcomeLines(); }, 400);
@@ -167,10 +189,12 @@ export default function WelcomeOnboarding() {
   React.useEffect(() => {
     if (needsWelcomeOnboarding(profile)) {
       setPickedLevel(profile.claimedLevel);
-      setPickedGender(profile.gender);
-      setLearnerName(profile.name || '');
+      setLevelLocked(false);
+      setShowEmailForm(false);
+      setEmailInput(profile.email || '');
+      setAuthError(null);
     }
-  }, [profile.claimedLevel, profile.gender, profile.name, profile.onboardingComplete]);
+  }, [profile.claimedLevel, profile.email, profile.onboardingComplete]);
 
   React.useEffect(() => () => {
     sessionRef.current += 1;
@@ -179,15 +203,17 @@ export default function WelcomeOnboarding() {
 
   if (!needsWelcomeOnboarding(profile)) return null;
 
-  const tryComplete = () => {
-    const name = learnerName.trim();
-    if (!pickedLevel || !pickedGender || !name) return;
+  const finishOnboarding = React.useCallback((authMethod, { email, name } = {}) => {
+    if (!pickedLevel) return;
     stopAudio();
-    completeOnboarding(pickedLevel, pickedGender, name);
-  };
+    completeOnboarding(pickedLevel, { authMethod, email, name });
+  }, [pickedLevel, stopAudio, completeOnboarding]);
 
   const handleLevelPick = (levelId) => {
+    if (levelLocked) return;
+    setAuthError(null);
     setPickedLevel(levelId);
+    setLevelLocked(true);
     const reaction = getLevelPickMockery(levelId);
     setLinesByNarrator((prev) => ({
       ...prev,
@@ -196,11 +222,22 @@ export default function WelcomeOnboarding() {
     playNarratorLine(reaction);
   };
 
-  const handleGenderPick = (gender) => {
-    setPickedGender(gender);
+  const handleGoogleConnect = () => {
+    setAuthError(null);
+    finishOnboarding('google', { name: 'Ami' });
   };
 
-  const canContinue = pickedLevel && pickedGender && learnerName.trim().length > 0;
+  const handleEmailContinue = (e) => {
+    e.preventDefault();
+    const email = emailInput.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setAuthError('Enter a valid email address.');
+      return;
+    }
+    const local = email.split('@')[0].replace(/[._-]+/g, ' ').trim();
+    const name = (local.split(/\s+/)[0] || 'Ami').replace(/^\w/, (c) => c.toUpperCase());
+    finishOnboarding('email', { email, name });
+  };
 
   const dismissTranslationHint = () => {
     setShowTranslationHint(false);
@@ -219,7 +256,7 @@ export default function WelcomeOnboarding() {
         <motion.div
           initial={{ opacity: 0, y: 16, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          className="w-full max-w-[600px] rounded-2xl border border-line/80 bg-paper shadow-[0_24px_64px_rgba(26,35,64,0.18)] overflow-visible"
+          className="w-full max-w-[780px] rounded-2xl border border-line/80 bg-paper shadow-[0_24px_64px_rgba(26,35,64,0.18)] overflow-visible"
         >
 
           <div className="px-6 sm:px-8 pt-6 pb-7">
@@ -294,111 +331,117 @@ export default function WelcomeOnboarding() {
               <p className="text-[11px] text-wine/70 text-center mb-4">{audioError}</p>
             )}
 
-            <p className="font-display text-[14px] sm:text-[15px] text-navy/75 text-center mb-3 italic">
-              Let Léa and Jules decide
-            </p>
-
-            <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
-              {LEVEL_PICKER.map(({ id, label, hint }) => {
-                const isPicked = pickedLevel === id;
-                return (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => handleLevelPick(id)}
-                    className={`rounded-xl border px-2 py-3 sm:py-3.5 transition-all duration-200 shadow-sm hover:shadow-md bg-ivory border-line text-navy hover:border-wine/35 hover:bg-paper ${
-                      isPicked ? 'border-wine ring-2 ring-wine/25 ring-offset-2 ring-offset-paper' : ''
-                    }`}
-                  >
-                    <span className="block font-display text-[22px] sm:text-[24px] leading-none font-semibold text-wine">
-                      {label}
-                    </span>
-                    <span className="block mt-1 text-[12px] sm:text-[13px] tracking-wide font-medium text-navy/45 leading-snug">
-                      {hint}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="mt-5 pt-5 border-t border-line/60">
-              <p className="text-[11px] tracking-[0.16em] uppercase font-semibold text-navy/75 text-center mb-3">
-                Choose your picture
-              </p>
-              <div className="flex items-stretch justify-center gap-3 sm:gap-4 max-w-[280px] mx-auto">
-                {[
-                  { id: 'woman', label: 'Her' },
-                  { id: 'man', label: 'Him' },
-                ].map(({ id, label }) => {
-                  const isPicked = pickedGender === id;
-                  return (
-                    <button
-                      key={id}
-                      type="button"
-                      onClick={() => handleGenderPick(id)}
-                      className={`flex-1 rounded-xl border px-2 py-2.5 transition-all duration-200 bg-ivory hover:border-wine/35 hover:bg-paper ${
-                        isPicked
-                          ? 'border-wine ring-2 ring-wine/25 ring-offset-2 ring-offset-paper'
-                          : 'border-line'
-                      }`}
-                      aria-label={`Choose ${label}`}
+            <LayoutGroup>
+              <div className="relative mb-2 min-h-[168px] sm:min-h-[200px]">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {!levelLocked ? (
+                    <motion.div
+                      key="level-grid"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="grid grid-cols-3 gap-3 sm:gap-4"
                     >
-                      <div className="w-full aspect-[3/4] rounded-full overflow-hidden border border-line/50 mb-2 mx-auto max-w-[72px]">
+                      {LEVEL_PICKER.map(({ id, label, hint }) => (
+                        <motion.button
+                          key={id}
+                          type="button"
+                          layoutId={pickedLevel === id ? SELECTED_BADGE_LAYOUT : undefined}
+                          onClick={() => handleLevelPick(id)}
+                          aria-label={`${label}, ${hint}`}
+                          exit={{ opacity: 0, scale: 0.88 }}
+                          transition={{ duration: 0.22 }}
+                          className="flex items-center justify-center rounded-xl border border-line bg-paper p-1 sm:p-1.5 shadow-sm hover:shadow-md hover:border-wine/35 transition-colors"
+                        >
+                          <img
+                            src={getLevelBadgeSrc(id)}
+                            alt=""
+                            className={BADGE_IMG_CLASS}
+                          />
+                        </motion.button>
+                      ))}
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="level-focus"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.25, delay: 0.08 }}
+                      className="flex flex-col items-center"
+                    >
+                      <motion.div
+                        layoutId={SELECTED_BADGE_LAYOUT}
+                        className="flex items-center justify-center rounded-xl border border-wine ring-2 ring-wine/25 ring-offset-2 ring-offset-paper bg-paper p-1 sm:p-1.5 shadow-md"
+                      >
                         <img
-                          src={PARISIAN_MASCOTS[id]}
+                          src={getLevelBadgeSrc(pickedLevel)}
                           alt=""
-                          className="w-full h-full object-cover object-top"
+                          className={BADGE_IMG_CLASS}
                         />
-                      </div>
-                      <span className={`block text-[10px] tracking-wide uppercase font-semibold transition-colors ${
-                        isPicked ? 'text-wine' : 'text-navy/55'
-                      }`}>
-                        {label}
-                      </span>
-                    </button>
-                  );
-                })}
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: 0.2 }}
+                        className="mt-6 w-full max-w-[300px] flex flex-col gap-2.5"
+                      >
+                        {!showEmailForm ? (
+                          <>
+                            <button
+                              type="button"
+                              onClick={handleGoogleConnect}
+                              className={`${NAV_CTA_CLASS} w-full justify-center gap-3`}
+                            >
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+                                <path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.71v2.26h2.92a8.78 8.78 0 002.68-6.61z" fill="#4285F4"/>
+                                <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33A8.99 8.99 0 009 18z" fill="#34A853"/>
+                                <path d="M3.97 10.71A5.41 5.41 0 013.68 9c0-.59.1-1.16.29-1.71V4.96H.96A8.99 8.99 0 000 9c0 1.45.35 2.82.96 4.04l3.01-2.33z" fill="#FBBC05"/>
+                                <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A8.99 8.99 0 00.96 4.96l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z" fill="#EA4335"/>
+                              </svg>
+                              Connect with Google
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => { setAuthError(null); setShowEmailForm(true); }}
+                              className="w-full rounded-full border border-wine/30 bg-paper text-wine px-5 py-3 text-[14px] font-medium font-display hover:bg-wine/5 transition-colors"
+                            >
+                              Continue with email
+                            </button>
+                          </>
+                        ) : (
+                          <form onSubmit={handleEmailContinue} className="flex flex-col gap-2.5">
+                            <input
+                              type="email"
+                              value={emailInput}
+                              onChange={(e) => setEmailInput(e.target.value)}
+                              placeholder="you@email.com"
+                              autoComplete="email"
+                              autoFocus
+                              className="w-full rounded-full border border-line bg-ivory px-4 py-3 text-center font-display text-[15px] text-navy placeholder:text-navy/25 outline-none focus:border-wine/40 focus:ring-2 focus:ring-wine/10"
+                            />
+                            <button type="submit" className={`${NAV_CTA_CLASS} w-full justify-center`}>
+                              Continue
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => { setShowEmailForm(false); setAuthError(null); }}
+                              className="text-[12px] text-navy/45 hover:text-wine transition-colors"
+                            >
+                              Back
+                            </button>
+                          </form>
+                        )}
+                        {authError && (
+                          <p className="text-[11px] text-wine/80 text-center">{authError}</p>
+                        )}
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-
-              {pickedGender && (
-                <div className="mt-4 max-w-[260px] mx-auto">
-                  <label htmlFor="learner-name" className="block text-[10px] tracking-[0.14em] uppercase text-navy/40 text-center mb-2">
-                    Your name
-                  </label>
-                  <input
-                    id="learner-name"
-                    type="text"
-                    value={learnerName}
-                    onChange={(e) => setLearnerName(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' && canContinue) tryComplete(); }}
-                    placeholder="Prénom"
-                    autoComplete="given-name"
-                    autoFocus
-                    className="w-full rounded-xl border border-line bg-ivory px-3 py-2.5 text-center font-display text-[16px] text-navy placeholder:text-navy/25 outline-none focus:border-wine/40 focus:ring-2 focus:ring-wine/10 transition-colors"
-                  />
-                </div>
-              )}
-
-              <button
-                type="button"
-                onClick={tryComplete}
-                disabled={!canContinue}
-                className="mt-4 w-full max-w-[260px] mx-auto block rounded-full border border-wine bg-wine text-ivory py-2.5 font-display text-[14px] hover:bg-wine2 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Continue
-              </button>
-
-              {!pickedLevel && pickedGender && (
-                <p className="mt-3 text-[10px] text-navy/40 text-center italic">
-                  Pick your level above to continue
-                </p>
-              )}
-              {pickedLevel && pickedGender && !learnerName.trim() && (
-                <p className="mt-3 text-[10px] text-navy/40 text-center italic">
-                  Enter your name to continue
-                </p>
-              )}
-            </div>
+            </LayoutGroup>
           </div>
         </motion.div>
       </motion.div>
