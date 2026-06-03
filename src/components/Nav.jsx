@@ -41,9 +41,11 @@ function NavReachNextLevel() {
 }
 
 async function handleLogout(resetWelcomeOnboarding) {
-  const { supabase } = await import('../lib/supabaseClient');
-  await supabase.auth.signOut();
   resetWelcomeOnboarding();
+  try {
+    const { supabase } = await import('../lib/supabaseClient');
+    await supabase.auth.signOut();
+  } catch {}
 }
 
 export default function Nav() {
