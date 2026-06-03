@@ -123,9 +123,10 @@ export function LearnerProfileProvider({ children }) {
     recordSample,
     mergeInterviewReport,
     gainExperience,
+    spendExperience,
     refreshProfile,
     resetWelcomeOnboarding,
-  }), [profile, effectiveLevel, experienceHighlightTick, setGender, completeOnboarding, setClaimedLevel, recordSample, mergeInterviewReport, gainExperience, refreshProfile, resetWelcomeOnboarding]);
+  }), [profile, effectiveLevel, experienceHighlightTick, setGender, completeOnboarding, setClaimedLevel, recordSample, mergeInterviewReport, gainExperience, spendExperience, refreshProfile, resetWelcomeOnboarding]);
 
   return (
     <LearnerProfileContext.Provider value={value}>
