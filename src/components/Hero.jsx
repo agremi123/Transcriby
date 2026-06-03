@@ -3080,7 +3080,7 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
 }
 
 export default function Hero() {
-  const { effectiveLevel } = useLearnerProfile();
+  const { effectiveLevel, profile, spendExperience } = useLearnerProfile();
   const [searchParams, setSearchParams] = useSearchParams();
   const learnMode = searchParams.get('learn');
   const learnLevel = searchParams.get('level');
