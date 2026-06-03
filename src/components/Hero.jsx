@@ -2824,7 +2824,7 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date }) 
       ) : (
         <div className="flex flex-col overflow-hidden" style={{ maxHeight: 'var(--card-height, 520px)' }}>
           {title && (
-            <h2 className="font-display text-[26px] sm:text-[30px] leading-[1.2] tracking-[-0.01em] text-navy mb-4 shrink-0 line-clamp-2">
+            <h2 className="font-display text-[26px] sm:text-[30px] leading-[1.2] tracking-[-0.01em] mb-4 shrink-0 line-clamp-2" style={{ color: '#8b1e2d' }}>
               {title}
             </h2>
           )}
