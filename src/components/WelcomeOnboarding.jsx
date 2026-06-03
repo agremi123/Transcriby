@@ -292,7 +292,7 @@ export default function WelcomeOnboarding() {
                 return (
                   <div key={id} className="flex flex-col items-center gap-3 min-w-0">
                     {/* Big portrait */}
-                    <div className={`relative w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] rounded-full overflow-hidden shadow-lg transition-all duration-300 ${
+                    <div className={`relative w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] rounded-full overflow-hidden shadow-lg transition-all duration-300 ${
                       isSpeaking
                         ? 'ring-4 ring-wine scale-[1.04] shadow-xl'
                         : 'ring-2 ring-line/60'
