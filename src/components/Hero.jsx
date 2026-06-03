@@ -2434,6 +2434,23 @@ export function AudioDemoCard({
           {/* Practice tab */}
           {activeTab === 'practice' && (
             <div className="px-4 pt-3 pb-4 border-t border-line/50 space-y-4">
+              {/* Subtabs */}
+              <div className="flex gap-0 border-b border-line/40 -mx-4 px-4 mb-2">
+                <button
+                  type="button"
+                  onClick={() => setPracticeSubTab('comprehension')}
+                  className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${practiceSubTab === 'comprehension' ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}
+                >
+                  Comprehension
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setPracticeSubTab('vocabulary'); if (inputMode !== 'discover') { setInputMode('discover'); } }}
+                  className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${practiceSubTab === 'vocabulary' ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}
+                >
+                  Vocabulary
+                </button>
+              </div>
               {practiceTopics.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 pb-2 border-b border-line/40">
                   {practiceTopics.map((topic) => {
