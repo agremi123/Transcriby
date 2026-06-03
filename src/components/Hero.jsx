@@ -3332,9 +3332,6 @@ export default function Hero() {
           </div>
 
           <div className="flex items-center justify-end h-full">
-            {readingActive ? (
-              <ReadingQuestionsCard questions={readingQuestions} loading={readingLoading} />
-            ) : (
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
               initialTopic={practiceTopic}
@@ -3342,8 +3339,9 @@ export default function Hero() {
               initialLearnLevel={learnLevel}
               onLearnModeHandled={clearLearnParams}
               onPracticeTopicHandled={clearPracticeParam}
+              readingQuestions={readingActive ? readingQuestions : null}
+              readingLoading={readingLoading}
             />
-            )}
           </div>
         </div>
       </Container>
