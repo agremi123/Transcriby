@@ -391,7 +391,7 @@ export default function WelcomeOnboarding() {
               <div className="grid grid-cols-2 gap-3 mt-5 mb-2">
 
                 {/* Left card — I'm new */}
-                <div className={`relative flex flex-col items-center gap-3 rounded-2xl border px-5 py-5 transition-all duration-300 ${
+                <div className={`relative flex flex-col items-center gap-2 rounded-xl border px-4 py-3 transition-all duration-300 ${
                   activeNarrator === 'lea' ? 'border-wine/40 bg-wine/4 shadow-md' : 'border-line bg-ivory'
                 }`}>
                   {activeNarrator === 'lea' && (
