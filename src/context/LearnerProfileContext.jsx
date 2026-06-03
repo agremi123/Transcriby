@@ -29,6 +29,12 @@ export function LearnerProfileProvider({ children }) {
     return next;
   }, []);
 
+  const spendExperience = React.useCallback((amount = 5) => {
+    const next = spendParisianExperience(loadLearnerProfile(), amount);
+    setProfile(next);
+    return next;
+  }, []);
+
   React.useEffect(() => {
     const onParisianXp = (event) => {
       const amount = Number(event?.detail?.amount) || 0;
