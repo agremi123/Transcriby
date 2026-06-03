@@ -2985,11 +2985,15 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
                   <button
                     type="button"
                     onClick={showHint ? () => setShowHint(false) : useHint}
-                    className="w-7 h-7 flex items-center justify-center rounded-full border transition-colors"
-                    style={{ borderColor: showHint ? 'rgba(139,30,45,0.6)' : 'rgba(139,30,45,0.35)', color: '#8b1e2d', opacity: showHint ? 1 : 0.6 }}
-                    aria-label="Hint"
+                    className="rounded-full border px-2.5 py-1 text-[10px] sm:text-[11px] font-display italic transition-colors whitespace-nowrap"
+                    style={{
+                      borderColor: showHint ? 'rgba(139,30,45,0.6)' : 'rgba(139,30,45,0.35)',
+                      color: '#8b1e2d',
+                      opacity: showHint ? 1 : 0.75,
+                    }}
+                    aria-label="Translate hard words"
                   >
-                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.2"/><path d="M6 5.5v3M6 3.5h.01" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+                    translate hard words
                   </button>
 
                   {/* Popup floats upward, no layout impact */}
