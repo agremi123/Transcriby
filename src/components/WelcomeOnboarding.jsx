@@ -198,7 +198,6 @@ export default function WelcomeOnboarding() {
       setPickedLevel(profile.claimedLevel);
       setLevelLocked(false);
       setShowLevelPicker(false);
-      setDialogueDone(false);
       setShowEmailForm(false);
       setEmailInput(profile.email || '');
       setAuthError(null);
