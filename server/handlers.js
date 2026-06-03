@@ -378,6 +378,46 @@ export async function handlePractice(body) {
   }
 }
 
+export async function handleReading(body) {
+  const { ANTHROPIC_API_KEY } = getEnv();
+  const topic = body?.topic || '';
+  if (!ANTHROPIC_API_KEY || !topic) {
+    return { statusCode: 200, body: { passage: '', questions: [] } };
+  }
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 900,
+        system: `You are a French language teacher creating a reading exercise. Given a topic, generate:
+1. A short French passage (4-6 sentences, authentic Parisian style, appropriate for intermediate learners).
+2. Exactly 4 questions: 2 fill-in-the-blank (type "fill") and 2 multiple choice (type "mcq").
+Respond with raw JSON only, no markdown:
+{
+  "passage": "French text here...",
+  "questions": [
+    { "type": "fill", "sentence": "sentence with ___ blank", "answer": "word", "hint": "infinitive or base form" },
+    { "type": "fill", "sentence": "sentence with ___ blank", "answer": "word", "hint": "base form" },
+    { "type": "mcq", "question": "Question about the passage?", "options": ["A", "B", "C", "D"], "answer": "A" },
+    { "type": "mcq", "question": "Another question?", "options": ["A", "B", "C", "D"], "answer": "B" }
+  ]
+}`,
+        messages: [{ role: 'user', content: `Topic: ${topic}` }],
+      }),
+    });
+    const data = await response.json();
+    let raw = data.content?.[0]?.text?.trim() || '{}';
+    raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+    const parsed = JSON.parse(raw);
+    return { statusCode: 200, body: { passage: parsed.passage || '', questions: parsed.questions || [] } };
+  } catch {
+    return { statusCode: 200, body: { passage: '', questions: [] } };
+  }
+}
+
 export async function handleWord() {
   const { ANTHROPIC_API_KEY, ELEVENLABS_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY } = getEnv();
   if (!ANTHROPIC_API_KEY) {
