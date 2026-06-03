@@ -2801,26 +2801,40 @@ export function AudioDemoCard({
   );
 }
 
-function VocabExercise({ vocab }) {
+function VocabExercise({ vocab, onGoodAnswer }) {
   const [answers, setAnswers] = React.useState({});
   const [revealed, setRevealed] = React.useState({});
   const [activeBlank, setActiveBlank] = React.useState(null); // index of focused blank
   const inputRefs = React.useRef({});
+  const rewardedRef = React.useRef({});
 
   if (!vocab || vocab.length === 0) {
     return <p className="text-[13px] text-navy/40 italic">Vocabulary exercise not available for this article.</p>;
   }
 
+  const rewardIfCorrect = (idx, answer, expected) => {
+    const isCorrect = String(answer || '').trim().toLowerCase() === expected.trim().toLowerCase();
+    if (isCorrect && !rewardedRef.current[idx]) {
+      rewardedRef.current[idx] = true;
+      onGoodAnswer?.();
+    }
+    return isCorrect;
+  };
+
   const check = (idx) => {
+    const expected = vocab[idx]?.word || '';
+    rewardIfCorrect(idx, answers[idx], expected);
     setRevealed((r) => ({ ...r, [idx]: true }));
     setActiveBlank(null);
   };
 
   const fillWord = (word) => {
     if (activeBlank === null) return;
-    setAnswers((a) => ({ ...a, [activeBlank]: word }));
-    // auto-check immediately on click
-    setRevealed((r) => ({ ...r, [activeBlank]: true }));
+    const idx = activeBlank;
+    const expected = vocab[idx]?.word || '';
+    setAnswers((a) => ({ ...a, [idx]: word }));
+    rewardIfCorrect(idx, word, expected);
+    setRevealed((r) => ({ ...r, [idx]: true }));
     setActiveBlank(null);
   };
 
