@@ -349,7 +349,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
           <>
           <foreignObject x={tx} y={ty} width={TW} height={TH} style={{ overflow: 'visible' }} pointerEvents="all">
             <div xmlns="http://www.w3.org/1999/xhtml"
-                 onMouseEnter={() => clearTimeout(closeTimer.current)}
+                 onMouseEnter={() => {}}
                  onMouseLeave={closeDot}
                  style={{
                    background: '#1A2340',
@@ -388,7 +388,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
             </div>
           </foreignObject>
           <circle cx={svgX} cy={svgY} r={18} fill="transparent"
-                  onMouseEnter={() => clearTimeout(closeTimer.current)}
+                  onMouseEnter={() => {}}
                   onMouseLeave={closeDot} />
           <circle cx={svgX} cy={svgY} r={4} fill="white" stroke={color} strokeWidth="1.4"
                   style={{ pointerEvents: 'none' }} />
