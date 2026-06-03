@@ -172,7 +172,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
   };
   const closeDot = () => {
     if (justOpened.current) return;
-    setHoveredDot(null);
+    closeTimer.current = setTimeout(() => setHoveredDot(null), 120);
   };
 
   React.useLayoutEffect(() => {
