@@ -272,15 +272,15 @@ export default function WelcomeOnboarding() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           className="w-full max-w-[820px] max-h-[92vh] rounded-2xl border border-line/80 bg-paper shadow-[0_24px_64px_rgba(26,35,64,0.18)] overflow-y-auto"
         >
-          <div className="px-6 sm:px-10 pt-7 pb-8">
+          <div className="px-6 sm:px-10 pt-6 pb-7">
 
             {/* Header */}
-            <div className="flex items-center mb-8">
+            <div className="flex items-center mb-6">
               <Logo className="shrink-0 pointer-events-none" />
             </div>
 
-            {/* Narrator portraits + speech — always visible */}
-            <div className="grid grid-cols-2 gap-6 sm:gap-12 mb-8">
+            {/* Narrator portraits row */}
+            <div className="grid grid-cols-2 gap-4 sm:gap-8 mb-5">
               {(['lea', 'jules']).map((id) => {
                 const n = NARRATORS[id];
                 const line = linesByNarrator[id] || WELCOME_LINES_BY_NARRATOR[id];
@@ -290,9 +290,9 @@ export default function WelcomeOnboarding() {
                   && speechPlaybackTime != null;
 
                 return (
-                  <div key={id} className="flex flex-col items-center gap-3 min-w-0">
-                    {/* Big portrait */}
-                    <div className={`relative w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] rounded-full overflow-hidden shadow-lg transition-all duration-300 ${
+                  <div key={id} className="flex flex-col items-center gap-2 min-w-0">
+                    {/* Portrait */}
+                    <div className={`relative w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] rounded-full overflow-hidden shadow-lg transition-all duration-300 ${
                       isSpeaking
                         ? 'ring-4 ring-wine scale-[1.04] shadow-xl'
                         : 'ring-2 ring-line/60'
@@ -304,7 +304,7 @@ export default function WelcomeOnboarding() {
                     </div>
 
                     {/* Name */}
-                    <span className={`text-[12px] tracking-[0.18em] uppercase font-semibold transition-colors ${
+                    <span className={`text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${
                       isSpeaking ? 'text-wine' : 'text-navy/60'
                     }`}>
                       {n.name}
@@ -321,7 +321,6 @@ export default function WelcomeOnboarding() {
                         }
                       }}
                       className="inline-flex items-center gap-1.5 text-[11px] text-wine/60 hover:text-wine transition-colors"
-                      title={playing && activeSpeakingNarrator === id ? 'Stop' : 'Replay'}
                     >
                       {playing && activeSpeakingNarrator === id ? (
                         <svg width="10" height="10" viewBox="0 0 14 14" fill="currentColor" aria-hidden>
@@ -335,7 +334,7 @@ export default function WelcomeOnboarding() {
                       {playing && activeSpeakingNarrator === id ? 'Stop' : 'Replay'}
                     </button>
 
-                    {/* Big speech text */}
+                    {/* Speech text */}
                     <NarratorHoverText
                       text={line.text}
                       translation={line.translation}
@@ -345,7 +344,7 @@ export default function WelcomeOnboarding() {
                       highlightSpeech={highlightSpeech}
                       speechPlaybackTime={speechPlaybackTime}
                       speechTimings={speechTimings}
-                      className="font-display text-[19px] sm:text-[22px] leading-[1.45] text-navy/85 italic break-words text-center min-w-0"
+                      className="font-display text-[17px] sm:text-[19px] leading-[1.45] text-navy/85 italic break-words text-center min-w-0"
                     />
                   </div>
                 );
@@ -353,30 +352,21 @@ export default function WelcomeOnboarding() {
             </div>
 
             {audioError && (
-              <p className="text-[11px] text-wine/70 text-center mb-4">{audioError}</p>
+              <p className="text-[11px] text-wine/70 text-center mb-3">{audioError}</p>
             )}
 
-            {/* Phase 2: "Choose my level" CTA — appears after dialogue finishes */}
-            <AnimatePresence>
-              {(dialogueDone || audioError) && !showLevelPicker && !levelLocked && (
-                <motion.div
-                  key="choose-cta"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 8 }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex flex-col items-center gap-2"
+            {/* "Choose my level" CTA — always visible */}
+            {!showLevelPicker && !levelLocked && (
+              <div className="flex justify-center mt-4 mb-2">
+                <button
+                  type="button"
+                  onClick={() => setShowLevelPicker(true)}
+                  className={`${NAV_CTA_CLASS} px-8 py-3.5 text-[15px]`}
                 >
-                  <button
-                    type="button"
-                    onClick={() => setShowLevelPicker(true)}
-                    className={`${NAV_CTA_CLASS} px-8 py-3.5 text-[15px]`}
-                  >
-                    Choose my level
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  Choose my level
+                </button>
+              </div>
+            )}
 
             {/* Phase 3: level picker + auth — appears after clicking "Choose my level" */}
             <AnimatePresence>
