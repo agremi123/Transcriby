@@ -50,6 +50,13 @@ export function LearnerProfileProvider({ children }) {
     return next;
   }, []);
 
+  const gainDailyParisianPoints = React.useCallback((amount) => {
+    const next = addDailyParisianPoints(amount);
+    setDailyParisianPoints(next);
+    window.dispatchEvent(new CustomEvent(DAILY_PARISIAN_POINTS_EVENT, { detail: { points: next } }));
+    return next;
+  }, []);
+
   React.useEffect(() => {
     const onParisianXp = (event) => {
       const amount = Number(event?.detail?.amount) || 0;
