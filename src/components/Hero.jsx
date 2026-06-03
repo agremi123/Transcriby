@@ -3207,6 +3207,9 @@ export default function Hero() {
           </div>
 
           <div className="flex items-center justify-end h-full">
+            {readingActive ? (
+              <ReadingQuestionsCard questions={readingQuestions} loading={readingLoading} />
+            ) : (
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
               initialTopic={practiceTopic}
