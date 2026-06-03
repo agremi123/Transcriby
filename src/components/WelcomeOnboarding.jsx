@@ -201,13 +201,13 @@ export default function WelcomeOnboarding() {
     try { sourceRef.current?.stop(); } catch {}
   }, []);
 
-  if (!needsWelcomeOnboarding(profile)) return null;
-
   const finishOnboarding = React.useCallback((authMethod, { email, name } = {}) => {
     if (!pickedLevel) return;
     stopAudio();
     completeOnboarding(pickedLevel, { authMethod, email, name });
   }, [pickedLevel, stopAudio, completeOnboarding]);
+
+  if (!needsWelcomeOnboarding(profile)) return null;
 
   const handleLevelPick = (levelId) => {
     if (levelLocked) return;
