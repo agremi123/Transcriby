@@ -382,39 +382,87 @@ export async function handleReading(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
   if (!ANTHROPIC_API_KEY || !topic) {
-    return { statusCode: 200, body: { passage: '', questions: [] } };
+    return { statusCode: 200, body: { passage: '', source: null, questions: [] } };
   }
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    // Step 1: Use web search to find a real French article about the topic
+    const searchRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'web-search-2025-03-05',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1200,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        system: `You are helping create a French reading exercise. Search for a recent French-language article or text about the given topic. Extract a clear passage of 5-8 sentences in French from a real source. Return ONLY raw JSON, no markdown:
+{
+  "passage": "the French text extracted verbatim, 5-8 sentences",
+  "source": "publication name or website (e.g. Le Monde, Le Figaro, 20minutes.fr)"
+}
+If you cannot find a real French source, write a realistic authentic passage yourself and set source to null.`,
+        messages: [{ role: 'user', content: `Find a recent French article or text about: ${topic}` }],
+      }),
+    });
+
+    const searchData = await searchRes.json();
+    let articlePassage = '';
+    let articleSource = null;
+
+    // Extract the final text response from the tool-use chain
+    const textBlock = searchData.content?.find((b) => b.type === 'text');
+    if (textBlock?.text) {
+      let raw = textBlock.text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      try {
+        const parsed = JSON.parse(raw);
+        articlePassage = parsed.passage || '';
+        articleSource = parsed.source || null;
+      } catch {
+        articlePassage = textBlock.text.trim();
+      }
+    }
+
+    if (!articlePassage) throw new Error('No passage found');
+
+    // Step 2: Generate questions based on the real passage
+    const qRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 900,
-        system: `You are a French language teacher creating a reading exercise. Given a topic, generate:
-1. A short French passage (4-6 sentences, authentic Parisian style, appropriate for intermediate learners).
-2. Exactly 4 questions: 2 fill-in-the-blank (type "fill") and 2 multiple choice (type "mcq").
-Respond with raw JSON only, no markdown:
+        max_tokens: 700,
+        system: `Create exactly 4 comprehension questions based on the French passage provided. Use 2 fill-in-the-blank and 2 multiple choice. Respond with raw JSON only, no markdown:
 {
-  "passage": "French text here...",
   "questions": [
-    { "type": "fill", "sentence": "sentence with ___ blank", "answer": "word", "hint": "infinitive or base form" },
-    { "type": "fill", "sentence": "sentence with ___ blank", "answer": "word", "hint": "base form" },
-    { "type": "mcq", "question": "Question about the passage?", "options": ["A", "B", "C", "D"], "answer": "A" },
-    { "type": "mcq", "question": "Another question?", "options": ["A", "B", "C", "D"], "answer": "B" }
+    { "type": "fill", "sentence": "sentence from passage with one word replaced by ___", "answer": "the removed word", "hint": "infinitive or base form" },
+    { "type": "fill", "sentence": "another sentence with ___", "answer": "word", "hint": "base form" },
+    { "type": "mcq", "question": "Comprehension question about the passage?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option A" },
+    { "type": "mcq", "question": "Another question?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option B" }
   ]
 }`,
-        messages: [{ role: 'user', content: `Topic: ${topic}` }],
+        messages: [{ role: 'user', content: `Passage:\n${articlePassage}` }],
       }),
     });
-    const data = await response.json();
-    let raw = data.content?.[0]?.text?.trim() || '{}';
+
+    const qData = await qRes.json();
+    let raw = qData.content?.[0]?.text?.trim() || '{}';
     raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-    const parsed = JSON.parse(raw);
-    return { statusCode: 200, body: { passage: parsed.passage || '', questions: parsed.questions || [] } };
+    const qParsed = JSON.parse(raw);
+
+    return {
+      statusCode: 200,
+      body: {
+        passage: articlePassage,
+        source: articleSource,
+        questions: qParsed.questions || [],
+      },
+    };
   } catch {
-    return { statusCode: 200, body: { passage: '', questions: [] } };
+    return { statusCode: 200, body: { passage: '', source: null, questions: [] } };
   }
 }
 
