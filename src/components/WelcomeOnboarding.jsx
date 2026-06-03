@@ -257,6 +257,20 @@ export default function WelcomeOnboarding() {
     finishOnboarding('email', { email, name });
   };
 
+  const handleReturningEmailContinue = (e) => {
+    e.preventDefault();
+    const email = emailInput.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setAuthError('Enter a valid email address.');
+      return;
+    }
+    const local = email.split('@')[0].replace(/[._-]+/g, ' ').trim();
+    const name = (local.split(/\s+/)[0] || 'Ami').replace(/^\w/, (c) => c.toUpperCase());
+    // Use existing level or default — skip level picker entirely
+    stopAudio();
+    completeOnboarding(profile.claimedLevel || 'B1', { authMethod: 'email', email, name });
+  };
+
   const activeNarrator = activeSpeakingNarrator;
 
   return (
