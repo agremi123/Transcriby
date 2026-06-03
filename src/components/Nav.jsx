@@ -76,6 +76,14 @@ export default function Nav() {
           {!onJudgePage && (
             <ButtonPrimary to="/dashboard" showArrow={false}>Judge my French</ButtonPrimary>
           )}
+          <button
+            type="button"
+            onClick={() => handleLogout(resetWelcomeOnboarding)}
+            className="text-[11px] text-navy/35 hover:text-navy/60 transition-colors ml-1"
+            title="Log out"
+          >
+            Log out
+          </button>
         </div>
       </Container>
     </motion.nav>
