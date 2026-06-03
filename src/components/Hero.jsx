@@ -730,7 +730,7 @@ export function AudioDemoCard({
   onPracticeTopicHandled,
   readingVocab = [],
 }) {
-  const { effectiveLevel, gainExperience } = useLearnerProfile();
+  const { effectiveLevel, gainExperience, gainDailyParisianPoints } = useLearnerProfile();
   const {
     utterances,
     partialTranscript,
