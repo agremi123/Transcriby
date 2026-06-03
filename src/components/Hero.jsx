@@ -3062,7 +3062,18 @@ function PassageWithVocabHighlights({ passage, vocabEntries, highlightActive }) 
   );
 }
 
-function ReadingArticlePanel({ loading, title, passage, source, author, date, vocab = [], parisianPercent = 0, onSpendExperience }) {
+function ReadingArticlePanel({
+  loading,
+  title,
+  passage,
+  source,
+  author,
+  date,
+  vocab = [],
+  parisianPercent = 0,
+  dailyParisianPoints = 0,
+  onSpendExperience,
+}) {
   const [revealedBatchCount, setRevealedBatchCount] = React.useState(0);
   const [translateActive, setTranslateActive] = React.useState(false);
 
