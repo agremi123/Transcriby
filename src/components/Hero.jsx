@@ -2876,7 +2876,7 @@ function VocabExercise({ vocab }) {
               <p className="font-display text-[14px] text-navy/80 leading-snug">
                 {parts[0]}
                 {isRevealed ? (
-                  <span className={`inline-block px-1.5 py-0.5 rounded text-[13px] font-semibold mx-0.5 ${isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-50 text-red-500 line-through'}`}>{ans || '—'}</span>
+                  <span className="inline-block px-1.5 py-0.5 rounded text-[13px] font-semibold mx-0.5 bg-wine/10 text-wine">{ans || '—'}</span>
                 ) : (
                   <input
                     ref={(el) => { inputRefs.current[i] = el; }}
