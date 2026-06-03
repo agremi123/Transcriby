@@ -2525,7 +2525,7 @@ export function AudioDemoCard({
 
               {/* Vocabulary subtab */}
               {practiceSubTab === 'vocabulary' && (
-                <VocabExercise vocab={readingVocab} />
+                <VocabExercise vocab={readingVocab} onGoodAnswer={gainDailyParisianPoints} />
               )}
             </div>
           )}
