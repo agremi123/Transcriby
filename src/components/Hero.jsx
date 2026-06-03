@@ -3107,6 +3107,8 @@ export default function Hero() {
                 </div>
               </div>
             </Reveal>
+            </div>
+            )}
           </div>
 
           <div className="flex items-center justify-end h-full">
