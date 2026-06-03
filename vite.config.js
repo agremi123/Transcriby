@@ -573,6 +573,70 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey) {
   };
 }
 
+function readingMiddleware(apiKey) {
+  return async (req, res, next) => {
+    if (req.url !== '/api/reading' || req.method !== 'POST') { next(); return; }
+    let topic = '';
+    try {
+      const body = JSON.parse(await readBody(req));
+      topic = body.topic || '';
+    } catch {
+      res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
+    }
+    if (!apiKey || !topic) {
+      res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ passage: '', source: null, questions: [] })); return;
+    }
+    try {
+      const searchRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-beta': 'web-search-2025-03-05',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 1200,
+          tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+          system: `Search for a recent French-language article about the topic. Extract a clear passage of 5-8 sentences in French verbatim. Return ONLY raw JSON, no markdown: {"passage":"French text...","source":"publication name e.g. Le Monde"}. If no real source, write authentic French and set source to null.`,
+          messages: [{ role: 'user', content: `Find a recent French article about: ${topic}` }],
+        }),
+      });
+      const searchData = await searchRes.json();
+      let passage = '';
+      let source = null;
+      const textBlock = searchData.content?.find((b) => b.type === 'text');
+      if (textBlock?.text) {
+        let raw = textBlock.text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        try { ({ passage, source } = JSON.parse(raw)); } catch { passage = textBlock.text.trim(); }
+      }
+      if (!passage) throw new Error('no passage');
+
+      const qRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 700,
+          system: `Create exactly 4 comprehension questions based on the French passage: 2 fill-in-the-blank and 2 multiple choice. Return ONLY raw JSON: {"questions":[{"type":"fill","sentence":"sentence with ___ blank","answer":"word","hint":"base form"},{"type":"fill","sentence":"another with ___","answer":"word","hint":"base"},{"type":"mcq","question":"Question?","options":["A","B","C","D"],"answer":"A"},{"type":"mcq","question":"Question2?","options":["A","B","C","D"],"answer":"B"}]}`,
+          messages: [{ role: 'user', content: passage }],
+        }),
+      });
+      const qData = await qRes.json();
+      let qRaw = qData.content?.[0]?.text?.trim() || '{}';
+      qRaw = qRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      const { questions = [] } = JSON.parse(qRaw);
+      res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ passage, source, questions }));
+    } catch {
+      res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ passage: '', source: null, questions: [] }));
+    }
+  };
+}
+
 function practiceMiddleware(apiKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/practice' || req.method !== 'POST') { next(); return; }
