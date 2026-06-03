@@ -310,7 +310,7 @@ export default function WelcomeOnboarding() {
                     </span>
 
                     {/* Speech text with replay button */}
-                    <div className={`relative w-full rounded-xl px-5 py-4 border transition-colors duration-300 flex items-center justify-center min-h-[90px] ${
+                    <div className={`relative w-full rounded-xl px-5 py-4 border transition-colors duration-300 flex items-center justify-center ${
                       isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
                     }`}>
                       <NarratorHoverText
