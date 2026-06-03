@@ -2785,6 +2785,103 @@ export function AudioDemoCard({
   );
 }
 
+const SENTENCES_PER_PAGE = 5;
+
+function splitIntoSentences(text) {
+  // Split on sentence-ending punctuation followed by a space or end
+  return text.match(/[^.!?…]+[.!?…]+(?:\s|$)|[^.!?…]+$/g)?.map((s) => s.trim()).filter(Boolean) ?? [text];
+}
+
+function ReadingArticlePanel({ loading, title, passage, source, author, date }) {
+  const sentences = React.useMemo(() => splitIntoSentences(passage || ''), [passage]);
+  const pages = React.useMemo(() => {
+    const result = [];
+    for (let i = 0; i < sentences.length; i += SENTENCES_PER_PAGE) {
+      result.push(sentences.slice(i, i + SENTENCES_PER_PAGE).join(' '));
+    }
+    return result.length > 0 ? result : [''];
+  }, [sentences]);
+
+  const [page, setPage] = React.useState(0);
+  const [direction, setDirection] = React.useState(1); // 1 = forward, -1 = back
+
+  React.useEffect(() => { setPage(0); }, [passage]);
+
+  const goNext = () => { setDirection(1); setPage((p) => Math.min(p + 1, pages.length - 1)); };
+  const goPrev = () => { setDirection(-1); setPage((p) => Math.max(p - 1, 0)); };
+
+  const byline = [author, date, source].filter(Boolean).join(' — ');
+  const isLast = page === pages.length - 1;
+  const isFirst = page === 0;
+
+  return (
+    <div className="flex flex-col h-full justify-center pr-4">
+      {loading ? (
+        <div className="flex items-center gap-3">
+          <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
+          <span className="text-[14px] text-navy/40 font-display italic">Searching for an article…</span>
+        </div>
+      ) : (
+        <div className="flex flex-col overflow-hidden" style={{ maxHeight: 'var(--card-height, 520px)' }}>
+          {title && (
+            <h2 className="font-display text-[26px] sm:text-[30px] leading-[1.2] tracking-[-0.01em] text-navy mb-4 shrink-0 line-clamp-2">
+              {title}
+            </h2>
+          )}
+
+          <div className="relative flex-1 min-h-0 overflow-hidden">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.p
+                key={page}
+                custom={direction}
+                initial={(d) => ({ x: d * 40, opacity: 0 })}
+                animate={{ x: 0, opacity: 1 }}
+                exit={(d) => ({ x: d * -40, opacity: 0 })}
+                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                className="font-display text-[17px] sm:text-[18px] leading-[1.75] text-navy/80 absolute inset-0"
+              >
+                {pages[page]}
+              </motion.p>
+            </AnimatePresence>
+          </div>
+
+          <div className="flex items-center justify-between mt-4 shrink-0">
+            {byline ? (
+              <p className="text-[10px] font-mono tracking-[0.12em] text-navy/35 border-t border-line/40 pt-3 flex-1 mr-4">
+                {byline}
+              </p>
+            ) : <span className="flex-1" />}
+
+            {pages.length > 1 && (
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  disabled={isFirst}
+                  className="w-7 h-7 flex items-center justify-center rounded-full border border-navy/20 text-navy/40 hover:border-navy/40 hover:text-navy/70 disabled:opacity-20 transition-colors"
+                  aria-label="Previous page"
+                >
+                  <svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M6 1L2 6l4 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+                <span className="text-[10px] font-mono text-navy/30">{page + 1}/{pages.length}</span>
+                <button
+                  type="button"
+                  onClick={goNext}
+                  disabled={isLast}
+                  className="w-7 h-7 flex items-center justify-center rounded-full border border-navy/20 text-navy/40 hover:border-navy/40 hover:text-navy/70 disabled:opacity-20 transition-colors"
+                  aria-label="Next page"
+                >
+                  <svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M2 1l4 5-4 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Hero() {
   const { effectiveLevel } = useLearnerProfile();
   const [searchParams, setSearchParams] = useSearchParams();
