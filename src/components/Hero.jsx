@@ -2924,24 +2924,10 @@ function splitIntoSentences(text) {
 const HINT_COST = 5; // Parisianism points per extra hint
 
 function ReadingArticlePanel({ loading, title, passage, source, author, date, vocab = [], parisianPercent = 0, onSpendExperience }) {
-  const sentences = React.useMemo(() => splitIntoSentences(passage || ''), [passage]);
-  const pages = React.useMemo(() => {
-    const result = [];
-    for (let i = 0; i < sentences.length; i += SENTENCES_PER_PAGE) {
-      result.push(sentences.slice(i, i + SENTENCES_PER_PAGE).join(' '));
-    }
-    return result.length > 0 ? result : [''];
-  }, [sentences]);
-
-  const [page, setPage] = React.useState(0);
-  const [direction, setDirection] = React.useState(1);
   const [hintsUsed, setHintsUsed] = React.useState(0);
   const [showHint, setShowHint] = React.useState(false);
 
-  React.useEffect(() => { setPage(0); setHintsUsed(0); setShowHint(false); }, [passage]);
-
-  const goNext = () => { setDirection(1); setPage((p) => Math.min(p + 1, pages.length - 1)); };
-  const goPrev = () => { setDirection(-1); setPage((p) => Math.max(p - 1, 0)); };
+  React.useEffect(() => { setHintsUsed(0); setShowHint(false); }, [passage]);
 
   // Group vocab into hint batches of 2
   const hintBatches = React.useMemo(() => {
@@ -2952,7 +2938,6 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
 
   const currentHintWords = hintBatches[hintsUsed] || [];
   const hasMoreHints = hintsUsed < hintBatches.length - 1;
-  const isFreeHint = hintsUsed === 0;
   const canAffordHint = parisianPercent >= HINT_COST;
 
   const useHint = () => {
@@ -2965,8 +2950,6 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
   };
 
   const byline = [author, date, source].filter(Boolean).join(' — ');
-  const isLast = page === pages.length - 1;
-  const isFirst = page === 0;
 
   return (
     <div className="flex flex-col pr-4" style={{ height: 520 }}>
@@ -2977,7 +2960,7 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
         </div>
       ) : (
         <>
-          {/* Title — fixed at top, never moves */}
+          {/* Title */}
           {title && (
             <div className="mb-5 shrink-0 px-4 py-3 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
               <h2 className="font-display text-[26px] sm:text-[30px] leading-[1.2] tracking-[-0.01em] line-clamp-2 text-navy">
@@ -2986,21 +2969,11 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
             </div>
           )}
 
-          {/* Article text — fixed height zone, slides between pages */}
-          <div className="relative overflow-hidden flex-1">
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.p
-                key={page}
-                custom={direction}
-                initial={(d) => ({ x: d * 40, opacity: 0 })}
-                animate={{ x: 0, opacity: 1 }}
-                exit={(d) => ({ x: d * -40, opacity: 0 })}
-                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                className="font-display text-[15px] sm:text-[16px] leading-[1.75] text-navy/80"
-              >
-                {pages[page]}
-              </motion.p>
-            </AnimatePresence>
+          {/* Full article text — scrolls internally, fills remaining space */}
+          <div className="flex-1 min-h-0 overflow-y-auto pr-1">
+            <p className="font-display text-[15px] sm:text-[16px] leading-[1.75] text-navy/80">
+              {passage}
+            </p>
           </div>
 
           {/* Byline + pagination + hint — all in one fixed row */}
