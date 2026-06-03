@@ -3,6 +3,7 @@ import {
   applyInterviewReport,
   applySampleAssessment,
   gainParisianExperience,
+  spendParisianExperience,
   getEffectiveLevel,
   getInitialParisianPercent,
   loadLearnerProfile,
