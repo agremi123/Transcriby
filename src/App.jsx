@@ -49,10 +49,36 @@ function LandingPage() {
   );
 }
 
+function GoogleAuthHandler() {
+  const { completeOnboarding, profile } = useLearnerProfile();
+
+  React.useEffect(() => {
+    import('./lib/supabaseClient').then(({ supabase }) => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user && !isProfileSetupComplete(profile)) {
+          const user = session.user;
+          const name = user.user_metadata?.full_name?.split(' ')[0]
+            || user.user_metadata?.name?.split(' ')[0]
+            || user.email?.split('@')[0]
+            || 'Ami';
+          completeOnboarding(profile.claimedLevel || 'B1', {
+            authMethod: 'google',
+            email: user.email,
+            name,
+          });
+        }
+      });
+    });
+  }, []);
+
+  return null;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <LearnerProfileProvider>
+        <GoogleAuthHandler />
         <ParisianCornerBadge />
         <WelcomeOnboarding />
         <Routes>
