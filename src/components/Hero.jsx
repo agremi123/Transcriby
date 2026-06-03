@@ -3218,6 +3218,7 @@ export default function Hero() {
               onLearnModeHandled={clearLearnParams}
               onPracticeTopicHandled={clearPracticeParam}
             />
+            )}
           </div>
         </div>
       </Container>
