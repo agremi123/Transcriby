@@ -2914,12 +2914,6 @@ function VocabExercise({ vocab }) {
   );
 }
 
-const SENTENCES_PER_PAGE = 5;
-
-function splitIntoSentences(text) {
-  // Split on sentence-ending punctuation followed by a space or end
-  return text.match(/[^.!?…]+[.!?…]+(?:\s|$)|[^.!?…]+$/g)?.map((s) => s.trim()).filter(Boolean) ?? [text];
-}
 
 const HINT_COST = 5; // Parisianism points per extra hint
 
