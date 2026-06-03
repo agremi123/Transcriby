@@ -25,6 +25,8 @@ export default function WelcomeOnboarding() {
   const { profile, completeOnboarding } = useLearnerProfile();
   const [pickedLevel, setPickedLevel] = React.useState(profile.claimedLevel);
   const [levelLocked, setLevelLocked] = React.useState(false);
+  const [showLevelPicker, setShowLevelPicker] = React.useState(false);
+  const [dialogueDone, setDialogueDone] = React.useState(false);
   const [showEmailForm, setShowEmailForm] = React.useState(false);
   const [emailInput, setEmailInput] = React.useState(profile.email || '');
   const [authError, setAuthError] = React.useState(null);
@@ -109,6 +111,7 @@ export default function WelcomeOnboarding() {
 
   const playWelcomeLines = React.useCallback(async () => {
     setLinesByNarrator(WELCOME_LINES_BY_NARRATOR);
+    setDialogueDone(false);
     const siteSession = beginSiteAudioPlayback();
     sessionRef.current += 1;
     const session = sessionRef.current;
@@ -161,6 +164,7 @@ export default function WelcomeOnboarding() {
         setSpeechText(null);
         setSpeechPlaybackTime(null);
         setSpeechTimings([]);
+        setDialogueDone(true);
       }
     }
   }, []);
@@ -190,6 +194,8 @@ export default function WelcomeOnboarding() {
     if (needsWelcomeOnboarding(profile)) {
       setPickedLevel(profile.claimedLevel);
       setLevelLocked(false);
+      setShowLevelPicker(false);
+      setDialogueDone(false);
       setShowEmailForm(false);
       setEmailInput(profile.email || '');
       setAuthError(null);
@@ -224,7 +230,6 @@ export default function WelcomeOnboarding() {
 
   const handleGoogleConnect = async () => {
     setAuthError(null);
-    // Save picked level before redirect so it survives OAuth round-trip
     if (pickedLevel) {
       const { saveLearnerProfile, loadLearnerProfile } = await import('../lib/learnerProfile');
       saveLearnerProfile({ ...loadLearnerProfile(), claimedLevel: pickedLevel });
@@ -249,10 +254,7 @@ export default function WelcomeOnboarding() {
     finishOnboarding('email', { email, name });
   };
 
-  const dismissTranslationHint = () => {
-    setShowTranslationHint(false);
-  };
-
+  const dismissTranslationHint = () => setShowTranslationHint(false);
   const activeNarrator = activeSpeakingNarrator;
 
   return (
@@ -266,11 +268,12 @@ export default function WelcomeOnboarding() {
         <motion.div
           initial={{ opacity: 0, y: 16, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          className="w-full max-w-[780px] rounded-2xl border border-line/80 bg-paper shadow-[0_24px_64px_rgba(26,35,64,0.18)] overflow-visible"
+          className="w-full max-w-[820px] rounded-2xl border border-line/80 bg-paper shadow-[0_24px_64px_rgba(26,35,64,0.18)] overflow-visible"
         >
+          <div className="px-6 sm:px-10 pt-7 pb-8">
 
-          <div className="px-6 sm:px-8 pt-6 pb-7">
-            <div className="flex items-center justify-between gap-3 mb-5">
+            {/* Header */}
+            <div className="flex items-center justify-between gap-3 mb-8">
               <Logo className="shrink-0 pointer-events-none" />
               <button
                 type="button"
@@ -289,13 +292,14 @@ export default function WelcomeOnboarding() {
                     <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden>
                       <path d="M0 0 L10 6 L0 12 Z" />
                     </svg>
-                    Listen
+                    Listen again
                   </>
                 )}
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 sm:gap-8 mb-6">
+            {/* Narrator portraits + speech — always visible */}
+            <div className="grid grid-cols-2 gap-6 sm:gap-12 mb-8">
               {(['lea', 'jules']).map((id) => {
                 const n = NARRATORS[id];
                 const line = linesByNarrator[id] || WELCOME_LINES_BY_NARRATOR[id];
@@ -305,10 +309,11 @@ export default function WelcomeOnboarding() {
                   && speechPlaybackTime != null;
 
                 return (
-                  <div key={id} className="flex flex-col items-center gap-2 min-w-0">
-                    <div className={`relative w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-full overflow-hidden shadow-md transition-all duration-300 ${
+                  <div key={id} className="flex flex-col items-center gap-3 min-w-0">
+                    {/* Big portrait */}
+                    <div className={`relative w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] rounded-full overflow-hidden shadow-lg transition-all duration-300 ${
                       isSpeaking
-                        ? 'ring-[3px] ring-wine scale-[1.03] shadow-lg'
+                        ? 'ring-4 ring-wine scale-[1.04] shadow-xl'
                         : 'ring-2 ring-line/60'
                     }`}>
                       <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
@@ -316,11 +321,15 @@ export default function WelcomeOnboarding() {
                         <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-25 pointer-events-none" />
                       )}
                     </div>
-                    <span className={`text-[11px] tracking-[0.16em] uppercase font-semibold transition-colors ${
-                      isSpeaking ? 'text-wine' : 'text-navy/75'
+
+                    {/* Name */}
+                    <span className={`text-[12px] tracking-[0.18em] uppercase font-semibold transition-colors ${
+                      isSpeaking ? 'text-wine' : 'text-navy/60'
                     }`}>
                       {n.name}
                     </span>
+
+                    {/* Big speech text */}
                     <NarratorHoverText
                       text={line.text}
                       translation={line.translation}
@@ -330,7 +339,7 @@ export default function WelcomeOnboarding() {
                       highlightSpeech={highlightSpeech}
                       speechPlaybackTime={speechPlaybackTime}
                       speechTimings={speechTimings}
-                      className="font-display text-[16px] sm:text-[17px] leading-[1.4] text-navy/80 italic break-words text-center min-w-0"
+                      className="font-display text-[19px] sm:text-[22px] leading-[1.45] text-navy/85 italic break-words text-center min-w-0"
                     />
                   </div>
                 );
@@ -341,117 +350,153 @@ export default function WelcomeOnboarding() {
               <p className="text-[11px] text-wine/70 text-center mb-4">{audioError}</p>
             )}
 
-            <LayoutGroup>
-              <div className="relative mb-2 min-h-[168px] sm:min-h-[200px]">
-                <AnimatePresence mode="popLayout" initial={false}>
-                  {!levelLocked ? (
-                    <motion.div
-                      key="level-grid"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="grid grid-cols-3 gap-3 sm:gap-4"
-                    >
-                      {LEVEL_PICKER.map(({ id, label, hint }) => (
-                        <motion.button
-                          key={id}
-                          type="button"
-                          layoutId={pickedLevel === id ? SELECTED_BADGE_LAYOUT : undefined}
-                          onClick={() => handleLevelPick(id)}
-                          aria-label={`${label}, ${hint}`}
-                          exit={{ opacity: 0, scale: 0.88 }}
-                          transition={{ duration: 0.22 }}
-                          className="flex items-center justify-center rounded-xl border border-line bg-paper p-1 sm:p-1.5 shadow-sm hover:shadow-md hover:border-wine/35 transition-colors"
-                        >
-                          <img
-                            src={getLevelBadgeSrc(id)}
-                            alt=""
-                            className={BADGE_IMG_CLASS}
-                          />
-                        </motion.button>
-                      ))}
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="level-focus"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.25, delay: 0.08 }}
-                      className="flex flex-col items-center"
-                    >
-                      <motion.div
-                        layoutId={SELECTED_BADGE_LAYOUT}
-                        className="flex items-center justify-center rounded-xl border border-wine ring-2 ring-wine/25 ring-offset-2 ring-offset-paper bg-paper p-1 sm:p-1.5 shadow-md"
-                      >
-                        <img
-                          src={getLevelBadgeSrc(pickedLevel)}
-                          alt=""
-                          className={BADGE_IMG_CLASS}
-                        />
-                      </motion.div>
+            {/* Phase 2: "Choose my level" CTA — appears after dialogue finishes */}
+            <AnimatePresence>
+              {(dialogueDone || audioError) && !showLevelPicker && !levelLocked && (
+                <motion.div
+                  key="choose-cta"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex flex-col items-center gap-2"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setShowLevelPicker(true)}
+                    className={`${NAV_CTA_CLASS} px-8 py-3.5 text-[15px]`}
+                  >
+                    Choose my level
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: 0.2 }}
-                        className="mt-6 w-full max-w-[300px] flex flex-col gap-2.5"
-                      >
-                        {!showEmailForm ? (
-                          <>
-                            <button
-                              type="button"
-                              onClick={handleGoogleConnect}
-                              className={`${NAV_CTA_CLASS} w-full justify-center gap-3`}
-                            >
-                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
-                                <path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.71v2.26h2.92a8.78 8.78 0 002.68-6.61z" fill="#4285F4"/>
-                                <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33A8.99 8.99 0 009 18z" fill="#34A853"/>
-                                <path d="M3.97 10.71A5.41 5.41 0 013.68 9c0-.59.1-1.16.29-1.71V4.96H.96A8.99 8.99 0 000 9c0 1.45.35 2.82.96 4.04l3.01-2.33z" fill="#FBBC05"/>
-                                <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A8.99 8.99 0 00.96 4.96l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z" fill="#EA4335"/>
-                              </svg>
-                              Connect with Google
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => { setAuthError(null); setShowEmailForm(true); }}
-                              className="w-full rounded-full border border-wine/30 bg-paper text-wine px-5 py-3 text-[14px] font-medium font-display hover:bg-wine/5 transition-colors"
-                            >
-                              Continue with email
-                            </button>
-                          </>
+            {/* Phase 3: level picker + auth — appears after clicking "Choose my level" */}
+            <AnimatePresence>
+              {(showLevelPicker || levelLocked) && (
+                <motion.div
+                  key="level-section"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <LayoutGroup>
+                    <div className="relative min-h-[168px] sm:min-h-[200px]">
+                      <AnimatePresence mode="popLayout" initial={false}>
+                        {!levelLocked ? (
+                          <motion.div
+                            key="level-grid"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="grid grid-cols-3 gap-3 sm:gap-4"
+                          >
+                            {LEVEL_PICKER.map(({ id, label, hint }) => (
+                              <motion.button
+                                key={id}
+                                type="button"
+                                layoutId={pickedLevel === id ? SELECTED_BADGE_LAYOUT : undefined}
+                                onClick={() => handleLevelPick(id)}
+                                aria-label={`${label}, ${hint}`}
+                                exit={{ opacity: 0, scale: 0.88 }}
+                                transition={{ duration: 0.22 }}
+                                className="flex items-center justify-center rounded-xl border border-line bg-paper p-1 sm:p-1.5 shadow-sm hover:shadow-md hover:border-wine/35 transition-colors"
+                              >
+                                <img
+                                  src={getLevelBadgeSrc(id)}
+                                  alt=""
+                                  className={BADGE_IMG_CLASS}
+                                />
+                              </motion.button>
+                            ))}
+                          </motion.div>
                         ) : (
-                          <form onSubmit={handleEmailContinue} className="flex flex-col gap-2.5">
-                            <input
-                              type="email"
-                              value={emailInput}
-                              onChange={(e) => setEmailInput(e.target.value)}
-                              placeholder="you@email.com"
-                              autoComplete="email"
-                              autoFocus
-                              className="w-full rounded-full border border-line bg-ivory px-4 py-3 text-center font-display text-[15px] text-navy placeholder:text-navy/25 outline-none focus:border-wine/40 focus:ring-2 focus:ring-wine/10"
-                            />
-                            <button type="submit" className={`${NAV_CTA_CLASS} w-full justify-center`}>
-                              Continue
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => { setShowEmailForm(false); setAuthError(null); }}
-                              className="text-[12px] text-navy/45 hover:text-wine transition-colors"
+                          <motion.div
+                            key="level-focus"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.25, delay: 0.08 }}
+                            className="flex flex-col items-center"
+                          >
+                            <motion.div
+                              layoutId={SELECTED_BADGE_LAYOUT}
+                              className="flex items-center justify-center rounded-xl border border-wine ring-2 ring-wine/25 ring-offset-2 ring-offset-paper bg-paper p-1 sm:p-1.5 shadow-md"
                             >
-                              Back
-                            </button>
-                          </form>
+                              <img
+                                src={getLevelBadgeSrc(pickedLevel)}
+                                alt=""
+                                className={BADGE_IMG_CLASS}
+                              />
+                            </motion.div>
+
+                            <motion.div
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: 0.2 }}
+                              className="mt-6 w-full max-w-[300px] flex flex-col gap-2.5"
+                            >
+                              {!showEmailForm ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={handleGoogleConnect}
+                                    className={`${NAV_CTA_CLASS} w-full justify-center gap-3`}
+                                  >
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+                                      <path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.71v2.26h2.92a8.78 8.78 0 002.68-6.61z" fill="#4285F4"/>
+                                      <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33A8.99 8.99 0 009 18z" fill="#34A853"/>
+                                      <path d="M3.97 10.71A5.41 5.41 0 013.68 9c0-.59.1-1.16.29-1.71V4.96H.96A8.99 8.99 0 000 9c0 1.45.35 2.82.96 4.04l3.01-2.33z" fill="#FBBC05"/>
+                                      <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A8.99 8.99 0 00.96 4.96l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z" fill="#EA4335"/>
+                                    </svg>
+                                    Connect with Google
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => { setAuthError(null); setShowEmailForm(true); }}
+                                    className="w-full rounded-full border border-wine/30 bg-paper text-wine px-5 py-3 text-[14px] font-medium font-display hover:bg-wine/5 transition-colors"
+                                  >
+                                    Continue with email
+                                  </button>
+                                </>
+                              ) : (
+                                <form onSubmit={handleEmailContinue} className="flex flex-col gap-2.5">
+                                  <input
+                                    type="email"
+                                    value={emailInput}
+                                    onChange={(e) => setEmailInput(e.target.value)}
+                                    placeholder="you@email.com"
+                                    autoComplete="email"
+                                    autoFocus
+                                    className="w-full rounded-full border border-line bg-ivory px-4 py-3 text-center font-display text-[15px] text-navy placeholder:text-navy/25 outline-none focus:border-wine/40 focus:ring-2 focus:ring-wine/10"
+                                  />
+                                  <button type="submit" className={`${NAV_CTA_CLASS} w-full justify-center`}>
+                                    Continue
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => { setShowEmailForm(false); setAuthError(null); }}
+                                    className="text-[12px] text-navy/45 hover:text-wine transition-colors"
+                                  >
+                                    Back
+                                  </button>
+                                </form>
+                              )}
+                              {authError && (
+                                <p className="text-[11px] text-wine/80 text-center">{authError}</p>
+                              )}
+                            </motion.div>
+                          </motion.div>
                         )}
-                        {authError && (
-                          <p className="text-[11px] text-wine/80 text-center">{authError}</p>
-                        )}
-                      </motion.div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </LayoutGroup>
+                      </AnimatePresence>
+                    </div>
+                  </LayoutGroup>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
           </div>
         </motion.div>
       </motion.div>
