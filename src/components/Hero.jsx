@@ -3144,15 +3144,18 @@ function ReadingArticlePanel({
             />
           </div>
 
-          {/* Byline + pagination + hint — all in one fixed row */}
-          <div className="flex items-end justify-between mt-4 shrink-0">
-            {byline ? (
-              <p className="text-[10px] font-mono tracking-[0.12em] border-t pt-3 flex-1 mr-4" style={{ color: '#8b1e2d', borderColor: 'rgba(139,30,45,0.2)' }}>
-                {byline}
-              </p>
-            ) : <span className="flex-1" />}
+          {/* Daily points + translate — bottom of article */}
+          <div className="flex items-end justify-between gap-4 mt-4 shrink-0 border-t pt-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
+            <div className="flex flex-col gap-2 min-w-0 flex-1">
+              <DailyParisianPointsIndicator points={dailyParisianPoints} />
+              {byline ? (
+                <p className="text-[10px] font-mono tracking-[0.12em] text-navy/40 truncate" style={{ color: '#8b1e2d' }}>
+                  {byline}
+                </p>
+              ) : null}
+            </div>
 
-            <div className="flex items-center gap-3 shrink-0 pb-1">
+            <div className="flex items-center gap-3 shrink-0 pb-0.5">
               {/* Hint button inline with arrows */}
               {vocab.length > 0 && (
                 <div className="flex flex-col items-end gap-1.5">
