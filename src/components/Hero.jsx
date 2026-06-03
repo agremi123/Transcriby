@@ -2969,7 +2969,7 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
   const isFirst = page === 0;
 
   return (
-    <div className="flex flex-col pr-4" style={{ height: 520 }}>
+    <div className="flex flex-col pr-4 h-full">
       {loading ? (
         <div className="flex items-center gap-3 mt-auto mb-auto">
           <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
