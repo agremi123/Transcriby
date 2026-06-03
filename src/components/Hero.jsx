@@ -2791,6 +2791,29 @@ export default function Hero() {
   const learnMode = searchParams.get('learn');
   const learnLevel = searchParams.get('level');
   const practiceTopic = searchParams.get('practice');
+  const practiceType = searchParams.get('ptype');
+  const isReadingMode = practiceType === 'reading' && !!practiceTopic;
+
+  const [readingPassage, setReadingPassage] = React.useState('');
+  const [readingSource, setReadingSource] = React.useState(null);
+  const [readingLoading, setReadingLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!isReadingMode) return;
+    setReadingLoading(true);
+    fetch('/api/reading', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: practiceTopic }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        setReadingPassage(data.passage || '');
+        setReadingSource(data.source || null);
+        setReadingLoading(false);
+      })
+      .catch(() => setReadingLoading(false));
+  }, [practiceTopic, practiceType]);
   const [introNarrator, setIntroNarrator] = React.useState(null);
   const [introPlaying, setIntroPlaying] = React.useState(null); // null | 'lea' | 'jules'
   const [introPlaybackTime, setIntroPlaybackTime] = React.useState(null);
