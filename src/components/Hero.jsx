@@ -2960,12 +2960,12 @@ export default function Hero() {
       <Container className="relative">
         <div className="grid lg:grid-cols-[1fr_1.5fr] gap-8 items-center h-[calc(100vh-96px)]">
           <div className="relative flex flex-col justify-center overflow-visible">
-            {isReadingMode ? (
+            {readingActive ? (
               <div className="flex flex-col gap-4 pr-4">
                 <div className="inline-flex items-center gap-2 self-start px-3 py-1.5 bg-navy text-ivory rounded-sm">
                   <span className="text-[9px] font-mono tracking-[0.2em] uppercase opacity-60">Reading</span>
                   <span className="text-[9px] font-mono opacity-30">—</span>
-                  <span className="text-[10px] font-mono tracking-wide opacity-90 max-w-[220px] truncate">{practiceTopic}</span>
+                  <span className="text-[10px] font-mono tracking-wide opacity-90 max-w-[220px] truncate">{readingTopic}</span>
                 </div>
                 {readingLoading ? (
                   <div className="flex items-center gap-3">
