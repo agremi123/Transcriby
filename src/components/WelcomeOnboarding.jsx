@@ -273,29 +273,8 @@ export default function WelcomeOnboarding() {
           <div className="px-6 sm:px-10 pt-7 pb-8">
 
             {/* Header */}
-            <div className="flex items-center justify-between gap-3 mb-8">
+            <div className="flex items-center mb-8">
               <Logo className="shrink-0 pointer-events-none" />
-              <button
-                type="button"
-                onClick={playing ? stopAudio : playWelcomeLines}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-wine/30 text-wine text-[11px] font-medium hover:bg-wine/5 transition-colors"
-              >
-                {playing ? (
-                  <>
-                    <svg width="10" height="10" viewBox="0 0 14 14" fill="currentColor" aria-hidden>
-                      <rect x="2" y="2" width="10" height="10" rx="1.5" />
-                    </svg>
-                    Stop
-                  </>
-                ) : (
-                  <>
-                    <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden>
-                      <path d="M0 0 L10 6 L0 12 Z" />
-                    </svg>
-                    Listen again
-                  </>
-                )}
-              </button>
             </div>
 
             {/* Narrator portraits + speech — always visible */}
