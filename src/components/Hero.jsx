@@ -2798,6 +2798,93 @@ export function AudioDemoCard({
   );
 }
 
+function VocabExercise({ vocab }) {
+  const [answers, setAnswers] = React.useState({});
+  const [revealed, setRevealed] = React.useState({});
+
+  if (!vocab || vocab.length === 0) {
+    return <p className="text-[13px] text-navy/40 italic">Vocabulary exercise not available for this article.</p>;
+  }
+
+  const words = vocab.map((v) => v.word);
+
+  const check = (idx) => {
+    setRevealed((r) => ({ ...r, [idx]: true }));
+  };
+
+  const allDone = vocab.every((_, i) => revealed[i]);
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Word bank */}
+      <div className="flex flex-wrap gap-2">
+        {vocab.map((v) => {
+          const usedIdx = Object.entries(answers).find(([, val]) => val === v.word)?.[0];
+          const isUsed = usedIdx !== undefined && revealed[usedIdx];
+          return (
+            <div key={v.word} className="group relative">
+              <span className={`inline-block px-2.5 py-1 border font-display text-[13px] rounded-sm transition-colors cursor-default ${isUsed ? 'border-green-400/40 bg-green-50 text-green-700 line-through opacity-50' : 'border-wine/30 bg-wine/5 text-wine'}`}>
+                {v.word}
+              </span>
+              <div className="absolute bottom-full left-0 mb-1 px-2 py-1 bg-navy text-ivory text-[10px] font-mono rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
+                {v.definition}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="border-t border-line/40" />
+
+      {/* Sentences */}
+      <div className="flex flex-col gap-3">
+        {vocab.map((v, i) => {
+          const parts = v.sentence.split('___');
+          const ans = answers[i] || '';
+          const isCorrect = ans.trim().toLowerCase() === v.word.toLowerCase();
+          const isRevealed = revealed[i];
+          return (
+            <div key={i} className="flex flex-col gap-1">
+              <p className="font-display text-[14px] text-navy/80 leading-snug">
+                {parts[0]}
+                {isRevealed ? (
+                  <span className={`inline-block px-1.5 py-0.5 rounded text-[13px] font-semibold mx-0.5 ${isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-50 text-red-500 line-through'}`}>{ans || '—'}</span>
+                ) : (
+                  <input
+                    type="text"
+                    value={ans}
+                    onChange={(e) => setAnswers((a) => ({ ...a, [i]: e.target.value }))}
+                    onKeyDown={(e) => e.key === 'Enter' && check(i)}
+                    placeholder="…"
+                    className="inline-block w-[100px] border-b-2 border-wine/30 bg-transparent text-navy text-center outline-none focus:border-wine px-1 font-display text-[14px] mx-0.5"
+                    autoComplete="off"
+                  />
+                )}
+                {parts[1]}
+              </p>
+              {isRevealed && !isCorrect && (
+                <p className="text-[11px] text-navy/40">→ <span className="font-semibold text-navy/70">{v.word}</span></p>
+              )}
+              {!isRevealed && ans.trim() && (
+                <button type="button" onClick={() => check(i)}
+                  className="self-start px-3 py-0.5 rounded-full bg-wine text-ivory text-[10px] font-display hover:bg-wine/85 transition-colors">
+                  Check
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {allDone && (
+        <p className="text-[11px] tracking-widest uppercase text-green-600 border-t border-line/40 pt-2">
+          {vocab.filter((v, i) => (answers[i] || '').trim().toLowerCase() === v.word.toLowerCase()).length}/{vocab.length} correct
+        </p>
+      )}
+    </div>
+  );
+}
+
 const SENTENCES_PER_PAGE = 5;
 
 function splitIntoSentences(text) {
