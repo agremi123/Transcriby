@@ -2802,15 +2802,24 @@ export function AudioDemoCard({
 function VocabExercise({ vocab }) {
   const [answers, setAnswers] = React.useState({});
   const [revealed, setRevealed] = React.useState({});
+  const [activeBlank, setActiveBlank] = React.useState(null); // index of focused blank
+  const inputRefs = React.useRef({});
 
   if (!vocab || vocab.length === 0) {
     return <p className="text-[13px] text-navy/40 italic">Vocabulary exercise not available for this article.</p>;
   }
 
-  const words = vocab.map((v) => v.word);
-
   const check = (idx) => {
     setRevealed((r) => ({ ...r, [idx]: true }));
+    setActiveBlank(null);
+  };
+
+  const fillWord = (word) => {
+    if (activeBlank === null) return;
+    setAnswers((a) => ({ ...a, [activeBlank]: word }));
+    // auto-check immediately on click
+    setRevealed((r) => ({ ...r, [activeBlank]: true }));
+    setActiveBlank(null);
   };
 
   const allDone = vocab.every((_, i) => revealed[i]);
@@ -2821,12 +2830,23 @@ function VocabExercise({ vocab }) {
       <div className="flex flex-wrap gap-2">
         {vocab.map((v) => {
           const usedIdx = Object.entries(answers).find(([, val]) => val === v.word)?.[0];
-          const isUsed = usedIdx !== undefined && revealed[usedIdx];
+          const isUsed = usedIdx !== undefined && revealed[Number(usedIdx)];
+          const isClickable = activeBlank !== null && !isUsed;
           return (
             <div key={v.word} className="group relative">
-              <span className={`inline-block px-2.5 py-1 border font-display text-[13px] rounded-sm transition-colors cursor-default ${isUsed ? 'border-green-400/40 bg-green-50 text-green-700 line-through opacity-50' : 'border-wine/30 bg-wine/5 text-wine'}`}>
+              <button
+                type="button"
+                onClick={() => isClickable && fillWord(v.word)}
+                className={`px-2.5 py-1 border font-display text-[13px] rounded-sm transition-all ${
+                  isUsed
+                    ? 'border-green-400/40 bg-green-50 text-green-700 opacity-40 cursor-default'
+                    : isClickable
+                      ? 'border-wine bg-wine text-ivory cursor-pointer scale-105 shadow-sm'
+                      : 'border-wine/30 bg-wine/5 text-wine cursor-default'
+                }`}
+              >
                 {v.word}
-              </span>
+              </button>
               <div className="absolute bottom-full left-0 mb-1 px-2 py-1 bg-navy text-ivory text-[10px] font-mono rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
                 {v.definition}
               </div>
@@ -2834,6 +2854,12 @@ function VocabExercise({ vocab }) {
           );
         })}
       </div>
+
+      {activeBlank !== null && (
+        <p className="text-[10px] font-mono tracking-widest uppercase text-wine/60 -mt-2">
+          ↑ click a word to fill the blank
+        </p>
+      )}
 
       <div className="border-t border-line/40" />
 
@@ -2844,6 +2870,7 @@ function VocabExercise({ vocab }) {
           const ans = answers[i] || '';
           const isCorrect = ans.trim().toLowerCase() === v.word.toLowerCase();
           const isRevealed = revealed[i];
+          const isFocused = activeBlank === i;
           return (
             <div key={i} className="flex flex-col gap-1">
               <p className="font-display text-[14px] text-navy/80 leading-snug">
@@ -2852,12 +2879,15 @@ function VocabExercise({ vocab }) {
                   <span className={`inline-block px-1.5 py-0.5 rounded text-[13px] font-semibold mx-0.5 ${isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-50 text-red-500 line-through'}`}>{ans || '—'}</span>
                 ) : (
                   <input
+                    ref={(el) => { inputRefs.current[i] = el; }}
                     type="text"
                     value={ans}
                     onChange={(e) => setAnswers((a) => ({ ...a, [i]: e.target.value }))}
-                    onKeyDown={(e) => e.key === 'Enter' && check(i)}
+                    onKeyDown={(e) => e.key === 'Enter' && ans.trim() && check(i)}
+                    onFocus={() => setActiveBlank(i)}
+                    onBlur={() => { if (activeBlank === i) setTimeout(() => setActiveBlank(null), 150); }}
                     placeholder="…"
-                    className="inline-block w-[100px] border-b-2 border-wine/30 bg-transparent text-navy text-center outline-none focus:border-wine px-1 font-display text-[14px] mx-0.5"
+                    className={`inline-block w-[110px] border-b-2 bg-transparent text-navy text-center outline-none px-1 font-display text-[14px] mx-0.5 transition-colors ${isFocused ? 'border-wine' : 'border-wine/30'}`}
                     autoComplete="off"
                   />
                 )}
