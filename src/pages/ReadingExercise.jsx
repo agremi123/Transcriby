@@ -115,6 +115,7 @@ export default function ReadingExercise() {
 
   const [phase, setPhase] = React.useState('loading'); // loading | read | questions | done
   const [passage, setPassage] = React.useState('');
+  const [source, setSource] = React.useState(null);
   const [questions, setQuestions] = React.useState([]);
   const [answers, setAnswers] = React.useState({});
   const [error, setError] = React.useState(null);
