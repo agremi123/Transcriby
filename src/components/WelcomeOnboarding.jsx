@@ -224,6 +224,11 @@ export default function WelcomeOnboarding() {
 
   const handleGoogleConnect = async () => {
     setAuthError(null);
+    // Save picked level before redirect so it survives OAuth round-trip
+    if (pickedLevel) {
+      const { saveLearnerProfile, loadLearnerProfile } = await import('../lib/learnerProfile');
+      saveLearnerProfile({ ...loadLearnerProfile(), claimedLevel: pickedLevel });
+    }
     const { supabase } = await import('../lib/supabaseClient');
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
