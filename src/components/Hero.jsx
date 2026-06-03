@@ -2918,30 +2918,96 @@ function VocabExercise({ vocab }) {
 
 const HINT_COST = 5; // Parisianism points per extra hint
 
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function buildPassageSegments(passage, vocabEntries) {
+  if (!passage) return [];
+  if (!vocabEntries.length) return [{ type: 'text', value: passage }];
+
+  const sorted = [...vocabEntries].sort((a, b) => b.word.length - a.word.length);
+  const pattern = sorted.map((v) => escapeRegex(v.word)).join('|');
+  const re = new RegExp(`(${pattern})`, 'giu');
+  const defByLower = new Map(sorted.map((v) => [v.word.toLowerCase(), v]));
+
+  return passage.split(re).filter((part) => part.length > 0).map((part) => {
+    const entry = defByLower.get(part.toLowerCase());
+    if (entry) return { type: 'vocab', value: part, entry };
+    return { type: 'text', value: part };
+  });
+}
+
+function PassageWithVocabHighlights({ passage, vocabEntries, highlightActive }) {
+  const segments = React.useMemo(
+    () => (highlightActive ? buildPassageSegments(passage, vocabEntries) : [{ type: 'text', value: passage }]),
+    [passage, vocabEntries, highlightActive],
+  );
+
+  return (
+    <p className="font-display text-[15px] sm:text-[16px] leading-[1.75] text-navy/80">
+      {segments.map((seg, i) => {
+        if (seg.type === 'text') {
+          return <React.Fragment key={i}>{seg.value}</React.Fragment>;
+        }
+        return (
+          <span key={i} className="relative inline cursor-help group">
+            <mark className="bg-wine/18 text-wine rounded-sm px-0.5 underline decoration-wine/50 decoration-dotted underline-offset-[3px]">
+              {seg.value}
+            </mark>
+            <span
+              role="tooltip"
+              className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 max-w-[220px] -translate-x-1/2 rounded-sm bg-navy px-2.5 py-2 text-[11px] leading-snug text-ivory opacity-0 shadow-[0_8px_24px_rgba(26,35,64,0.28)] transition-opacity duration-150 group-hover:opacity-100 whitespace-normal text-center"
+            >
+              {seg.entry.definition}
+            </span>
+          </span>
+        );
+      })}
+    </p>
+  );
+}
+
 function ReadingArticlePanel({ loading, title, passage, source, author, date, vocab = [], parisianPercent = 0, onSpendExperience }) {
-  const [hintsUsed, setHintsUsed] = React.useState(0);
-  const [showHint, setShowHint] = React.useState(false);
+  const [revealedBatchCount, setRevealedBatchCount] = React.useState(0);
+  const [translateActive, setTranslateActive] = React.useState(false);
 
-  React.useEffect(() => { setHintsUsed(0); setShowHint(false); }, [passage]);
+  React.useEffect(() => {
+    setRevealedBatchCount(0);
+    setTranslateActive(false);
+  }, [passage]);
 
-  // Group vocab into hint batches of 2
   const hintBatches = React.useMemo(() => {
     const batches = [];
     for (let i = 0; i < vocab.length; i += 2) batches.push(vocab.slice(i, i + 2));
     return batches;
   }, [vocab]);
 
-  const currentHintWords = hintBatches[hintsUsed] || [];
-  const hasMoreHints = hintsUsed < hintBatches.length - 1;
+  const revealedWords = React.useMemo(
+    () => hintBatches.slice(0, revealedBatchCount).flat(),
+    [hintBatches, revealedBatchCount],
+  );
+
+  const hasMoreHints = revealedBatchCount < hintBatches.length;
   const canAffordHint = parisianPercent >= HINT_COST;
 
-  const useHint = () => {
-    if (hintsUsed > 0) {
-      if (!canAffordHint) return;
-      onSpendExperience?.(HINT_COST);
+  const handleTranslateClick = () => {
+    if (translateActive) {
+      setTranslateActive(false);
+      return;
     }
-    setHintsUsed((h) => h + 1);
-    setShowHint(true);
+    if (revealedBatchCount === 0) {
+      setRevealedBatchCount(1);
+    }
+    setTranslateActive(true);
+  };
+
+  const revealMoreWords = () => {
+    if (!hasMoreHints) return;
+    if (revealedBatchCount > 0 && !canAffordHint) return;
+    if (revealedBatchCount > 0) onSpendExperience?.(HINT_COST);
+    setRevealedBatchCount((c) => Math.min(c + 1, hintBatches.length));
+    setTranslateActive(true);
   };
 
   const byline = [author, date, source].filter(Boolean).join(' — ');
