@@ -2829,7 +2829,7 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date }) 
             </h2>
           )}
 
-          <div className="relative flex-1 min-h-0 overflow-hidden">
+          <div className="relative overflow-hidden" style={{ minHeight: 200 }}>
             <AnimatePresence mode="wait" custom={direction}>
               <motion.p
                 key={page}
@@ -2838,7 +2838,7 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date }) 
                 animate={{ x: 0, opacity: 1 }}
                 exit={(d) => ({ x: d * -40, opacity: 0 })}
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                className="font-display text-[17px] sm:text-[18px] leading-[1.75] text-navy/80 absolute inset-0"
+                className="font-display text-[17px] sm:text-[18px] leading-[1.75] text-navy/80"
               >
                 {pages[page]}
               </motion.p>
