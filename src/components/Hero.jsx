@@ -3035,23 +3035,6 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
                 </div>
               )}
 
-              {pages.length > 1 && (
-                <>
-                  <button type="button" onClick={goPrev} disabled={isFirst}
-                    className="w-7 h-7 flex items-center justify-center rounded-full border disabled:opacity-20 transition-colors"
-                    style={{ borderColor: 'rgba(139,30,45,0.35)', color: '#8b1e2d' }}
-                    aria-label="Previous page">
-                    <svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M6 1L2 6l4 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  </button>
-                  <span className="text-[10px] font-mono" style={{ color: '#8b1e2d' }}>{page + 1}/{pages.length}</span>
-                  <button type="button" onClick={goNext} disabled={isLast}
-                    className="w-7 h-7 flex items-center justify-center rounded-full border disabled:opacity-20 transition-colors"
-                    style={{ borderColor: 'rgba(139,30,45,0.35)', color: '#8b1e2d' }}
-                    aria-label="Next page">
-                    <svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M2 1l4 5-4 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  </button>
-                </>
-              )}
             </div>
           </div>
         </>
