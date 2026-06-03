@@ -2923,6 +2923,19 @@ function escapeRegex(str) {
   return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/** Title-case each word in an English translation (e.g. "relating to media" → "Relating To Media"). */
+function formatTranslationWords(text) {
+  return String(text || '')
+    .trim()
+    .split(/(\s+)/)
+    .map((part) => {
+      if (!/\S/.test(part)) return part;
+      const lower = part.toLowerCase();
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join('');
+}
+
 function buildPassageSegments(passage, vocabEntries) {
   if (!passage) return [];
   if (!vocabEntries.length) return [{ type: 'text', value: passage }];
