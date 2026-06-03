@@ -350,7 +350,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
           <foreignObject x={tx} y={ty} width={TW} height={TH} style={{ overflow: 'visible' }} pointerEvents="all">
             <div xmlns="http://www.w3.org/1999/xhtml"
                  onMouseEnter={() => clearTimeout(closeTimer.current)}
-                 onMouseLeave={closeDot}
+                 onMouseLeave={() => { clearTimeout(closeTimer.current); setHoveredDot(null); }}
                  style={{
                    background: '#1A2340',
                    border: '1px solid rgba(255,255,255,0.12)',
