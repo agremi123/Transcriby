@@ -334,7 +334,7 @@ export default function WelcomeOnboarding() {
                     </button>
 
                     {/* Speech text */}
-                    <div className={`w-full rounded-xl px-4 py-3 border transition-colors duration-300 ${
+                    <div className={`w-full rounded-xl px-5 py-4 border transition-colors duration-300 flex items-center justify-center min-h-[90px] ${
                       isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
                     }`}>
                       <NarratorHoverText
@@ -346,7 +346,7 @@ export default function WelcomeOnboarding() {
                         highlightSpeech={highlightSpeech}
                         speechPlaybackTime={speechPlaybackTime}
                         speechTimings={speechTimings}
-                        className="font-display text-[17px] sm:text-[19px] leading-[1.45] text-navy/85 italic break-words text-center min-w-0"
+                        className="font-display text-[16px] sm:text-[18px] leading-[1.5] text-navy/85 italic text-center w-full"
                       />
                     </div>
                   </div>
