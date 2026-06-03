@@ -334,17 +334,21 @@ export default function WelcomeOnboarding() {
                     </button>
 
                     {/* Speech text */}
-                    <NarratorHoverText
-                      text={line.text}
-                      translation={line.translation}
-                      showTutorialHint={false}
-                      enableHoverDemo={false}
-                      onFirstHover={undefined}
-                      highlightSpeech={highlightSpeech}
-                      speechPlaybackTime={speechPlaybackTime}
-                      speechTimings={speechTimings}
-                      className="font-display text-[17px] sm:text-[19px] leading-[1.45] text-navy/85 italic break-words text-center min-w-0"
-                    />
+                    <div className={`w-full rounded-xl px-4 py-3 border transition-colors duration-300 ${
+                      isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
+                    }`}>
+                      <NarratorHoverText
+                        text={line.text}
+                        translation={line.translation}
+                        showTutorialHint={false}
+                        enableHoverDemo={false}
+                        onFirstHover={undefined}
+                        highlightSpeech={highlightSpeech}
+                        speechPlaybackTime={speechPlaybackTime}
+                        speechTimings={speechTimings}
+                        className="font-display text-[17px] sm:text-[19px] leading-[1.45] text-navy/85 italic break-words text-center min-w-0"
+                      />
+                    </div>
                   </div>
                 );
               })}
