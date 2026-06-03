@@ -2422,7 +2422,7 @@ export function AudioDemoCard({
                 </p>
               ) : status !== 'connecting' ? (
                 <p className="font-display text-[17px] leading-snug text-navy/30">
-                  Press the mic to speak
+                  Ask a question to Léa and Jules
                 </p>
               ) : null
             )}
