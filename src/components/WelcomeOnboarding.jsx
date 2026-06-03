@@ -337,9 +337,9 @@ export default function WelcomeOnboarding() {
                     <NarratorHoverText
                       text={line.text}
                       translation={line.translation}
-                      showTutorialHint={id === 'lea' && showTranslationHint}
-                      enableHoverDemo={id === 'lea' && showTranslationHint}
-                      onFirstHover={id === 'lea' ? dismissTranslationHint : undefined}
+                      showTutorialHint={false}
+                      enableHoverDemo={false}
+                      onFirstHover={undefined}
                       highlightSpeech={highlightSpeech}
                       speechPlaybackTime={speechPlaybackTime}
                       speechTimings={speechTimings}
