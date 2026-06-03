@@ -2825,7 +2825,7 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date }) 
         <>
           {/* Title — fixed at top, never moves */}
           {title && (
-            <h2 className="font-display text-[26px] sm:text-[30px] leading-[1.2] tracking-[-0.01em] mb-5 shrink-0 line-clamp-2" style={{ color: '#8b1e2d' }}>
+            <h2 className="font-display text-[26px] sm:text-[30px] leading-[1.2] tracking-[-0.01em] mb-5 shrink-0 line-clamp-2 text-blue-900">
               {title}
             </h2>
           )}
