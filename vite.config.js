@@ -629,41 +629,60 @@ function readingMiddleware(apiKey) {
       const searchData = await searchRes.json();
 
       let passage = '';
+      let title = '';
       let source = null;
+      let author = null;
+      let date = null;
 
       // Try to find a JSON block in the response text
       const textBlock = searchData.content?.find((b) => b.type === 'text');
       if (textBlock?.text) {
         const txt = textBlock.text.trim();
-        // Try to parse the last JSON object in the response
-        const jsonMatches = [...txt.matchAll(/\{[^{}]*"passage"[^{}]*\}/gs)];
+        // Try to parse the last JSON object containing "passage"
+        const jsonMatches = [...txt.matchAll(/\{[\s\S]*?"passage"[\s\S]*?\}/g)];
         if (jsonMatches.length > 0) {
-          try { ({ passage, source } = JSON.parse(jsonMatches[jsonMatches.length - 1][0])); } catch {}
+          try {
+            const parsed = JSON.parse(jsonMatches[jsonMatches.length - 1][0]);
+            passage = parsed.passage || '';
+            title = parsed.title || '';
+            source = parsed.source || null;
+            author = parsed.author || null;
+            date = parsed.date || null;
+          } catch {}
         }
-        // Fallback: strip any preamble sentences that aren't French, take remaining text
+        // Fallback: extract French lines
         if (!passage) {
-          // Remove lines like "I found..." or "Here is..." (English preamble)
           const lines = txt.split('\n').filter((l) => l.trim().length > 20);
           const frenchLines = lines.filter((l) => /[àâäéèêëîïôöùûüç]/i.test(l) || /\b(le|la|les|un|une|des|et|est|en|de|du|au|ce|qu|pour)\b/i.test(l));
           if (frenchLines.length > 0) passage = frenchLines.slice(0, 8).join(' ').trim();
         }
       }
 
-      // Step 2: if web search gave nothing useful, generate synthetic French passage
+      // Step 2: if web search gave nothing useful, generate a synthetic passage
       if (!passage || passage.length < 40) {
         const genRes = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
-            max_tokens: 500,
-            system: 'Write an authentic French passage of exactly 6 sentences about the given topic, at B2 level. Output ONLY the French passage text, nothing else.',
+            max_tokens: 600,
+            system: 'Write an engaging authentic French passage of 6 sentences about the given topic, at B1-B2 level, suitable for French learners. Also give it a title. Output ONLY raw JSON: {"title":"...","passage":"...6 sentences in French..."}',
             messages: [{ role: 'user', content: `Topic: ${topic}` }],
           }),
         });
         const genData = await genRes.json();
-        passage = genData.content?.[0]?.text?.trim() || '';
+        let genRaw = genData.content?.[0]?.text?.trim() || '{}';
+        genRaw = genRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        try {
+          const genParsed = JSON.parse(genRaw);
+          passage = genParsed.passage || '';
+          title = genParsed.title || '';
+        } catch {
+          passage = genRaw;
+        }
         source = null;
+        author = null;
+        date = null;
       }
 
       if (!passage) throw new Error('no passage');
