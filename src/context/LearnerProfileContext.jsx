@@ -22,9 +22,19 @@ const LearnerProfileContext = React.createContext(null);
 export function LearnerProfileProvider({ children }) {
   const [profile, setProfile] = React.useState(() => loadLearnerProfile());
   const [experienceHighlightTick, setExperienceHighlightTick] = React.useState(0);
+  const [dailyParisianPoints, setDailyParisianPoints] = React.useState(
+    () => loadDailyParisianPoints().points,
+  );
 
   React.useEffect(() => {
     setProfile(loadLearnerProfile());
+    setDailyParisianPoints(loadDailyParisianPoints().points);
+  }, []);
+
+  React.useEffect(() => {
+    const syncDaily = () => setDailyParisianPoints(loadDailyParisianPoints().points);
+    window.addEventListener(DAILY_PARISIAN_POINTS_EVENT, syncDaily);
+    return () => window.removeEventListener(DAILY_PARISIAN_POINTS_EVENT, syncDaily);
   }, []);
 
   const gainExperience = React.useCallback((amount = 1) => {
