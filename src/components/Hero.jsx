@@ -2939,6 +2939,72 @@ function buildPassageSegments(passage, vocabEntries) {
   });
 }
 
+function VocabWordHighlight({ word, definition }) {
+  const anchorRef = React.useRef(null);
+  const [hovered, setHovered] = React.useState(false);
+  const [tooltipPos, setTooltipPos] = React.useState({ top: 0, left: 0 });
+
+  const updatePosition = React.useCallback(() => {
+    const rect = anchorRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setTooltipPos({
+      top: rect.top,
+      left: rect.left + rect.width / 2,
+    });
+  }, []);
+
+  const showTooltip = () => {
+    updatePosition();
+    setHovered(true);
+  };
+
+  const hideTooltip = () => setHovered(false);
+
+  React.useEffect(() => {
+    if (!hovered) return undefined;
+    const onScroll = () => updatePosition();
+    window.addEventListener('scroll', onScroll, true);
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, [hovered, updatePosition]);
+
+  const tooltip = hovered ? createPortal(
+    <div
+      role="tooltip"
+      className="pointer-events-none fixed z-[250] min-w-[11.5rem] max-w-[16rem] rounded-md border border-navy/10 bg-navy px-3 py-2.5 text-left text-[12px] leading-snug text-ivory shadow-[0_10px_32px_rgba(26,35,64,0.35)]"
+      style={{
+        top: tooltipPos.top,
+        left: tooltipPos.left,
+        transform: 'translate(-50%, calc(-100% - 10px))',
+      }}
+    >
+      {definition}
+    </div>,
+    document.body,
+  ) : null;
+
+  return (
+    <>
+      <span
+        ref={anchorRef}
+        className="relative inline cursor-help"
+        onMouseEnter={showTooltip}
+        onMouseLeave={hideTooltip}
+        onFocus={showTooltip}
+        onBlur={hideTooltip}
+      >
+        <mark className="bg-wine/10 text-navy/80 rounded-sm px-0.5">
+          {word}
+        </mark>
+      </span>
+      {tooltip}
+    </>
+  );
+}
+
 function PassageWithVocabHighlights({ passage, vocabEntries, highlightActive }) {
   const segments = React.useMemo(
     () => (highlightActive ? buildPassageSegments(passage, vocabEntries) : [{ type: 'text', value: passage }]),
@@ -2952,17 +3018,11 @@ function PassageWithVocabHighlights({ passage, vocabEntries, highlightActive }) 
           return <React.Fragment key={i}>{seg.value}</React.Fragment>;
         }
         return (
-          <span key={i} className="relative inline cursor-help group">
-            <mark className="bg-wine/10 text-navy/80 rounded-sm px-0.5">
-              {seg.value}
-            </mark>
-            <span
-              role="tooltip"
-              className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 max-w-[220px] -translate-x-1/2 rounded-sm bg-navy px-2.5 py-2 text-[11px] leading-snug text-ivory opacity-0 shadow-[0_8px_24px_rgba(26,35,64,0.28)] transition-opacity duration-150 group-hover:opacity-100 whitespace-normal text-center"
-            >
-              {seg.entry.definition}
-            </span>
-          </span>
+          <VocabWordHighlight
+            key={i}
+            word={seg.value}
+            definition={seg.entry.definition}
+          />
         );
       })}
     </p>
