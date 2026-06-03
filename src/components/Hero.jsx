@@ -3270,6 +3270,9 @@ export default function Hero() {
                 source={readingSource}
                 author={readingAuthor}
                 date={readingDate}
+                vocab={readingVocab}
+                parisianPercent={profile?.parisianPercent ?? 0}
+                onSpendExperience={spendExperience}
               />
             ) : (
             <div className="flex flex-col items-center text-center overflow-visible">
