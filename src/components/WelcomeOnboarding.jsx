@@ -6,7 +6,7 @@ import {
   isProfileSetupComplete,
   needsWelcomeOnboarding,
 } from '../lib/learnerProfile';
-import { LEVEL_PICKER, WELCOME_LEVEL_LINES, getLevelPickMockery } from '../lib/narratorLevelAdapt';
+import { LEVEL_PICKER, WELCOME_LEVEL_LINES, JULES_LEVEL_PICKER_LINE, getLevelPickMockery } from '../lib/narratorLevelAdapt';
 import { fetchNarratorAudio, connectNarratorSource, NARRATORS } from '../lib/narratorAudio';
 import { buildWordTimings, playDecodedBuffer } from '../lib/speechHighlight';
 import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from '../lib/siteAudio';
