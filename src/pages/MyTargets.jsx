@@ -361,10 +361,11 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                    height: '100%',
                    boxSizing: 'border-box',
                  }}>
-              <p style={{ color: 'rgba(246,241,232,0.4)', fontSize: 9, fontFamily: "'SF Mono','Fira Mono',monospace", letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>
-                {themeInfo ? `${themeInfo.cat} · ${themeInfo.idx} of ${themeInfo.total}` : t.pathCategory}
+              <p style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'rgba(246,241,232,0.9)', fontSize: 9, fontFamily: "'SF Mono','Fira Mono',monospace", letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8, background: 'rgba(255,255,255,0.1)', padding: '3px 8px', borderRadius: 2 }}>
+                {t.category || t.pathCategory}
+                <span style={{ color: 'rgba(246,241,232,0.35)', letterSpacing: '0.05em' }}>—</span>
+                {themeName}
               </p>
-              <p style={{ color: '#F6F1E8', fontSize: 14, fontFamily: "Georgia,'Times New Roman',serif", fontStyle: 'italic', marginBottom: 4, lineHeight: 1.3 }}>{themeName}</p>
               <p style={{ color: 'rgba(246,241,232,0.4)', fontSize: 10, marginBottom: 10, lineHeight: 1.4 }}>{desc(t)}</p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <button
