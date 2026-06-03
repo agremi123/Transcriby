@@ -2886,7 +2886,7 @@ function VocabExercise({ vocab }) {
                     onKeyDown={(e) => e.key === 'Enter' && ans.trim() && check(i)}
                     onFocus={() => setActiveBlank(i)}
                     onBlur={() => { if (activeBlank === i) setTimeout(() => setActiveBlank(null), 150); }}
-                    placeholder="…"
+                    placeholder=""
                     className={`inline-block w-[110px] border-b-2 bg-transparent text-navy text-center outline-none px-1 font-display text-[14px] mx-0.5 transition-colors ${isFocused ? 'border-wine' : 'border-wine/30'}`}
                     autoComplete="off"
                   />
