@@ -3003,49 +3003,7 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
             </AnimatePresence>
           </div>
 
-          {/* Hint button + popup */}
-          {vocab.length > 0 && (
-            <div className="relative shrink-0 mt-3">
-              {showHint && currentHintWords.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-2 p-3 bg-navy text-ivory rounded-sm flex flex-col gap-2"
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] font-mono tracking-[0.2em] uppercase opacity-50">Hint {hintsUsed}</span>
-                    <button type="button" onClick={() => setShowHint(false)} className="text-ivory/40 hover:text-ivory/80 transition-colors text-[14px] leading-none">×</button>
-                  </div>
-                  {currentHintWords.map((w) => (
-                    <div key={w.word} className="flex items-baseline gap-2">
-                      <span className="font-display text-[14px] italic text-wine">{w.word}</span>
-                      <span className="text-[11px] text-ivory/60">—</span>
-                      <span className="text-[12px] text-ivory/80">{w.definition}</span>
-                    </div>
-                  ))}
-                  {hasMoreHints && (
-                    <button
-                      type="button"
-                      onClick={canAffordHint ? useHint : undefined}
-                      className={`mt-1 self-start text-[10px] font-mono tracking-widest uppercase transition-colors ${canAffordHint ? 'text-wine hover:text-wine/70 cursor-pointer' : 'text-ivory/20 cursor-not-allowed'}`}
-                    >
-                      {canAffordHint ? `Next hint — ${HINT_COST} Parisianism` : `Not enough Parisianism (need ${HINT_COST})`}
-                    </button>
-                  )}
-                </motion.div>
-              )}
-              <button
-                type="button"
-                onClick={showHint ? () => setShowHint(false) : useHint}
-                className="flex items-center gap-1.5 text-[10px] font-mono tracking-widest uppercase text-navy/35 hover:text-navy/60 transition-colors"
-              >
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.2"/><path d="M6 5.5v3M6 3.5h.01" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
-                {showHint ? 'Hide hint' : hintsUsed === 0 ? '1 hint available' : `Hint ${hintsUsed} — next costs ${HINT_COST} pts`}
-              </button>
-            </div>
-          )}
-
-          {/* Byline + pagination — fixed at bottom */}
+          {/* Byline + pagination + hint — all in one fixed row */}
           <div className="flex items-end justify-between mt-4 shrink-0">
             {byline ? (
               <p className="text-[10px] font-mono tracking-[0.12em] border-t pt-3 flex-1 mr-4" style={{ color: '#8b1e2d', borderColor: 'rgba(139,30,45,0.2)' }}>
@@ -3053,23 +3011,75 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
               </p>
             ) : <span className="flex-1" />}
 
-            {pages.length > 1 && (
-              <div className="flex items-center gap-2 shrink-0 pb-1">
-                <button type="button" onClick={goPrev} disabled={isFirst}
-                  className="w-7 h-7 flex items-center justify-center rounded-full border disabled:opacity-20 transition-colors"
-                  style={{ borderColor: 'rgba(139,30,45,0.35)', color: '#8b1e2d' }}
-                  aria-label="Previous page">
-                  <svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M6 1L2 6l4 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </button>
-                <span className="text-[10px] font-mono" style={{ color: '#8b1e2d' }}>{page + 1}/{pages.length}</span>
-                <button type="button" onClick={goNext} disabled={isLast}
-                  className="w-7 h-7 flex items-center justify-center rounded-full border disabled:opacity-20 transition-colors"
-                  style={{ borderColor: 'rgba(139,30,45,0.35)', color: '#8b1e2d' }}
-                  aria-label="Next page">
-                  <svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M2 1l4 5-4 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </button>
-              </div>
-            )}
+            <div className="flex items-center gap-3 shrink-0 pb-1">
+              {/* Hint button inline with arrows */}
+              {vocab.length > 0 && (
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={showHint ? () => setShowHint(false) : useHint}
+                    className="w-7 h-7 flex items-center justify-center rounded-full border transition-colors"
+                    style={{ borderColor: showHint ? 'rgba(139,30,45,0.6)' : 'rgba(139,30,45,0.35)', color: '#8b1e2d', opacity: showHint ? 1 : 0.6 }}
+                    aria-label="Hint"
+                  >
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.2"/><path d="M6 5.5v3M6 3.5h.01" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+                  </button>
+
+                  {/* Popup floats upward, no layout impact */}
+                  <AnimatePresence>
+                    {showHint && currentHintWords.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 8 }}
+                        transition={{ duration: 0.18 }}
+                        className="absolute bottom-full right-0 mb-2 p-3 bg-navy text-ivory rounded-sm flex flex-col gap-2 z-20"
+                        style={{ minWidth: 200, maxWidth: 280 }}
+                      >
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-[9px] font-mono tracking-[0.2em] uppercase opacity-40">Hint {hintsUsed}</span>
+                          <button type="button" onClick={() => setShowHint(false)} className="text-ivory/40 hover:text-ivory/80 transition-colors text-[14px] leading-none ml-4">×</button>
+                        </div>
+                        {currentHintWords.map((w) => (
+                          <div key={w.word} className="flex items-baseline gap-2 flex-wrap">
+                            <span className="font-display text-[13px] italic text-wine">{w.word}</span>
+                            <span className="text-[11px] text-ivory/50">—</span>
+                            <span className="text-[11px] text-ivory/75">{w.definition}</span>
+                          </div>
+                        ))}
+                        {hasMoreHints && (
+                          <button
+                            type="button"
+                            onClick={canAffordHint ? useHint : undefined}
+                            className={`mt-0.5 self-start text-[9px] font-mono tracking-widest uppercase transition-colors ${canAffordHint ? 'text-wine/80 hover:text-wine cursor-pointer' : 'text-ivory/20 cursor-not-allowed'}`}
+                          >
+                            {canAffordHint ? `+hint — ${HINT_COST} pts` : `need ${HINT_COST} Parisianism`}
+                          </button>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+
+              {pages.length > 1 && (
+                <>
+                  <button type="button" onClick={goPrev} disabled={isFirst}
+                    className="w-7 h-7 flex items-center justify-center rounded-full border disabled:opacity-20 transition-colors"
+                    style={{ borderColor: 'rgba(139,30,45,0.35)', color: '#8b1e2d' }}
+                    aria-label="Previous page">
+                    <svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M6 1L2 6l4 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                  <span className="text-[10px] font-mono" style={{ color: '#8b1e2d' }}>{page + 1}/{pages.length}</span>
+                  <button type="button" onClick={goNext} disabled={isLast}
+                    className="w-7 h-7 flex items-center justify-center rounded-full border disabled:opacity-20 transition-colors"
+                    style={{ borderColor: 'rgba(139,30,45,0.35)', color: '#8b1e2d' }}
+                    aria-label="Next page">
+                    <svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M2 1l4 5-4 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </>
       )}
