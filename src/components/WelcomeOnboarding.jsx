@@ -449,6 +449,43 @@ export default function WelcomeOnboarding() {
               </div>
             )}
 
+            {/* Returning user email form */}
+            <AnimatePresence>
+              {returningEmailForm && (
+                <motion.div
+                  key="returning-email"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="mt-4 flex flex-col items-center gap-2"
+                >
+                  <form onSubmit={handleReturningEmailContinue} className="flex flex-col gap-2 w-full max-w-[280px]">
+                    <input
+                      type="email"
+                      value={emailInput}
+                      onChange={(e) => setEmailInput(e.target.value)}
+                      placeholder="your@email.com"
+                      autoComplete="email"
+                      autoFocus
+                      className="w-full rounded-full border border-line bg-ivory px-4 py-2.5 text-center font-display text-[14px] text-navy placeholder:text-navy/25 outline-none focus:border-wine/40 focus:ring-2 focus:ring-wine/10"
+                    />
+                    <button type="submit" className={`${NAV_CTA_CLASS} w-full justify-center`}>
+                      Log in
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setReturningEmailForm(false); setAuthError(null); }}
+                      className="text-[12px] text-navy/40 hover:text-wine transition-colors"
+                    >
+                      Back
+                    </button>
+                  </form>
+                  {authError && <p className="text-[11px] text-wine/80 text-center">{authError}</p>}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* Phase 3: level picker + auth — appears after clicking "Choose my level" */}
             <AnimatePresence>
               {(showLevelPicker || levelLocked) && (
