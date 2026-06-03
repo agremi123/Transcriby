@@ -2839,7 +2839,7 @@ function VocabExercise({ vocab }) {
                 onClick={() => isClickable && fillWord(v.word)}
                 className={`px-2.5 py-1 border font-display text-[13px] rounded-sm transition-all ${
                   isUsed
-                    ? 'border-navy/20 bg-navy/5 text-navy/30 opacity-50 cursor-default line-through'
+                    ? 'border-wine/15 bg-transparent text-wine/30 cursor-default'
                     : isClickable
                       ? 'border-wine bg-wine text-ivory cursor-pointer scale-105 shadow-sm'
                       : 'border-wine/30 bg-wine/5 text-wine cursor-default'
