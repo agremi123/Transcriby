@@ -412,7 +412,7 @@ export default function WelcomeOnboarding() {
                 </div>
 
                 {/* Right card — I'm already Parisian */}
-                <div className={`relative flex flex-col items-center gap-3 rounded-2xl border px-5 py-5 transition-all duration-300 ${
+                <div className={`relative flex flex-col items-center gap-2 rounded-xl border px-4 py-3 transition-all duration-300 ${
                   activeNarrator === 'jules' ? 'border-wine/40 bg-wine/4 shadow-md' : 'border-line bg-ivory'
                 }`}>
                   {activeNarrator === 'jules' && (
