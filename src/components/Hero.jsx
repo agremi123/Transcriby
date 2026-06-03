@@ -2923,7 +2923,9 @@ function splitIntoSentences(text) {
   return text.match(/[^.!?…]+[.!?…]+(?:\s|$)|[^.!?…]+$/g)?.map((s) => s.trim()).filter(Boolean) ?? [text];
 }
 
-function ReadingArticlePanel({ loading, title, passage, source, author, date }) {
+const HINT_COST = 5; // Parisianism points per extra hint
+
+function ReadingArticlePanel({ loading, title, passage, source, author, date, vocab = [], parisianPercent = 0, onSpendExperience }) {
   const sentences = React.useMemo(() => splitIntoSentences(passage || ''), [passage]);
   const pages = React.useMemo(() => {
     const result = [];
@@ -2934,12 +2936,35 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date }) 
   }, [sentences]);
 
   const [page, setPage] = React.useState(0);
-  const [direction, setDirection] = React.useState(1); // 1 = forward, -1 = back
+  const [direction, setDirection] = React.useState(1);
+  const [hintsUsed, setHintsUsed] = React.useState(0);
+  const [showHint, setShowHint] = React.useState(false);
 
-  React.useEffect(() => { setPage(0); }, [passage]);
+  React.useEffect(() => { setPage(0); setHintsUsed(0); setShowHint(false); }, [passage]);
 
   const goNext = () => { setDirection(1); setPage((p) => Math.min(p + 1, pages.length - 1)); };
   const goPrev = () => { setDirection(-1); setPage((p) => Math.max(p - 1, 0)); };
+
+  // Group vocab into hint batches of 2
+  const hintBatches = React.useMemo(() => {
+    const batches = [];
+    for (let i = 0; i < vocab.length; i += 2) batches.push(vocab.slice(i, i + 2));
+    return batches;
+  }, [vocab]);
+
+  const currentHintWords = hintBatches[hintsUsed] || [];
+  const hasMoreHints = hintsUsed < hintBatches.length - 1;
+  const isFreeHint = hintsUsed === 0;
+  const canAffordHint = parisianPercent >= HINT_COST;
+
+  const useHint = () => {
+    if (hintsUsed > 0) {
+      if (!canAffordHint) return;
+      onSpendExperience?.(HINT_COST);
+    }
+    setHintsUsed((h) => h + 1);
+    setShowHint(true);
+  };
 
   const byline = [author, date, source].filter(Boolean).join(' — ');
   const isLast = page === pages.length - 1;
