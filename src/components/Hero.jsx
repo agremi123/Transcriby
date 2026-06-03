@@ -2850,7 +2850,7 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date }) 
           {/* Byline + pagination — fixed at bottom */}
           <div className="flex items-end justify-between mt-4 shrink-0">
             {byline ? (
-              <p className="text-[10px] font-mono tracking-[0.12em] border-t pt-3 flex-1 mr-4" style={{ color: '#c0392b', borderColor: 'rgba(192,57,43,0.2)' }}>
+              <p className="text-[10px] font-mono tracking-[0.12em] border-t pt-3 flex-1 mr-4" style={{ color: '#8b1e2d', borderColor: 'rgba(139,30,45,0.2)' }}>
                 {byline}
               </p>
             ) : <span className="flex-1" />}
