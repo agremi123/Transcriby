@@ -130,6 +130,7 @@ export default function ReadingExercise() {
       .then((r) => r.json())
       .then((data) => {
         setPassage(data.passage || '');
+        setSource(data.source || null);
         setQuestions(data.questions || []);
         setPhase('read');
       })
