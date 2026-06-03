@@ -188,6 +188,14 @@ export function gainParisianExperience(profile, amount = 1) {
   });
 }
 
+export function spendParisianExperience(profile, amount = 5) {
+  const cost = Math.max(0, Number(amount) || 0);
+  return saveLearnerProfile({
+    ...profile,
+    parisianPercent: Math.max(0, (Number(profile.parisianPercent) || 0) - cost),
+  });
+}
+
 export function applySampleAssessment(profile, { level, strength, weakness, learnerGender }) {
   const assessedLevel = mergeAssessedLevel(
     profile.assessedLevel || profile.claimedLevel,
