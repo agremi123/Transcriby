@@ -392,7 +392,7 @@ export default function WelcomeOnboarding() {
                         ↓
                       </motion.div>
                     )}
-                    <div className={`flex items-center gap-2 transition-all duration-200 ${activeNarrator === 'jules' ? 'scale-105' : ''}`}>
+                    <div className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={handleGoogleConnect}
