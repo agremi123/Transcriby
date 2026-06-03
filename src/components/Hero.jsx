@@ -3032,9 +3032,11 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
 
           {/* Full article text — scrolls internally, fills remaining space */}
           <div className="flex-1 min-h-0 overflow-y-auto pr-1">
-            <p className="font-display text-[15px] sm:text-[16px] leading-[1.75] text-navy/80">
-              {passage}
-            </p>
+            <PassageWithVocabHighlights
+              passage={passage}
+              vocabEntries={revealedWords}
+              highlightActive={translateActive && revealedWords.length > 0}
+            />
           </div>
 
           {/* Byline + pagination + hint — all in one fixed row */}
