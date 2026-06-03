@@ -72,8 +72,8 @@ export function pickNarratorReaction(profileOrLevel) {
 export const WELCOME_LEVEL_LINES = [
   {
     narrator: 'lea',
-    text: 'Salut ! Bienvenue sur Nativa. Dis-nous : tu te sens à quel niveau en français ?',
-    translation: 'Hi! Welcome to Nativa. What level do you think you\'re at in French?',
+    text: 'Bienvenue sur Nativa ! Clique en bas pour nous dire ton niveau en français. On va voir si t\'es à la hauteur du défi !',
+    translation: 'Welcome to Nativa! Click below to tell us your French level. Let\'s see if you\'re up for the challenge!',
   },
   {
     narrator: 'jules',
