@@ -26,7 +26,7 @@ export default function WelcomeOnboarding() {
   const [pickedLevel, setPickedLevel] = React.useState(profile.claimedLevel);
   const [levelLocked, setLevelLocked] = React.useState(false);
   const [showLevelPicker, setShowLevelPicker] = React.useState(false);
-  const [dialogueDone, setDialogueDone] = React.useState(false);
+  const [dialogueDone, setDialogueDone] = React.useState(true);
   const [showEmailForm, setShowEmailForm] = React.useState(false);
   const [emailInput, setEmailInput] = React.useState(profile.email || '');
   const [authError, setAuthError] = React.useState(null);
