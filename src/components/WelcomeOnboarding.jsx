@@ -184,8 +184,11 @@ export default function WelcomeOnboarding() {
     if (!needsWelcomeOnboarding(profile) || hasAutoPlayedRef.current) return;
     hasAutoPlayedRef.current = true;
     const t = window.setTimeout(() => { playWelcomeLines(); }, 400);
+    // Fallback: show the CTA even if audio never plays / is blocked
+    const fallback = window.setTimeout(() => { setDialogueDone(true); }, 6000);
     return () => {
       window.clearTimeout(t);
+      window.clearTimeout(fallback);
       stopAudio();
     };
   }, [profile, playWelcomeLines, stopAudio]);
