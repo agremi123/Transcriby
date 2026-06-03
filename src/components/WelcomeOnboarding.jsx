@@ -222,21 +222,38 @@ export default function WelcomeOnboarding() {
     playNarratorLine(reaction);
   };
 
-  const handleGoogleConnect = () => {
+  const handleGoogleConnect = async () => {
     setAuthError(null);
-    finishOnboarding('google', { name: 'Ami' });
+    const { supabase } = await import('../lib/supabaseClient');
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) setAuthError(error.message);
   };
 
-  const handleEmailContinue = (e) => {
+  const handleEmailContinue = async (e) => {
     e.preventDefault();
     const email = emailInput.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setAuthError('Enter a valid email address.');
       return;
     }
+    setAuthError(null);
+    const { supabase } = await import('../lib/supabaseClient');
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: true },
+    });
+    if (error) {
+      setAuthError(error.message);
+      return;
+    }
+    // OTP sent — show confirmation
     const local = email.split('@')[0].replace(/[._-]+/g, ' ').trim();
     const name = (local.split(/\s+/)[0] || 'Ami').replace(/^\w/, (c) => c.toUpperCase());
     finishOnboarding('email', { email, name });
+    setAuthError('✉️ Check your email for a magic link to confirm your account!');
   };
 
   const dismissTranslationHint = () => {
