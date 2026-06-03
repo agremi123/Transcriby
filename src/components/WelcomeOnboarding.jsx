@@ -310,27 +310,16 @@ export default function WelcomeOnboarding() {
                     </span>
 
                     {/* Speech text with replay button */}
-                    <div className={`relative w-full rounded-xl px-5 py-4 border transition-colors duration-300 flex items-center justify-center ${
+                    <div className={`w-full rounded-xl px-4 py-4 border transition-colors duration-300 flex items-start gap-3 ${
                       isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
                     }`}>
-                      <NarratorHoverText
-                        text={line.text}
-                        translation={line.translation}
-                        showTutorialHint={false}
-                        enableHoverDemo={false}
-                        onFirstHover={undefined}
-                        highlightSpeech={highlightSpeech}
-                        speechPlaybackTime={speechPlaybackTime}
-                        speechTimings={speechTimings}
-                        className="font-display text-[16px] sm:text-[18px] leading-[1.5] text-navy/85 italic text-center w-full"
-                      />
                       <button
                         type="button"
                         onClick={() => {
                           if (playing && activeSpeakingNarrator === id) stopAudio();
                           else playNarratorLine(line);
                         }}
-                        className="absolute bottom-2 right-2 relative w-7 h-7 rounded-full border border-wine/30 text-wine/60 hover:text-wine hover:border-wine/60 flex items-center justify-center transition-colors shrink-0"
+                        className="relative mt-[3px] w-7 h-7 rounded-full border border-wine/30 text-wine/60 hover:text-wine hover:border-wine/60 flex items-center justify-center transition-colors shrink-0"
                         aria-label={isSpeaking ? 'Stop' : 'Replay'}
                       >
                         {isSpeaking ? (
@@ -346,6 +335,17 @@ export default function WelcomeOnboarding() {
                           <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-40 pointer-events-none" />
                         )}
                       </button>
+                      <NarratorHoverText
+                        text={line.text}
+                        translation={line.translation}
+                        showTutorialHint={false}
+                        enableHoverDemo={false}
+                        onFirstHover={undefined}
+                        highlightSpeech={highlightSpeech}
+                        speechPlaybackTime={speechPlaybackTime}
+                        speechTimings={speechTimings}
+                        className="font-display text-[16px] sm:text-[18px] leading-[1.5] text-navy/85 italic"
+                      />
                     </div>
                   </div>
                 );
