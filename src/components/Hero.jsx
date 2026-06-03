@@ -751,6 +751,7 @@ export function AudioDemoCard({
   const [practiceTopics, setPracticeTopics] = React.useState([]);
   const [assessingLevel, setAssessingLevel] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState('transcript');
+  const [practiceSubTab, setPracticeSubTab] = React.useState('comprehension');
   const [practiceExercises, setPracticeExercises] = React.useState(null);
   const [loadingPractice, setLoadingPractice] = React.useState(false);
   const [skillProgress, setSkillProgress] = React.useState({});
