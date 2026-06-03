@@ -416,14 +416,16 @@ If you cannot find a real French source, write a realistic authentic passage you
     // Extract the final text response from the tool-use chain
     const textBlock = searchData.content?.find((b) => b.type === 'text');
     if (textBlock?.text) {
-      let raw = textBlock.text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-      try {
-        const parsed = JSON.parse(raw);
-        articlePassage = parsed.passage || '';
-        articleSource = parsed.source || null;
-      } catch {
-        articlePassage = textBlock.text.trim();
+      const txt = textBlock.text;
+      const jsonMatch = txt.match(/\{[\s\S]*"passage"[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          const parsed = JSON.parse(jsonMatch[0]);
+          articlePassage = parsed.passage || '';
+          articleSource = parsed.source || null;
+        } catch {}
       }
+      if (!articlePassage) articlePassage = txt.replace(/^[^{]*I['']?ll[^.]*\.\s*/i, '').trim();
     }
 
     if (!articlePassage) throw new Error('No passage found');
