@@ -17,6 +17,7 @@ import { LearnerProfileProvider, useLearnerProfile } from './context/LearnerProf
 import { isProfileSetupComplete } from './lib/learnerProfile';
 
 
+
 function LandingPage() {
   return (
     <div className="relative">
