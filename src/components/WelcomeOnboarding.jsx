@@ -37,7 +37,7 @@ export default function WelcomeOnboarding() {
   const [speechPlaybackTime, setSpeechPlaybackTime] = React.useState(null);
   const [speechTimings, setSpeechTimings] = React.useState([]);
   const [speechText, setSpeechText] = React.useState(null);
-  const [showTranslationHint, setShowTranslationHint] = React.useState(true);
+  const [showTranslationHint] = React.useState(false);
   const ctxRef = React.useRef(null);
   const sourceRef = React.useRef(null);
   const sessionRef = React.useRef(0);
