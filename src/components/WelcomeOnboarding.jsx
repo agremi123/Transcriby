@@ -373,7 +373,7 @@ export default function WelcomeOnboarding() {
                     <button
                       type="button"
                       onClick={() => setShowLevelPicker(true)}
-                      className={`${NAV_CTA_CLASS} px-6 py-3 text-[14px] transition-all duration-200 ${activeNarrator === 'lea' ? 'scale-105 shadow-lg' : ''}`}
+                      className={`${NAV_CTA_CLASS} px-6 py-3 text-[14px]`}
                     >
                       Choose my level
                     </button>
