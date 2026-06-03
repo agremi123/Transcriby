@@ -3175,10 +3175,10 @@ function ReadingArticlePanel({
               </p>
             ) : null}
 
-            <div className="flex items-end justify-between gap-4">
+            <div className="flex items-center justify-between gap-3">
               <DailyParisianPointsIndicator points={dailyParisianPoints} />
 
-            <div className="flex items-center gap-3 shrink-0 pb-0.5">
+            <div className="flex items-center gap-3 shrink-0">
               {/* Hint button inline with arrows */}
               {vocab.length > 0 && (
                 <div className="flex flex-col items-end gap-1.5">
