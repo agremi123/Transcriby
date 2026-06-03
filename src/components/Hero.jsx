@@ -3205,7 +3205,7 @@ function ReadingArticlePanel({
 }
 
 export default function Hero() {
-  const { effectiveLevel, profile, spendExperience } = useLearnerProfile();
+  const { effectiveLevel, profile, spendExperience, dailyParisianPoints } = useLearnerProfile();
   const [searchParams, setSearchParams] = useSearchParams();
   const learnMode = searchParams.get('learn');
   const learnLevel = searchParams.get('level');
