@@ -1,15 +1,44 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Nav from '../components/Nav';
-import { ParisianProfileSquare } from '../components/ParisianCornerBadge';
 import { Container } from '../components/atoms';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
 import { getLevelTargets, groupTargetsByPath, PATH_CATEGORIES } from '../lib/levelTargets';
 import { loadTargetProgress, PARISIAN_XP_EVENT } from '../lib/targetProgress';
 
-function practiceUrl(topic) {
-  return `/?practice=${encodeURIComponent(topic)}#nativa-demo`;
+function practiceUrl(topic, themeInfo) {
+  const base = `/?practice=${encodeURIComponent(topic)}`;
+  if (!themeInfo) return base + '#nativa-demo';
+  const { cat, idx, total, theme } = themeInfo;
+  return `${base}&pcat=${encodeURIComponent(cat)}&pidx=${idx}&ptotal=${total}&ptheme=${encodeURIComponent(theme)}#nativa-demo`;
 }
+
+const ARC_THEMES = {
+  Reading: [
+    'News & Media', 'Books & Literature', 'Blog Posts', 'Restaurant Menus',
+    'Travel Guides', 'Emails & Letters', 'Social Media', 'Advertisements',
+    'Academic Texts', 'Short Stories', 'Film Subtitles', 'Maps & Directions',
+    'Recipes', 'Magazines',
+  ],
+  Listening: [
+    'Podcast Episodes', 'Radio Shows', 'Movies & Series', 'Street Conversations',
+    'Phone Calls', 'Songs & Lyrics', 'News Reports', 'YouTube Videos',
+    'Voicemails', 'Metro Announcements', 'Café Chatter', 'Lectures',
+    'Interviews', 'Documentaries',
+  ],
+  Writing: [
+    'Text Messages', 'Emails', 'Instagram Captions', 'Diary Entries',
+    'Restaurant Reviews', 'Short Stories', 'Comments & Replies', 'Shopping Lists',
+    'Travel Journal', 'Cover Letters', 'Blog Posts', 'Social Media Posts',
+    'Notes to a Friend', 'Recipes',
+  ],
+  Speaking: [
+    'Ordering at a Café', 'Making Plans', 'Phone Conversations', 'Meeting New People',
+    'Arguments & Debates', 'Shopping', 'Asking for Directions', 'Job Interviews',
+    'Telling Stories', 'Expressing Opinions', 'Complaining', 'Small Talk',
+    'Emergency Situations', 'Presentations',
+  ],
+};
 
 const COPY = {
   'a2-b1-conditional':      { label: 'What would you do in Paris?',        desc: 'Wish, hypothesize, politely insist — all in one tense.' },
@@ -83,13 +112,13 @@ const LEVEL_LABEL_FONT = "Georgia,'Times New Roman',serif";
 const LEVEL_LABEL_FS_PAST = 15;
 const LEVEL_LABEL_FS_CURRENT = 18;
 const LEVEL_LABEL_FS_FUTURE = 15;
-const LEVEL_CONNECTOR_STROKE = 6;
+const LEVEL_CONNECTOR_STROKE = 3;
 
 const ARC_DEFS = [
-  { cat: 'Reading',   ctrlY: 12,  color: '#2E6EA6', side: 'above' },
-  { cat: 'Listening', ctrlY: 85,  color: '#2D7A5E', side: 'above' },
-  { cat: 'Writing',   ctrlY: 215, color: '#8B1E2D', side: 'below' },
-  { cat: 'Speaking',  ctrlY: 288, color: '#1A2340', side: 'below' },
+  { cat: 'Reading',   ctrlY: -90,  color: '#2E6EA6', side: 'above' },
+  { cat: 'Listening', ctrlY: 70,   color: '#2D7A5E', side: 'above' },
+  { cat: 'Writing',   ctrlY: 230,  color: '#8B1E2D', side: 'below' },
+  { cat: 'Speaking',  ctrlY: 390,  color: '#1A2340', side: 'below' },
 ];
 
 function qbPoint(t, x0, y0, cx, cy, x1, y1) {
@@ -100,7 +129,19 @@ function qbPoint(t, x0, y0, cx, cy, x1, y1) {
   ];
 }
 
+function BadgeTick({ cx, cy }) {
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={10} fill="#8B1E2D" />
+      <path d={`M ${cx - 5},${cy} l3.5,3.5 l7,-7`}
+            stroke="white" strokeWidth="2" fill="none"
+            strokeLinecap="round" strokeLinejoin="round" />
+    </g>
+  );
+}
+
 function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
+  const navigate = useNavigate();
   const curIdx  = ALL_LEVELS_SVG.indexOf(currentLevel);
   const nextIdx = ALL_LEVELS_SVG.indexOf(nextLevel);
 
@@ -119,10 +160,27 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
 
   const bgRefs = React.useRef(ARC_DEFS.map(() => null));
   const [lengths, setLengths] = React.useState(ARC_DEFS.map(() => 580));
+  const [hoveredDot, setHoveredDot] = React.useState(null);
+  const closeTimer = React.useRef(null);
+
+  const justOpened = React.useRef(false);
+  const openDot  = (info) => {
+    clearTimeout(closeTimer.current);
+    setHoveredDot(info);
+    justOpened.current = true;
+    setTimeout(() => { justOpened.current = false; }, 120);
+  };
+  const closeDot = () => {
+    if (justOpened.current) return;
+    closeTimer.current = setTimeout(() => setHoveredDot(null), 250);
+  };
 
   React.useLayoutEffect(() => {
     setLengths(bgRefs.current.map((r) => r?.getTotalLength() ?? 580));
   }, []);
+
+  const BADGE_SIZE = 160;
+  const BADGE_Y    = MY + 18;
 
   return (
     <svg
@@ -138,36 +196,37 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
       )}
       {pastLevels.map((lvl, i) => {
         const x = PAD + i * PAST_PX;
-        const badgeSize = 160;
         return (
           <g key={lvl}>
             <circle cx={x} cy={MY} r={3.5} fill="#8B1E2D" opacity="0.38" />
-            <text x={x} y={MY + 16} textAnchor="middle"
+            <text x={x} y={MY - 16} textAnchor="middle"
                   fontSize={LEVEL_LABEL_FS_PAST} fill="#8B1E2D" opacity="0.5"
                   fontFamily={LEVEL_LABEL_FONT} fontWeight="600">{lvl}</text>
             <image
               href={`/badge-${lvl.toLowerCase()}.png`}
-              x={x - badgeSize / 2}
-              y={MY + 18}
-              width={badgeSize}
-              height={badgeSize}
+              x={x - BADGE_SIZE / 2}
+              y={BADGE_Y}
+              width={BADGE_SIZE}
+              height={BADGE_SIZE}
               style={{ mixBlendMode: 'multiply' }}
             />
+            <BadgeTick cx={x} cy={BADGE_Y + 10} />
           </g>
         );
       })}
 
-      {/* arc start node + badge */}
+      {/* arc start node + badge (current level) */}
       <circle cx={arcSX} cy={MY} r={6} fill="#8B1E2D" />
       <text x={arcSX} y={MY - 16} textAnchor="middle"
             fill="#8B1E2D" fontSize={LEVEL_LABEL_FS_CURRENT} fontStyle="italic"
             fontFamily={LEVEL_LABEL_FONT} fontWeight="600">{currentLevel}</text>
       <image
         href={`/badge-${currentLevel.toLowerCase()}.png`}
-        x={arcSX - 80} y={MY + 18}
+        x={arcSX - 80} y={BADGE_Y}
         width={160} height={160}
         style={{ mixBlendMode: 'multiply' }}
       />
+      <BadgeTick cx={arcSX} cy={BADGE_Y + 10} />
 
       {/* 4 arcs */}
       {ARC_DEFS.map(({ cat, ctrlY, color, side }, idx) => {
@@ -184,52 +243,81 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
           const tv       = (i + 1) / (total + 1);
           const [dx, dy] = qbPoint(tv, arcSX, MY, arcCX, ctrlY, arcEX, MY);
           const p        = Number(progressMap[t.id]) || 0;
-          return { dx, dy, isDone: p >= 100, isPartial: p > 0 && p < 100 };
+          return { dx, dy, isDone: p >= 100, isPartial: p > 0 && p < 100, target: t, tv };
         });
+
+        const lessonTVals = dots.map(d => d.tv);
+        const MIN_GAP = 0.07;
+        const DECO_COUNT = 14;
+        const decoTVals = Array.from({ length: DECO_COUNT }, (_, i) => (i + 1) / (DECO_COUNT + 1))
+          .filter(tv => lessonTVals.every(lt => Math.abs(lt - tv) > MIN_GAP));
+
+        // All circles ordered by t-value → assign one unique theme each
+        const themes = ARC_THEMES[cat] ?? [];
+        const allCircles = [
+          ...decoTVals.map(tv => ({ tv, isDeco: true })),
+          ...dots.map(d => ({ tv: d.tv, isDeco: false, dot: d })),
+        ].sort((a, b) => a.tv - b.tv);
+        const totalCircles = allCircles.length;
 
         return (
           <g key={cat}>
             <path ref={(el) => { bgRefs.current[idx] = el; }}
-                  d={d} fill="none" stroke={color} strokeWidth="3" opacity="0.15" />
-            <path d={d} fill="none" stroke={color} strokeWidth="3.5"
+                  d={d} fill="none" stroke={color} strokeWidth="1.8" opacity="0.15" />
+            <path d={d} fill="none" stroke={color} strokeWidth="2"
                   opacity={pct > 0 ? 0.80 : 0}
                   strokeDasharray={len} strokeDashoffset={len * (1 - pct)}
                   strokeLinecap="round"
                   style={{ transition: 'stroke-dashoffset 0.9s cubic-bezier(0.4,0,0.2,1)' }} />
-            <text x={lx} y={labelY} textAnchor="middle"
-                  fill={color} fontSize="8.5" opacity="0.60"
-                  fontFamily="'SF Mono','Fira Mono',monospace"
-                  letterSpacing="0.13em" fontWeight="600">
-              {cat.toUpperCase()}
-            </text>
-            {dots.map(({ dx, dy, isDone, isPartial }, di) => (
-              <g key={di}>
-                <circle cx={dx} cy={dy} r={isDone ? 4.5 : 3.5}
-                        fill={isDone ? color : 'white'} stroke={color} strokeWidth="1.5"
-                        opacity={isDone ? 0.85 : isPartial ? 0.55 : 0.22} />
-                {isPartial && <circle cx={dx} cy={dy} r={1.8} fill={color} opacity="0.7" />}
-              </g>
-            ))}
+            <g>
+              <rect x={lx - 28} y={labelY - 10} width={56} height={14}
+                    fill="white" stroke={color} strokeWidth="0.8" opacity="0.7" rx="1" />
+              <text x={lx} y={labelY} textAnchor="middle"
+                    fill={color} fontSize="7" opacity="0.75"
+                    fontFamily="'SF Mono','Fira Mono',monospace"
+                    letterSpacing="0.15em" fontWeight="700">
+                {cat.toUpperCase()}
+              </text>
+            </g>
+            {allCircles.map((c, ci) => {
+              const theme = themes[ci % themes.length] ?? cat;
+              const themeInfo = { cat, idx: ci + 1, total: totalCircles, theme };
+              const [dx, dy] = qbPoint(c.tv, arcSX, MY, arcCX, ctrlY, arcEX, MY);
+              const t = c.isDeco ? (total > 0 ? targets[ci % total] : null) : c.dot.target;
+              const isDone = !c.isDeco && c.dot.isDone;
+              const isPartial = !c.isDeco && c.dot.isPartial;
+              return (
+                <g key={ci} style={{ cursor: 'pointer' }}
+                   onMouseEnter={() => t && openDot({ svgX: dx, svgY: dy, target: t, color, themeInfo })}
+                   onMouseLeave={closeDot}>
+                  <circle cx={dx} cy={dy} r={18} fill="transparent" />
+                  <circle cx={dx} cy={dy} r={4}
+                          fill="white" stroke={color} strokeWidth={c.isDeco ? 1.2 : 1.4}
+                          opacity={isDone ? 0.85 : isPartial ? 0.55 : (c.isDeco ? 0.4 : 0.35)} />
+                  {isPartial && <circle cx={dx} cy={dy} r={2} fill={color} opacity="0.7" />}
+                </g>
+              );
+            })}
           </g>
         );
       })}
 
-      {/* arc end node + badge */}
+      {/* arc end node + badge (next level) */}
       <circle cx={arcEX} cy={MY} r={6} fill="none" stroke="#1A2340" strokeWidth="1.5" opacity="0.35" />
       <text x={arcEX} y={MY - 16} textAnchor="middle"
             fill="#1A2340" fontSize={LEVEL_LABEL_FS_CURRENT} fontWeight="700"
             fontFamily={LEVEL_LABEL_FONT} opacity="0.55">{nextLevel}</text>
       <image
         href={`/badge-${nextLevel.toLowerCase()}.png`}
-        x={arcEX - 80} y={MY + 18}
+        x={arcEX - 80} y={BADGE_Y}
         width={160} height={160}
         style={{ mixBlendMode: 'multiply' }}
       />
 
-      {/* future line */}
+      {/* future line — thinner, not yet achieved */}
       {futureLevels.length > 0 && (
         <line x1={arcEX} y1={MY} x2={VW - PAD} y2={MY}
-              stroke="#1A2340" strokeWidth={LEVEL_CONNECTOR_STROKE} strokeLinecap="round" opacity="0.22" />
+              stroke="#8B1E2D" strokeWidth="2" strokeLinecap="round" opacity="0.22" />
       )}
       {futureLevels.map((lvl, i) => {
         const x = arcEX + (i + 1) * FUT_PX;
@@ -248,6 +336,65 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
           </g>
         );
       })}
+
+      {/* dot tooltip */}
+      {hoveredDot && (() => {
+        const { svgX, svgY, target: t, color, themeInfo } = hoveredDot;
+        const themeName = themeInfo?.theme ?? label(t);
+        const TW = 310, TH = 150;
+        const tx = Math.min(Math.max(svgX - TW / 2, 4), VW - TW - 4);
+        const ty = svgY - TH + 10;
+        const zoneL = tx - 6, zoneT = ty, zoneW = TW + 12, zoneH = svgY + 22 - ty;
+        return (
+          <>
+          <foreignObject x={tx} y={ty} width={TW} height={TH} style={{ overflow: 'visible' }} pointerEvents="all">
+            <div xmlns="http://www.w3.org/1999/xhtml"
+                 onMouseEnter={() => clearTimeout(closeTimer.current)}
+                 onMouseLeave={closeDot}
+                 style={{
+                   background: '#1A2340',
+                   border: '1px solid rgba(255,255,255,0.12)',
+                   borderRadius: 4,
+                   padding: '15px 17px',
+                   boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+                   pointerEvents: 'all',
+                   height: '100%',
+                   boxSizing: 'border-box',
+                 }}>
+              <p style={{ color: 'rgba(246,241,232,0.4)', fontSize: 9, fontFamily: "'SF Mono','Fira Mono',monospace", letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>
+                {themeInfo ? `${themeInfo.cat} · ${themeInfo.idx} of ${themeInfo.total}` : t.pathCategory}
+              </p>
+              <p style={{ color: '#F6F1E8', fontSize: 14, fontFamily: "Georgia,'Times New Roman',serif", fontStyle: 'italic', marginBottom: 4, lineHeight: 1.3 }}>{themeName}</p>
+              <p style={{ color: 'rgba(246,241,232,0.4)', fontSize: 10, marginBottom: 10, lineHeight: 1.4 }}>{desc(t)}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <button
+                  style={{
+                    background: '#8B1E2D',
+                    color: '#F6F1E8',
+                    border: 'none',
+                    padding: '5px 14px',
+                    fontSize: 11,
+                    fontFamily: "Georgia,'Times New Roman',serif",
+                    fontStyle: 'italic',
+                    cursor: 'pointer',
+                    pointerEvents: 'all',
+                  }}
+                  onMouseDown={() => navigate(practiceUrl(t.topic, themeInfo))}
+                >
+                  Study →
+                </button>
+                <span style={{ color: 'rgba(251,191,36,0.75)', fontSize: 10, fontFamily: "'SF Mono','Fira Mono',monospace", fontWeight: 700 }}>+{xp(t)} XP to Parisian</span>
+              </div>
+            </div>
+          </foreignObject>
+          <circle cx={svgX} cy={svgY} r={18} fill="transparent"
+                  onMouseEnter={() => clearTimeout(closeTimer.current)}
+                  onMouseLeave={closeDot} />
+          <circle cx={svgX} cy={svgY} r={4} fill="white" stroke={color} strokeWidth="1.4"
+                  style={{ pointerEvents: 'none' }} />
+          </>
+        );
+      })()}
     </svg>
   );
 }
@@ -266,35 +413,11 @@ function LevelBanner({ levelInfo, grouped, progressMap }) {
 
   return (
     <div className="mb-8 border border-line/60 bg-ivory/30 px-6 pt-5 pb-5 sm:px-8">
-      <div className="flex items-start justify-between gap-4 mb-1">
-        <div>
-          <p className="text-[9.5px] font-mono tracking-[0.2em] uppercase text-navy/30 mb-1.5">Your path</p>
-          <h1 className="font-display text-[26px] sm:text-[32px] leading-tight text-navy">
-            {levelInfo.atMaxLevel ? (
-              <>Keep your <span className="text-wine italic">Parisian edge</span></>
-            ) : (
-              <>
-                <span className="text-wine italic">{levelInfo.currentLevel}</span>
-                <span className="text-navy/25 mx-2.5">→</span>
-                <span className="font-semibold">{levelInfo.nextLevel}</span>
-              </>
-            )}
-          </h1>
-          {!levelInfo.atMaxLevel && (
-            <p className="mt-1 text-[12.5px] text-navy/40 leading-snug">
-              {doneLessons} of {totalLessons} lessons done
-              {allComplete
-                ? <span className="text-wine ml-1">— all 4 paths complete ✓</span>
-                : <span className="text-navy/30"> — complete all 4 paths to reach {levelInfo.nextLevel}</span>
-              }
-            </p>
-          )}
-        </div>
-        <div className="hidden sm:block shrink-0">
-          <ParisianProfileSquare />
-        </div>
+      <div className="mb-3 inline-block border border-line/60 bg-ivory/60 px-4 py-2.5">
+        <h1 className="font-display text-[22px] sm:text-[26px] leading-tight text-navy">
+          My Parisian <span className="text-wine italic">Progress</span>
+        </h1>
       </div>
-
       {!levelInfo.atMaxLevel && (
         <ArcPathMap
           grouped={grouped}
@@ -534,22 +657,6 @@ export default function MyTargets() {
           </Link>
 
           <LevelBanner levelInfo={levelInfo} grouped={grouped} progressMap={progressMap} />
-          <PracticeNow levelInfo={levelInfo} progressMap={progressMap} />
-
-          <div className="flex items-center gap-4 mb-5">
-            <span className="text-[9.5px] font-mono tracking-[0.2em] uppercase text-navy/25 whitespace-nowrap">All lessons</span>
-            <div className="flex-1 h-px bg-line/60" />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 xl:gap-3">
-            {PATH_CATEGORIES.map((cat) => (
-              <Track key={cat} category={cat} targets={grouped[cat] ?? []} progressMap={progressMap} />
-            ))}
-          </div>
-
-          <p className="mt-10 text-[10.5px] font-mono text-navy/25 uppercase tracking-wide leading-relaxed">
-            Practice on the homepage fills each lesson · your Parisian profile updates automatically
-          </p>
         </Container>
       </main>
     </div>
