@@ -76,6 +76,7 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/expressions" element={<MyExpressions />} />
           <Route path="/targets" element={<MyTargets />} />
+          <Route path="/reading" element={<ReadingExercise />} />
         </Routes>
       </LearnerProfileProvider>
     </BrowserRouter>
