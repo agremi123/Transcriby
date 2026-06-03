@@ -6,7 +6,10 @@ import { useLearnerProfile } from '../context/LearnerProfileContext';
 import { getLevelTargets, groupTargetsByPath, PATH_CATEGORIES } from '../lib/levelTargets';
 import { loadTargetProgress, PARISIAN_XP_EVENT } from '../lib/targetProgress';
 
-function practiceUrl(topic, themeInfo) {
+function practiceUrl(topic, themeInfo, category) {
+  if (category === 'Reading') {
+    return `/reading?topic=${encodeURIComponent(topic)}`;
+  }
   const base = `/?practice=${encodeURIComponent(topic)}`;
   if (!themeInfo) return base + '#nativa-demo';
   const { cat, idx, total, theme } = themeInfo;
