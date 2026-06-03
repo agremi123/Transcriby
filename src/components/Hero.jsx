@@ -2847,7 +2847,7 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date }) 
 
           <div className="flex items-center justify-between mt-4 shrink-0">
             {byline ? (
-              <p className="text-[10px] font-mono tracking-[0.12em] text-navy/35 border-t border-line/40 pt-3 flex-1 mr-4">
+              <p className="text-[10px] font-mono tracking-[0.12em] border-t pt-3 flex-1 mr-4" style={{ color: '#c0392b', borderColor: 'rgba(192,57,43,0.2)' }}>
                 {byline}
               </p>
             ) : <span className="flex-1" />}
