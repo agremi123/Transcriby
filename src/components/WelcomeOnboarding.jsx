@@ -392,13 +392,6 @@ export default function WelcomeOnboarding() {
 
                 {/* I'm new */}
                 <div className="relative flex flex-col items-center gap-1.5">
-                  {activeNarrator === 'lea' && (
-                    <motion.div
-                      animate={{ y: [0, 5, 0] }}
-                      transition={{ repeat: Infinity, duration: 0.85, ease: 'easeInOut' }}
-                      className="absolute -top-5 left-1/2 -translate-x-1/2 text-wine text-lg leading-none"
-                    >↓</motion.div>
-                  )}
                   <p className="text-[11px] tracking-[0.12em] uppercase text-navy/35 font-semibold">I'm new</p>
                   <button
                     type="button"
