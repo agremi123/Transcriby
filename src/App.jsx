@@ -51,11 +51,14 @@ function LandingPage() {
 
 function GoogleAuthHandler() {
   const { completeOnboarding, profile } = useLearnerProfile();
+  const handledRef = React.useRef(false);
 
   React.useEffect(() => {
+    if (handledRef.current) return;
     import('./lib/supabaseClient').then(({ supabase }) => {
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session?.user && !isProfileSetupComplete(profile)) {
+          handledRef.current = true;
           const user = session.user;
           const name = user.user_metadata?.full_name?.split(' ')[0]
             || user.user_metadata?.name?.split(' ')[0]
