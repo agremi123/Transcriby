@@ -309,32 +309,8 @@ export default function WelcomeOnboarding() {
                       {n.name}
                     </span>
 
-                    {/* Replay button */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (playing && activeSpeakingNarrator === id) {
-                          stopAudio();
-                        } else {
-                          playNarratorLine(line);
-                        }
-                      }}
-                      className="inline-flex items-center gap-1.5 text-[11px] text-wine/60 hover:text-wine transition-colors"
-                    >
-                      {playing && activeSpeakingNarrator === id ? (
-                        <svg width="10" height="10" viewBox="0 0 14 14" fill="currentColor" aria-hidden>
-                          <rect x="2" y="2" width="10" height="10" rx="1.5" />
-                        </svg>
-                      ) : (
-                        <svg width="9" height="11" viewBox="0 0 10 12" fill="currentColor" aria-hidden>
-                          <path d="M0 0 L10 6 L0 12 Z" />
-                        </svg>
-                      )}
-                      {playing && activeSpeakingNarrator === id ? 'Stop' : 'Replay'}
-                    </button>
-
-                    {/* Speech text */}
-                    <div className={`w-full rounded-xl px-5 py-4 border transition-colors duration-300 flex items-center justify-center min-h-[90px] ${
+                    {/* Speech text with replay button */}
+                    <div className={`relative w-full rounded-xl px-5 py-4 border transition-colors duration-300 flex items-center justify-center min-h-[90px] ${
                       isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
                     }`}>
                       <NarratorHoverText
@@ -348,6 +324,28 @@ export default function WelcomeOnboarding() {
                         speechTimings={speechTimings}
                         className="font-display text-[16px] sm:text-[18px] leading-[1.5] text-navy/85 italic text-center w-full"
                       />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (playing && activeSpeakingNarrator === id) stopAudio();
+                          else playNarratorLine(line);
+                        }}
+                        className="absolute bottom-2 right-2 relative w-7 h-7 rounded-full border border-wine/30 text-wine/60 hover:text-wine hover:border-wine/60 flex items-center justify-center transition-colors shrink-0"
+                        aria-label={isSpeaking ? 'Stop' : 'Replay'}
+                      >
+                        {isSpeaking ? (
+                          <svg width="8" height="8" viewBox="0 0 14 14" fill="currentColor" aria-hidden>
+                            <rect x="2" y="2" width="10" height="10" rx="1.5" />
+                          </svg>
+                        ) : (
+                          <svg width="7" height="9" viewBox="0 0 10 12" fill="currentColor" aria-hidden>
+                            <path d="M0 0 L10 6 L0 12 Z" />
+                          </svg>
+                        )}
+                        {isSpeaking && (
+                          <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-40 pointer-events-none" />
+                        )}
+                      </button>
                     </div>
                   </div>
                 );
