@@ -2952,7 +2952,7 @@ function PassageWithVocabHighlights({ passage, vocabEntries, highlightActive }) 
         }
         return (
           <span key={i} className="relative inline cursor-help group">
-            <mark className="bg-red-100 text-navy/80 rounded-sm px-0.5">
+            <mark className="bg-wine/10 text-navy/80 rounded-sm px-0.5">
               {seg.value}
             </mark>
             <span
