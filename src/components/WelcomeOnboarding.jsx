@@ -270,7 +270,7 @@ export default function WelcomeOnboarding() {
         <motion.div
           initial={{ opacity: 0, y: 16, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          className="w-full max-w-[820px] rounded-2xl border border-line/80 bg-paper shadow-[0_24px_64px_rgba(26,35,64,0.18)] overflow-visible"
+          className="w-full max-w-[820px] max-h-[92vh] rounded-2xl border border-line/80 bg-paper shadow-[0_24px_64px_rgba(26,35,64,0.18)] overflow-y-auto"
         >
           <div className="px-6 sm:px-10 pt-7 pb-8">
 
