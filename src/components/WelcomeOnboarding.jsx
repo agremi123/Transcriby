@@ -410,7 +410,7 @@ export default function WelcomeOnboarding() {
                   <p className="text-[11px] tracking-[0.12em] uppercase text-navy/35 font-semibold">I'm new</p>
                   <button
                     type="button"
-                    onClick={() => setShowLevelPicker(true)}
+                    onClick={() => { setShowLevelPicker(true); playNarratorLine(JULES_LEVEL_PICKER_LINE); }}
                     className={`${NAV_CTA_CLASS} text-[14px] py-2.5 px-6`}
                   >
                     Choose my level
