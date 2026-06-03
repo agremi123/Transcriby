@@ -355,15 +355,37 @@ export default function WelcomeOnboarding() {
               <p className="text-[11px] text-wine/70 text-center mb-3">{audioError}</p>
             )}
 
-            {/* "Choose my level" CTA — always visible */}
+            {/* Auth CTAs — always visible */}
             {!showLevelPicker && !levelLocked && (
-              <div className="flex justify-center mt-4 mb-2">
+              <div className="flex flex-wrap items-center justify-center gap-3 mt-4 mb-2">
                 <button
                   type="button"
                   onClick={() => setShowLevelPicker(true)}
-                  className={`${NAV_CTA_CLASS} px-8 py-3.5 text-[15px]`}
+                  className={`${NAV_CTA_CLASS} px-6 py-3 text-[14px]`}
                 >
-                  Choose my level
+                  New account
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleGoogleConnect}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-line bg-white text-navy text-[14px] font-medium font-display shadow-sm hover:shadow-md hover:border-wine/30 transition-all"
+                >
+                  <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden>
+                    <path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.71v2.26h2.92a8.78 8.78 0 002.68-6.61z" fill="#4285F4"/>
+                    <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33A8.99 8.99 0 009 18z" fill="#34A853"/>
+                    <path d="M3.97 10.71A5.41 5.41 0 013.68 9c0-.59.1-1.16.29-1.71V4.96H.96A8.99 8.99 0 000 9c0 1.45.35 2.82.96 4.04l3.01-2.33z" fill="#FBBC05"/>
+                    <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A8.99 8.99 0 00.96 4.96l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z" fill="#EA4335"/>
+                  </svg>
+                  Connect with Google
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setShowLevelPicker(true); setTimeout(() => setShowEmailForm(true), 50); }}
+                  className="text-[13px] text-navy/50 hover:text-wine underline underline-offset-2 transition-colors font-display"
+                >
+                  via email
                 </button>
               </div>
             )}
