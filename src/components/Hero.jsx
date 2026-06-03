@@ -1920,7 +1920,14 @@ export function AudioDemoCard({
         </button>
       )}
 
+      {/* Reading exercise tabs — replaces normal card content when reading is active */}
+      {readingQuestions !== null && (
+        <ReadingQuestionsInCard questions={readingQuestions} loading={readingLoading} />
+      )}
+
       {/* Main content column (2/3) */}
+      {readingQuestions !== null ? null : <></> /* hide normal content below */}
+      {readingQuestions === null && <></> /* eslint-disable-line */ }
       <div className={fullscreen ? 'flex-[2] flex flex-col overflow-y-auto min-w-0' : 'contents'}>
       {/* Mode controls + speech box */}
       <div className={`px-7 pt-4 flex flex-col gap-2.5${fullscreen ? ' flex-1 min-h-0' : ''}`}>
