@@ -3269,7 +3269,7 @@ export default function Hero() {
 
       <Container className="relative">
         <div className="grid lg:grid-cols-[1fr_1.5fr] gap-8 items-center h-[calc(100vh-96px)]">
-          <div className="relative flex flex-col justify-center overflow-visible h-full">
+          <div className="relative flex flex-col justify-center overflow-visible">
             {readingActive ? (
               <ReadingArticlePanel
                 loading={readingLoading}
