@@ -75,11 +75,6 @@ export const WELCOME_LEVEL_LINES = [
     text: 'Bienvenue sur Nativa ! Clique en bas pour nous dire ton niveau en français. On va voir si t\'es à la hauteur du défi !',
     translation: 'Welcome to Nativa! Click below to tell us your French level. Let\'s see if you\'re up for the challenge!',
   },
-  {
-    narrator: 'jules',
-    text: 'Si tu as déjà un compte, clique ici.',
-    translation: 'If you already have an account, click here.',
-  },
 ];
 
 export const LEVEL_PICKER = [
