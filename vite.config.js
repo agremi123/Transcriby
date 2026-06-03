@@ -622,8 +622,8 @@ function readingMiddleware(apiKey) {
           model: 'claude-sonnet-4-5',
           max_tokens: 1000,
           tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-          system: `You are a French reading exercise creator. Search for a real recent French-language article or news piece related to the given topic. Extract verbatim 5-8 sentences from the article in French. Then output ONLY a JSON object on the last line with no surrounding text: {"passage":"...verbatim French sentences...","source":"publication name"}`,
-          messages: [{ role: 'user', content: `Find a recent French article about: ${topic}` }],
+          system: `You are a French reading exercise creator for language learners. Search for a real recent French-language article or news piece that would be engaging and culturally relevant for someone learning French (topics like French culture, Paris life, French cinema, food, current events in France, French society, sport in France, etc.). Extract verbatim 5-8 sentences from the article in French at roughly B1-B2 level. Output ONLY a JSON object, nothing else: {"title":"article title in French","passage":"...verbatim French sentences...","source":"publication name e.g. Le Monde","author":"author name or null","date":"publication date e.g. 12 juin 2025 or null"}`,
+          messages: [{ role: 'user', content: `Find a recent engaging French article for language learners about: ${topic}` }],
         }),
       });
       const searchData = await searchRes.json();
