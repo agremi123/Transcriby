@@ -391,7 +391,7 @@ export default function WelcomeOnboarding() {
               <div className="flex flex-col items-center gap-4 mt-4 mb-2">
                 <div className="flex flex-wrap items-center justify-center gap-3">
 
-                  {/* "Choose my level" */}
+                  {/* I'm new — Choose my level */}
                   <div className="flex flex-col items-center gap-1">
                     {activeNarrator === 'lea' && (
                       <motion.div
@@ -405,15 +405,16 @@ export default function WelcomeOnboarding() {
                     <button
                       type="button"
                       onClick={() => setShowLevelPicker(true)}
-                      className={`${NAV_CTA_CLASS} px-6 py-3 text-[14px]`}
+                      className={`${NAV_CTA_CLASS} px-6 py-3 text-[14px] flex flex-col items-center leading-tight`}
                     >
-                      Choose my level
+                      <span className="text-[11px] opacity-75 font-normal">I'm new —</span>
+                      <span>Choose my level</span>
                     </button>
                   </div>
 
                   <span className="text-navy/25 text-[13px]">or</span>
 
-                  {/* Google + email */}
+                  {/* I'm already Parisian — Google + email */}
                   <div className="flex flex-col items-center gap-1">
                     {activeNarrator === 'jules' && (
                       <motion.div
@@ -424,6 +425,7 @@ export default function WelcomeOnboarding() {
                         ↓
                       </motion.div>
                     )}
+                    <span className="text-[11px] text-navy/45 font-display mb-1">I'm already Parisian</span>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
