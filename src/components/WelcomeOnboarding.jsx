@@ -360,7 +360,7 @@ export default function WelcomeOnboarding() {
                   transition={{ duration: 0.35 }}
                   className="flex items-center gap-4 mb-5"
                 >
-                  <div className={`relative w-[72px] h-[72px] rounded-full overflow-hidden shadow-md shrink-0 transition-all duration-300 ${
+                  <div className={`relative w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] rounded-full overflow-hidden shadow-md shrink-0 transition-all duration-300 ${
                     isSpeaking ? 'ring-4 ring-wine scale-[1.04]' : 'ring-2 ring-line/60'
                   }`}>
                     <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
