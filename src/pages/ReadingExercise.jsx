@@ -221,6 +221,9 @@ export default function ReadingExercise() {
                   </summary>
                   <div className="px-6 pb-5 pt-2">
                     <p className="font-display text-[15px] italic leading-[1.7] text-navy/70 whitespace-pre-wrap">{passage}</p>
+                    {source && (
+                      <p className="mt-3 text-[10px] font-mono tracking-[0.12em] uppercase text-navy/25">Source — {source}</p>
+                    )}
                   </div>
                 </details>
 
