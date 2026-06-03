@@ -40,8 +40,15 @@ function NavReachNextLevel() {
   );
 }
 
+async function handleLogout(resetWelcomeOnboarding) {
+  const { supabase } = await import('../lib/supabaseClient');
+  await supabase.auth.signOut();
+  resetWelcomeOnboarding();
+}
+
 export default function Nav() {
   const { pathname } = useLocation();
+  const { resetWelcomeOnboarding } = useLearnerProfile();
   const [scrolled, setScrolled] = React.useState(false);
   const onJudgePage = pathname === '/dashboard';
 
