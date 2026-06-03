@@ -308,6 +308,31 @@ export default function WelcomeOnboarding() {
                       {n.name}
                     </span>
 
+                    {/* Replay button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (playing && activeSpeakingNarrator === id) {
+                          stopAudio();
+                        } else {
+                          playNarratorLine(line);
+                        }
+                      }}
+                      className="inline-flex items-center gap-1.5 text-[11px] text-wine/60 hover:text-wine transition-colors"
+                      title={playing && activeSpeakingNarrator === id ? 'Stop' : 'Replay'}
+                    >
+                      {playing && activeSpeakingNarrator === id ? (
+                        <svg width="10" height="10" viewBox="0 0 14 14" fill="currentColor" aria-hidden>
+                          <rect x="2" y="2" width="10" height="10" rx="1.5" />
+                        </svg>
+                      ) : (
+                        <svg width="9" height="11" viewBox="0 0 10 12" fill="currentColor" aria-hidden>
+                          <path d="M0 0 L10 6 L0 12 Z" />
+                        </svg>
+                      )}
+                      {playing && activeSpeakingNarrator === id ? 'Stop' : 'Replay'}
+                    </button>
+
                     {/* Big speech text */}
                     <NarratorHoverText
                       text={line.text}
