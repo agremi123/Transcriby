@@ -2919,6 +2919,26 @@ function VocabExercise({ vocab }) {
 
 const HINT_COST = 5; // Parisianism points per extra hint
 
+function DailyParisianPointsIndicator({ points }) {
+  return (
+    <motion.div
+      key={points}
+      initial={{ scale: 1 }}
+      animate={{ scale: [1, 1.06, 1] }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className="flex flex-col gap-1 shrink-0"
+      aria-live="polite"
+    >
+      <span className="text-[9px] font-mono tracking-[0.12em] uppercase text-navy/45 leading-tight max-w-[9rem]">
+        My Daily Parisian points
+      </span>
+      <span className="font-stat text-[26px] sm:text-[28px] tabular-nums leading-none text-wine">
+        {points}
+      </span>
+    </motion.div>
+  );
+}
+
 function escapeRegex(str) {
   return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
