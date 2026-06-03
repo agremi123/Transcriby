@@ -77,6 +77,12 @@ export const WELCOME_LEVEL_LINES = [
   },
 ];
 
+export const JULES_LEVEL_PICKER_LINE = {
+  narrator: 'jules',
+  text: 'Fais gaffe, on va te tester après !',
+  translation: 'Watch out, we\'ll test you after!',
+};
+
 export const LEVEL_PICKER = [
   { id: 'A1', label: 'A1', hint: 'Bébé parisien' },
   { id: 'A2', label: 'A2', hint: 'Baguette Enjoyer' },
