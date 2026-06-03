@@ -10,6 +10,11 @@ import {
   resetWelcomeOnboarding as resetWelcomeOnboardingProfile,
   saveLearnerProfile,
 } from '../lib/learnerProfile';
+import {
+  addDailyParisianPoints,
+  DAILY_PARISIAN_POINTS_EVENT,
+  loadDailyParisianPoints,
+} from '../lib/dailyParisianPoints';
 import { PARISIAN_XP_EVENT } from '../lib/targetProgress';
 
 const LearnerProfileContext = React.createContext(null);
