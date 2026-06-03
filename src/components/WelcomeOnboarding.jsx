@@ -388,12 +388,10 @@ export default function WelcomeOnboarding() {
 
             {/* Auth CTAs — always visible */}
             {!showLevelPicker && !levelLocked && (
-              <div className="grid grid-cols-2 gap-3 mt-5 mb-2">
+              <div className="flex flex-wrap items-center justify-center gap-4 mt-5 mb-2">
 
-                {/* Left card — I'm new */}
-                <div className={`relative flex flex-col items-center gap-2 rounded-xl border px-4 py-3 transition-all duration-300 ${
-                  activeNarrator === 'lea' ? 'border-wine/40 bg-wine/4 shadow-md' : 'border-line bg-ivory'
-                }`}>
+                {/* I'm new */}
+                <div className="relative flex flex-col items-center gap-1.5">
                   {activeNarrator === 'lea' && (
                     <motion.div
                       animate={{ y: [0, 5, 0] }}
@@ -401,20 +399,20 @@ export default function WelcomeOnboarding() {
                       className="absolute -top-5 left-1/2 -translate-x-1/2 text-wine text-lg leading-none"
                     >↓</motion.div>
                   )}
-                  <p className="text-[11px] tracking-[0.12em] uppercase text-navy/40 font-semibold">I'm new</p>
+                  <p className="text-[11px] tracking-[0.12em] uppercase text-navy/35 font-semibold">I'm new</p>
                   <button
                     type="button"
                     onClick={() => setShowLevelPicker(true)}
-                    className={`${NAV_CTA_CLASS} w-full justify-center text-[14px] py-3`}
+                    className={`${NAV_CTA_CLASS} text-[14px] py-2.5 px-6`}
                   >
                     Choose my level
                   </button>
                 </div>
 
-                {/* Right card — I'm already Parisian */}
-                <div className={`relative flex flex-col items-center gap-2 rounded-xl border px-4 py-3 transition-all duration-300 ${
-                  activeNarrator === 'jules' ? 'border-wine/40 bg-wine/4 shadow-md' : 'border-line bg-ivory'
-                }`}>
+                <span className="text-navy/20 text-lg">|</span>
+
+                {/* I'm already Parisian */}
+                <div className="relative flex flex-col items-center gap-1.5">
                   {activeNarrator === 'jules' && (
                     <motion.div
                       animate={{ y: [0, 5, 0] }}
@@ -422,27 +420,29 @@ export default function WelcomeOnboarding() {
                       className="absolute -top-5 left-1/2 -translate-x-1/2 text-wine text-lg leading-none"
                     >↓</motion.div>
                   )}
-                  <p className="text-[11px] tracking-[0.12em] uppercase text-navy/40 font-semibold">I'm already Parisian</p>
-                  <button
-                    type="button"
-                    onClick={handleGoogleConnect}
-                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full border border-line bg-white text-navy text-[13px] font-medium font-display shadow-sm hover:shadow-md hover:border-wine/30 transition-all"
-                  >
-                    <svg width="15" height="15" viewBox="0 0 18 18" fill="none" aria-hidden>
-                      <path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.71v2.26h2.92a8.78 8.78 0 002.68-6.61z" fill="#4285F4"/>
-                      <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33A8.99 8.99 0 009 18z" fill="#34A853"/>
-                      <path d="M3.97 10.71A5.41 5.41 0 013.68 9c0-.59.1-1.16.29-1.71V4.96H.96A8.99 8.99 0 000 9c0 1.45.35 2.82.96 4.04l3.01-2.33z" fill="#FBBC05"/>
-                      <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A8.99 8.99 0 00.96 4.96l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z" fill="#EA4335"/>
-                    </svg>
-                    Connect with Google
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { setShowLevelPicker(true); setTimeout(() => setShowEmailForm(true), 50); }}
-                    className="text-[12px] text-navy/40 hover:text-wine transition-colors font-display underline underline-offset-2"
-                  >
-                    or via email
-                  </button>
+                  <p className="text-[11px] tracking-[0.12em] uppercase text-navy/35 font-semibold">I'm already Parisian</p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleGoogleConnect}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-line bg-white text-navy text-[13px] font-medium font-display shadow-sm hover:shadow-md hover:border-wine/30 transition-all"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 18 18" fill="none" aria-hidden>
+                        <path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.71v2.26h2.92a8.78 8.78 0 002.68-6.61z" fill="#4285F4"/>
+                        <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33A8.99 8.99 0 009 18z" fill="#34A853"/>
+                        <path d="M3.97 10.71A5.41 5.41 0 013.68 9c0-.59.1-1.16.29-1.71V4.96H.96A8.99 8.99 0 000 9c0 1.45.35 2.82.96 4.04l3.01-2.33z" fill="#FBBC05"/>
+                        <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A8.99 8.99 0 00.96 4.96l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z" fill="#EA4335"/>
+                      </svg>
+                      Google
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setShowLevelPicker(true); setTimeout(() => setShowEmailForm(true), 50); }}
+                      className="text-[12px] text-navy/40 hover:text-wine transition-colors font-display underline underline-offset-2"
+                    >
+                      or via email
+                    </button>
+                  </div>
                 </div>
 
               </div>
