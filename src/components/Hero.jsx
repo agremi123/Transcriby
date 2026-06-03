@@ -1906,10 +1906,8 @@ export function AudioDemoCard({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={fullscreen
         ? 'fixed inset-6 z-50 bg-paper flex overflow-hidden'
-        : 'relative w-full max-w-[640px] bg-paper hairline overflow-hidden'}
-      style={fullscreen
-        ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' }
-        : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)', height: 580 }}
+        : 'relative w-full max-w-[640px] bg-paper hairline'}
+      style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)' }}
     >
       {/* Close button in fullscreen */}
       {fullscreen && (
@@ -2857,11 +2855,9 @@ function VocabExercise({ vocab }) {
         })}
       </div>
 
-      {activeBlank !== null && (
-        <p className="text-[10px] font-mono tracking-widest uppercase text-wine/60 -mt-2">
-          ↑ click a word to fill the blank
-        </p>
-      )}
+      <p className="text-[9px] font-mono tracking-widest uppercase text-wine/50 -mt-2 transition-opacity duration-150" style={{ opacity: activeBlank !== null ? 1 : 0, pointerEvents: 'none' }}>
+        ↑ click a word above
+      </p>
 
       <div className="border-t border-line/40" />
 
