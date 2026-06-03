@@ -2794,6 +2794,129 @@ export function AudioDemoCard({
   );
 }
 
+function ReadingQuestionsInCard({ questions, loading }) {
+  const [tab, setTab] = React.useState('comprehension');
+  const [answers, setAnswers] = React.useState({});
+
+  const mcq = questions.filter((q) => q.type === 'mcq');
+  const fill = questions.filter((q) => q.type === 'fill');
+  const wordBank = React.useMemo(() => {
+    const words = fill.map((q) => q.answer);
+    return [...words].sort(() => Math.random() - 0.5);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fill.map((q) => q.answer).join(',')]);
+
+  const tabCls = (t) =>
+    `px-4 py-2.5 text-[10px] font-mono tracking-[0.15em] uppercase border-b-2 transition-colors ${
+      tab === t ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'
+    }`;
+
+  return (
+    <>
+      <div className="flex border-b border-line/50 shrink-0">
+        <button type="button" className={tabCls('comprehension')} onClick={() => setTab('comprehension')}>
+          Comprehension
+        </button>
+        <button type="button" className={tabCls('vocabulary')} onClick={() => setTab('vocabulary')}>
+          Vocabulary
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-7 py-5">
+        {loading ? (
+          <div className="flex items-center justify-center h-32">
+            <div className="w-5 h-5 rounded-full border-2 border-wine/20 border-t-wine animate-spin" />
+          </div>
+        ) : tab === 'comprehension' ? (
+          <div className="space-y-5">
+            {mcq.length === 0 && <p className="text-[13px] text-navy/30 italic">No questions yet.</p>}
+            {mcq.map((q, i) => {
+              const picked = answers[`mcq-${i}`] ?? null;
+              return (
+                <div key={i} className="border-b border-line/30 pb-5 last:border-0 last:pb-0">
+                  <p className="font-display text-[15px] text-navy/85 mb-3 leading-snug">{q.question}</p>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {q.options.map((opt) => {
+                      const isCorrect = opt === q.answer;
+                      const isPicked = opt === picked;
+                      let cls = 'border border-line/50 bg-ivory/60 text-navy/65 hover:border-wine/40 hover:bg-wine/5 cursor-pointer';
+                      if (picked !== null) {
+                        if (isCorrect) cls = 'border-2 border-green-500 bg-green-50 text-green-700 font-semibold cursor-default';
+                        else if (isPicked) cls = 'border-2 border-wine/50 bg-wine/5 text-wine/70 line-through cursor-default';
+                        else cls = 'border border-line/20 bg-ivory/30 text-navy/25 cursor-default';
+                      }
+                      return (
+                        <button key={opt} type="button"
+                          onClick={() => picked === null && setAnswers((a) => ({ ...a, [`mcq-${i}`]: opt }))}
+                          className={`rounded-lg px-3 py-2 text-[12px] font-display text-left transition-colors ${cls}`}>
+                          {opt}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {picked !== null && (
+                    <p className={`mt-2 text-[11px] font-semibold ${picked === q.answer ? 'text-green-600' : 'text-wine'}`}>
+                      {picked === q.answer ? '✓ Correct' : `✗ → ${q.answer}`}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="space-y-5">
+            <div className="flex flex-wrap gap-1.5 pb-4 border-b border-line/30">
+              {wordBank.map((w) => (
+                <span key={w} className="px-2.5 py-1 rounded-full bg-navy/5 border border-navy/15 text-[11px] font-mono text-navy/60">
+                  {w}
+                </span>
+              ))}
+            </div>
+            {fill.length === 0 && <p className="text-[13px] text-navy/30 italic">No questions yet.</p>}
+            {fill.map((q, i) => {
+              const val = answers[`fill-${i}`] ?? '';
+              const submitted = answers[`fill-${i}-done`] ?? false;
+              const correct = val.trim().toLowerCase() === q.answer.toLowerCase();
+              const parts = q.sentence.split('___');
+              return (
+                <div key={i} className="border-b border-line/30 pb-5 last:border-0 last:pb-0">
+                  <p className="font-display text-[15px] italic text-navy/80 leading-relaxed mb-3">
+                    {parts[0]}
+                    {submitted ? (
+                      <span className={`inline-block px-1.5 py-0.5 rounded text-[14px] not-italic font-semibold mx-0.5 ${correct ? 'bg-green-100 text-green-700' : 'bg-wine/10 text-wine line-through'}`}>{val}</span>
+                    ) : (
+                      <input type="text" value={val}
+                        onChange={(e) => setAnswers((a) => ({ ...a, [`fill-${i}`]: e.target.value }))}
+                        onKeyDown={(e) => e.key === 'Enter' && val.trim() && setAnswers((a) => ({ ...a, [`fill-${i}-done`]: true }))}
+                        placeholder="…"
+                        className="inline-block w-[100px] border-b-2 border-wine/40 bg-transparent text-navy text-center outline-none focus:border-wine px-1 font-display text-[15px] italic mx-0.5"
+                        autoComplete="off"
+                      />
+                    )}
+                    {parts[1]}
+                  </p>
+                  {q.hint && !submitted && <p className="text-[10px] text-navy/30 mb-2">hint: {q.hint}</p>}
+                  {!submitted ? (
+                    <button type="button" disabled={!val.trim()}
+                      onClick={() => setAnswers((a) => ({ ...a, [`fill-${i}-done`]: true }))}
+                      className="px-3 py-1 rounded-full bg-wine text-ivory text-[11px] font-display hover:bg-wine/85 transition-colors disabled:opacity-30">
+                      Check
+                    </button>
+                  ) : (
+                    <p className={`text-[11px] font-semibold ${correct ? 'text-green-600' : 'text-wine'}`}>
+                      {correct ? '✓ Correct' : `✗ → ${q.answer}`}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
 function ReadingQuestionsCard({ questions, loading }) {
   const [tab, setTab] = React.useState('comprehension');
   const [answers, setAnswers] = React.useState({});
