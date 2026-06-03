@@ -3167,16 +3167,16 @@ function ReadingArticlePanel({
             />
           </div>
 
-          {/* Daily points + translate — bottom of article */}
-          <div className="flex items-end justify-between gap-4 mt-4 shrink-0 border-t pt-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
-            <div className="flex flex-col gap-2 min-w-0 flex-1">
+          {/* Byline, daily points circle, translate */}
+          <div className="mt-4 shrink-0 border-t pt-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
+            {byline ? (
+              <p className="text-[10px] font-mono tracking-[0.12em] mb-3 truncate" style={{ color: '#8b1e2d' }}>
+                {byline}
+              </p>
+            ) : null}
+
+            <div className="flex items-end justify-between gap-4">
               <DailyParisianPointsIndicator points={dailyParisianPoints} />
-              {byline ? (
-                <p className="text-[10px] font-mono tracking-[0.12em] text-navy/40 truncate" style={{ color: '#8b1e2d' }}>
-                  {byline}
-                </p>
-              ) : null}
-            </div>
 
             <div className="flex items-center gap-3 shrink-0 pb-0.5">
               {/* Hint button inline with arrows */}
