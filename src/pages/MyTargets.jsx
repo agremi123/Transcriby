@@ -7,13 +7,11 @@ import { getLevelTargets, groupTargetsByPath, PATH_CATEGORIES } from '../lib/lev
 import { loadTargetProgress, PARISIAN_XP_EVENT } from '../lib/targetProgress';
 
 function practiceUrl(topic, themeInfo, category) {
-  if (category === 'Reading') {
-    return `/reading?topic=${encodeURIComponent(topic)}`;
-  }
   const base = `/?practice=${encodeURIComponent(topic)}`;
-  if (!themeInfo) return base + '#nativa-demo';
+  const suffix = category === 'Reading' ? '&ptype=reading' : '';
+  if (!themeInfo) return base + suffix + '#nativa-demo';
   const { cat, idx, total, theme } = themeInfo;
-  return `${base}&pcat=${encodeURIComponent(cat)}&pidx=${idx}&ptotal=${total}&ptheme=${encodeURIComponent(theme)}#nativa-demo`;
+  return `${base}${suffix}&pcat=${encodeURIComponent(cat)}&pidx=${idx}&ptotal=${total}&ptheme=${encodeURIComponent(theme)}#nativa-demo`;
 }
 
 const ARC_THEMES = {
