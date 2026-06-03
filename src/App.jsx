@@ -20,7 +20,6 @@ import { isProfileSetupComplete } from './lib/learnerProfile';
 function LandingPage() {
   return (
     <div className="relative">
-      <WelcomeResetButton />
       <Nav />
       <Hero />
       <UniversitiesBar />
