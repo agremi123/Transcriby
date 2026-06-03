@@ -77,8 +77,8 @@ export const WELCOME_LEVEL_LINES = [
   },
   {
     narrator: 'jules',
-    text: 'Sois honnête — on s\'adapte à toi dès le départ.',
-    translation: 'Be honest — we\'ll adapt to you from the start.',
+    text: 'Si tu as déjà un compte, clique ici.',
+    translation: 'If you already have an account, click here.',
   },
 ];
 
