@@ -2952,7 +2952,34 @@ export default function Hero() {
 
       <Container className="relative">
         <div className="grid lg:grid-cols-[1fr_1.5fr] gap-8 items-center h-[calc(100vh-96px)]">
-          <div className="relative flex flex-col justify-center items-center text-center overflow-visible">
+          <div className="relative flex flex-col justify-center overflow-visible">
+            {isReadingMode ? (
+              <div className="flex flex-col gap-4 pr-4">
+                <div className="inline-flex items-center gap-2 self-start px-3 py-1.5 bg-navy text-ivory rounded-sm">
+                  <span className="text-[9px] font-mono tracking-[0.2em] uppercase opacity-60">Reading</span>
+                  <span className="text-[9px] font-mono opacity-30">—</span>
+                  <span className="text-[10px] font-mono tracking-wide opacity-90 max-w-[220px] truncate">{practiceTopic}</span>
+                </div>
+                {readingLoading ? (
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
+                    <span className="text-[14px] text-navy/40 font-display italic">Searching for an article…</span>
+                  </div>
+                ) : (
+                  <>
+                    <p className="font-display text-[20px] sm:text-[24px] leading-[1.65] text-navy/85 italic">
+                      {readingPassage}
+                    </p>
+                    {readingSource && (
+                      <p className="text-[10px] font-mono tracking-[0.16em] uppercase text-navy/30 border-t border-line/40 pt-3 mt-1">
+                        Source — {readingSource}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            ) : (
+            <div className="flex flex-col items-center text-center overflow-visible">
             <h1 className="font-display text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-2">
               <Reveal delay={0.08}>Learn French</Reveal>
               <Reveal delay={0.18} className="text-wine italic">From Parisiens.</Reveal>
