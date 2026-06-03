@@ -2976,11 +2976,11 @@ export default function Hero() {
                 ) : (
                   <div className="flex flex-col overflow-hidden" style={{ maxHeight: 'var(--card-height, 520px)' }}>
                     {readingTitle && (
-                      <h2 className="font-display text-[22px] sm:text-[26px] leading-[1.2] tracking-[-0.01em] text-navy mb-4 shrink-0 line-clamp-3">
+                      <h2 className="font-display text-[26px] sm:text-[30px] leading-[1.2] tracking-[-0.01em] text-navy mb-4 shrink-0 line-clamp-3">
                         {readingTitle}
                       </h2>
                     )}
-                    <p className="font-display text-[15px] sm:text-[16px] leading-[1.7] text-navy/80 overflow-hidden flex-1 min-h-0" style={{ display: '-webkit-box', WebkitLineClamp: 12, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    <p className="font-display text-[17px] sm:text-[18px] leading-[1.75] text-navy/80 overflow-hidden flex-1 min-h-0" style={{ display: '-webkit-box', WebkitLineClamp: 12, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                       {readingPassage}
                     </p>
                     {(readingAuthor || readingDate || readingSource) && (
