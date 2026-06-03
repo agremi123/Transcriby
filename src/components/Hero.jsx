@@ -2842,7 +2842,7 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date }) 
                 animate={{ x: 0, opacity: 1 }}
                 exit={(d) => ({ x: d * -40, opacity: 0 })}
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                className="font-display text-[17px] sm:text-[18px] leading-[1.75] text-navy/80"
+                className="font-display text-[15px] sm:text-[16px] leading-[1.75] text-navy/80"
               >
                 {pages[page]}
               </motion.p>
