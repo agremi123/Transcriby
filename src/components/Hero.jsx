@@ -2809,6 +2809,13 @@ function VocabExercise({ vocab, onGoodAnswer }) {
   const inputRefs = React.useRef({});
   const rewardedRef = React.useRef({});
 
+  React.useEffect(() => {
+    rewardedRef.current = {};
+    setAnswers({});
+    setRevealed({});
+    setActiveBlank(null);
+  }, [vocab]);
+
   if (!vocab || vocab.length === 0) {
     return <p className="text-[13px] text-navy/40 italic">Vocabulary exercise not available for this article.</p>;
   }
