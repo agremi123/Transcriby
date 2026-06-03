@@ -2986,15 +2986,10 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
                   <button
                     type="button"
                     onClick={showHint ? () => setShowHint(false) : useHint}
-                    className="rounded-full border px-2.5 py-1 text-[10px] sm:text-[11px] font-display italic transition-colors whitespace-nowrap"
-                    style={{
-                      borderColor: showHint ? 'rgba(139,30,45,0.6)' : 'rgba(139,30,45,0.35)',
-                      color: '#8b1e2d',
-                      opacity: showHint ? 1 : 0.75,
-                    }}
+                    className={`${NAV_CTA_CLASS} ${showHint ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
                     aria-label="Translate hard words"
                   >
-                    translate hard words
+                    Translate hard words
                   </button>
 
                   {/* Popup floats upward, no layout impact */}
