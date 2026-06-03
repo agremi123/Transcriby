@@ -2445,7 +2445,7 @@ export function AudioDemoCard({
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setPracticeSubTab('vocabulary'); if (inputMode !== 'discover') { setInputMode('discover'); } }}
+                  onClick={() => { setPracticeSubTab('vocabulary'); if (!wordData && !wordLoading) discoverWord(); }}
                   className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${practiceSubTab === 'vocabulary' ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}
                 >
                   Vocabulary
