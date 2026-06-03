@@ -705,10 +705,10 @@ function readingMiddleware(apiKey) {
       try { ({ questions = [] } = JSON.parse(qRaw)); } catch {}
 
       // Save session
-      saveSession({ id: Date.now(), topic, passage, source, questions, createdAt: new Date().toISOString() });
+      saveSession({ id: Date.now(), topic, title, passage, source, author, date, questions, createdAt: new Date().toISOString() });
 
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ passage, source, questions }));
+      res.end(JSON.stringify({ title, passage, source, author, date, questions }));
     } catch (err) {
       console.error('[reading] error:', err.message);
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
