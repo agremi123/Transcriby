@@ -5,6 +5,7 @@ import { useSpeechmaticsTranscription } from '../hooks/useSpeechmaticsTranscript
 import {
   ButtonPrimary,
   Container,
+  NAV_CTA_CLASS,
   ParisianExperienceHint,
   Reveal,
   Star,
