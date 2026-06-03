@@ -2994,7 +2994,7 @@ function VocabWordHighlight({ word, definition }) {
         transform: 'translate(-50%, calc(-100% - 10px))',
       }}
     >
-      {definition}
+      {formatTranslationWords(definition)}
     </div>,
     document.body,
   ) : null;
