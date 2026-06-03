@@ -609,8 +609,14 @@ function readingMiddleware(apiKey) {
       let source = null;
       const textBlock = searchData.content?.find((b) => b.type === 'text');
       if (textBlock?.text) {
-        let raw = textBlock.text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-        try { ({ passage, source } = JSON.parse(raw)); } catch { passage = textBlock.text.trim(); }
+        const txt = textBlock.text;
+        // Extract JSON object from anywhere in the response
+        const jsonMatch = txt.match(/\{[\s\S]*"passage"[\s\S]*\}/);
+        if (jsonMatch) {
+          try { ({ passage, source } = JSON.parse(jsonMatch[0])); } catch {}
+        }
+        // Fallback: grab everything after the last colon/newline if no JSON found
+        if (!passage) passage = txt.replace(/^[^{]*I['']?ll[^.]*\.\s*/i, '').trim();
       }
       if (!passage) throw new Error('no passage');
 
