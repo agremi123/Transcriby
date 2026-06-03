@@ -3397,6 +3397,7 @@ export default function Hero() {
                 date={readingDate}
                 vocab={readingVocab}
                 parisianPercent={profile?.parisianPercent ?? 0}
+                dailyParisianPoints={dailyParisianPoints}
                 onSpendExperience={spendExperience}
               />
             ) : (
