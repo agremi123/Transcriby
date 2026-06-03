@@ -344,8 +344,61 @@ export default function WelcomeOnboarding() {
               );
             })()}
 
-            {/* Phase 2: both narrators side by side once level picker is open */}
-            {(showLevelPicker || levelLocked) && (
+            {/* Phase 2: Jules appears with his taunt + badge picker */}
+            {(showLevelPicker || levelLocked) && (() => {
+              const julesLine = linesByNarrator['jules']?.text === JULES_LEVEL_PICKER_LINE.text
+                ? linesByNarrator['jules']
+                : JULES_LEVEL_PICKER_LINE;
+              const n = NARRATORS['jules'];
+              const isSpeaking = activeNarrator === 'jules';
+              const highlightSpeech = isSpeaking && speechText === julesLine.text && speechPlaybackTime != null;
+              return (
+                <motion.div
+                  key="jules-taunt"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35 }}
+                  className="flex items-center gap-4 mb-5 max-w-[420px] mx-auto"
+                >
+                  <div className={`relative w-[72px] h-[72px] rounded-full overflow-hidden shadow-md shrink-0 transition-all duration-300 ${
+                    isSpeaking ? 'ring-4 ring-wine scale-[1.04]' : 'ring-2 ring-line/60'
+                  }`}>
+                    <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
+                    {isSpeaking && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-25 pointer-events-none" />}
+                  </div>
+                  <div className={`flex-1 rounded-xl px-4 py-3 border transition-colors duration-300 flex items-start gap-2 ${
+                    isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
+                  }`}>
+                    <button
+                      type="button"
+                      onClick={() => { if (playing && activeSpeakingNarrator === 'jules') stopAudio(); else playNarratorLine(julesLine); }}
+                      className="relative mt-[3px] w-7 h-7 rounded-full border border-wine/30 text-wine/60 hover:text-wine hover:border-wine/60 flex items-center justify-center transition-colors shrink-0"
+                    >
+                      {isSpeaking ? (
+                        <svg width="8" height="8" viewBox="0 0 14 14" fill="currentColor" aria-hidden><rect x="2" y="2" width="10" height="10" rx="1.5" /></svg>
+                      ) : (
+                        <svg width="7" height="9" viewBox="0 0 10 12" fill="currentColor" aria-hidden><path d="M0 0 L10 6 L0 12 Z" /></svg>
+                      )}
+                      {isSpeaking && <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-40 pointer-events-none" />}
+                    </button>
+                    <NarratorHoverText
+                      text={julesLine.text}
+                      translation={julesLine.translation}
+                      showTutorialHint={false}
+                      enableHoverDemo={false}
+                      onFirstHover={undefined}
+                      highlightSpeech={highlightSpeech}
+                      speechPlaybackTime={speechPlaybackTime}
+                      speechTimings={speechTimings}
+                      className="font-display text-[16px] sm:text-[17px] leading-[1.5] text-navy/85 italic"
+                    />
+                  </div>
+                </motion.div>
+              );
+            })()}
+
+            {/* REMOVE OLD grid — replaced above */}
+            {false && (showLevelPicker || levelLocked) && (
               <div className="grid grid-cols-2 gap-4 sm:gap-8 mb-5">
                 {(['lea', 'jules']).map((id) => {
                   const n = NARRATORS[id];
