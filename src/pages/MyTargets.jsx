@@ -381,7 +381,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                     cursor: 'pointer',
                     pointerEvents: 'all',
                   }}
-                  onMouseDown={() => navigate(practiceUrl(t.topic, themeInfo, t.category))}
+                  onMouseDown={() => navigate(practiceUrl(t.topic, themeInfo, themeInfo?.cat ?? t.category))}
                 >
                   Study →
                 </button>
