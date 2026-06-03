@@ -256,7 +256,6 @@ export default function WelcomeOnboarding() {
     finishOnboarding('email', { email, name });
   };
 
-  const dismissTranslationHint = () => setShowTranslationHint(false);
   const activeNarrator = activeSpeakingNarrator;
 
   return (
