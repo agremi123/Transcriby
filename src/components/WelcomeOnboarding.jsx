@@ -412,43 +412,6 @@ export default function WelcomeOnboarding() {
                       }`}>
                         <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
                         {isSpeaking && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-25 pointer-events-none" />}
-                      </div>
-                      <span className={`text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${isSpeaking ? 'text-wine' : 'text-navy/60'}`}>
-                        {n.name}
-                      </span>
-                      <div className={`w-full rounded-xl px-4 py-3 border transition-colors duration-300 flex items-start gap-3 ${
-                        isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
-                      }`}>
-                        <button
-                          type="button"
-                          onClick={() => { if (playing && activeSpeakingNarrator === id) stopAudio(); else playNarratorLine(line); }}
-                          className="relative mt-[3px] w-7 h-7 rounded-full border border-wine/30 text-wine/60 hover:text-wine hover:border-wine/60 flex items-center justify-center transition-colors shrink-0"
-                          aria-label={isSpeaking ? 'Stop' : 'Replay'}
-                        >
-                          {isSpeaking ? (
-                            <svg width="8" height="8" viewBox="0 0 14 14" fill="currentColor" aria-hidden><rect x="2" y="2" width="10" height="10" rx="1.5" /></svg>
-                          ) : (
-                            <svg width="7" height="9" viewBox="0 0 10 12" fill="currentColor" aria-hidden><path d="M0 0 L10 6 L0 12 Z" /></svg>
-                          )}
-                          {isSpeaking && <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-40 pointer-events-none" />}
-                        </button>
-                        <NarratorHoverText
-                          text={line.text}
-                          translation={line.translation}
-                          showTutorialHint={false}
-                          enableHoverDemo={false}
-                          onFirstHover={undefined}
-                          highlightSpeech={highlightSpeech}
-                          speechPlaybackTime={speechPlaybackTime}
-                          speechTimings={speechTimings}
-                          className="font-display text-[14px] sm:text-[15px] leading-[1.5] text-navy/85 italic"
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
 
             {audioError && (
               <p className="text-[11px] text-wine/70 text-center mb-3">{audioError}</p>
