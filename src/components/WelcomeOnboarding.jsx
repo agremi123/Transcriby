@@ -28,6 +28,7 @@ export default function WelcomeOnboarding() {
   const [showLevelPicker, setShowLevelPicker] = React.useState(false);
   const [dialogueDone, setDialogueDone] = React.useState(true);
   const [showEmailForm, setShowEmailForm] = React.useState(false);
+  const [returningEmailForm, setReturningEmailForm] = React.useState(false);
   const [emailInput, setEmailInput] = React.useState(profile.email || '');
   const [authError, setAuthError] = React.useState(null);
   const [linesByNarrator, setLinesByNarrator] = React.useState(WELCOME_LINES_BY_NARRATOR);
