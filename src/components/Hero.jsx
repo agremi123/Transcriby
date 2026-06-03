@@ -2521,8 +2521,68 @@ export function AudioDemoCard({
 
               {/* Vocabulary subtab */}
               {practiceSubTab === 'vocabulary' && (
-                <div className="text-[13px] text-navy/40 italic">
-                  Vocabulary exercise coming soon…
+                <div className="flex flex-col gap-2">
+                  {wordLoading ? (
+                    <div className="flex items-center justify-center py-6"><CorrectionLoading /></div>
+                  ) : wordData?.word ? (
+                    <>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-baseline gap-2 flex-wrap">
+                            <span className="font-display text-[22px] font-bold text-wine italic leading-none">{wordData.word}</span>
+                            <span className="text-[12px] text-navy/45">{wordData.meaning}</span>
+                          </div>
+                          <p className="text-[12px] text-navy/60 italic mt-1 leading-snug">
+                            {wordPlaying && parisianSpeakingText === wordData.example ? (
+                              <HighlightedSpeech text={wordData.example} playbackTime={parisianPlaybackTime} timings={parisianTimings} quote />
+                            ) : <>«{wordData.example}»</>}
+                          </p>
+                          <p className="text-[10px] text-navy/35 mt-0.5">{wordData.exampleTranslation}</p>
+                        </div>
+                        <div className="flex gap-2 flex-shrink-0">
+                          {[{ id: 'jules', src: '/assets/jules.png', label: 'Jules' }, { id: 'lea', src: '/assets/lea.png', label: 'Léa' }].map((n) => (
+                            <div key={n.id} className="flex flex-col items-center gap-1">
+                              <button type="button"
+                                onClick={() => { if (wordPlayingRef.current && narrator === n.id) { stopParisianAudio(); } else { stopParisianAudio(); setNarrator(n.id); playParisianWord(null, n.id); } }}
+                                className={`relative w-10 h-10 rounded-full overflow-hidden transition-all duration-200 ${narrator === n.id && wordPlaying ? 'ring-2 ring-wine shadow-md scale-110' : narrator === n.id ? 'ring-2 ring-wine/50 scale-105' : 'ring-1 ring-line/40 opacity-55 hover:opacity-90 hover:scale-105'}`}>
+                                <img src={n.src} alt={n.label} className="w-full h-full object-cover object-top" />
+                                {wordPlaying && narrator === n.id && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />}
+                              </button>
+                              <span className={`font-display text-[10px] ${narrator === n.id && wordPlaying ? 'text-wine italic' : 'text-navy/50'}`}>{n.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="border-t border-line/40" />
+                      <textarea
+                        className="w-full px-3 py-2 bg-paper/40 border border-line/60 resize-none outline-none font-display text-[14px] text-navy placeholder:text-navy/25 focus:border-wine/30 transition-colors"
+                        rows={2}
+                        placeholder="Écrivez une phrase avec ce mot…"
+                        value={wordUserSentence}
+                        onChange={(e) => { setWordUserSentence(e.target.value); setWordCorrection(null); }}
+                      />
+                      <div className="flex items-center justify-between">
+                        <button type="button" onClick={discoverWord} className="text-[10px] tracking-widest uppercase text-wine/50 hover:text-wine transition-colors">
+                          New word
+                        </button>
+                        {wordUserSentence.trim() && (
+                          <button type="button" onClick={correctWordSentence} disabled={wordCorrecting}
+                            className="px-3 py-1 rounded-full bg-wine text-ivory text-[11px] font-display hover:bg-wine/85 transition-colors disabled:opacity-40">
+                            {wordCorrecting ? '…' : 'Check'}
+                          </button>
+                        )}
+                      </div>
+                      {wordCorrection && (
+                        <div className="text-[13px] font-display text-navy/70 italic border-t border-line/40 pt-2">
+                          <DiffText original={wordUserSentence} corrected={wordCorrection.corrected} side="corrected" />
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <button type="button" onClick={discoverWord} className="text-[13px] text-wine/60 hover:text-wine transition-colors">
+                      Load a word →
+                    </button>
+                  )}
                 </div>
               )}
             </div>
