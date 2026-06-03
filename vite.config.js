@@ -574,6 +574,27 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey) {
 }
 
 function readingMiddleware(apiKey) {
+  const DATA_DIR = resolve(process.cwd(), 'data');
+  const SESSIONS_FILE = resolve(DATA_DIR, 'reading-sessions.json');
+
+  function loadSessions() {
+    try {
+      if (existsSync(SESSIONS_FILE)) return JSON.parse(readFileSync(SESSIONS_FILE, 'utf8'));
+    } catch {}
+    return [];
+  }
+
+  function saveSession(session) {
+    try {
+      if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
+      const sessions = loadSessions();
+      sessions.unshift(session);
+      writeFileSync(SESSIONS_FILE, JSON.stringify(sessions, null, 2));
+    } catch (err) {
+      console.warn('[reading] save failed:', err.message);
+    }
+  }
+
   return async (req, res, next) => {
     if (req.url !== '/api/reading' || req.method !== 'POST') { next(); return; }
     let topic = '';
@@ -588,6 +609,7 @@ function readingMiddleware(apiKey) {
       res.end(JSON.stringify({ passage: '', source: null, questions: [] })); return;
     }
     try {
+      // Step 1: use web search to find a real French article passage
       const searchRes = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -597,46 +619,79 @@ function readingMiddleware(apiKey) {
           'anthropic-beta': 'web-search-2025-03-05',
         },
         body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 1200,
+          model: 'claude-sonnet-4-5',
+          max_tokens: 1000,
           tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-          system: `Search for a recent French-language article about the topic. Extract a clear passage of 5-8 sentences in French verbatim. Return ONLY raw JSON, no markdown: {"passage":"French text...","source":"publication name e.g. Le Monde"}. If no real source, write authentic French and set source to null.`,
+          system: `You are a French reading exercise creator. Search for a real recent French-language article or news piece related to the given topic. Extract verbatim 5-8 sentences from the article in French. Then output ONLY a JSON object on the last line with no surrounding text: {"passage":"...verbatim French sentences...","source":"publication name"}`,
           messages: [{ role: 'user', content: `Find a recent French article about: ${topic}` }],
         }),
       });
       const searchData = await searchRes.json();
+
       let passage = '';
       let source = null;
+
+      // Try to find a JSON block in the response text
       const textBlock = searchData.content?.find((b) => b.type === 'text');
       if (textBlock?.text) {
-        const txt = textBlock.text;
-        // Extract JSON object from anywhere in the response
-        const jsonMatch = txt.match(/\{[\s\S]*"passage"[\s\S]*\}/);
-        if (jsonMatch) {
-          try { ({ passage, source } = JSON.parse(jsonMatch[0])); } catch {}
+        const txt = textBlock.text.trim();
+        // Try to parse the last JSON object in the response
+        const jsonMatches = [...txt.matchAll(/\{[^{}]*"passage"[^{}]*\}/gs)];
+        if (jsonMatches.length > 0) {
+          try { ({ passage, source } = JSON.parse(jsonMatches[jsonMatches.length - 1][0])); } catch {}
         }
-        // Fallback: grab everything after the last colon/newline if no JSON found
-        if (!passage) passage = txt.replace(/^[^{]*I['']?ll[^.]*\.\s*/i, '').trim();
+        // Fallback: strip any preamble sentences that aren't French, take remaining text
+        if (!passage) {
+          // Remove lines like "I found..." or "Here is..." (English preamble)
+          const lines = txt.split('\n').filter((l) => l.trim().length > 20);
+          const frenchLines = lines.filter((l) => /[àâäéèêëîïôöùûüç]/i.test(l) || /\b(le|la|les|un|une|des|et|est|en|de|du|au|ce|qu|pour)\b/i.test(l));
+          if (frenchLines.length > 0) passage = frenchLines.slice(0, 8).join(' ').trim();
+        }
       }
+
+      // Step 2: if web search gave nothing useful, generate synthetic French passage
+      if (!passage || passage.length < 40) {
+        const genRes = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 500,
+            system: 'Write an authentic French passage of exactly 6 sentences about the given topic, at B2 level. Output ONLY the French passage text, nothing else.',
+            messages: [{ role: 'user', content: `Topic: ${topic}` }],
+          }),
+        });
+        const genData = await genRes.json();
+        passage = genData.content?.[0]?.text?.trim() || '';
+        source = null;
+      }
+
       if (!passage) throw new Error('no passage');
 
+      // Step 3: generate comprehension questions
       const qRes = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 700,
-          system: `Create exactly 4 comprehension questions based on the French passage: 2 fill-in-the-blank and 2 multiple choice. Return ONLY raw JSON: {"questions":[{"type":"fill","sentence":"sentence with ___ blank","answer":"word","hint":"base form"},{"type":"fill","sentence":"another with ___","answer":"word","hint":"base"},{"type":"mcq","question":"Question?","options":["A","B","C","D"],"answer":"A"},{"type":"mcq","question":"Question2?","options":["A","B","C","D"],"answer":"B"}]}`,
+          system: `Create exactly 4 comprehension questions based on the French passage: 2 fill-in-the-blank and 2 multiple choice. Return ONLY raw JSON, no markdown: {"questions":[{"type":"fill","sentence":"sentence with ___ blank","answer":"word","hint":"base form"},{"type":"fill","sentence":"another with ___","answer":"word","hint":"base"},{"type":"mcq","question":"Question?","options":["A","B","C","D"],"answer":"A"},{"type":"mcq","question":"Question2?","options":["A","B","C","D"],"answer":"B"}]}`,
           messages: [{ role: 'user', content: passage }],
         }),
       });
       const qData = await qRes.json();
       let qRaw = qData.content?.[0]?.text?.trim() || '{}';
       qRaw = qRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-      const { questions = [] } = JSON.parse(qRaw);
+      let questions = [];
+      try { ({ questions = [] } = JSON.parse(qRaw)); } catch {}
+
+      // Save session
+      saveSession({ id: Date.now(), topic, passage, source, questions, createdAt: new Date().toISOString() });
+
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ passage, source, questions }));
-    } catch {
+    } catch (err) {
+      console.error('[reading] error:', err.message);
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ passage: '', source: null, questions: [] }));
     }
