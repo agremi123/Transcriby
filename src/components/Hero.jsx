@@ -1336,6 +1336,7 @@ export function AudioDemoCard({
     const key = objective || overallWeakness || 'general';
     setSkillProgress((prev) => ({ ...prev, [key]: Math.min(100, (prev[key] || 0) + 5) }));
     bumpTargetProgressByTopic(key, 5);
+    if (readingVocab?.length > 0) gainDailyParisianPoints();
   };
 
   const fetchPreviewCorrection = async (text) => {
