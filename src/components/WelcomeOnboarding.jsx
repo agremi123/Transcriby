@@ -366,7 +366,7 @@ export default function WelcomeOnboarding() {
                     <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
                     {isSpeaking && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-25 pointer-events-none" />}
                   </div>
-                  <div className={`flex-1 rounded-xl px-4 py-3 border transition-colors duration-300 flex items-start gap-2 ${
+                  <div className={`rounded-xl px-4 py-3 border transition-colors duration-300 inline-flex items-start gap-2 ${
                     isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
                   }`}>
                     <button
