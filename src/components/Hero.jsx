@@ -3005,6 +3005,48 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
             </AnimatePresence>
           </div>
 
+          {/* Hint button + popup */}
+          {vocab.length > 0 && (
+            <div className="relative shrink-0 mt-3">
+              {showHint && currentHintWords.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-2 p-3 bg-navy text-ivory rounded-sm flex flex-col gap-2"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[9px] font-mono tracking-[0.2em] uppercase opacity-50">Hint {hintsUsed}</span>
+                    <button type="button" onClick={() => setShowHint(false)} className="text-ivory/40 hover:text-ivory/80 transition-colors text-[14px] leading-none">×</button>
+                  </div>
+                  {currentHintWords.map((w) => (
+                    <div key={w.word} className="flex items-baseline gap-2">
+                      <span className="font-display text-[14px] italic text-wine">{w.word}</span>
+                      <span className="text-[11px] text-ivory/60">—</span>
+                      <span className="text-[12px] text-ivory/80">{w.definition}</span>
+                    </div>
+                  ))}
+                  {hasMoreHints && (
+                    <button
+                      type="button"
+                      onClick={canAffordHint ? useHint : undefined}
+                      className={`mt-1 self-start text-[10px] font-mono tracking-widest uppercase transition-colors ${canAffordHint ? 'text-wine hover:text-wine/70 cursor-pointer' : 'text-ivory/20 cursor-not-allowed'}`}
+                    >
+                      {canAffordHint ? `Next hint — ${HINT_COST} Parisianism` : `Not enough Parisianism (need ${HINT_COST})`}
+                    </button>
+                  )}
+                </motion.div>
+              )}
+              <button
+                type="button"
+                onClick={showHint ? () => setShowHint(false) : useHint}
+                className="flex items-center gap-1.5 text-[10px] font-mono tracking-widest uppercase text-navy/35 hover:text-navy/60 transition-colors"
+              >
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.2"/><path d="M6 5.5v3M6 3.5h.01" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+                {showHint ? 'Hide hint' : hintsUsed === 0 ? '1 hint available' : `Hint ${hintsUsed} — next costs ${HINT_COST} pts`}
+              </button>
+            </div>
+          )}
+
           {/* Byline + pagination — fixed at bottom */}
           <div className="flex items-end justify-between mt-4 shrink-0">
             {byline ? (
