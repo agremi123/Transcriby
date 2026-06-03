@@ -2792,33 +2792,34 @@ export default function Hero() {
   const learnLevel = searchParams.get('level');
   const practiceTopic = searchParams.get('practice');
   const practiceType = searchParams.get('ptype');
-  const isReadingMode = practiceType === 'reading' && !!practiceTopic;
 
+  const [readingActive, setReadingActive] = React.useState(false);
+  const [readingTopic, setReadingTopic] = React.useState('');
   const [readingPassage, setReadingPassage] = React.useState('');
   const [readingSource, setReadingSource] = React.useState(null);
   const [readingLoading, setReadingLoading] = React.useState(false);
-  // Persist topic in a ref so it survives after clearPracticeParam wipes the URL
-  const readingTopicRef = React.useRef(null);
-  if (isReadingMode && practiceTopic) readingTopicRef.current = practiceTopic;
-  const activeReadingTopic = readingTopicRef.current;
 
+  // Detect reading mode from URL once — store in state so it survives clearPracticeParam
   React.useEffect(() => {
-    if (!isReadingMode || !practiceTopic) return;
-    setReadingLoading(true);
-    setReadingPassage('');
-    setReadingSource(null);
-    fetch('/api/reading', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic: practiceTopic }),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        setReadingPassage(data.passage || '');
-        setReadingSource(data.source || null);
-        setReadingLoading(false);
+    if (practiceType === 'reading' && practiceTopic && !readingActive) {
+      setReadingActive(true);
+      setReadingTopic(practiceTopic);
+      setReadingLoading(true);
+      setReadingPassage('');
+      setReadingSource(null);
+      fetch('/api/reading', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: practiceTopic }),
       })
-      .catch(() => setReadingLoading(false));
+        .then((r) => r.json())
+        .then((data) => {
+          setReadingPassage(data.passage || '');
+          setReadingSource(data.source || null);
+          setReadingLoading(false);
+        })
+        .catch(() => setReadingLoading(false));
+    }
   }, [practiceTopic, practiceType]);
   const [introNarrator, setIntroNarrator] = React.useState(null);
   const [introPlaying, setIntroPlaying] = React.useState(null); // null | 'lea' | 'jules'
