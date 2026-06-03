@@ -183,6 +183,11 @@ export default function ReadingExercise() {
                   <p className="font-display text-[19px] sm:text-[21px] italic leading-[1.7] text-navy/85 whitespace-pre-wrap">
                     {passage}
                   </p>
+                  {source && (
+                    <p className="mt-5 pt-4 border-t border-line/40 text-[10px] font-mono tracking-[0.14em] uppercase text-navy/30">
+                      Source — {source}
+                    </p>
+                  )}
                 </div>
                 <div className="flex justify-center">
                   <button
