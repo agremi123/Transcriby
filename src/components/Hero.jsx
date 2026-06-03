@@ -2967,25 +2967,25 @@ export default function Hero() {
         <div className="grid lg:grid-cols-[1fr_1.5fr] gap-8 items-center h-[calc(100vh-96px)]">
           <div className="relative flex flex-col justify-center overflow-visible">
             {readingActive ? (
-              <div className="flex flex-col gap-4 pr-4">
-                <div className="inline-flex items-center gap-2 self-start px-3 py-1.5 bg-navy text-ivory rounded-sm">
-                  <span className="text-[9px] font-mono tracking-[0.2em] uppercase opacity-60">Reading</span>
-                  <span className="text-[9px] font-mono opacity-30">—</span>
-                  <span className="text-[10px] font-mono tracking-wide opacity-90 max-w-[220px] truncate">{readingTopic}</span>
-                </div>
+              <div className="flex flex-col pr-4 overflow-y-auto max-h-[calc(100vh-120px)]">
                 {readingLoading ? (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 py-10">
                     <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
                     <span className="text-[14px] text-navy/40 font-display italic">Searching for an article…</span>
                   </div>
                 ) : (
                   <>
-                    <p className="font-display text-[20px] sm:text-[24px] leading-[1.65] text-navy/85 italic">
+                    {readingTitle && (
+                      <h2 className="font-display text-[28px] sm:text-[34px] leading-[1.15] tracking-[-0.01em] text-navy mb-5">
+                        {readingTitle}
+                      </h2>
+                    )}
+                    <p className="font-display text-[17px] sm:text-[19px] leading-[1.75] text-navy/80">
                       {readingPassage}
                     </p>
-                    {readingSource && (
-                      <p className="text-[10px] font-mono tracking-[0.16em] uppercase text-navy/30 border-t border-line/40 pt-3 mt-1">
-                        Source — {readingSource}
+                    {(readingAuthor || readingDate || readingSource) && (
+                      <p className="text-[10px] font-mono tracking-[0.12em] text-navy/35 border-t border-line/40 pt-3 mt-6">
+                        {[readingAuthor, readingDate, readingSource].filter(Boolean).join(' — ')}
                       </p>
                     )}
                   </>
