@@ -3205,6 +3205,7 @@ function ReadingArticlePanel({
               )}
 
             </div>
+            </div>
           </div>
         </>
       )}
