@@ -2967,28 +2967,28 @@ export default function Hero() {
         <div className="grid lg:grid-cols-[1fr_1.5fr] gap-8 items-center h-[calc(100vh-96px)]">
           <div className="relative flex flex-col justify-center overflow-visible">
             {readingActive ? (
-              <div className="flex flex-col pr-4 overflow-y-auto max-h-[calc(100vh-120px)]">
+              <div className="flex flex-col h-full justify-center pr-4">
                 {readingLoading ? (
-                  <div className="flex items-center gap-3 py-10">
+                  <div className="flex items-center gap-3">
                     <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
                     <span className="text-[14px] text-navy/40 font-display italic">Searching for an article…</span>
                   </div>
                 ) : (
-                  <>
+                  <div className="flex flex-col overflow-hidden" style={{ maxHeight: 'var(--card-height, 520px)' }}>
                     {readingTitle && (
-                      <h2 className="font-display text-[28px] sm:text-[34px] leading-[1.15] tracking-[-0.01em] text-navy mb-5">
+                      <h2 className="font-display text-[22px] sm:text-[26px] leading-[1.2] tracking-[-0.01em] text-navy mb-4 shrink-0 line-clamp-3">
                         {readingTitle}
                       </h2>
                     )}
-                    <p className="font-display text-[17px] sm:text-[19px] leading-[1.75] text-navy/80">
+                    <p className="font-display text-[15px] sm:text-[16px] leading-[1.7] text-navy/80 overflow-hidden flex-1 min-h-0" style={{ display: '-webkit-box', WebkitLineClamp: 12, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                       {readingPassage}
                     </p>
                     {(readingAuthor || readingDate || readingSource) && (
-                      <p className="text-[10px] font-mono tracking-[0.12em] text-navy/35 border-t border-line/40 pt-3 mt-6">
+                      <p className="text-[10px] font-mono tracking-[0.12em] text-navy/35 border-t border-line/40 pt-3 mt-4 shrink-0">
                         {[readingAuthor, readingDate, readingSource].filter(Boolean).join(' — ')}
                       </p>
                     )}
-                  </>
+                  </div>
                 )}
               </div>
             ) : (
