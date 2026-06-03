@@ -2797,10 +2797,16 @@ export default function Hero() {
   const [readingPassage, setReadingPassage] = React.useState('');
   const [readingSource, setReadingSource] = React.useState(null);
   const [readingLoading, setReadingLoading] = React.useState(false);
+  // Persist topic in a ref so it survives after clearPracticeParam wipes the URL
+  const readingTopicRef = React.useRef(null);
+  if (isReadingMode && practiceTopic) readingTopicRef.current = practiceTopic;
+  const activeReadingTopic = readingTopicRef.current;
 
   React.useEffect(() => {
-    if (!isReadingMode) return;
+    if (!isReadingMode || !practiceTopic) return;
     setReadingLoading(true);
+    setReadingPassage('');
+    setReadingSource(null);
     fetch('/api/reading', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
