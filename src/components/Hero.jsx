@@ -2815,21 +2815,23 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date }) 
   const isFirst = page === 0;
 
   return (
-    <div className="flex flex-col h-full justify-center pr-4">
+    <div className="flex flex-col pr-4" style={{ height: 520 }}>
       {loading ? (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mt-auto mb-auto">
           <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
           <span className="text-[14px] text-navy/40 font-display italic">Searching for an article…</span>
         </div>
       ) : (
-        <div className="flex flex-col overflow-hidden" style={{ maxHeight: 'var(--card-height, 520px)' }}>
+        <>
+          {/* Title — fixed at top, never moves */}
           {title && (
-            <h2 className="font-display text-[26px] sm:text-[30px] leading-[1.2] tracking-[-0.01em] mb-4 shrink-0 line-clamp-2" style={{ color: '#8b1e2d' }}>
+            <h2 className="font-display text-[26px] sm:text-[30px] leading-[1.2] tracking-[-0.01em] mb-5 shrink-0 line-clamp-2" style={{ color: '#8b1e2d' }}>
               {title}
             </h2>
           )}
 
-          <div className="relative overflow-hidden" style={{ minHeight: 200 }}>
+          {/* Article text — fixed height zone, slides between pages */}
+          <div className="relative overflow-hidden flex-1">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.p
                 key={page}
@@ -2845,7 +2847,8 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date }) 
             </AnimatePresence>
           </div>
 
-          <div className="flex items-center justify-between mt-4 shrink-0">
+          {/* Byline + pagination — fixed at bottom */}
+          <div className="flex items-end justify-between mt-4 shrink-0">
             {byline ? (
               <p className="text-[10px] font-mono tracking-[0.12em] border-t pt-3 flex-1 mr-4" style={{ color: '#c0392b', borderColor: 'rgba(192,57,43,0.2)' }}>
                 {byline}
@@ -2853,30 +2856,22 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date }) 
             ) : <span className="flex-1" />}
 
             {pages.length > 1 && (
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={goPrev}
-                  disabled={isFirst}
+              <div className="flex items-center gap-2 shrink-0 pb-1">
+                <button type="button" onClick={goPrev} disabled={isFirst}
                   className="w-7 h-7 flex items-center justify-center rounded-full border border-navy/20 text-navy/40 hover:border-navy/40 hover:text-navy/70 disabled:opacity-20 transition-colors"
-                  aria-label="Previous page"
-                >
+                  aria-label="Previous page">
                   <svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M6 1L2 6l4 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </button>
                 <span className="text-[10px] font-mono text-navy/30">{page + 1}/{pages.length}</span>
-                <button
-                  type="button"
-                  onClick={goNext}
-                  disabled={isLast}
+                <button type="button" onClick={goNext} disabled={isLast}
                   className="w-7 h-7 flex items-center justify-center rounded-full border border-navy/20 text-navy/40 hover:border-navy/40 hover:text-navy/70 disabled:opacity-20 transition-colors"
-                  aria-label="Next page"
-                >
+                  aria-label="Next page">
                   <svg width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M2 1l4 5-4 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </button>
               </div>
             )}
           </div>
-        </div>
+        </>
       )}
     </div>
   );
