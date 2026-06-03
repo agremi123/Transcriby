@@ -3050,50 +3050,26 @@ function ReadingArticlePanel({ loading, title, passage, source, author, date, vo
             <div className="flex items-center gap-3 shrink-0 pb-1">
               {/* Hint button inline with arrows */}
               {vocab.length > 0 && (
-                <div className="relative">
+                <div className="flex flex-col items-end gap-1.5">
                   <button
                     type="button"
-                    onClick={showHint ? () => setShowHint(false) : useHint}
-                    className={`${NAV_CTA_CLASS} ${showHint ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
+                    onClick={handleTranslateClick}
+                    className={`${NAV_CTA_CLASS} ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
                     aria-label="Translate hard words"
+                    aria-pressed={translateActive}
                   >
                     Translate hard words
                   </button>
-
-                  {/* Popup floats upward, no layout impact */}
-                  <AnimatePresence>
-                    {showHint && currentHintWords.length > 0 && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 8 }}
-                        transition={{ duration: 0.18 }}
-                        className="absolute bottom-full right-0 mb-2 p-3 bg-navy text-ivory rounded-sm flex flex-col gap-2 z-20"
-                        style={{ minWidth: 200, maxWidth: 280 }}
-                      >
-                        <div className="flex items-center justify-between mb-0.5">
-                          <span className="text-[9px] font-mono tracking-[0.2em] uppercase opacity-40">Hint {hintsUsed}</span>
-                          <button type="button" onClick={() => setShowHint(false)} className="text-ivory/40 hover:text-ivory/80 transition-colors text-[14px] leading-none ml-4">×</button>
-                        </div>
-                        {currentHintWords.map((w) => (
-                          <div key={w.word} className="flex items-baseline gap-2 flex-wrap">
-                            <span className="font-display text-[13px] italic text-wine">{w.word}</span>
-                            <span className="text-[11px] text-ivory/50">—</span>
-                            <span className="text-[11px] text-ivory/75">{w.definition}</span>
-                          </div>
-                        ))}
-                        {hasMoreHints && (
-                          <button
-                            type="button"
-                            onClick={canAffordHint ? useHint : undefined}
-                            className={`mt-0.5 self-start text-[9px] font-mono tracking-widest uppercase transition-colors ${canAffordHint ? 'text-wine/80 hover:text-wine cursor-pointer' : 'text-ivory/20 cursor-not-allowed'}`}
-                          >
-                            {canAffordHint ? `+hint — ${HINT_COST} pts` : `need ${HINT_COST} Parisianism`}
-                          </button>
-                        )}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {translateActive && hasMoreHints && revealedBatchCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={revealMoreWords}
+                      disabled={!canAffordHint}
+                      className={`text-[9px] font-mono tracking-widest uppercase transition-colors ${canAffordHint ? 'text-wine/70 hover:text-wine' : 'text-navy/25 cursor-not-allowed'}`}
+                    >
+                      {canAffordHint ? `+ more words — ${HINT_COST} pts` : `need ${HINT_COST} Parisianism`}
+                    </button>
+                  )}
                 </div>
               )}
 
