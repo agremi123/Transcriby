@@ -397,22 +397,6 @@ export default function WelcomeOnboarding() {
               );
             })()}
 
-            {/* REMOVE OLD grid — replaced above */}
-            {false && (showLevelPicker || levelLocked) && (
-              <div className="grid grid-cols-2 gap-4 sm:gap-8 mb-5">
-                {(['lea', 'jules']).map((id) => {
-                  const n = NARRATORS[id];
-                  const line = linesByNarrator[id] || WELCOME_LINES_BY_NARRATOR[id];
-                  const isSpeaking = activeNarrator === id;
-                  const highlightSpeech = isSpeaking && speechText === line.text && speechPlaybackTime != null;
-                  return (
-                    <div key={id} className="flex flex-col items-center gap-2 min-w-0">
-                      <div className={`relative w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] rounded-full overflow-hidden shadow-lg transition-all duration-300 ${
-                        isSpeaking ? 'ring-4 ring-wine scale-[1.04] shadow-xl' : 'ring-2 ring-line/60'
-                      }`}>
-                        <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
-                        {isSpeaking && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-25 pointer-events-none" />}
-
             {audioError && (
               <p className="text-[11px] text-wine/70 text-center mb-3">{audioError}</p>
             )}
