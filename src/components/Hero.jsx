@@ -2818,7 +2818,10 @@ export default function Hero() {
         .then((r) => r.json())
         .then((data) => {
           setReadingPassage(data.passage || '');
+          setReadingTitle(data.title || '');
           setReadingSource(data.source || null);
+          setReadingAuthor(data.author || null);
+          setReadingDate(data.date || null);
           setReadingLoading(false);
         })
         .catch(() => setReadingLoading(false));
