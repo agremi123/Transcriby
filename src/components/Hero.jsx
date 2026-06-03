@@ -3315,6 +3315,7 @@ export default function Hero() {
               initialLearnLevel={learnLevel}
               onLearnModeHandled={clearLearnParams}
               onPracticeTopicHandled={clearPracticeParam}
+              readingVocab={readingVocab}
             />
           </div>
         </div>
