@@ -3317,7 +3317,7 @@ function ReadingArticlePanel({
   );
 }
 
-const WORDS_PER_PAGE = 80;
+const WORDS_PER_PAGE = 120;
 
 function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vocab = [], parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
   const [playing, setPlaying] = React.useState(false);
