@@ -1838,6 +1838,9 @@ export function AudioDemoCard({
     stopRaf();
     if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
     reset();
+    clearTabCapture();
+    setSource('mic');
+    setTabCaptureError(null);
     setTime(0);
     setSpeakCorrection(null);
     setFetchingCorrection(false);
