@@ -2044,7 +2044,7 @@ export function AudioDemoCard({
           </button>
         </div>
 
-      <div className="flex border-b border-line shrink-0" style={{ visibility: (activeTab === 'practice' || vocabLevel) ? 'visible' : 'hidden' }}>
+      <div className="flex border-b border-line shrink-0" style={{ visibility: (activeTab === 'practice' || vocabLevel || (practiceExercises?.length > 0)) ? 'visible' : 'hidden' }}>
           <button type="button" onClick={() => setActiveTab('transcript')}
             className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${activeTab === 'transcript' ? 'border-navy text-navy' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
             Chat
