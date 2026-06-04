@@ -66,12 +66,12 @@ function FeatureCard({ icon, title, desc, delay }) {
 
 export function UniversitiesBar() {
   const items = [
-    { name: 'Université de Montréal', style: 'font-display italic text-[22px]' },
-    { name: 'HEC PARIS', style: 'font-display text-[20px] tracking-[0.15em]' },
-    { name: 'McGill UNIVERSITY', style: 'font-display text-[20px]' },
-    { name: 'Sorbonne Université', style: 'font-display italic text-[20px]' },
-    { name: 'ÉTS', style: 'font-display text-[22px] tracking-[0.3em]' },
-    { name: 'Alliance Française', style: 'font-display italic text-[18px]' },
+    { name: 'InnerFrench', style: 'font-display italic text-[22px]' },
+    { name: 'EASY FRENCH', style: 'font-display text-[20px] tracking-[0.15em]' },
+    { name: 'RFI Français Facile', style: 'font-display italic text-[18px]' },
+    { name: 'Français Authentique', style: 'font-display italic text-[19px]' },
+    { name: 'CHOSES À SAVOIR', style: 'font-display text-[17px] tracking-[0.1em]' },
+    { name: 'Coffee Break French', style: 'font-display italic text-[18px]' },
   ];
 
   return (
@@ -79,7 +79,7 @@ export function UniversitiesBar() {
       <Container>
         <Reveal>
           <p className="text-center eyebrow text-navy/55 mb-9">
-            Trusted by ambitious learners worldwide
+            All your favorite French podcasts, gathered here
           </p>
         </Reveal>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 items-center">
