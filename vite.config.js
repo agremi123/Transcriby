@@ -915,7 +915,7 @@ function listeningMiddleware(anthropicKey, deepgramKey) {
 
       res.end(JSON.stringify({
         title: episode.title,
-        audioUrl: episode.audioUrl,
+        audioUrl: episode.audioUrl ? `/api/audio-proxy?url=${encodeURIComponent(episode.audioUrl)}` : null,
         transcript,
         source: 'RFI — Journal en Français Facile',
         date: episode.pubDate,
