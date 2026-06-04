@@ -3643,11 +3643,11 @@ export default function Hero() {
           <div className="flex items-center justify-end h-full">
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
-              initialTopic={practiceTopic}
+              initialTopic={practiceType === 'reading' ? null : practiceTopic}
               initialLearnMode={learnMode}
               initialLearnLevel={learnLevel}
               onLearnModeHandled={clearLearnParams}
-              onPracticeTopicHandled={clearPracticeParam}
+              onPracticeTopicHandled={practiceType === 'reading' ? undefined : clearPracticeParam}
               readingVocab={readingVocab}
             />
           </div>
