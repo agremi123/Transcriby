@@ -2873,7 +2873,9 @@ export function AudioDemoCard({
         ) : null}
       </div>
 
-      {error && <p className="px-7 pb-4 text-[12px] text-wine">{error}</p>}
+      {(error || tabCaptureError) && (
+        <p className="px-7 pb-4 text-[12px] text-wine">{error || tabCaptureError}</p>
+      )}
       </div>{/* end main content column */}
 
       {/* Level sidebar (1/3) — fullscreen only */}
