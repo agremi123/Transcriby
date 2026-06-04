@@ -2496,7 +2496,7 @@ export function AudioDemoCard({
             ) : (!isLive || !hadContentRef.current) && (
               isRecording ? (
                 <p className="font-display text-[17px] leading-snug text-navy/30">
-                  Start speaking…
+                  {source === 'tab' ? 'Listening to tab audio…' : 'Start speaking…'}
                 </p>
               ) : status !== 'connecting' ? (
                 <p className="font-display text-[17px] leading-snug text-navy/30">
