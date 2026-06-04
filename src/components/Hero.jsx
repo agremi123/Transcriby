@@ -3834,6 +3834,20 @@ export default function Hero() {
                 dailyParisianPoints={dailyParisianPoints}
                 onSpendExperience={spendExperience}
               />
+            ) : speakingActive ? (
+              <SpeakingChallengePanel
+                loading={speakingLoading}
+                narratorId={speakingNarrator}
+                openingLine={speakingOpeningLine}
+                topicLabel={speakingTopicLabel}
+              />
+            ) : writingActive ? (
+              <WritingChallengePanel
+                loading={writingLoading}
+                prompt={writingPrompt}
+                guidelines={writingGuidelines}
+                wordTarget={writingWordTarget}
+              />
             ) : (
             <div className="flex flex-col items-center text-center overflow-visible">
             <h1 className="font-display text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-2">
