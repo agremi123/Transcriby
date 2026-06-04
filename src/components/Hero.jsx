@@ -3375,24 +3375,29 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
 
           {/* Audio player */}
           {audioUrl && (
-            <div className="shrink-0 mb-4 flex items-center gap-3 px-1">
+            <div className="shrink-0 mb-5 bg-navy/5 border border-navy/10 px-5 py-4">
               <audio ref={audioRef} src={audioUrl} preload="metadata"
                 onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
                 onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
                 onEnded={() => setPlaying(false)} />
-              <button type="button" onClick={togglePlay}
-                className="w-9 h-9 rounded-full bg-wine text-ivory flex items-center justify-center shrink-0 hover:bg-wine2 transition-colors">
-                {playing
-                  ? <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><rect x="0" y="0" width="3" height="12" rx="0.5" fill="white"/><rect x="6" y="0" width="3" height="12" rx="0.5" fill="white"/></svg>
-                  : <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M1 1l8 5-8 5V1z" fill="white"/></svg>}
-              </button>
-              <div className="flex-1 flex flex-col gap-1">
-                <div className="w-full h-1.5 bg-navy/10 rounded-full cursor-pointer relative" onClick={seek}>
-                  <div className="h-full bg-wine rounded-full transition-all" style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }} />
-                </div>
-                <div className="flex justify-between text-[10px] font-mono text-navy/35">
-                  <span>{Math.floor(currentTime / 60)}:{String(Math.floor(currentTime % 60)).padStart(2, '0')}</span>
-                  <span>{Math.floor(duration / 60)}:{String(Math.floor(duration % 60)).padStart(2, '0')}</span>
+              <p className="text-[10px] tracking-widest uppercase font-mono text-navy/35 mb-3">Écoute l'épisode</p>
+              <div className="flex items-center gap-4">
+                <button type="button" onClick={togglePlay}
+                  className="w-14 h-14 rounded-full bg-wine text-ivory flex items-center justify-center shrink-0 hover:bg-wine2 active:scale-95 transition-all shadow-md">
+                  {playing
+                    ? <svg width="14" height="16" viewBox="0 0 14 16" fill="none"><rect x="0" y="0" width="4" height="16" rx="1" fill="white"/><rect x="9" y="0" width="4" height="16" rx="1" fill="white"/></svg>
+                    : <svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1l11 7L2 15V1z" fill="white"/></svg>}
+                </button>
+                <div className="flex-1 flex flex-col gap-2">
+                  <div className="w-full h-2 bg-navy/10 rounded-full cursor-pointer relative group" onClick={seek}>
+                    <div className="h-full bg-wine rounded-full transition-all" style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }} />
+                    <div className="absolute inset-y-0 w-3 h-3 rounded-full bg-wine border-2 border-white shadow -translate-y-[2px] transition-all hidden group-hover:block"
+                      style={{ left: duration ? `calc(${(currentTime / duration) * 100}% - 6px)` : '-6px' }} />
+                  </div>
+                  <div className="flex justify-between text-[11px] font-mono text-navy/40">
+                    <span>{Math.floor(currentTime / 60)}:{String(Math.floor(currentTime % 60)).padStart(2, '0')}</span>
+                    <span>{duration ? `${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}` : '--:--'}</span>
+                  </div>
                 </div>
               </div>
             </div>
