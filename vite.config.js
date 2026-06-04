@@ -789,28 +789,47 @@ function sessionAudioMiddleware() {
   };
 }
 
+// Max bytes for a ~3-minute audio clip at common podcast bitrates:
+// 128kbps → 3MB ≈ 3 min | 64kbps → 3MB ≈ 6 min | 192kbps → 3MB ≈ 2 min
+const AUDIO_MAX_BYTES = 3_000_000;
+
 function audioProxyMiddleware() {
   return async (req, res, next) => {
     if (!req.url.startsWith('/api/audio-proxy')) { next(); return; }
-    const urlParam = new URL(req.url, 'http://localhost').searchParams.get('url');
+    const params = new URL(req.url, 'http://localhost').searchParams;
+    const urlParam = params.get('url');
     if (!urlParam) { res.statusCode = 400; res.end('Missing url param'); return; }
+
+    // Allow caller to override max bytes; default caps at 3 min worth
+    const maxBytes = parseInt(params.get('maxbytes') || '0', 10) || AUDIO_MAX_BYTES;
+    const clientRange = req.headers['range'] || '';
+
     try {
+      // If the client requests a specific range, honour it but still respect maxBytes ceiling
+      let upstreamRange = clientRange;
+      if (!clientRange) {
+        // No client range: request only the first maxBytes bytes
+        upstreamRange = `bytes=0-${maxBytes - 1}`;
+      }
+
       const upstream = await fetch(urlParam, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0',
-          'Range': req.headers['range'] || '',
-        },
+        headers: { 'User-Agent': 'Mozilla/5.0', 'Range': upstreamRange },
       });
-      res.statusCode = upstream.status;
+
       const ct = upstream.headers.get('content-type') || 'audio/mpeg';
-      const cl = upstream.headers.get('content-length');
-      const cr = upstream.headers.get('content-range');
       res.setHeader('Content-Type', ct);
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Accept-Ranges', 'bytes');
-      if (cl) res.setHeader('Content-Length', cl);
-      if (cr) res.setHeader('Content-Range', cr);
-      const buf = Buffer.from(await upstream.arrayBuffer());
+
+      let buf = Buffer.from(await upstream.arrayBuffer());
+
+      // Hard-cap: never serve more than maxBytes regardless of what upstream returned
+      if (buf.length > maxBytes) buf = buf.subarray(0, maxBytes);
+
+      res.statusCode = clientRange ? (upstream.status === 206 ? 206 : 200) : 200;
+      res.setHeader('Content-Length', buf.length);
+      // Provide a fake content-range so the player knows the slice boundaries
+      res.setHeader('Content-Range', `bytes 0-${buf.length - 1}/*`);
       res.end(buf);
     } catch (err) {
       res.statusCode = 502; res.end('Proxy error: ' + err.message);
