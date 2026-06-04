@@ -3425,7 +3425,7 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
 
           {/* Transcript page — fills remaining space, no scroll */}
           <div className="flex-1 min-h-0 overflow-hidden">
-            <PassageWithVocabHighlights passage={currentPageText} vocabEntries={revealedWords} highlightActive={translateActive && revealedWords.length > 0} />
+            <PassageWithVocabHighlights passage={currentPageText} vocabEntries={revealedWords} highlightActive={translateActive && revealedWords.length > 0} className="font-display text-[17px] leading-[1.65] text-navy/80" />
           </div>
 
           {/* Footer: byline + points + pagination + translate */}
