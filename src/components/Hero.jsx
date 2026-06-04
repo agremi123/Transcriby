@@ -193,54 +193,51 @@ function NarratorAnswerLoading({ narratorId, hideName = false }) {
   );
 }
 
-// Fill-in-the-blank exercise
+// Multiple-choice exercise
 function PracticeExercise({ exercise, skillPct, onCorrect }) {
-  const [value, setValue] = React.useState('');
+  const [selected, setSelected] = React.useState(null);
   const reportedRef = React.useRef(false);
-  const hasInput = value.trim().length > 0;
-  const isCorrect = hasInput && value.trim().toLowerCase() === exercise.answer.trim().toLowerCase();
 
-  React.useEffect(() => {
-    if (isCorrect && !reportedRef.current) {
+  const options = exercise.options || [];
+  const answer = exercise.answer || '';
+  const question = exercise.question || exercise.sentence || '';
+
+  const handleSelect = (opt) => {
+    if (selected !== null) return;
+    setSelected(opt);
+    if (opt === answer && !reportedRef.current) {
       reportedRef.current = true;
       onCorrect?.();
     }
-  }, [isCorrect]);
+  };
 
   return (
-    <div className="space-y-1">
-      <p className="font-display text-[17px] leading-snug text-navy">
-        {exercise.sentence.split('___').map((part, i, arr) => (
-          <React.Fragment key={i}>
-            {part}
-            {i < arr.length - 1 && (
-              <>
-                <input
-                  type="text"
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
-                  className={`mx-1 border-b bg-transparent outline-none text-center text-[17px] font-display transition-colors duration-150 ${
-                    !hasInput ? 'border-navy/30 text-navy'
-                    : isCorrect ? 'border-green-600 text-green-700'
-                    : 'border-wine text-wine'
-                  }`}
-                  style={{ width: Math.max(90, exercise.answer.length * 12) }}
-                  spellCheck={false}
-                  autoComplete="off"
-                />
-                {exercise.hint && (
-                  <span className="text-[14px] text-navy/40 font-display ml-1">({exercise.hint})</span>
-                )}
-                {hasInput && (
-                  <span className={`text-[13px] font-mono ml-1 transition-colors ${isCorrect ? 'text-green-600' : 'text-wine/60'}`}>
-                    {isCorrect ? '✓' : '✗'}
-                  </span>
-                )}
-              </>
-            )}
-          </React.Fragment>
-        ))}
-      </p>
+    <div className="space-y-2">
+      <p className="font-display text-[16px] leading-snug text-navy">{question}</p>
+      <div className="flex flex-col gap-1.5">
+        {options.map((opt, i) => {
+          const isSelected = selected === opt;
+          const isCorrect = opt === answer;
+          let cls = 'border border-line/60 text-navy/70 hover:border-wine/40 hover:text-navy transition-colors';
+          if (isSelected && isCorrect) cls = 'border border-green-500 bg-green-50 text-green-700';
+          else if (isSelected && !isCorrect) cls = 'border border-wine/60 bg-wine/5 text-wine';
+          else if (selected !== null && isCorrect) cls = 'border border-green-500 bg-green-50 text-green-700';
+          return (
+            <button
+              key={i}
+              type="button"
+              onClick={() => handleSelect(opt)}
+              disabled={selected !== null}
+              className={`text-left px-3 py-1.5 text-[14px] font-display transition-colors ${cls}`}
+            >
+              <span className="text-[11px] font-mono text-navy/30 mr-2">{String.fromCharCode(65 + i)}.</span>
+              {opt}
+              {isSelected && isCorrect && <span className="ml-1.5 text-green-600 text-[12px]">✓</span>}
+              {isSelected && !isCorrect && <span className="ml-1.5 text-wine text-[12px]">✗</span>}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
