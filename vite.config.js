@@ -772,6 +772,35 @@ function practiceMiddleware(apiKey) {
   };
 }
 
+function audioProxyMiddleware() {
+  return async (req, res, next) => {
+    if (!req.url.startsWith('/api/audio-proxy')) { next(); return; }
+    const urlParam = new URL(req.url, 'http://localhost').searchParams.get('url');
+    if (!urlParam) { res.statusCode = 400; res.end('Missing url param'); return; }
+    try {
+      const upstream = await fetch(urlParam, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0',
+          'Range': req.headers['range'] || '',
+        },
+      });
+      res.statusCode = upstream.status;
+      const ct = upstream.headers.get('content-type') || 'audio/mpeg';
+      const cl = upstream.headers.get('content-length');
+      const cr = upstream.headers.get('content-range');
+      res.setHeader('Content-Type', ct);
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Accept-Ranges', 'bytes');
+      if (cl) res.setHeader('Content-Length', cl);
+      if (cr) res.setHeader('Content-Range', cr);
+      const buf = Buffer.from(await upstream.arrayBuffer());
+      res.end(buf);
+    } catch (err) {
+      res.statusCode = 502; res.end('Proxy error: ' + err.message);
+    }
+  };
+}
+
 function listeningMiddleware(anthropicKey, deepgramKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/listening' || req.method !== 'POST') { next(); return; }
