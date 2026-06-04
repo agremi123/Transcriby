@@ -3625,6 +3625,7 @@ export default function Hero() {
   const [speakingLoading, setSpeakingLoading] = React.useState(false);
   const [speakingNarrator, setSpeakingNarrator] = React.useState('lea');
   const [speakingOpeningLine, setSpeakingOpeningLine] = React.useState('');
+  const [speakingOpeningTranslation, setSpeakingOpeningTranslation] = React.useState('');
   const [speakingTopicLabel, setSpeakingTopicLabel] = React.useState('');
 
   React.useEffect(() => {
