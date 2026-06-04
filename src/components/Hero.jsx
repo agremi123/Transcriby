@@ -1290,11 +1290,11 @@ export function AudioDemoCard({
     setAssessingLevel(false);
   };
 
-  const loadPractice = async (topic, { openFullscreen = false, autoSwitch = true } = {}) => {
+  const loadPractice = async (topic, { openFullscreen = false } = {}) => {
     const t = topic || overallWeakness;
     if (!t) return;
     if (openFullscreen) onOpenFullscreen?.(t);
-    if (autoSwitch) setActiveTab('practice');
+    setActiveTab('practice');
     setPracticeExercises(null);
     setCompletedInBatch(new Set());
     setLoadingPractice(true);
@@ -1642,7 +1642,7 @@ export function AudioDemoCard({
     if (!initialTopic) return;
     setOverallWeakness(initialTopic);
     setPracticeTopics([initialTopic]);
-    loadPractice(initialTopic, { autoSwitch: false });
+    loadPractice(initialTopic);
     onPracticeTopicHandled?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -2516,10 +2516,13 @@ export function AudioDemoCard({
 
           </div>
           </div>
-          ) : (
-            <div className={`${transcriptHeight} flex flex-col min-h-0 overflow-hidden`}>
+          ) : null}
+
+          {/* Practice tab */}
+          {activeTab === 'practice' && (
+            <div className="px-4 pt-3 pb-4 border-t border-line/50 space-y-4">
               {/* Subtabs */}
-              <div className="flex gap-0 border-b border-line/40 px-4 shrink-0">
+              <div className="flex gap-0 border-b border-line/40 -mx-4 px-4 mb-2">
                 <button
                   type="button"
                   onClick={() => setPracticeSubTab('comprehension')}
@@ -2535,73 +2538,78 @@ export function AudioDemoCard({
                   Vocabulary
                 </button>
               </div>
-              <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-4 scroll-premium">
-                {/* Comprehension subtab */}
-                {practiceSubTab === 'comprehension' && (
-                  <>
-                    {practiceTopics.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 pb-2 border-b border-line/40">
-                        {practiceTopics.map((topic) => {
-                          const pct = Math.min(skillProgress[topic] ?? 0, 100);
-                          return (
-                            <button
-                              key={topic}
-                              type="button"
-                              onClick={() => startPractice(topic)}
-                              className="relative overflow-hidden border border-line/60 hover:border-wine/40 transition-colors group"
-                              style={{ height: 24 }}
-                            >
-                              <div className="absolute inset-y-0 left-0 bg-wine/10 group-hover:bg-wine/15 transition-all duration-500" style={{ width: `${pct}%` }} />
-                              <div className="relative flex items-center gap-2 px-2 h-full">
-                                <span className="text-[11px] text-navy/60 group-hover:text-navy transition-colors whitespace-nowrap">{topic}</span>
-                                <span className="text-[9px] font-mono text-navy/30 tabular-nums">{pct}%</span>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                    {loadingPractice ? (
-                      <div className="flex justify-center pt-8"><CorrectionLoading /></div>
-                    ) : practiceExercises && practiceExercises.length > 0 ? (() => {
-                      const anyAt100 = Object.values(skillProgress).some((p) => p >= 100);
-                      return (
-                        <>
-                          {practiceExercises.map((ex, i) => {
-                            const key = ex.objective || overallWeakness || 'general';
-                            return (
-                              <PracticeExercise
-                                key={ex._id ?? i}
-                                exercise={ex}
-                                onCorrect={() => handleExerciseCorrect(i, key)}
-                              />
-                            );
-                          })}
-                          {!anyAt100 && (
-                            <div className="pt-2">
-                              {loadingMore ? <CorrectionLoading /> : (
-                                <button type="button" onClick={practiceMore}
-                                  className="w-full flex flex-col items-center gap-0.5 text-wine/60 hover:text-wine transition-colors">
-                                  <span className="text-[10px] tracking-widest uppercase">more</span>
-                                  <svg width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden>
-                                    <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                                  </svg>
-                                </button>
-                              )}
+              {/* Comprehension subtab */}
+              {practiceSubTab === 'comprehension' && (
+                <>
+                  {practiceTopics.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pb-2 border-b border-line/40">
+                      {practiceTopics.map((topic) => {
+                        const pct = Math.min(skillProgress[topic] ?? 0, 100);
+                        return (
+                          <button
+                            key={topic}
+                            type="button"
+                            onClick={() => startPractice(topic)}
+                            className="relative overflow-hidden border border-line/60 hover:border-wine/40 transition-colors group"
+                            style={{ height: 24 }}
+                          >
+                            <div
+                              className="absolute inset-y-0 left-0 bg-wine/10 group-hover:bg-wine/15 transition-all duration-500"
+                              style={{ width: `${pct}%` }}
+                            />
+                            <div className="relative flex items-center gap-2 px-2 h-full">
+                              <span className="text-[11px] text-navy/60 group-hover:text-navy transition-colors whitespace-nowrap">{topic}</span>
+                              <span className="text-[9px] font-mono text-navy/30 tabular-nums">{pct}%</span>
                             </div>
-                          )}
-                          {anyAt100 && <p className="text-[11px] tracking-widest uppercase text-green-600 pt-1">100% — skill mastered!</p>}
-                        </>
-                      );
-                    })() : practiceExercises !== null ? (
-                      <p className="text-[13px] text-navy/40">No exercises generated.</p>
-                    ) : null}
-                  </>
-                )}
-                {practiceSubTab === 'vocabulary' && (
-                  <VocabExercise vocab={readingVocab} onGoodAnswer={gainDailyParisianPoints} />
-                )}
-              </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                  {loadingPractice ? <CorrectionLoading /> : practiceExercises && practiceExercises.length > 0
+                    ? (() => {
+                        const anyAt100 = Object.values(skillProgress).some((p) => p >= 100);
+                        return (
+                          <>
+                            {practiceExercises.map((ex, i) => {
+                              const key = ex.objective || overallWeakness || 'general';
+                              return (
+                                <PracticeExercise
+                                  key={ex._id ?? i}
+                                  exercise={ex}
+                                  onCorrect={() => handleExerciseCorrect(i, key)}
+                                />
+                              );
+                            })}
+                            {!anyAt100 && (
+                              <div className="pt-2">
+                                {loadingMore ? <CorrectionLoading /> : (
+                                  <button type="button" onClick={practiceMore}
+                                    className="w-full flex flex-col items-center gap-0.5 text-wine/60 hover:text-wine transition-colors">
+                                    <span className="text-[10px] tracking-widest uppercase">more</span>
+                                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden>
+                                      <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                                    </svg>
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                            {anyAt100 && (
+                              <p className="text-[11px] tracking-widest uppercase text-green-600 pt-1">100% — skill mastered!</p>
+                            )}
+                          </>
+                        );
+                      })()
+                    : practiceExercises !== null
+                      ? <p className="text-[13px] text-navy/40">No exercises generated.</p>
+                      : null}
+                </>
+              )}
+
+              {/* Vocabulary subtab */}
+              {practiceSubTab === 'vocabulary' && (
+                <VocabExercise vocab={readingVocab} onGoodAnswer={gainDailyParisianPoints} />
+              )}
             </div>
           )}
 
@@ -3252,35 +3260,37 @@ function ReadingArticlePanel({
               </p>
             ) : null}
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between gap-3">
               <DailyParisianPointsIndicator points={dailyParisianPoints} />
 
-              {vocab.length > 0 && !translateActive && (
-                <motion.div
-                  className="flex-1 flex items-center justify-center gap-1.5 pointer-events-none"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: [0, 1, 1, 0] }}
-                  transition={{ duration: 1.8, repeat: Infinity, repeatDelay: 1.2, ease: 'easeInOut' }}
-                >
-                  <span className="font-display text-[11px] italic text-wine/70 whitespace-nowrap">Use your points</span>
-                  <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden>
-                    <path d="M1 5h11M8 1l4 4-4 4" stroke="#8B1E2D" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
-                  </svg>
-                </motion.div>
-              )}
-              {vocab.length > 0 && translateActive && <div className="flex-1" />}
-
+            <div className="flex items-center gap-3 shrink-0">
+              {/* Hint button inline with arrows */}
               {vocab.length > 0 && (
-                <div className="flex flex-col items-end gap-1.5 shrink-0">
-                  <button
-                    type="button"
-                    onClick={handleTranslateClick}
-                    className={`${NAV_CTA_CLASS} ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
-                    aria-label="Translate hard words"
-                    aria-pressed={translateActive}
-                  >
-                    Translate hard words
-                  </button>
+                <div className="flex flex-col items-end gap-1.5">
+                  <div className="relative flex flex-col items-end">
+                    {!translateActive && (
+                      <motion.div
+                        initial={{ opacity: 0, x: 6 }}
+                        animate={{ opacity: [0, 1, 1, 0], x: [6, 0, 0, -4] }}
+                        transition={{ duration: 1.8, repeat: Infinity, repeatDelay: 1.2, ease: 'easeInOut' }}
+                        className="absolute right-full mr-2 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none"
+                      >
+                        <span className="font-display text-[11px] italic text-wine/70 whitespace-nowrap">use them to translate</span>
+                        <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden>
+                          <path d="M1 5h11M8 1l4 4-4 4" stroke="#8B1E2D" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
+                        </svg>
+                      </motion.div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handleTranslateClick}
+                      className={`${NAV_CTA_CLASS} ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
+                      aria-label="Translate hard words"
+                      aria-pressed={translateActive}
+                    >
+                      Translate hard words
+                    </button>
+                  </div>
                   {translateActive && hasMoreHints && revealedBatchCount > 0 && (
                     <button
                       type="button"
@@ -3293,6 +3303,8 @@ function ReadingArticlePanel({
                   )}
                 </div>
               )}
+
+            </div>
             </div>
           </div>
         </>
@@ -3482,25 +3494,22 @@ export default function Hero() {
       </div>
 
       <Container className="relative">
-        {readingActive && (
-          <div className="py-6">
-            <ReadingArticlePanel
-              loading={readingLoading}
-              title={readingTitle}
-              passage={readingPassage}
-              source={readingSource}
-              author={readingAuthor}
-              date={readingDate}
-              vocab={readingVocab}
-              parisianPercent={profile?.parisianPercent ?? 0}
-              dailyParisianPoints={dailyParisianPoints}
-              onSpendExperience={spendExperience}
-            />
-          </div>
-        )}
         <div className="grid lg:grid-cols-[1fr_1.5fr] gap-8 items-center h-[calc(100vh-96px)]">
           <div className="relative flex flex-col justify-center overflow-visible">
-            {(
+            {readingActive ? (
+              <ReadingArticlePanel
+                loading={readingLoading}
+                title={readingTitle}
+                passage={readingPassage}
+                source={readingSource}
+                author={readingAuthor}
+                date={readingDate}
+                vocab={readingVocab}
+                parisianPercent={profile?.parisianPercent ?? 0}
+                dailyParisianPoints={dailyParisianPoints}
+                onSpendExperience={spendExperience}
+              />
+            ) : (
             <div className="flex flex-col items-center text-center overflow-visible">
             <h1 className="font-display text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-2">
               <Reveal delay={0.08}>Learn French</Reveal>
@@ -3636,11 +3645,11 @@ export default function Hero() {
           <div className="flex items-center justify-end h-full">
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
-              initialTopic={practiceTopic}
+              initialTopic={practiceType === 'reading' ? null : practiceTopic}
               initialLearnMode={learnMode}
               initialLearnLevel={learnLevel}
               onLearnModeHandled={clearLearnParams}
-              onPracticeTopicHandled={clearPracticeParam}
+              onPracticeTopicHandled={practiceType === 'reading' ? undefined : clearPracticeParam}
               readingVocab={readingVocab}
             />
           </div>

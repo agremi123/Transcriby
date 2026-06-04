@@ -772,6 +772,134 @@ function practiceMiddleware(apiKey) {
   };
 }
 
+function listeningMiddleware(anthropicKey, deepgramKey) {
+  return async (req, res, next) => {
+    if (req.url !== '/api/listening' || req.method !== 'POST') { next(); return; }
+    let topic = '';
+    try {
+      const body = JSON.parse(await readBody(req));
+      topic = body.topic || '';
+    } catch {
+      res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
+    }
+    res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+    if (!anthropicKey) {
+      res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: 'RFI', questions: [], vocab: [] })); return;
+    }
+    try {
+      // Step 1: fetch RFI "Journal en Français Facile" RSS feed
+      const RSS_URL = 'https://www.rfi.fr/fr/podcasts/journal-en-francais-facile/feed/';
+      const rssRes = await fetch(RSS_URL, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+      const rssText = await rssRes.text();
+
+      // Parse RSS items
+      const items = [];
+      const itemMatches = [...rssText.matchAll(/<item>([\s\S]*?)<\/item>/g)];
+      for (const m of itemMatches.slice(0, 10)) {
+        const block = m[1];
+        const title = (block.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/) || block.match(/<title>([\s\S]*?)<\/title>/))?.[1]?.trim() || '';
+        const link = (block.match(/<link>([\s\S]*?)<\/link>/) || [])[1]?.trim() || '';
+        const audioUrl = (block.match(/enclosure[^>]+url="([^"]+)"/) || [])[1] || '';
+        const pubDate = (block.match(/<pubDate>([\s\S]*?)<\/pubDate>/))?.[1]?.trim() || '';
+        const desc = (block.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/) || block.match(/<description>([\s\S]*?)<\/description>/))?.[1]?.trim() || '';
+        if (audioUrl) items.push({ title, link, audioUrl, pubDate, desc });
+      }
+
+      if (!items.length) throw new Error('No RFI episodes found');
+
+      // Pick the most recent episode (first item)
+      const episode = items[0];
+
+      // Step 2: try to get transcript from the article page
+      let transcript = '';
+      if (episode.link) {
+        try {
+          const pageRes = await fetch(episode.link, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+          const pageHtml = await pageRes.text();
+          // RFI article pages have transcript in <div class="article__content"> or <p> tags
+          const bodyMatch = pageHtml.match(/<div[^>]+class="[^"]*article__content[^"]*"[^>]*>([\s\S]*?)<\/div>/);
+          if (bodyMatch) {
+            transcript = bodyMatch[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 3000);
+          }
+          if (!transcript || transcript.length < 100) {
+            // fallback: grab all <p> text
+            const pMatches = [...pageHtml.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)];
+            const pTexts = pMatches.map((m) => m[1].replace(/<[^>]+>/g, '').trim()).filter((t) => t.length > 30 && /[àâéèêëîïôùûçœ]/i.test(t));
+            if (pTexts.length >= 3) transcript = pTexts.slice(0, 12).join(' ').trim();
+          }
+        } catch {}
+      }
+
+      // Step 3: if no transcript from page, use Deepgram to transcribe the audio
+      if ((!transcript || transcript.length < 80) && deepgramKey && episode.audioUrl) {
+        try {
+          const dgRes = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&language=fr&punctuate=true&smart_format=true', {
+            method: 'POST',
+            headers: { 'Authorization': `Token ${deepgramKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: episode.audioUrl }),
+          });
+          const dgData = await dgRes.json();
+          transcript = dgData?.results?.channels?.[0]?.alternatives?.[0]?.transcript || '';
+        } catch {}
+      }
+
+      // Fallback: use RSS description
+      if (!transcript || transcript.length < 40) {
+        transcript = episode.desc.replace(/<[^>]+>/g, '').trim();
+      }
+
+      if (!transcript || transcript.length < 40) throw new Error('No transcript available');
+
+      // Step 4: generate 4 MCQ comprehension questions
+      const qRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 700,
+          system: `Create exactly 4 multiple-choice comprehension questions in French based on the transcript provided. Each question has exactly 4 options and one correct answer. Respond with raw JSON only, no markdown: {"questions":[{"question":"Question?","options":["A","B","C","D"],"answer":"A"},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."}]}`,
+          messages: [{ role: 'user', content: `Transcript:\n${transcript.slice(0, 2000)}` }],
+        }),
+      });
+      const qData = await qRes.json();
+      let qRaw = qData.content?.[0]?.text?.trim() || '{}';
+      qRaw = qRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      let questions = [];
+      try { ({ questions = [] } = JSON.parse(qRaw)); } catch {}
+
+      // Step 5: generate vocabulary list
+      const vRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 700,
+          system: `From the given French transcript, pick exactly 5 difficult or interesting vocabulary words for a B1-B2 learner. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"...","sentence":"...___..."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
+          messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
+        }),
+      });
+      const vData = await vRes.json();
+      let vRaw = vData.content?.[0]?.text?.trim() || '{}';
+      vRaw = vRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      let vocab = [];
+      try { ({ vocab = [] } = JSON.parse(vRaw)); } catch {}
+
+      res.end(JSON.stringify({
+        title: episode.title,
+        audioUrl: episode.audioUrl,
+        transcript,
+        source: 'RFI — Journal en Français Facile',
+        date: episode.pubDate,
+        questions,
+        vocab,
+      }));
+    } catch (err) {
+      console.error('[listening] error:', err.message);
+      res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: 'RFI', questions: [], vocab: [] }));
+    }
+  };
+}
+
 export default defineConfig(() => {
   const env = readEnvFile(process.cwd());
 
