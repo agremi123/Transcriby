@@ -3822,7 +3822,7 @@ export default function Hero() {
               initialLearnLevel={learnLevel}
               onLearnModeHandled={clearLearnParams}
               onPracticeTopicHandled={practiceType === 'reading' ? undefined : clearPracticeParam}
-              readingVocab={readingVocab}
+              readingVocab={listeningActive ? listeningVocab : readingVocab}
             />
           </div>
         </div>
