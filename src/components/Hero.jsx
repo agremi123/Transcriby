@@ -1642,7 +1642,7 @@ export function AudioDemoCard({
     if (!initialTopic) return;
     setOverallWeakness(initialTopic);
     setPracticeTopics([initialTopic]);
-    loadPractice(initialTopic);
+    loadPractice(initialTopic, { autoSwitch: false });
     onPracticeTopicHandled?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
