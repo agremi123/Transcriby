@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
-import { resolve } from 'path';
+import { readFileSync, writeFileSync, unlinkSync, existsSync, mkdirSync } from 'fs';
+import { resolve, join } from 'path';
+import { tmpdir } from 'os';
+import { execFile } from 'child_process';
 import { createClient } from '@supabase/supabase-js';
 import { handleElevenLabsTts } from './server/handlers.js';
 import { sendHandlerResult } from './server/node-response.js';
