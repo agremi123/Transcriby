@@ -1092,7 +1092,8 @@ export default defineConfig(() => {
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(audioProxyMiddleware());
-          server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY));
+          server.middlewares.use(sessionAudioMiddleware());
+          server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY));
           server.middlewares.use(speakingPromptMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY));
@@ -1107,7 +1108,8 @@ export default defineConfig(() => {
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(audioProxyMiddleware());
-          server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY));
+          server.middlewares.use(sessionAudioMiddleware());
+          server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY));
           server.middlewares.use(speakingPromptMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY));
