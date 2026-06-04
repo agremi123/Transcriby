@@ -22,6 +22,7 @@ import { useLearnerProfile } from '../context/LearnerProfileContext';
 import { matchesCorrectionTarget, isStrictCorrectionMatch, wordDiff, buildCorrectionNarrationText } from '../lib/correctionFormat';
 import { DiffText } from '../lib/DiffText';
 import { registerCorrectionKeyterms } from '../lib/deepgramKeyterms';
+import { captureTabAudioStream, releaseTabCapture } from '../lib/captureTabAudio';
 import { saveCorrection } from '../lib/correctionsNotebook';
 import { bumpTargetProgressByTopic } from '../lib/targetProgress';
 import { joinTranscriptSegments, segmentNeedsLeadingSpace } from '../lib/transcriptJoin';
