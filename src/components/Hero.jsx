@@ -3317,16 +3317,31 @@ function ReadingArticlePanel({
   );
 }
 
+const WORDS_PER_PAGE = 80;
+
 function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vocab = [], parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
   const [playing, setPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
   const audioRef = React.useRef(null);
-
+  const [pageIndex, setPageIndex] = React.useState(0);
   const [translateActive, setTranslateActive] = React.useState(false);
   const [revealedBatchCount, setRevealedBatchCount] = React.useState(0);
 
-  React.useEffect(() => { setTranslateActive(false); setRevealedBatchCount(0); }, [transcript]);
+  React.useEffect(() => { setTranslateActive(false); setRevealedBatchCount(0); setPageIndex(0); }, [transcript]);
+
+  // Split transcript into fixed word-count pages
+  const pages = React.useMemo(() => {
+    if (!transcript) return [''];
+    const words = transcript.split(/\s+/);
+    const result = [];
+    for (let i = 0; i < words.length; i += WORDS_PER_PAGE) {
+      result.push(words.slice(i, i + WORDS_PER_PAGE).join(' '));
+    }
+    return result.length ? result : [''];
+  }, [transcript]);
+  const totalPages = pages.length;
+  const currentPageText = pages[pageIndex] || '';
 
   const hintBatches = React.useMemo(() => {
     const b = [];
@@ -3357,17 +3372,14 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
   };
 
   const byline = [source, date].filter(Boolean).join(' — ');
-
   const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   const pct = duration ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="flex flex-col pr-4 min-h-0">
+    <div className="flex flex-col pr-4" style={{ height: 520 }}>
       {loading ? (
         <div className="flex flex-col gap-4 pt-2">
-          {/* skeleton title */}
           <div className="h-8 bg-navy/8 rounded w-3/4 animate-pulse" />
-          {/* skeleton audio bar */}
           <div className="flex items-center gap-3 px-4 py-3 bg-navy/5 border border-navy/10 rounded-lg">
             <div className="w-9 h-9 rounded-full bg-wine/20 animate-pulse shrink-0" />
             <div className="flex-1 h-1.5 bg-navy/10 rounded-full animate-pulse" />
@@ -3380,36 +3392,30 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
         </div>
       ) : (
         <>
+          {/* Title */}
           {title && (
             <div className="mb-3 shrink-0 px-4 py-3 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
               <h2 className="font-display text-[20px] sm:text-[24px] leading-[1.2] tracking-[-0.01em] line-clamp-2 text-navy">{title}</h2>
             </div>
           )}
 
-          {/* Audio bar — always shown, disabled when no URL */}
-          <div className="shrink-0 mb-4">
+          {/* Audio bar */}
+          <div className="shrink-0 mb-3">
             {audioUrl && <audio ref={audioRef} src={audioUrl} preload="metadata"
               onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
               onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
               onEnded={() => setPlaying(false)} />}
             <div className="flex items-center gap-3 px-4 py-3 bg-navy/5 border border-navy/10 rounded-lg">
-              {/* play/pause button */}
               <button type="button" onClick={togglePlay} disabled={!audioUrl}
                 className="w-9 h-9 rounded-full bg-wine text-ivory flex items-center justify-center shrink-0 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-wine/80">
                 {playing
                   ? <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><rect x="0" y="0" width="3" height="12" rx="1" fill="white"/><rect x="6" y="0" width="3" height="12" rx="1" fill="white"/></svg>
                   : <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M1 0.5l8 5.5L1 11.5V0.5z" fill="white"/></svg>}
               </button>
-
-              {/* progress bar */}
               <div className="flex-1 flex flex-col gap-1.5">
-                <div className={`w-full h-1.5 rounded-full relative group ${audioUrl ? 'cursor-pointer' : 'cursor-default'} bg-navy/12`}
-                  onClick={audioUrl ? seek : undefined}>
+                <div className={`w-full h-1.5 rounded-full relative group ${audioUrl ? 'cursor-pointer' : 'cursor-default'} bg-navy/12`} onClick={audioUrl ? seek : undefined}>
                   <div className="h-full bg-wine rounded-full transition-[width] duration-100" style={{ width: `${pct}%` }} />
-                  {audioUrl && (
-                    <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-wine border-2 border-white shadow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-                      style={{ left: `calc(${pct}% - 6px)` }} />
-                  )}
+                  {audioUrl && <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-wine border-2 border-white shadow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" style={{ left: `calc(${pct}% - 6px)` }} />}
                 </div>
                 <div className="flex justify-between text-[10px] font-mono text-navy/35">
                   <span>{fmtTime(currentTime)}</span>
@@ -3419,18 +3425,37 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
             </div>
           </div>
 
-          {/* Transcript */}
-          <div className="flex-1 min-h-0 overflow-y-auto pr-1">
-            <PassageWithVocabHighlights passage={transcript} vocabEntries={revealedWords} highlightActive={translateActive && revealedWords.length > 0} />
+          {/* Transcript page — fills remaining space, no scroll */}
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <PassageWithVocabHighlights passage={currentPageText} vocabEntries={revealedWords} highlightActive={translateActive && revealedWords.length > 0} />
           </div>
 
-          {/* Footer */}
-          <div className="mt-4 shrink-0 border-t pt-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
-            {byline && <p className="text-[10px] font-mono tracking-[0.12em] mb-3 truncate" style={{ color: '#8b1e2d' }}>{byline}</p>}
-            <div className="flex items-center gap-3">
+          {/* Footer: byline + points + pagination + translate */}
+          <div className="mt-3 shrink-0 border-t pt-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
+            {byline && <p className="text-[10px] font-mono tracking-[0.12em] mb-2 truncate" style={{ color: '#8b1e2d' }}>{byline}</p>}
+            <div className="flex items-center gap-2">
               <DailyParisianPointsIndicator points={dailyParisianPoints} />
+
+              {/* Page navigation */}
+              {totalPages > 1 && (
+                <div className="flex items-center gap-1 ml-1">
+                  <button type="button" onClick={() => setPageIndex((p) => Math.max(0, p - 1))} disabled={pageIndex === 0}
+                    className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.5 2L3.5 6l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                  <span className="text-[10px] font-mono text-navy/40 tabular-nums">{pageIndex + 1}/{totalPages}</span>
+                  <button type="button" onClick={() => setPageIndex((p) => Math.min(totalPages - 1, p + 1))} disabled={pageIndex === totalPages - 1}
+                    className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                </div>
+              )}
+
+              <div className="flex-1" />
+
+              {/* Translate */}
               {vocab.length > 0 && !translateActive && (
-                <motion.div className="flex-1 flex items-center justify-center gap-1.5 pointer-events-none"
+                <motion.div className="flex items-center gap-1.5 pointer-events-none mr-1"
                   initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 1, 0] }}
                   transition={{ duration: 1.8, repeat: Infinity, repeatDelay: 1.2, ease: 'easeInOut' }}>
                   <span className="font-display text-[11px] italic text-wine/70 whitespace-nowrap">Use your points</span>
@@ -3439,9 +3464,8 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
                   </svg>
                 </motion.div>
               )}
-              {vocab.length > 0 && translateActive && <div className="flex-1" />}
               {vocab.length > 0 && (
-                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                <div className="flex flex-col items-end gap-1 shrink-0">
                   <button type="button" onClick={handleTranslateClick}
                     className={`${NAV_CTA_CLASS} ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}>
                     Translate hard words
