@@ -8,7 +8,7 @@ import { loadTargetProgress, PARISIAN_XP_EVENT } from '../lib/targetProgress';
 
 function practiceUrl(topic, themeInfo, category) {
   const base = `/?practice=${encodeURIComponent(topic)}`;
-  const suffix = category === 'Reading' ? '&ptype=reading' : '';
+  const suffix = category === 'Reading' ? '&ptype=reading' : category === 'Listening' ? '&ptype=listening' : '';
   if (!themeInfo) return base + suffix + '#nativa-demo';
   const { cat, idx, total, theme } = themeInfo;
   return `${base}${suffix}&pcat=${encodeURIComponent(cat)}&pidx=${idx}&ptotal=${total}&ptheme=${encodeURIComponent(theme)}#nativa-demo`;
