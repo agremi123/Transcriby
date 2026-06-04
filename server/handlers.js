@@ -437,13 +437,13 @@ If you cannot find a real French source, write a realistic authentic passage you
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 700,
-        system: `Create exactly 4 comprehension questions based on the French passage provided. Use 2 fill-in-the-blank and 2 multiple choice. Respond with raw JSON only, no markdown:
+        system: `Create exactly 4 multiple-choice comprehension questions based on the French passage provided. Each question has exactly 4 options and one correct answer. Respond with raw JSON only, no markdown:
 {
   "questions": [
-    { "type": "fill", "sentence": "sentence from passage with one word replaced by ___", "answer": "the removed word", "hint": "infinitive or base form" },
-    { "type": "fill", "sentence": "another sentence with ___", "answer": "word", "hint": "base form" },
-    { "type": "mcq", "question": "Comprehension question about the passage?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option A" },
-    { "type": "mcq", "question": "Another question?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option B" }
+    { "question": "Comprehension question about the passage?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option A" },
+    { "question": "Another question?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option B" },
+    { "question": "Third question?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option C" },
+    { "question": "Fourth question?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option D" }
   ]
 }`,
         messages: [{ role: 'user', content: `Passage:\n${articlePassage}` }],
