@@ -3423,8 +3423,8 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
             </div>
           </div>
 
-          {/* Transcript page — fills remaining space, fades at bottom */}
-          <div className="flex-1 min-h-0 overflow-hidden" style={{ maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)' }}>
+          {/* Transcript page — fills remaining space */}
+          <div className="flex-1 min-h-0 overflow-hidden">
             <PassageWithVocabHighlights passage={currentPageText} vocabEntries={revealedWords} highlightActive={translateActive && revealedWords.length > 0} className="font-display text-[17px] leading-[1.65] text-navy/80" />
           </div>
 
