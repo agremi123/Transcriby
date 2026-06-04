@@ -1085,13 +1085,9 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
       let vocab = [];
       try { ({ vocab = [] } = JSON.parse(vRaw)); } catch {}
 
-      const finalAudioUrl = episode.audioUrl
-        ? `/api/audio-proxy?url=${encodeURIComponent(episode.audioUrl)}`
-        : generatedAudioUrl;
-
       res.end(JSON.stringify({
         title: episode.title,
-        audioUrl: finalAudioUrl,
+        audioUrl: clipAudioUrl,
         transcript,
         source: sourceName,
         date: episode.pubDate,
