@@ -3668,6 +3668,19 @@ export default function Hero() {
                 dailyParisianPoints={dailyParisianPoints}
                 onSpendExperience={spendExperience}
               />
+            ) : listeningActive ? (
+              <ListeningPanel
+                loading={listeningLoading}
+                title={listeningTitle}
+                audioUrl={listeningAudioUrl}
+                transcript={listeningTranscript}
+                source={listeningSource}
+                date={listeningDate}
+                vocab={listeningVocab}
+                parisianPercent={profile?.parisianPercent ?? 0}
+                dailyParisianPoints={dailyParisianPoints}
+                onSpendExperience={spendExperience}
+              />
             ) : (
             <div className="flex flex-col items-center text-center overflow-visible">
             <h1 className="font-display text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-2">
