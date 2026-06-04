@@ -3482,6 +3482,40 @@ export default function Hero() {
         .catch(() => setReadingLoading(false));
     }
   }, [practiceTopic, practiceType]);
+
+  // Listening mode state
+  const [listeningActive, setListeningActive] = React.useState(false);
+  const [listeningLoading, setListeningLoading] = React.useState(false);
+  const [listeningTitle, setListeningTitle] = React.useState('');
+  const [listeningAudioUrl, setListeningAudioUrl] = React.useState(null);
+  const [listeningTranscript, setListeningTranscript] = React.useState('');
+  const [listeningSource, setListeningSource] = React.useState(null);
+  const [listeningDate, setListeningDate] = React.useState(null);
+  const [listeningVocab, setListeningVocab] = React.useState([]);
+
+  React.useEffect(() => {
+    if (practiceType === 'listening' && practiceTopic && !listeningActive) {
+      setListeningActive(true);
+      setListeningLoading(true);
+      fetch('/api/listening', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: practiceTopic }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          setListeningTitle(data.title || '');
+          setListeningAudioUrl(data.audioUrl || null);
+          setListeningTranscript(data.transcript || '');
+          setListeningSource(data.source || null);
+          setListeningDate(data.date || null);
+          setListeningVocab(data.vocab || []);
+          setListeningLoading(false);
+        })
+        .catch(() => setListeningLoading(false));
+    }
+  }, [practiceTopic, practiceType]);
+
   const [introNarrator, setIntroNarrator] = React.useState(null);
   const [introPlaying, setIntroPlaying] = React.useState(null); // null | 'lea' | 'jules'
   const [introPlaybackTime, setIntroPlaybackTime] = React.useState(null);
