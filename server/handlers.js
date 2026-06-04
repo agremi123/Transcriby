@@ -364,8 +364,8 @@ export async function handlePractice(body) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 600,
-        system: `You are a French language teacher. Generate exactly 4 fill-in-the-blank exercises in French to practice: "${topic}". Each sentence must have exactly one blank marked as "___". For each exercise include a "hint" field: if the answer is a conjugated verb, put the infinitive form (e.g. "aller"); for other words put the base/dictionary form. Respond with raw JSON only, no markdown: {"exercises":[{"sentence":"...___...","answer":"...","hint":"..."},{"sentence":"...___...","answer":"...","hint":"..."},{"sentence":"...___...","answer":"...","hint":"..."},{"sentence":"...___...","answer":"...","hint":"..."}]}`,
-        messages: [{ role: 'user', content: `Generate 4 fill-in-the-blank French exercises for: ${topic}` }],
+        system: `You are a French language teacher. Generate exactly 4 multiple-choice comprehension questions in French to practice: "${topic}". Each question has exactly 4 options (A–D) and one correct answer. Respond with raw JSON only, no markdown: {"exercises":[{"question":"Question in French?","options":["Option A","Option B","Option C","Option D"],"answer":"Option A"},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."}]}`,
+        messages: [{ role: 'user', content: `Generate 4 multiple-choice questions for: ${topic}` }],
       }),
     });
     const data = await response.json();
