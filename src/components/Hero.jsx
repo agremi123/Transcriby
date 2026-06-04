@@ -3150,14 +3150,14 @@ function VocabWordHighlight({ word, definition }) {
   );
 }
 
-function PassageWithVocabHighlights({ passage, vocabEntries, highlightActive }) {
+function PassageWithVocabHighlights({ passage, vocabEntries, highlightActive, className }) {
   const segments = React.useMemo(
     () => (highlightActive ? buildPassageSegments(passage, vocabEntries) : [{ type: 'text', value: passage }]),
     [passage, vocabEntries, highlightActive],
   );
 
   return (
-    <p className="font-display text-[15px] sm:text-[16px] leading-[1.75] text-navy/80">
+    <p className={className || "font-display text-[15px] sm:text-[16px] leading-[1.75] text-navy/80"}>
       {segments.map((seg, i) => {
         if (seg.type === 'text') {
           return <React.Fragment key={i}>{seg.value}</React.Fragment>;
