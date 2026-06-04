@@ -772,6 +772,23 @@ function practiceMiddleware(apiKey) {
   };
 }
 
+// In-memory store for session-scoped generated audio
+const SESSION_AUDIO = new Map();
+
+function sessionAudioMiddleware() {
+  return (req, res, next) => {
+    if (!req.url.startsWith('/api/audio-session/')) { next(); return; }
+    const id = decodeURIComponent(req.url.split('/api/audio-session/')[1] || '');
+    const buf = SESSION_AUDIO.get(id);
+    if (!buf) { res.statusCode = 404; res.end('Not found'); return; }
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Content-Length', buf.length);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.end(buf);
+  };
+}
+
 function audioProxyMiddleware() {
   return async (req, res, next) => {
     if (!req.url.startsWith('/api/audio-proxy')) { next(); return; }
