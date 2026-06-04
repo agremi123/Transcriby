@@ -3985,7 +3985,7 @@ export default function Hero() {
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
               initialTopic={practiceType === 'reading' ? null : practiceTopic}
-              initialLearnMode={learnMode}
+              initialLearnMode={speakingActive ? 'speak' : writingActive ? 'write' : learnMode}
               initialLearnLevel={learnLevel}
               onLearnModeHandled={clearLearnParams}
               onPracticeTopicHandled={practiceType === 'reading' ? undefined : clearPracticeParam}
