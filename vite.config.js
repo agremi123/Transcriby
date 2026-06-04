@@ -946,7 +946,7 @@ function speakingPromptMiddleware(apiKey) {
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 200,
-          system: `You are ${name}, a native Parisian French speaker. Generate a warm, natural conversation opener in French (2-3 sentences, B1-B2 level) to start a conversation about the given topic with a French learner. Make it engaging and culturally Parisian. Return ONLY raw JSON: {"openingLine":"...","topicLabel":"short label for the topic in French (3-5 words)"}`,
+          system: `You are ${name}, a native Parisian French speaker. Generate a warm, natural conversation opener in French (2-3 sentences, B1-B2 level) to start a conversation about the given topic with a French learner. Make it engaging and culturally Parisian. Return ONLY raw JSON: {"openingLine":"...","openingLineTranslation":"English translation of openingLine","topicLabel":"short label for the topic in French (3-5 words)"}`,
           messages: [{ role: 'user', content: `Topic: ${topic}` }],
         }),
       });
