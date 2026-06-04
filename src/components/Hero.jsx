@@ -3641,6 +3641,7 @@ export default function Hero() {
         .then((data) => {
           setSpeakingNarrator(data.narratorId || 'lea');
           setSpeakingOpeningLine(data.openingLine || '');
+          setSpeakingOpeningTranslation(data.openingLineTranslation || '');
           setSpeakingTopicLabel(data.topicLabel || practiceTopic);
           setSpeakingLoading(false);
         })
