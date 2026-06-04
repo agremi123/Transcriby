@@ -900,6 +900,63 @@ function listeningMiddleware(anthropicKey, deepgramKey) {
   };
 }
 
+const SPEAKING_NARRATORS = ['jules', 'lea'];
+function speakingPromptMiddleware(apiKey) {
+  return async (req, res, next) => {
+    if (req.url !== '/api/speaking-prompt' || req.method !== 'POST') { next(); return; }
+    let topic = '';
+    try { topic = (JSON.parse(await readBody(req))).topic || ''; } catch {}
+    res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+    if (!apiKey) { res.end(JSON.stringify({ narratorId: 'lea', openingLine: '', topic })); return; }
+    try {
+      const narratorId = SPEAKING_NARRATORS[Math.floor(Math.random() * SPEAKING_NARRATORS.length)];
+      const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 200,
+          system: `You are ${name}, a native Parisian French speaker. Generate a warm, natural conversation opener in French (2-3 sentences, B1-B2 level) to start a conversation about the given topic with a French learner. Make it engaging and culturally Parisian. Return ONLY raw JSON: {"openingLine":"...","topicLabel":"short label for the topic in French (3-5 words)"}`,
+          messages: [{ role: 'user', content: `Topic: ${topic}` }],
+        }),
+      });
+      const d = await r.json();
+      let raw = d.content?.[0]?.text?.trim() || '{}';
+      raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      const parsed = JSON.parse(raw);
+      res.end(JSON.stringify({ narratorId, openingLine: parsed.openingLine || '', topicLabel: parsed.topicLabel || topic }));
+    } catch { res.end(JSON.stringify({ narratorId: 'lea', openingLine: '', topicLabel: topic })); }
+  };
+}
+
+function writingPromptMiddleware(apiKey) {
+  return async (req, res, next) => {
+    if (req.url !== '/api/writing-prompt' || req.method !== 'POST') { next(); return; }
+    let topic = '';
+    try { topic = (JSON.parse(await readBody(req))).topic || ''; } catch {}
+    res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+    if (!apiKey) { res.end(JSON.stringify({ prompt: '', guidelines: [], wordTarget: 80 })); return; }
+    try {
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 300,
+          system: `You are a French writing coach. Generate a specific, engaging writing prompt in French for a B1-B2 learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss. Return ONLY raw JSON: {"prompt":"The writing task in French (1-2 sentences)","guidelines":["tip 1 in French","tip 2 in French","tip 3 in French"],"wordTarget":80}`,
+          messages: [{ role: 'user', content: `Topic: ${topic}` }],
+        }),
+      });
+      const d = await r.json();
+      let raw = d.content?.[0]?.text?.trim() || '{}';
+      raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      const parsed = JSON.parse(raw);
+      res.end(JSON.stringify({ prompt: parsed.prompt || '', guidelines: parsed.guidelines || [], wordTarget: parsed.wordTarget || 80 }));
+    } catch { res.end(JSON.stringify({ prompt: '', guidelines: [], wordTarget: 80 })); }
+  };
+}
+
 export default defineConfig(() => {
   const env = readEnvFile(process.cwd());
 
