@@ -356,7 +356,9 @@ export function useSpeechmaticsTranscription() {
     } catch (err) {
       setError(
         err.name === 'NotAllowedError'
-          ? 'Allow microphone access in your browser to continue.'
+          ? (options.stream
+            ? 'Tab capture was cancelled or denied.'
+            : 'Allow microphone access in your browser to continue.')
           : err.message || 'Unable to start recording',
       );
       setStatus('idle');
