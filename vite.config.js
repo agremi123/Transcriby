@@ -1011,7 +1011,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
         title: episode.title,
         audioUrl: finalAudioUrl,
         transcript,
-        source: 'RFI — Journal en Français Facile',
+        source: sourceName,
         date: episode.pubDate,
         questions,
         vocab,
