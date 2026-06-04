@@ -1484,6 +1484,7 @@ export function AudioDemoCard({
     stopParisianAudio();
     clearTabCapture();
     setSource('mic');
+    setTabCaptureError(null);
     await start(awaitingRepeat ? {
       utteranceEndMs: 1000,
       endpointing: 500,
