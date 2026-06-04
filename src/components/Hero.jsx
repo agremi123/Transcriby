@@ -3414,7 +3414,7 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
               </button>
               <div className="flex-1 flex items-center gap-2">
                 <span className="text-[10px] font-mono text-navy/35 tabular-nums w-7 shrink-0">{fmtTime(currentTime)}</span>
-                <div className={`flex-1 h-1 rounded-full relative group ${audioUrl ? 'cursor-pointer' : 'cursor-default'} bg-navy/12`} onClick={audioUrl ? seek : undefined}>
+                <div className={`flex-1 h-1 rounded-full relative group ${audioUrl ? 'cursor-pointer' : 'cursor-default'} bg-navy/25`} onClick={audioUrl ? seek : undefined}>
                   <div className="h-full bg-wine rounded-full transition-[width] duration-100" style={{ width: `${pct}%` }} />
                   {audioUrl && <div className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-wine border-2 border-white shadow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" style={{ left: `calc(${pct}% - 5px)` }} />}
                 </div>
