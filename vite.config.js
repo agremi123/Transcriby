@@ -818,6 +818,53 @@ function audioProxyMiddleware() {
   };
 }
 
+// French podcast sources for listening exercises
+const FRENCH_PODCAST_SOURCES = [
+  { id: 'rfi', name: 'RFI — Journal en Français Facile', level: 'A2-B1', rssUrl: 'https://www.rfi.fr/fr/podcasts/journal-en-francais-facile/feed/' },
+  { id: 'innerfrench', name: 'InnerFrench', level: 'B1-B2', rssUrl: 'https://podcast.innerfrench.com/feed.xml' },
+  { id: 'littletalk', name: 'Little Talk in Slow French', level: 'A2-B1', rssUrl: 'https://www.spreaker.com/show/6084166/episodes/feed', hasBuiltinTranscript: true },
+  { id: 'feelgood', name: 'Feel Good French', level: 'B2-C1', rssUrl: 'https://anchor.fm/s/fbc886b4/podcast/rss' },
+  { id: 'francaisauthentique', name: 'Français Authentique', level: 'B1-B2', rssUrl: 'https://www.francaisauthentique.com/feed/podcast/' },
+];
+
+function shuffleArray(arr) { return arr.slice().sort(() => Math.random() - 0.5); }
+
+async function fetchPodcastEpisode() {
+  const sources = shuffleArray(FRENCH_PODCAST_SOURCES);
+  for (const source of sources) {
+    try {
+      const r = await fetch(source.rssUrl, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36', 'Accept': 'application/rss+xml, application/xml, text/xml, */*' },
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!r.ok) { console.log(`[listening] ${source.id} HTTP ${r.status}`); continue; }
+      const text = await r.text();
+      if (text.length < 300) { console.log(`[listening] ${source.id} too short`); continue; }
+
+      const items = [];
+      for (const m of [...text.matchAll(/<item[\s>]([\s\S]*?)<\/item>/g)].slice(0, 15)) {
+        const b = m[1];
+        const title = (b.match(/<title><!\[CDATA\[([\s\S]*?)\]\]>/) || b.match(/<title>([^<]{3,})<\/title>/))?.[1]?.trim() || '';
+        const audioUrl = (b.match(/enclosure[^>]+url="([^"]+\.mp3[^"]*)"/) || b.match(/enclosure[^>]+url="([^"]+)"/))?.[ 1] || '';
+        const link = b.match(/<link>(https?:[^<]+)<\/link>/)?.[1]?.trim() || '';
+        const pubDate = b.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1]?.trim() || '';
+        const desc = (b.match(/<description><!\[CDATA\[([\s\S]*?)\]\]>/) || b.match(/<description>([^<]*)<\/description>/))?.[1]?.trim() || '';
+        // Spreaker / Podcast Index built-in plain-text transcript
+        const transcriptUrl = (b.match(/<podcast:transcript[^>]+type="text\/plain"[^>]+url="([^"]+)"/) || b.match(/<podcast:transcript[^>]+url="([^"]+)"[^>]+type="text\/plain"/))?.[1] || '';
+        if (audioUrl && title) items.push({ title, audioUrl, link, pubDate, desc, transcriptUrl });
+      }
+
+      if (!items.length) { console.log(`[listening] ${source.id} 0 items`); continue; }
+
+      // Pick randomly from the 5 most recent episodes
+      const episode = items[Math.floor(Math.random() * Math.min(5, items.length))];
+      console.log(`[listening] Using source: ${source.name} — "${episode.title}"`);
+      return { source, episode };
+    } catch (e) { console.log(`[listening] ${source.id} error: ${e.message}`); }
+  }
+  return null;
+}
+
 function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/listening' || req.method !== 'POST') { next(); return; }
@@ -830,121 +877,82 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
     }
     res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
     if (!anthropicKey) {
-      res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: 'RFI', questions: [], vocab: [] })); return;
+      res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: '', questions: [], vocab: [] })); return;
     }
     try {
-      // Step 1: fetch RFI "Journal en Français Facile" RSS feed
-      const RSS_URLS = [
-        'https://www.rfi.fr/fr/podcasts/journal-en-francais-facile/feed/',
-        'https://podcasts.rfi.fr/podcast/rfi-journal-francais-facile.xml',
-        'https://www.rfi.fr/fr/emission/20120830-journal-francais-facile/feed/',
-      ];
-      let rssText = '';
-      for (const RSS_URL of RSS_URLS) {
-        try {
-          const r = await fetch(RSS_URL, {
-            headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36', 'Accept': 'application/rss+xml, application/xml, text/xml, */*' },
-            signal: AbortSignal.timeout(12000),
-          });
-          if (r.ok) { rssText = await r.text(); if (rssText.length > 200) break; }
-        } catch {}
-      }
-
-      // Parse RSS items — handle <item> or <item attr="...">
-      const items = [];
-      const itemMatches = [...rssText.matchAll(/<item[\s>]([\s\S]*?)<\/item>/g)];
-      for (const m of itemMatches.slice(0, 10)) {
-        const block = m[1];
-        const title = (block.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/) || block.match(/<title>([^<]*)<\/title>/))?.[1]?.trim() || '';
-        const link = (block.match(/<link>([\s\S]*?)<\/link>/) || block.match(/<link[^>]+href="([^"]+)"/))?.[1]?.trim() || '';
-        const audioUrl = (block.match(/enclosure[^>]+url="([^"]+)"/) || block.match(/<media:content[^>]+url="([^"]+)"/) || [])[1] || '';
-        const pubDate = (block.match(/<pubDate>([\s\S]*?)<\/pubDate>/))?.[1]?.trim() || '';
-        const desc = (block.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/) || block.match(/<description>([^<]*)<\/description>/))?.[1]?.trim() || '';
-        if (audioUrl) items.push({ title, link, audioUrl, pubDate, desc });
-      }
-
-      // Log feed status to help debug
-      console.log(`[listening] RSS text length: ${rssText.length}, items found: ${items.length}`);
-      if (rssText.length > 0 && items.length === 0) {
-        console.log('[listening] RSS sample:', rssText.slice(0, 300));
-      }
-
-      // If RSS unavailable, fall back to Claude-generated episode + ElevenLabs audio
-      let episode = items[0] || null;
+      // Step 1: try all podcast sources in random order
+      const found = await fetchPodcastEpisode();
+      let episode = found?.episode || null;
+      const sourceName = found?.source?.name || 'RFI — Journal en Français Facile';
       let generatedAudioUrl = null;
 
       if (!episode) {
-        console.log('[listening] RSS unavailable — generating episode with Claude + ElevenLabs');
-        // Generate a realistic French news transcript
+        // All sources failed — generate with Claude + ElevenLabs
+        console.log('[listening] All sources unavailable — generating episode with Claude + ElevenLabs');
         const genRes = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
             max_tokens: 900,
-            system: 'You are a French radio journalist for "Journal en Français Facile" on RFI. Write a short French news bulletin (250-300 words, B1-B2 level) on a current cultural, social, or environmental topic. Use natural spoken French. Return ONLY raw JSON: {"title":"Episode title","transcript":"Full text of the bulletin","date":"today"}',
+            system: 'You are a French radio journalist for "Journal en Français Facile" on RFI. Write a short French news bulletin (250-300 words, B1-B2 level) on a current cultural, social, or environmental topic. Use natural spoken French. Return ONLY raw JSON: {"title":"Episode title","transcript":"Full text of the bulletin"}',
             messages: [{ role: 'user', content: `Topic hint: ${topic || 'culture française'}` }],
           }),
         });
         const genData = await genRes.json();
-        let genRaw = genData.content?.[0]?.text?.trim() || '{}';
-        genRaw = genRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        let genRaw = (genData.content?.[0]?.text?.trim() || '{}').replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
         let generated = {};
         try { generated = JSON.parse(genRaw); } catch {}
+        episode = { title: generated.title || 'Journal en Français Facile', audioUrl: null, link: '', pubDate: new Date().toUTCString(), desc: '', transcriptUrl: '', generatedTranscript: generated.transcript || '' };
 
-        episode = {
-          title: generated.title || 'Journal en Français Facile',
-          audioUrl: null,
-          link: '',
-          pubDate: new Date().toUTCString(),
-          desc: '',
-          generatedTranscript: generated.transcript || '',
-        };
-
-        // Generate ElevenLabs audio for the transcript
         if (elevenlabsKey && episode.generatedTranscript) {
           try {
-            const leaVoiceId = 'ebRwkdEFVZIx2A6YucFh';
-            const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${leaVoiceId}`, {
+            const elRes = await fetch('https://api.elevenlabs.io/v1/text-to-speech/ebRwkdEFVZIx2A6YucFh', {
               method: 'POST',
               headers: { 'xi-api-key': elevenlabsKey, 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                text: episode.generatedTranscript,
-                model_id: 'eleven_multilingual_v2',
-                voice_settings: { stability: 0.55, similarity_boost: 0.75 },
-              }),
+              body: JSON.stringify({ text: episode.generatedTranscript, model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.55, similarity_boost: 0.75 } }),
             });
             if (elRes.ok) {
-              const audioBuf = Buffer.from(await elRes.arrayBuffer());
-              const sessionId = Math.random().toString(36).slice(2) + Date.now().toString(36);
-              SESSION_AUDIO.set(sessionId, audioBuf);
-              setTimeout(() => SESSION_AUDIO.delete(sessionId), 60 * 60 * 1000);
-              generatedAudioUrl = `/api/audio-session/${sessionId}`;
-              console.log('[listening] Generated ElevenLabs audio, session:', sessionId);
+              const buf = Buffer.from(await elRes.arrayBuffer());
+              const sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
+              SESSION_AUDIO.set(sid, buf);
+              setTimeout(() => SESSION_AUDIO.delete(sid), 60 * 60 * 1000);
+              generatedAudioUrl = `/api/audio-session/${sid}`;
             }
           } catch (e) { console.error('[listening] ElevenLabs error:', e.message); }
         }
       }
 
-      // Step 2: try to get transcript from the article page (only for real RSS episodes)
+      // Step 2: get transcript
       let transcript = episode.generatedTranscript || '';
+
+      // 2a. Spreaker / Podcast Index built-in plain-text transcript
+      if (!transcript && episode.transcriptUrl) {
+        try {
+          const tr = await fetch(episode.transcriptUrl, { signal: AbortSignal.timeout(8000) });
+          if (tr.ok) {
+            transcript = (await tr.text()).replace(/\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\S+\s*/g, '').replace(/<[^>]+>/g, '').replace(/^\d+\s*$/gm, '').replace(/\s+/g, ' ').trim().slice(0, 4000);
+          }
+        } catch {}
+      }
+
+      // 2b. Scrape article page
       if (!transcript && episode.link) {
         try {
           const pageRes = await fetch(episode.link, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(8000) });
           const pageHtml = await pageRes.text();
-          const bodyMatch = pageHtml.match(/<div[^>]+class="[^"]*article__content[^"]*"[^>]*>([\s\S]*?)<\/div>/);
-          if (bodyMatch) {
-            transcript = bodyMatch[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 3000);
-          }
+          const bodyMatch = pageHtml.match(/<div[^>]+class="[^"]*(?:article|entry|post)(?:__|-)?content[^"]*"[^>]*>([\s\S]*?)<\/div>/);
+          if (bodyMatch) transcript = bodyMatch[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 3000);
           if (!transcript || transcript.length < 100) {
-            const pMatches = [...pageHtml.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)];
-            const pTexts = pMatches.map((m) => m[1].replace(/<[^>]+>/g, '').trim()).filter((t) => t.length > 30 && /[àâéèêëîïôùûçœ]/i.test(t));
+            const pTexts = [...pageHtml.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)]
+              .map((m) => m[1].replace(/<[^>]+>/g, '').trim())
+              .filter((t) => t.length > 40 && /[àâéèêëîïôùûçœ]/i.test(t));
             if (pTexts.length >= 3) transcript = pTexts.slice(0, 12).join(' ').trim();
           }
         } catch {}
       }
 
-      // Step 3: if no transcript from page, use Deepgram to transcribe the audio
+      // 2c. Deepgram pre-recorded transcription
       if ((!transcript || transcript.length < 80) && deepgramKey && episode.audioUrl) {
         try {
           const dgRes = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&language=fr&punctuate=true&smart_format=true', {
@@ -952,15 +960,12 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
             headers: { 'Authorization': `Token ${deepgramKey}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: episode.audioUrl }),
           });
-          const dgData = await dgRes.json();
-          transcript = dgData?.results?.channels?.[0]?.alternatives?.[0]?.transcript || '';
+          transcript = (await dgRes.json())?.results?.channels?.[0]?.alternatives?.[0]?.transcript || '';
         } catch {}
       }
 
-      // Fallback: use RSS description
-      if (!transcript || transcript.length < 40) {
-        transcript = (episode.desc || '').replace(/<[^>]+>/g, '').trim();
-      }
+      // 2d. RSS description
+      if (!transcript || transcript.length < 40) transcript = (episode.desc || '').replace(/<[^>]+>/g, '').trim();
 
       if (!transcript || transcript.length < 40) throw new Error('No transcript available');
 
