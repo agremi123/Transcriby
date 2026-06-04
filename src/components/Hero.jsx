@@ -3401,6 +3401,24 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
     audioRef.current.currentTime = pct * duration;
   };
 
+  const totalTranscriptWords = React.useMemo(() => transcript ? transcript.split(/\s+/).length : 0, [transcript]);
+  const pageOffset = pageIndex * WORDS_PER_PAGE;
+
+  // Click a word → seek audio to its estimated position
+  const seekToWord = (globalWordIdx) => {
+    if (!audioRef.current || !duration || !totalTranscriptWords) return;
+    audioRef.current.currentTime = (globalWordIdx / totalTranscriptWords) * duration;
+  };
+
+  // Auto-advance page when playhead passes the last word of the current page
+  React.useEffect(() => {
+    if (!duration || !totalTranscriptWords) return;
+    const pageEnd = ((pageOffset + WORDS_PER_PAGE) / totalTranscriptWords) * duration;
+    if (currentTime >= pageEnd && pageIndex < totalPages - 1) {
+      setPageIndex((p) => p + 1);
+    }
+  }, [currentTime, duration, totalTranscriptWords, pageOffset, pageIndex, totalPages]);
+
   const fmtDate = (d) => {
     if (!d) return '';
     try {
