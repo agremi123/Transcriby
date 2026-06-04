@@ -3846,6 +3846,7 @@ export default function Hero() {
                 loading={speakingLoading}
                 narratorId={speakingNarrator}
                 openingLine={speakingOpeningLine}
+                openingLineTranslation={speakingOpeningTranslation}
                 topicLabel={speakingTopicLabel}
               />
             ) : writingActive ? (
