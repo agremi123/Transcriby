@@ -748,6 +748,7 @@ export function AudioDemoCard({
   const [time, setTime] = React.useState(0);
   const [register, setRegister] = React.useState('Standard');
   const [source, setSource] = React.useState('mic');
+  const [tabCaptureError, setTabCaptureError] = React.useState(null);
   const [stableWordCount, setStableWordCount] = React.useState(0);
   const [overallLevel, setOverallLevel] = React.useState(null);
   const [overallStrength, setOverallStrength] = React.useState(null);
