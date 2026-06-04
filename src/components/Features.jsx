@@ -91,7 +91,7 @@ export function UniversitiesBar() {
               transition={{ duration: 0.5, delay: 0.2 + i * 0.06 }}
               className="flex flex-col items-center gap-2 group"
             >
-              <div className="w-24 h-24 rounded-2xl overflow-hidden shadow-md ring-1 ring-navy/10 group-hover:ring-wine/40 group-hover:shadow-lg transition-all duration-200">
+              <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-md ring-1 ring-navy/10 group-hover:ring-wine/40 group-hover:shadow-lg transition-all duration-200">
                 <img src={p.art} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
               </div>
               <span className="font-display text-[12px] text-navy/55 text-center leading-tight group-hover:text-navy/75 transition-colors">{p.name}</span>
