@@ -988,6 +988,10 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
 
       if (!transcript || transcript.length < 40) throw new Error('No transcript available');
 
+      // Truncate transcript to ~400 words (≈ 3 min of speech at 130 wpm)
+      const words = transcript.split(/\s+/);
+      if (words.length > 400) transcript = words.slice(0, 400).join(' ') + '…';
+
       // Step 4: generate 4 MCQ comprehension questions
       const qRes = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
