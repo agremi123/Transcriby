@@ -1674,6 +1674,10 @@ export function AudioDemoCard({
       setPracticeTopics([topic]);
       loadPractice(topic);
       clearHighlights();
+    } else if (initialLearnMode === 'write') {
+      setInputMode('write');
+      setLastSpeakWriteMode('write');
+      setActiveTab('transcript');
     } else if (initialLearnMode === 'discover') {
       setInputMode('discover');
       setHighlightDiscover(true);
