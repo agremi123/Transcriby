@@ -2047,8 +2047,7 @@ export function AudioDemoCard({
           </button>
         </div>
 
-      {(activeTab === 'practice' || vocabLevel) && (
-        <div className="flex border-b border-line shrink-0">
+      <div className="flex border-b border-line shrink-0" style={{ visibility: (activeTab === 'practice' || vocabLevel) ? 'visible' : 'hidden' }}>
           <button type="button" onClick={() => setActiveTab('transcript')}
             className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${activeTab === 'transcript' ? 'border-navy text-navy' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
             Chat
@@ -2058,7 +2057,6 @@ export function AudioDemoCard({
             {vocabLevel ? `Vocab & grammar · ${vocabLevel}` : `Practice — ${overallWeakness}`}
           </button>
         </div>
-      )}
 
         <div ref={writeBoxRef} className={`relative bg-ivory/60 border border-line/70 overflow-hidden${fullscreen ? ' flex-1 flex flex-col min-h-0' : ' h-[360px]'}`}>
           {inputMode === 'discover' ? (
