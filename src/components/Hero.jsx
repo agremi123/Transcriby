@@ -3313,6 +3313,131 @@ function ReadingArticlePanel({
   );
 }
 
+function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vocab = [], parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
+  const [playing, setPlaying] = React.useState(false);
+  const [currentTime, setCurrentTime] = React.useState(0);
+  const [duration, setDuration] = React.useState(0);
+  const audioRef = React.useRef(null);
+
+  const [translateActive, setTranslateActive] = React.useState(false);
+  const [revealedBatchCount, setRevealedBatchCount] = React.useState(0);
+
+  React.useEffect(() => { setTranslateActive(false); setRevealedBatchCount(0); }, [transcript]);
+
+  const hintBatches = React.useMemo(() => {
+    const b = [];
+    for (let i = 0; i < vocab.length; i += 2) b.push(vocab.slice(i, i + 2));
+    return b;
+  }, [vocab]);
+  const revealedWords = React.useMemo(() => hintBatches.slice(0, revealedBatchCount).flat(), [hintBatches, revealedBatchCount]);
+  const hasMoreHints = revealedBatchCount < hintBatches.length;
+  const canAffordHint = parisianPercent >= HINT_COST;
+
+  const handleTranslateClick = () => {
+    if (translateActive) { setTranslateActive(false); return; }
+    if (revealedBatchCount === 0) setRevealedBatchCount(1);
+    setTranslateActive(true);
+  };
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (playing) { audioRef.current.pause(); setPlaying(false); }
+    else { audioRef.current.play(); setPlaying(true); }
+  };
+
+  const seek = (e) => {
+    if (!audioRef.current || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    audioRef.current.currentTime = pct * duration;
+  };
+
+  const byline = [source, date].filter(Boolean).join(' — ');
+
+  return (
+    <div className="flex flex-col pr-4" style={{ height: 520 }}>
+      {loading ? (
+        <div className="flex items-center gap-3 mt-auto mb-auto">
+          <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
+          <span className="text-[14px] text-navy/40 font-display italic">Searching for an episode…</span>
+        </div>
+      ) : (
+        <>
+          {title && (
+            <div className="mb-4 shrink-0 px-4 py-3 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
+              <h2 className="font-display text-[22px] sm:text-[26px] leading-[1.2] tracking-[-0.01em] line-clamp-2 text-navy">{title}</h2>
+            </div>
+          )}
+
+          {/* Audio player */}
+          {audioUrl && (
+            <div className="shrink-0 mb-4 flex items-center gap-3 px-1">
+              <audio ref={audioRef} src={audioUrl} preload="metadata"
+                onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
+                onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
+                onEnded={() => setPlaying(false)} />
+              <button type="button" onClick={togglePlay}
+                className="w-9 h-9 rounded-full bg-wine text-ivory flex items-center justify-center shrink-0 hover:bg-wine2 transition-colors">
+                {playing
+                  ? <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><rect x="0" y="0" width="3" height="12" rx="0.5" fill="white"/><rect x="6" y="0" width="3" height="12" rx="0.5" fill="white"/></svg>
+                  : <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M1 1l8 5-8 5V1z" fill="white"/></svg>}
+              </button>
+              <div className="flex-1 flex flex-col gap-1">
+                <div className="w-full h-1.5 bg-navy/10 rounded-full cursor-pointer relative" onClick={seek}>
+                  <div className="h-full bg-wine rounded-full transition-all" style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }} />
+                </div>
+                <div className="flex justify-between text-[10px] font-mono text-navy/35">
+                  <span>{Math.floor(currentTime / 60)}:{String(Math.floor(currentTime % 60)).padStart(2, '0')}</span>
+                  <span>{Math.floor(duration / 60)}:{String(Math.floor(duration % 60)).padStart(2, '0')}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Transcript */}
+          <div className="flex-1 min-h-0 overflow-y-auto pr-1">
+            <PassageWithVocabHighlights passage={transcript} vocabEntries={revealedWords} highlightActive={translateActive && revealedWords.length > 0} />
+          </div>
+
+          {/* Footer */}
+          <div className="mt-4 shrink-0 border-t pt-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
+            {byline && <p className="text-[10px] font-mono tracking-[0.12em] mb-3 truncate" style={{ color: '#8b1e2d' }}>{byline}</p>}
+            <div className="flex items-center gap-3">
+              <DailyParisianPointsIndicator points={dailyParisianPoints} />
+              {vocab.length > 0 && !translateActive && (
+                <motion.div className="flex-1 flex items-center justify-center gap-1.5 pointer-events-none"
+                  initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 1, 0] }}
+                  transition={{ duration: 1.8, repeat: Infinity, repeatDelay: 1.2, ease: 'easeInOut' }}>
+                  <span className="font-display text-[11px] italic text-wine/70 whitespace-nowrap">Use your points</span>
+                  <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden>
+                    <path d="M1 5h11M8 1l4 4-4 4" stroke="#8B1E2D" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
+                  </svg>
+                </motion.div>
+              )}
+              {vocab.length > 0 && translateActive && <div className="flex-1" />}
+              {vocab.length > 0 && (
+                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                  <button type="button" onClick={handleTranslateClick}
+                    className={`${NAV_CTA_CLASS} ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}>
+                    Translate hard words
+                  </button>
+                  {translateActive && hasMoreHints && revealedBatchCount > 0 && (
+                    <button type="button" onClick={() => { if (!canAffordHint) return; onSpendExperience?.(HINT_COST); setRevealedBatchCount((c) => Math.min(c + 1, hintBatches.length)); setTranslateActive(true); }}
+                      disabled={!canAffordHint}
+                      className={`text-[9px] font-mono tracking-widest uppercase transition-colors ${canAffordHint ? 'text-wine/70 hover:text-wine' : 'text-navy/25 cursor-not-allowed'}`}>
+                      {canAffordHint ? `+ more words — ${HINT_COST} pts` : `need ${HINT_COST} Parisianism`}
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function Hero() {
   const { effectiveLevel, profile, spendExperience, dailyParisianPoints } = useLearnerProfile();
   const [searchParams, setSearchParams] = useSearchParams();
