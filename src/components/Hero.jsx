@@ -3380,10 +3380,10 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
       {loading ? (
         <div className="flex flex-col gap-4 pt-2">
           <div className="h-8 bg-navy/8 rounded w-3/4 animate-pulse" />
-          <div className="flex items-center gap-3 px-4 py-3 bg-navy/5 border border-navy/10 rounded-lg">
-            <div className="w-9 h-9 rounded-full bg-wine/20 animate-pulse shrink-0" />
-            <div className="flex-1 h-1.5 bg-navy/10 rounded-full animate-pulse" />
-            <div className="w-10 h-3 bg-navy/10 rounded animate-pulse" />
+          <div className="flex items-center gap-2.5 px-3 py-2 bg-navy/5 border border-navy/10 rounded-lg">
+            <div className="w-7 h-7 rounded-full bg-wine/20 animate-pulse shrink-0" />
+            <div className="flex-1 h-1 bg-navy/10 rounded-full animate-pulse" />
+            <div className="w-7 h-3 bg-navy/10 rounded animate-pulse" />
           </div>
           <div className="flex items-center gap-2 mt-2">
             <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
