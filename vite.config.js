@@ -795,6 +795,41 @@ function sessionAudioMiddleware() {
 // 128kbps → 3MB ≈ 3 min | 64kbps → 3MB ≈ 6 min | 192kbps → 3MB ≈ 2 min
 const AUDIO_MAX_BYTES = 3_000_000;
 
+const CLIP_SECONDS = 150; // 2 min 30 sec target clip length
+const DOWNLOAD_BYTES = 8_000_000; // download 8 MB — enough for 5+ min at 128 kbps
+
+/**
+ * Downloads the first DOWNLOAD_BYTES of an audio URL and trims it to
+ * exactly CLIP_SECONDS using ffmpeg. Returns a Buffer of the MP3 output.
+ */
+async function makeAudioClip(audioUrl) {
+  const r = await fetch(audioUrl, {
+    headers: { 'User-Agent': 'Mozilla/5.0', 'Range': `bytes=0-${DOWNLOAD_BYTES - 1}` },
+    signal: AbortSignal.timeout(25000),
+  });
+  const rawBuf = Buffer.from(await r.arrayBuffer());
+
+  const id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+  const inPath = join(tmpdir(), `nativa-in-${id}`);
+  const outPath = join(tmpdir(), `nativa-out-${id}.mp3`);
+
+  writeFileSync(inPath, rawBuf);
+
+  await new Promise((resolve, reject) => {
+    execFile(
+      'ffmpeg',
+      ['-y', '-i', inPath, '-t', String(CLIP_SECONDS), '-c:a', 'libmp3lame', '-q:a', '5', '-ar', '44100', outPath],
+      { timeout: 30000 },
+      (err) => { if (err) reject(err); else resolve(); }
+    );
+  });
+
+  const trimmed = readFileSync(outPath);
+  try { unlinkSync(inPath); } catch {}
+  try { unlinkSync(outPath); } catch {}
+  return trimmed;
+}
+
 function audioProxyMiddleware() {
   return async (req, res, next) => {
     if (!req.url.startsWith('/api/audio-proxy')) { next(); return; }
