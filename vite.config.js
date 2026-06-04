@@ -1014,19 +1014,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
         } catch {}
       }
 
-      // 3b. Deepgram on the TRIMMED binary — gets transcript only for the clip portion
-      if ((!transcript || transcript.length < 80) && deepgramKey && clipAudioBuf) {
-        try {
-          const dgRes = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&language=fr&punctuate=true&smart_format=true', {
-            method: 'POST',
-            headers: { 'Authorization': `Token ${deepgramKey}`, 'Content-Type': 'audio/mpeg' },
-            body: clipAudioBuf,
-          });
-          transcript = (await dgRes.json())?.results?.channels?.[0]?.alternatives?.[0]?.transcript || '';
-        } catch {}
-      }
-
-      // 3c. Scrape article page
+      // 3b. Scrape article page
       if (!transcript && episode.link) {
         try {
           const pageRes = await fetch(episode.link, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(8000) });
