@@ -3615,6 +3615,60 @@ export default function Hero() {
     }
   }, [practiceTopic, practiceType]);
 
+  // Speaking challenge state
+  const [speakingActive, setSpeakingActive] = React.useState(false);
+  const [speakingLoading, setSpeakingLoading] = React.useState(false);
+  const [speakingNarrator, setSpeakingNarrator] = React.useState('lea');
+  const [speakingOpeningLine, setSpeakingOpeningLine] = React.useState('');
+  const [speakingTopicLabel, setSpeakingTopicLabel] = React.useState('');
+
+  React.useEffect(() => {
+    if (practiceType === 'speaking' && practiceTopic && !speakingActive) {
+      setSpeakingActive(true);
+      setSpeakingLoading(true);
+      fetch('/api/speaking-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: practiceTopic }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          setSpeakingNarrator(data.narratorId || 'lea');
+          setSpeakingOpeningLine(data.openingLine || '');
+          setSpeakingTopicLabel(data.topicLabel || practiceTopic);
+          setSpeakingLoading(false);
+        })
+        .catch(() => setSpeakingLoading(false));
+    }
+  }, [practiceTopic, practiceType]);
+
+  // Writing challenge state
+  const [writingActive, setWritingActive] = React.useState(false);
+  const [writingLoading, setWritingLoading] = React.useState(false);
+  const [writingPrompt, setWritingPrompt] = React.useState('');
+  const [writingGuidelines, setWritingGuidelines] = React.useState([]);
+  const [writingWordTarget, setWritingWordTarget] = React.useState(80);
+
+  React.useEffect(() => {
+    if (practiceType === 'writing' && practiceTopic && !writingActive) {
+      setWritingActive(true);
+      setWritingLoading(true);
+      fetch('/api/writing-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: practiceTopic }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          setWritingPrompt(data.prompt || '');
+          setWritingGuidelines(data.guidelines || []);
+          setWritingWordTarget(data.wordTarget || 80);
+          setWritingLoading(false);
+        })
+        .catch(() => setWritingLoading(false));
+    }
+  }, [practiceTopic, practiceType]);
+
   const [introNarrator, setIntroNarrator] = React.useState(null);
   const [introPlaying, setIntroPlaying] = React.useState(null); // null | 'lea' | 'jules'
   const [introPlaybackTime, setIntroPlaybackTime] = React.useState(null);
