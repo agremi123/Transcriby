@@ -3449,8 +3449,59 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
 
 const NARRATOR_PORTRAITS = { lea: '/assets/lea.png', jules: '/assets/jules.png' };
 
-function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', topicLabel = '' }) {
+function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '' }) {
   const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+
+  const [speaking, setSpeaking] = React.useState(false);
+  const [playbackTime, setPlaybackTime] = React.useState(null);
+  const [timings, setTimings] = React.useState([]);
+  const ctxRef = React.useRef(null);
+  const sourceRef = React.useRef(null);
+  const sessionRef = React.useRef(0);
+
+  const stopAudio = React.useCallback(() => {
+    sessionRef.current += 1;
+    try { sourceRef.current?.stop(); } catch {}
+    sourceRef.current = null;
+    setSpeaking(false);
+    setPlaybackTime(null);
+    setTimings([]);
+  }, []);
+
+  React.useEffect(() => stopAudio, [stopAudio]);
+
+  const playOpeningLine = async () => {
+    if (!openingLine) return;
+    if (speaking) { stopAudio(); return; }
+    stopAudio();
+    const session = sessionRef.current;
+    const siteSession = beginSiteAudioPlayback();
+    try {
+      const buf = await fetchNarratorAudio(openingLine, narratorId);
+      if (session !== sessionRef.current || !isSiteAudioPlaybackCurrent(siteSession)) return;
+      const ctx = ctxRef.current || new (window.AudioContext || window.webkitAudioContext)();
+      ctxRef.current = ctx;
+      const decoded = await ctx.decodeAudioData(buf.slice(0));
+      if (session !== sessionRef.current || !isSiteAudioPlaybackCurrent(siteSession)) return;
+      setTimings(buildWordTimings(openingLine, decoded.duration));
+      setPlaybackTime(0);
+      setSpeaking(true);
+      registerSiteAudioStop(stopAudio);
+      await playDecodedBuffer(ctx, {
+        buffer: decoded,
+        narrator: narratorId,
+        sourceRef,
+        connectSource: connectNarratorSource,
+        playbackSession: siteSession,
+        onTimeUpdate: (t) => {
+          if (session !== sessionRef.current) return;
+          setPlaybackTime(t);
+          if (t == null) stopAudio();
+        },
+      });
+    } catch { stopAudio(); }
+  };
+
   return (
     <div className="flex flex-col pr-4" style={{ height: 520 }}>
       {loading ? (
@@ -3466,12 +3517,43 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
           </div>
 
           <div className="flex gap-4 items-start mb-6 shrink-0">
-            <img src={NARRATOR_PORTRAITS[narratorId]} alt={name}
-              className="w-16 h-16 rounded-full object-cover shrink-0 border-2 border-wine/20" />
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[10px] tracking-widest uppercase text-wine/60 font-mono">{name}</span>
+            {/* Narrator portrait — click to play */}
+            <div className="relative shrink-0">
+              <button type="button" onClick={playOpeningLine} aria-label={`Listen to ${name}`}
+                className="relative w-16 h-16 rounded-full overflow-hidden border-2 transition-all hover:scale-105 active:scale-95"
+                style={{ borderColor: speaking ? '#8b1e2d' : 'rgba(139,30,45,0.2)' }}>
+                <img src={NARRATOR_PORTRAITS[narratorId]} alt={name} className="w-full h-full object-cover object-top" />
+                {/* play/pause overlay */}
+                <div className={`absolute inset-0 flex items-center justify-center bg-navy/30 transition-opacity ${speaking ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                  {speaking
+                    ? <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><rect x="0" y="0" width="3" height="12" rx="0.5" fill="white"/><rect x="6" y="0" width="3" height="12" rx="0.5" fill="white"/></svg>
+                    : <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M1 1l8 5-8 5V1z" fill="white"/></svg>}
+                </div>
+              </button>
+              {speaking && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-30 pointer-events-none" />}
+            </div>
+
+            <div className="flex flex-col gap-2 flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] tracking-widest uppercase text-wine/60 font-mono">{name}</span>
+                <button type="button" onClick={playOpeningLine}
+                  className="flex items-center gap-1 text-[10px] font-mono text-wine/50 hover:text-wine transition-colors">
+                  {speaking
+                    ? <><svg width="8" height="10" viewBox="0 0 10 12" fill="none"><rect x="0" y="0" width="3" height="12" rx="0.5" fill="currentColor"/><rect x="6" y="0" width="3" height="12" rx="0.5" fill="currentColor"/></svg> pause</>
+                    : <><svg width="8" height="10" viewBox="0 0 10 12" fill="none"><path d="M1 1l8 5-8 5V1z" fill="currentColor"/></svg> écouter</>}
+                </button>
+              </div>
               {openingLine ? (
-                <p className="font-display text-[16px] italic leading-snug text-navy">&ldquo;{openingLine}&rdquo;</p>
+                <NarratorHoverText
+                  text={openingLine}
+                  translation={openingLineTranslation}
+                  highlightSpeech={speaking}
+                  speechPlaybackTime={playbackTime}
+                  speechTimings={timings}
+                  quote
+                  className="font-display text-[16px] italic leading-snug text-navy"
+                  wrapperClassName="relative w-full"
+                />
               ) : (
                 <p className="font-display text-[15px] text-navy/40 italic">Réponds en français…</p>
               )}
