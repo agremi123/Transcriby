@@ -3442,6 +3442,101 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
   );
 }
 
+const NARRATOR_PORTRAITS = { lea: '/assets/lea.png', jules: '/assets/jules.png' };
+
+function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', topicLabel = '' }) {
+  const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+  return (
+    <div className="flex flex-col pr-4" style={{ height: 520 }}>
+      {loading ? (
+        <div className="flex items-center gap-3 mt-auto mb-auto">
+          <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
+          <span className="text-[14px] text-navy/40 font-display italic">Preparing the conversation…</span>
+        </div>
+      ) : (
+        <>
+          <div className="mb-6 shrink-0 px-4 py-3 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
+            <p className="text-[10px] tracking-widest uppercase text-wine/60 mb-1 font-mono">Speaking Challenge</p>
+            <h2 className="font-display text-[24px] leading-snug text-navy">{topicLabel}</h2>
+          </div>
+
+          <div className="flex gap-4 items-start mb-6 shrink-0">
+            <img src={NARRATOR_PORTRAITS[narratorId]} alt={name}
+              className="w-16 h-16 rounded-full object-cover shrink-0 border-2 border-wine/20" />
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[10px] tracking-widest uppercase text-wine/60 font-mono">{name}</span>
+              {openingLine ? (
+                <p className="font-display text-[16px] italic leading-snug text-navy">&ldquo;{openingLine}&rdquo;</p>
+              ) : (
+                <p className="font-display text-[15px] text-navy/40 italic">Réponds en français…</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex-1 flex flex-col justify-end gap-3 pb-4">
+            <div className="border border-line/40 bg-paper/60 px-4 py-3 space-y-2">
+              <p className="text-[10px] tracking-widest uppercase text-navy/35 font-mono">Tips</p>
+              <ul className="space-y-1">
+                {['Parle naturellement, sans trop réfléchir', 'Utilise des expressions idiomatiques parisiennes', 'N\'hésite pas à demander des clarifications'].map((tip, i) => (
+                  <li key={i} className="flex items-start gap-2 text-[13px] text-navy/60 font-display">
+                    <span className="text-wine/40 shrink-0 mt-0.5">—</span>
+                    <span>{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function WritingChallengePanel({ loading, prompt = '', guidelines = [], wordTarget = 80 }) {
+  return (
+    <div className="flex flex-col pr-4" style={{ height: 520 }}>
+      {loading ? (
+        <div className="flex items-center gap-3 mt-auto mb-auto">
+          <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
+          <span className="text-[14px] text-navy/40 font-display italic">Preparing your writing prompt…</span>
+        </div>
+      ) : (
+        <>
+          <div className="mb-5 shrink-0 px-4 py-3 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
+            <p className="text-[10px] tracking-widest uppercase text-wine/60 mb-1 font-mono">Writing Challenge</p>
+            <p className="font-display text-[17px] leading-snug text-navy">{prompt || 'Écris en français sur ce sujet…'}</p>
+          </div>
+
+          <div className="mb-4 shrink-0 flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+              <circle cx="7" cy="7" r="6" stroke="#8B1E2D" strokeWidth="1.2" opacity="0.4"/>
+              <path d="M7 4v3.5l2 1.5" stroke="#8B1E2D" strokeWidth="1.2" strokeLinecap="round" opacity="0.4"/>
+            </svg>
+            <span className="text-[12px] font-mono text-navy/40">Objectif : ~{wordTarget} mots</span>
+          </div>
+
+          {guidelines.length > 0 && (
+            <div className="border border-line/40 bg-paper/60 px-4 py-3 space-y-2 shrink-0">
+              <p className="text-[10px] tracking-widest uppercase text-navy/35 font-mono">Conseils</p>
+              <ul className="space-y-1.5">
+                {guidelines.map((tip, i) => (
+                  <li key={i} className="flex items-start gap-2 text-[13px] text-navy/60 font-display">
+                    <span className="text-wine/40 shrink-0 mt-0.5">—</span>
+                    <span>{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="flex-1" />
+          <p className="text-[11px] text-navy/30 font-display italic mt-4">Écris dans la zone de texte à droite, puis clique sur <em>Make it Parisien!</em> pour avoir une correction.</p>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function Hero() {
   const { effectiveLevel, profile, spendExperience, dailyParisianPoints } = useLearnerProfile();
   const [searchParams, setSearchParams] = useSearchParams();
