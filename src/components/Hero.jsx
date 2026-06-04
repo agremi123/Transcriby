@@ -3358,50 +3358,66 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
 
   const byline = [source, date].filter(Boolean).join(' — ');
 
+  const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  const pct = duration ? (currentTime / duration) * 100 : 0;
+
   return (
-    <div className="flex flex-col pr-4" style={{ height: 520 }}>
+    <div className="flex flex-col pr-4 min-h-0">
       {loading ? (
-        <div className="flex items-center gap-3 mt-auto mb-auto">
-          <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
-          <span className="text-[14px] text-navy/40 font-display italic">Searching for an episode…</span>
+        <div className="flex flex-col gap-4 pt-2">
+          {/* skeleton title */}
+          <div className="h-8 bg-navy/8 rounded w-3/4 animate-pulse" />
+          {/* skeleton audio bar */}
+          <div className="flex items-center gap-3 px-4 py-3 bg-navy/5 border border-navy/10 rounded-lg">
+            <div className="w-9 h-9 rounded-full bg-wine/20 animate-pulse shrink-0" />
+            <div className="flex-1 h-1.5 bg-navy/10 rounded-full animate-pulse" />
+            <div className="w-10 h-3 bg-navy/10 rounded animate-pulse" />
+          </div>
+          <div className="flex items-center gap-2 mt-2">
+            <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
+            <span className="text-[13px] text-navy/40 font-display italic">Chargement de l'épisode…</span>
+          </div>
         </div>
       ) : (
         <>
           {title && (
-            <div className="mb-4 shrink-0 px-4 py-3 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
-              <h2 className="font-display text-[22px] sm:text-[26px] leading-[1.2] tracking-[-0.01em] line-clamp-2 text-navy">{title}</h2>
+            <div className="mb-3 shrink-0 px-4 py-3 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
+              <h2 className="font-display text-[20px] sm:text-[24px] leading-[1.2] tracking-[-0.01em] line-clamp-2 text-navy">{title}</h2>
             </div>
           )}
 
-          {/* Audio player */}
-          {audioUrl && (
-            <div className="shrink-0 mb-5 bg-navy/5 border border-navy/10 px-5 py-4">
-              <audio ref={audioRef} src={audioUrl} preload="metadata"
-                onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
-                onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
-                onEnded={() => setPlaying(false)} />
-              <p className="text-[10px] tracking-widest uppercase font-mono text-navy/35 mb-3">Écoute l'épisode</p>
-              <div className="flex items-center gap-4">
-                <button type="button" onClick={togglePlay}
-                  className="w-14 h-14 rounded-full bg-wine text-ivory flex items-center justify-center shrink-0 hover:bg-wine2 active:scale-95 transition-all shadow-md">
-                  {playing
-                    ? <svg width="14" height="16" viewBox="0 0 14 16" fill="none"><rect x="0" y="0" width="4" height="16" rx="1" fill="white"/><rect x="9" y="0" width="4" height="16" rx="1" fill="white"/></svg>
-                    : <svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1l11 7L2 15V1z" fill="white"/></svg>}
-                </button>
-                <div className="flex-1 flex flex-col gap-2">
-                  <div className="w-full h-2 bg-navy/10 rounded-full cursor-pointer relative group" onClick={seek}>
-                    <div className="h-full bg-wine rounded-full transition-all" style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }} />
-                    <div className="absolute inset-y-0 w-3 h-3 rounded-full bg-wine border-2 border-white shadow -translate-y-[2px] transition-all hidden group-hover:block"
-                      style={{ left: duration ? `calc(${(currentTime / duration) * 100}% - 6px)` : '-6px' }} />
-                  </div>
-                  <div className="flex justify-between text-[11px] font-mono text-navy/40">
-                    <span>{Math.floor(currentTime / 60)}:{String(Math.floor(currentTime % 60)).padStart(2, '0')}</span>
-                    <span>{duration ? `${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}` : '--:--'}</span>
-                  </div>
+          {/* Audio bar — always shown, disabled when no URL */}
+          <div className="shrink-0 mb-4">
+            {audioUrl && <audio ref={audioRef} src={audioUrl} preload="metadata"
+              onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
+              onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
+              onEnded={() => setPlaying(false)} />}
+            <div className="flex items-center gap-3 px-4 py-3 bg-navy/5 border border-navy/10 rounded-lg">
+              {/* play/pause button */}
+              <button type="button" onClick={togglePlay} disabled={!audioUrl}
+                className="w-9 h-9 rounded-full bg-wine text-ivory flex items-center justify-center shrink-0 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-wine/80">
+                {playing
+                  ? <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><rect x="0" y="0" width="3" height="12" rx="1" fill="white"/><rect x="6" y="0" width="3" height="12" rx="1" fill="white"/></svg>
+                  : <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M1 0.5l8 5.5L1 11.5V0.5z" fill="white"/></svg>}
+              </button>
+
+              {/* progress bar */}
+              <div className="flex-1 flex flex-col gap-1.5">
+                <div className={`w-full h-1.5 rounded-full relative group ${audioUrl ? 'cursor-pointer' : 'cursor-default'} bg-navy/12`}
+                  onClick={audioUrl ? seek : undefined}>
+                  <div className="h-full bg-wine rounded-full transition-[width] duration-100" style={{ width: `${pct}%` }} />
+                  {audioUrl && (
+                    <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-wine border-2 border-white shadow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                      style={{ left: `calc(${pct}% - 6px)` }} />
+                  )}
+                </div>
+                <div className="flex justify-between text-[10px] font-mono text-navy/35">
+                  <span>{fmtTime(currentTime)}</span>
+                  <span>{duration ? fmtTime(duration) : '--:--'}</span>
                 </div>
               </div>
             </div>
-          )}
+          </div>
 
           {/* Transcript */}
           <div className="flex-1 min-h-0 overflow-y-auto pr-1">
