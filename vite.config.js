@@ -998,9 +998,13 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
       let vocab = [];
       try { ({ vocab = [] } = JSON.parse(vRaw)); } catch {}
 
+      const finalAudioUrl = episode.audioUrl
+        ? `/api/audio-proxy?url=${encodeURIComponent(episode.audioUrl)}`
+        : generatedAudioUrl;
+
       res.end(JSON.stringify({
         title: episode.title,
-        audioUrl: episode.audioUrl ? `/api/audio-proxy?url=${encodeURIComponent(episode.audioUrl)}` : null,
+        audioUrl: finalAudioUrl,
         transcript,
         source: 'RFI — Journal en Français Facile',
         date: episode.pubDate,
