@@ -1948,11 +1948,11 @@ export function AudioDemoCard({
               </svg>
             </motion.div>
           )}
-          <button type="button" onClick={toggleRecording} disabled={status === 'connecting' || manualCorrecting || stoppingRecording}
+          <button type="button" onClick={toggleRecording} disabled={status === 'connecting' || manualCorrecting || stoppingRecording || (isRecording && source === 'tab')}
             className={`relative w-11 h-11 rounded-full bg-wine hover:bg-wine2 disabled:opacity-60 inline-flex items-center justify-center transition-all ${
               (highlightMic || showRepeatHint) && !isRecording ? 'scale-110 shadow-md ring-2 ring-wine/35' : ''
-            }`}
-            aria-label="Toggle recording">
+            } ${isRecording && source === 'mic' ? '' : ''}`}
+            aria-label="Toggle microphone recording">
             {isRecording ? (
               <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden>
                 <rect x="2" y="2" width="10" height="10" rx="1.5" fill="#F6F1E8" />
