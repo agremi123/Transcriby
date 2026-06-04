@@ -1002,6 +1002,7 @@ export default defineConfig(() => {
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY));
+          server.middlewares.use(audioProxyMiddleware());
           server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY));
           server.middlewares.use(speakingPromptMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY));
@@ -1016,6 +1017,7 @@ export default defineConfig(() => {
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY));
+          server.middlewares.use(audioProxyMiddleware());
           server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY));
           server.middlewares.use(speakingPromptMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY));
