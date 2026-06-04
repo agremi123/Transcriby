@@ -65,13 +65,13 @@ function FeatureCard({ icon, title, desc, delay }) {
 }
 
 export function UniversitiesBar() {
-  const items = [
-    { name: 'InnerFrench', style: 'font-display italic text-[22px]' },
-    { name: 'EASY FRENCH', style: 'font-display text-[20px] tracking-[0.15em]' },
-    { name: 'RFI Français Facile', style: 'font-display italic text-[18px]' },
-    { name: 'Français Authentique', style: 'font-display italic text-[19px]' },
-    { name: 'CHOSES À SAVOIR', style: 'font-display text-[17px] tracking-[0.1em]' },
-    { name: 'Coffee Break French', style: 'font-display italic text-[18px]' },
+  const podcasts = [
+    { name: 'InnerFrench', art: 'https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/5f/4b/51/5f4b5121-b307-4b0c-4ba9-3fba7aba161d/mza_1141892237621262066.jpg/600x600bb.jpg' },
+    { name: 'Easy French', art: 'https://is1-ssl.mzstatic.com/image/thumb/Podcasts122/v4/3a/97/78/3a9778d3-4932-96d9-fb69-95dfae76e61a/mza_11621599327333719166.jpg/600x600bb.jpg' },
+    { name: 'RFI Français Facile', art: 'https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/81/15/23/8115239e-731b-e9eb-aeb4-bcc7bab89aae/mza_92410675554346166.jpg/600x600bb.jpg' },
+    { name: 'Français Authentique', art: 'https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/e8/5c/ac/e85cacb6-6ef2-e0fa-bbc3-e4bfc135b2bf/mza_10847007516377223831.jpg/600x600bb.jpg' },
+    { name: 'Coffee Break French', art: 'https://is1-ssl.mzstatic.com/image/thumb/Podcasts115/v4/73/01/0a/73010a40-85a8-4d98-1f0d-b25d96b8e86f/mza_11764534205288833014.jpg/600x600bb.jpg' },
+    { name: 'Choses à Savoir', art: 'https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/31/55/a8/3155a807-e878-0453-86f7-1842cd32a186/mza_12348316116145026782.jpeg/600x600bb.jpg' },
   ];
 
   return (
@@ -82,16 +82,19 @@ export function UniversitiesBar() {
             All your favorite French podcasts, gathered here
           </p>
         </Reveal>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 items-center">
-          {items.map((it, i) => (
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-8 items-center justify-items-center">
+          {podcasts.map((p, i) => (
             <motion.div
-              key={it.name}
+              key={p.name}
               initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 0.55, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 + i * 0.05 }}
-              className="text-center text-navy hover:opacity-90 transition-opacity"
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 + i * 0.06 }}
+              className="flex flex-col items-center gap-2 group"
             >
-              <span className={it.style}>{it.name}</span>
+              <div className="w-14 h-14 rounded-xl overflow-hidden shadow-sm ring-1 ring-navy/10 group-hover:ring-wine/30 transition-all duration-200">
+                <img src={p.art} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+              </div>
+              <span className="font-display text-[11px] text-navy/50 text-center leading-tight group-hover:text-navy/70 transition-colors">{p.name}</span>
             </motion.div>
           ))}
         </div>
