@@ -954,7 +954,7 @@ function speakingPromptMiddleware(apiKey) {
       let raw = d.content?.[0]?.text?.trim() || '{}';
       raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       const parsed = JSON.parse(raw);
-      res.end(JSON.stringify({ narratorId, openingLine: parsed.openingLine || '', topicLabel: parsed.topicLabel || topic }));
+      res.end(JSON.stringify({ narratorId, openingLine: parsed.openingLine || '', openingLineTranslation: parsed.openingLineTranslation || '', topicLabel: parsed.topicLabel || topic }));
     } catch { res.end(JSON.stringify({ narratorId: 'lea', openingLine: '', topicLabel: topic })); }
   };
 }
