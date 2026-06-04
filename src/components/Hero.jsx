@@ -803,6 +803,7 @@ export function AudioDemoCard({
   const [playbackWords, setPlaybackWords] = React.useState(null);
   const audioRef = React.useRef(null);
   const recordingSessionRef = React.useRef(null);
+  const tabCaptureRef = React.useRef(null);
 
   // Parisian voice playback timing
   const [parisianPlaybackTime, setParisianPlaybackTime] = React.useState(null);
