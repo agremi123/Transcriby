@@ -14,7 +14,7 @@ export function Logo({ className = '' }) {
         })}
       </svg>
       <span className="font-display text-[26px] leading-none text-navy">Nativa</span>
-      <span className="hidden sm:block text-[11px] font-mono tracking-[0.08em] text-navy/70 leading-none border-l border-navy/20 pl-3 ml-1">all the French you need</span>
+      <span className="hidden sm:block text-[11px] font-mono tracking-[0.08em] text-navy/70 leading-none border-l border-navy/20 pl-3 ml-1 self-end mb-[3px]">all the French you need</span>
     </Link>
   );
 }
