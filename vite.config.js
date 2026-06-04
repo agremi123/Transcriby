@@ -979,26 +979,60 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
         }
       }
 
-      // Step 2: get transcript
+      // Step 2: trim real audio to exactly CLIP_SECONDS using ffmpeg, store in SESSION_AUDIO
+      let clipAudioUrl = generatedAudioUrl; // already set for the Claude+ElevenLabs fallback
+      let clipAudioBuf = null;
+
+      if (!clipAudioUrl && episode.audioUrl) {
+        try {
+          console.log('[listening] Trimming audio with ffmpeg…');
+          clipAudioBuf = await makeAudioClip(episode.audioUrl);
+          const sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
+          SESSION_AUDIO.set(sid, clipAudioBuf);
+          setTimeout(() => SESSION_AUDIO.delete(sid), 60 * 60 * 1000);
+          clipAudioUrl = `/api/audio-session/${sid}`;
+          console.log(`[listening] Clip ready: ${clipAudioBuf.length} bytes`);
+        } catch (e) {
+          console.error('[listening] ffmpeg trim failed:', e.message);
+          // Fall back to raw proxy URL so audio still plays (just full length)
+          clipAudioUrl = `/api/audio-proxy?url=${encodeURIComponent(episode.audioUrl)}`;
+        }
+      }
+
+      // Step 3: get transcript for the clip
       let transcript = episode.generatedTranscript || '';
 
-      // 2a. Spreaker / Podcast Index built-in plain-text transcript
+      // 3a. Spreaker / Podcast Index built-in plain-text transcript (already time-aligned, truncate by words)
       if (!transcript && episode.transcriptUrl) {
         try {
           const tr = await fetch(episode.transcriptUrl, { signal: AbortSignal.timeout(8000) });
           if (tr.ok) {
-            transcript = (await tr.text()).replace(/\d{2}:\d{2}:\d{2}[,\.]\d{3}\s*-->\s*\S+\s*/g, '').replace(/<[^>]+>/g, '').replace(/^\d+\s*$/gm, '').replace(/\s+/g, ' ').trim().slice(0, 4000);
+            transcript = (await tr.text())
+              .replace(/\d{2}:\d{2}:\d{2}[,.]\d{3}\s*-->\s*\S+\s*/g, '')
+              .replace(/<[^>]+>/g, '').replace(/^\d+\s*$/gm, '').replace(/\s+/g, ' ').trim();
           }
         } catch {}
       }
 
-      // 2b. Scrape article page
+      // 3b. Deepgram on the TRIMMED binary — gets transcript only for the clip portion
+      if ((!transcript || transcript.length < 80) && deepgramKey && clipAudioBuf) {
+        try {
+          const dgRes = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&language=fr&punctuate=true&smart_format=true', {
+            method: 'POST',
+            headers: { 'Authorization': `Token ${deepgramKey}`, 'Content-Type': 'audio/mpeg' },
+            body: clipAudioBuf,
+          });
+          transcript = (await dgRes.json())?.results?.channels?.[0]?.alternatives?.[0]?.transcript || '';
+        } catch {}
+      }
+
+      // 3c. Scrape article page
       if (!transcript && episode.link) {
         try {
           const pageRes = await fetch(episode.link, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(8000) });
           const pageHtml = await pageRes.text();
           const bodyMatch = pageHtml.match(/<div[^>]+class="[^"]*(?:article|entry|post)(?:__|-)?content[^"]*"[^>]*>([\s\S]*?)<\/div>/);
-          if (bodyMatch) transcript = bodyMatch[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 3000);
+          if (bodyMatch) transcript = bodyMatch[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
           if (!transcript || transcript.length < 100) {
             const pTexts = [...pageHtml.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)]
               .map((m) => m[1].replace(/<[^>]+>/g, '').trim())
@@ -1008,24 +1042,12 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
         } catch {}
       }
 
-      // 2c. Deepgram pre-recorded transcription
-      if ((!transcript || transcript.length < 80) && deepgramKey && episode.audioUrl) {
-        try {
-          const dgRes = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&language=fr&punctuate=true&smart_format=true', {
-            method: 'POST',
-            headers: { 'Authorization': `Token ${deepgramKey}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: episode.audioUrl }),
-          });
-          transcript = (await dgRes.json())?.results?.channels?.[0]?.alternatives?.[0]?.transcript || '';
-        } catch {}
-      }
-
-      // 2d. RSS description
+      // 3d. RSS description fallback
       if (!transcript || transcript.length < 40) transcript = (episode.desc || '').replace(/<[^>]+>/g, '').trim();
 
       if (!transcript || transcript.length < 40) throw new Error('No transcript available');
 
-      // Truncate transcript to ~400 words (≈ 3 min of speech at 130 wpm)
+      // Always truncate to ~400 words (≈ 2:30 of speech at 130 wpm) to match the audio clip
       const words = transcript.split(/\s+/);
       if (words.length > 400) transcript = words.slice(0, 400).join(' ') + '…';
 
