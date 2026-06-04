@@ -1290,11 +1290,11 @@ export function AudioDemoCard({
     setAssessingLevel(false);
   };
 
-  const loadPractice = async (topic, { openFullscreen = false } = {}) => {
+  const loadPractice = async (topic, { openFullscreen = false, autoSwitch = true } = {}) => {
     const t = topic || overallWeakness;
     if (!t) return;
     if (openFullscreen) onOpenFullscreen?.(t);
-    setActiveTab('practice');
+    if (autoSwitch) setActiveTab('practice');
     setPracticeExercises(null);
     setCompletedInBatch(new Set());
     setLoadingPractice(true);
