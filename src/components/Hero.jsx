@@ -3494,22 +3494,25 @@ export default function Hero() {
       </div>
 
       <Container className="relative">
+        {readingActive && (
+          <div className="py-6">
+            <ReadingArticlePanel
+              loading={readingLoading}
+              title={readingTitle}
+              passage={readingPassage}
+              source={readingSource}
+              author={readingAuthor}
+              date={readingDate}
+              vocab={readingVocab}
+              parisianPercent={profile?.parisianPercent ?? 0}
+              dailyParisianPoints={dailyParisianPoints}
+              onSpendExperience={spendExperience}
+            />
+          </div>
+        )}
         <div className="grid lg:grid-cols-[1fr_1.5fr] gap-8 items-center h-[calc(100vh-96px)]">
           <div className="relative flex flex-col justify-center overflow-visible">
-            {readingActive ? (
-              <ReadingArticlePanel
-                loading={readingLoading}
-                title={readingTitle}
-                passage={readingPassage}
-                source={readingSource}
-                author={readingAuthor}
-                date={readingDate}
-                vocab={readingVocab}
-                parisianPercent={profile?.parisianPercent ?? 0}
-                dailyParisianPoints={dailyParisianPoints}
-                onSpendExperience={spendExperience}
-              />
-            ) : (
+            {(
             <div className="flex flex-col items-center text-center overflow-visible">
             <h1 className="font-display text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-2">
               <Reveal delay={0.08}>Learn French</Reveal>
