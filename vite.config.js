@@ -818,7 +818,7 @@ function audioProxyMiddleware() {
   };
 }
 
-function listeningMiddleware(anthropicKey, deepgramKey) {
+function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/listening' || req.method !== 'POST') { next(); return; }
     let topic = '';
