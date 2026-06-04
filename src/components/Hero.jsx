@@ -1521,12 +1521,19 @@ export function AudioDemoCard({
     try {
       const capture = await captureTabAudioStream();
       tabCaptureRef.current = capture;
+      capture.stream.getAudioTracks().forEach((track) => {
+        track.onended = () => {
+          if (!tabCaptureRef.current) return;
+          stopRecordingWithGrace();
+        };
+      });
       setSource('tab');
+      setTabCaptureError(null);
       await start({ stream: capture.stream });
     } catch (err) {
       clearTabCapture();
       setSource('mic');
-      setError(err?.message || 'Unable to capture tab audio.');
+      setTabCaptureError(err?.message || 'Unable to capture tab audio.');
     }
   };
 
