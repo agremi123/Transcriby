@@ -1921,7 +1921,7 @@ export function AudioDemoCard({
         <button
           type="button"
           onClick={toggleTabRecording}
-          disabled={status === 'connecting' || manualCorrecting || stoppingRecording || awaitingRepeat}
+          disabled={status === 'connecting' || manualCorrecting || stoppingRecording || awaitingRepeat || (isRecording && source === 'mic')}
           className={`relative w-11 h-11 rounded-full border inline-flex items-center justify-center transition-all shrink-0 ${
             isRecording && source === 'tab'
               ? 'bg-wine border-wine text-ivory hover:bg-wine2'
