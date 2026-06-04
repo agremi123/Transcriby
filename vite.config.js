@@ -817,21 +817,39 @@ function listeningMiddleware(anthropicKey, deepgramKey) {
     }
     try {
       // Step 1: fetch RFI "Journal en Français Facile" RSS feed
-      const RSS_URL = 'https://www.rfi.fr/fr/podcasts/journal-en-francais-facile/feed/';
-      const rssRes = await fetch(RSS_URL, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-      const rssText = await rssRes.text();
+      const RSS_URLS = [
+        'https://www.rfi.fr/fr/podcasts/journal-en-francais-facile/feed/',
+        'https://podcasts.rfi.fr/podcast/rfi-journal-francais-facile.xml',
+        'https://www.rfi.fr/fr/emission/20120830-journal-francais-facile/feed/',
+      ];
+      let rssText = '';
+      for (const RSS_URL of RSS_URLS) {
+        try {
+          const r = await fetch(RSS_URL, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36', 'Accept': 'application/rss+xml, application/xml, text/xml, */*' },
+            signal: AbortSignal.timeout(12000),
+          });
+          if (r.ok) { rssText = await r.text(); if (rssText.length > 200) break; }
+        } catch {}
+      }
 
-      // Parse RSS items
+      // Parse RSS items — handle <item> or <item attr="...">
       const items = [];
-      const itemMatches = [...rssText.matchAll(/<item>([\s\S]*?)<\/item>/g)];
+      const itemMatches = [...rssText.matchAll(/<item[\s>]([\s\S]*?)<\/item>/g)];
       for (const m of itemMatches.slice(0, 10)) {
         const block = m[1];
-        const title = (block.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/) || block.match(/<title>([\s\S]*?)<\/title>/))?.[1]?.trim() || '';
-        const link = (block.match(/<link>([\s\S]*?)<\/link>/) || [])[1]?.trim() || '';
-        const audioUrl = (block.match(/enclosure[^>]+url="([^"]+)"/) || [])[1] || '';
+        const title = (block.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/) || block.match(/<title>([^<]*)<\/title>/))?.[1]?.trim() || '';
+        const link = (block.match(/<link>([\s\S]*?)<\/link>/) || block.match(/<link[^>]+href="([^"]+)"/))?.[1]?.trim() || '';
+        const audioUrl = (block.match(/enclosure[^>]+url="([^"]+)"/) || block.match(/<media:content[^>]+url="([^"]+)"/) || [])[1] || '';
         const pubDate = (block.match(/<pubDate>([\s\S]*?)<\/pubDate>/))?.[1]?.trim() || '';
-        const desc = (block.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/) || block.match(/<description>([\s\S]*?)<\/description>/))?.[1]?.trim() || '';
+        const desc = (block.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/) || block.match(/<description>([^<]*)<\/description>/))?.[1]?.trim() || '';
         if (audioUrl) items.push({ title, link, audioUrl, pubDate, desc });
+      }
+
+      // Log feed status to help debug
+      console.log(`[listening] RSS text length: ${rssText.length}, items found: ${items.length}`);
+      if (rssText.length > 0 && items.length === 0) {
+        console.log('[listening] RSS sample:', rssText.slice(0, 300));
       }
 
       if (!items.length) throw new Error('No RFI episodes found');
