@@ -3265,15 +3265,30 @@ function ReadingArticlePanel({
               {/* Hint button inline with arrows */}
               {vocab.length > 0 && (
                 <div className="flex flex-col items-end gap-1.5">
-                  <button
-                    type="button"
-                    onClick={handleTranslateClick}
-                    className={`${NAV_CTA_CLASS} ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
-                    aria-label="Translate hard words"
-                    aria-pressed={translateActive}
-                  >
-                    Translate hard words
-                  </button>
+                  <div className="relative flex flex-col items-end">
+                    {!translateActive && (
+                      <motion.div
+                        initial={{ opacity: 0, x: 6 }}
+                        animate={{ opacity: [0, 1, 1, 0], x: [6, 0, 0, -4] }}
+                        transition={{ duration: 1.8, repeat: Infinity, repeatDelay: 1.2, ease: 'easeInOut' }}
+                        className="absolute right-full mr-2 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none"
+                      >
+                        <span className="font-display text-[11px] italic text-wine/70 whitespace-nowrap">use them to translate</span>
+                        <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden>
+                          <path d="M1 5h11M8 1l4 4-4 4" stroke="#8B1E2D" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
+                        </svg>
+                      </motion.div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handleTranslateClick}
+                      className={`${NAV_CTA_CLASS} ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
+                      aria-label="Translate hard words"
+                      aria-pressed={translateActive}
+                    >
+                      Translate hard words
+                    </button>
+                  </div>
                   {translateActive && hasMoreHints && revealedBatchCount > 0 && (
                     <button
                       type="button"
