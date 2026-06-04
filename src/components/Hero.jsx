@@ -1418,6 +1418,11 @@ export function AudioDemoCard({
     ).replace(/\s+/g, ' ')
   ), [utterances, settledText, partialTranscript]);
 
+  const clearTabCapture = React.useCallback(() => {
+    releaseTabCapture(tabCaptureRef.current);
+    tabCaptureRef.current = null;
+  }, []);
+
   const stopRecordingWithGrace = React.useCallback(async () => {
     if (!isRecording) return;
     const session = ++stopRecordingSessionRef.current;
@@ -1426,13 +1431,14 @@ export function AudioDemoCard({
       await wait(RECORDING_STOP_GRACE_MS);
       if (stopRecordingSessionRef.current !== session) return;
       await stop();
+      clearTabCapture();
       await wait(RECORDING_STOP_SETTLE_MS);
     } finally {
       if (stopRecordingSessionRef.current === session) {
         setStoppingRecording(false);
       }
     }
-  }, [isRecording, stop]);
+  }, [isRecording, stop, clearTabCapture]);
 
   const toggleRecording = async () => {
     if (stoppingRecording) return;
