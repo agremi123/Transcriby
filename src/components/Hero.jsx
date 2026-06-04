@@ -3319,6 +3319,36 @@ function ReadingArticlePanel({
 
 const WORDS_PER_PAGE = 120;
 
+function AudioSyncedTranscript({ text, currentTime, duration, pageOffset, totalWords, onWordClick, className }) {
+  const words = React.useMemo(() => text.split(/\s+/).filter(Boolean), [text]);
+
+  const currentWordIdx = React.useMemo(() => {
+    if (!duration || !totalWords) return -1;
+    const pageStart = (pageOffset / totalWords) * duration;
+    const pageEnd = ((pageOffset + words.length) / totalWords) * duration;
+    if (currentTime < pageStart || currentTime >= pageEnd) return -1;
+    const progress = (currentTime - pageStart) / (pageEnd - pageStart);
+    return Math.min(Math.floor(progress * words.length), words.length - 1);
+  }, [currentTime, duration, words.length, pageOffset, totalWords]);
+
+  return (
+    <p className={className}>
+      {words.map((word, i) => (
+        <React.Fragment key={i}>
+          <span
+            onClick={() => onWordClick?.(pageOffset + i)}
+            className={`cursor-pointer rounded transition-colors duration-75 ${
+              i === currentWordIdx
+                ? 'bg-wine/20 text-wine'
+                : 'hover:bg-navy/8'
+            }`}
+          >{word}</span>{' '}
+        </React.Fragment>
+      ))}
+    </p>
+  );
+}
+
 function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vocab = [], parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
   const [playing, setPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
