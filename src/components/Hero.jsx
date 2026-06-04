@@ -3428,26 +3428,26 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
             <PassageWithVocabHighlights passage={currentPageText} vocabEntries={revealedWords} highlightActive={translateActive && revealedWords.length > 0} className="font-display text-[17px] leading-[1.65] text-navy/80" />
           </div>
 
-          {/* Footer: byline + points + pagination + translate */}
-          <div className="mt-3 shrink-0 border-t pt-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
+          {/* Pagination — bottom-right, just above the red line */}
+          {totalPages > 1 && (
+            <div className="flex justify-end items-center gap-1 shrink-0 mb-1">
+              <button type="button" onClick={() => setPageIndex((p) => Math.max(0, p - 1))} disabled={pageIndex === 0}
+                className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.5 2L3.5 6l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+              <span className="text-[10px] font-mono text-navy/40 tabular-nums">{pageIndex + 1}/{totalPages}</span>
+              <button type="button" onClick={() => setPageIndex((p) => Math.min(totalPages - 1, p + 1))} disabled={pageIndex === totalPages - 1}
+                className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+            </div>
+          )}
+
+          {/* Footer: byline + points + translate */}
+          <div className="shrink-0 border-t pt-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
             {byline && <p className="text-[10px] font-mono tracking-[0.12em] mb-2 truncate" style={{ color: '#8b1e2d' }}>{byline}</p>}
             <div className="flex items-center gap-2">
               <DailyParisianPointsIndicator points={dailyParisianPoints} />
-
-              {/* Page navigation */}
-              {totalPages > 1 && (
-                <div className="flex items-center gap-1 ml-1">
-                  <button type="button" onClick={() => setPageIndex((p) => Math.max(0, p - 1))} disabled={pageIndex === 0}
-                    className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.5 2L3.5 6l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  </button>
-                  <span className="text-[10px] font-mono text-navy/40 tabular-nums">{pageIndex + 1}/{totalPages}</span>
-                  <button type="button" onClick={() => setPageIndex((p) => Math.min(totalPages - 1, p + 1))} disabled={pageIndex === totalPages - 1}
-                    className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  </button>
-                </div>
-              )}
 
               <div className="flex-1" />
 
