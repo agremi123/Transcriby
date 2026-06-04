@@ -3394,8 +3394,8 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
         <>
           {/* Title */}
           {title && (
-            <div className="mb-3 shrink-0 px-4 py-3 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
-              <h2 className="font-display text-[20px] sm:text-[24px] leading-[1.2] tracking-[-0.01em] line-clamp-2 text-navy">{title}</h2>
+            <div className="mb-2 shrink-0 px-3 py-2 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
+              <h2 className="font-display text-[16px] sm:text-[18px] leading-[1.25] tracking-[-0.01em] line-clamp-2 text-navy">{title}</h2>
             </div>
           )}
 
@@ -3405,15 +3405,16 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
               onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
               onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
               onEnded={() => setPlaying(false)} />}
-            <div className="flex items-center gap-3 px-4 py-3 bg-navy/5 border border-navy/10 rounded-lg">
+            <div className="flex items-center gap-2.5 px-3 py-2 bg-navy/5 border border-navy/10 rounded-lg">
               <button type="button" onClick={togglePlay} disabled={!audioUrl}
-                className="w-9 h-9 rounded-full bg-wine text-ivory flex items-center justify-center shrink-0 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-wine/80">
+                className="w-7 h-7 rounded-full bg-wine text-ivory flex items-center justify-center shrink-0 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-wine/80">
                 {playing
-                  ? <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><rect x="0" y="0" width="3" height="12" rx="1" fill="white"/><rect x="6" y="0" width="3" height="12" rx="1" fill="white"/></svg>
-                  : <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M1 0.5l8 5.5L1 11.5V0.5z" fill="white"/></svg>}
+                  ? <svg width="8" height="10" viewBox="0 0 8 10" fill="none"><rect x="0" y="0" width="2.5" height="10" rx="1" fill="white"/><rect x="5" y="0" width="2.5" height="10" rx="1" fill="white"/></svg>
+                  : <svg width="8" height="10" viewBox="0 0 8 10" fill="none"><path d="M1 0.5l6 4.5L1 9.5V0.5z" fill="white"/></svg>}
               </button>
-              <div className="flex-1 flex flex-col gap-1.5">
-                <div className={`w-full h-1.5 rounded-full relative group ${audioUrl ? 'cursor-pointer' : 'cursor-default'} bg-navy/12`} onClick={audioUrl ? seek : undefined}>
+              <div className="flex-1 flex items-center gap-2">
+                <span className="text-[10px] font-mono text-navy/35 tabular-nums w-7 shrink-0">{fmtTime(currentTime)}</span>
+                <div className={`flex-1 h-1 rounded-full relative group ${audioUrl ? 'cursor-pointer' : 'cursor-default'} bg-navy/12`} onClick={audioUrl ? seek : undefined}>
                   <div className="h-full bg-wine rounded-full transition-[width] duration-100" style={{ width: `${pct}%` }} />
                   {audioUrl && <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-wine border-2 border-white shadow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" style={{ left: `calc(${pct}% - 6px)` }} />}
                 </div>
