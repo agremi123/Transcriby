@@ -1481,11 +1481,51 @@ export function AudioDemoCard({
     setShowStartHint(false);
     repeatAutoStoppingRef.current = false;
     stopParisianAudio();
+    clearTabCapture();
+    setSource('mic');
     await start(awaitingRepeat ? {
       utteranceEndMs: 1000,
       endpointing: 500,
       onSpeechFinal: handleRepeatSpeechFinal,
     } : {});
+  };
+
+  const toggleTabRecording = async () => {
+    if (stoppingRecording || manualCorrecting || awaitingRepeat) return;
+    if (isRecording) {
+      await stopRecordingWithGrace();
+      return;
+    }
+
+    setTime(0);
+    setPlaybackTime(null);
+    setIsPlaying(false);
+    setSpeakCorrection(null);
+    setPreviewCorrection(null);
+    setNarratorReaction(null);
+    setManualCorrection(null);
+    setSentenceCongrats(null);
+    setCorrectionUtteranceId(null);
+    setManualCorrecting(false);
+    setAwaitingRepeat(false);
+    setRepeatFeedback(null);
+    correctionAudioPlayedRef.current = null;
+    setHighlightMic(false);
+    setShowStartHint(false);
+    repeatAutoStoppingRef.current = false;
+    stopParisianAudio();
+    clearTabCapture();
+
+    try {
+      const capture = await captureTabAudioStream();
+      tabCaptureRef.current = capture;
+      setSource('tab');
+      await start({ stream: capture.stream });
+    } catch (err) {
+      clearTabCapture();
+      setSource('mic');
+      setError(err?.message || 'Unable to capture tab audio.');
+    }
   };
 
   const rafRef = React.useRef(null);
