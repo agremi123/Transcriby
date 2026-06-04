@@ -3371,7 +3371,13 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
     audioRef.current.currentTime = pct * duration;
   };
 
-  const byline = [source, date].filter(Boolean).join(' — ');
+  const fmtDate = (d) => {
+    if (!d) return '';
+    try {
+      return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch { return d.split(' ').slice(1, 4).join(' '); }
+  };
+  const byline = [source, fmtDate(date)].filter(Boolean).join(' — ');
   const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   const pct = duration ? (currentTime / duration) * 100 : 0;
 
