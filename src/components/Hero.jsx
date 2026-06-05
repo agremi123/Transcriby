@@ -2556,9 +2556,14 @@ export function AudioDemoCard({
                   {source === 'tab' ? 'Listening to tab audio…' : 'Start speaking…'}
                 </p>
               ) : status !== 'connecting' ? (
-                <p className="font-display text-[17px] leading-snug text-navy/30">
-                  Ask a question to Léa and Jules
-                </p>
+                <div className="flex items-center gap-3 py-1">
+                  <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0">
+                    <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
+                  </div>
+                  <p className="font-display text-[16px] italic text-navy/70 leading-snug">
+                    Bonjour ! Ask me anything in French — I'll help you improve. 🗼
+                  </p>
+                </div>
               ) : null
             )}
 
