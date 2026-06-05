@@ -1228,7 +1228,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       let grammar = [];
       try { ({ grammar = [] } = JSON.parse(gRaw)); } catch {}
 
-      res.end(JSON.stringify({
+      const result = {
         title: episode.title,
         audioUrl: clipAudioUrl,
         transcript,
@@ -1238,7 +1238,28 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
         questions,
         vocab,
         grammar,
-      }));
+      };
+
+      // Save to Supabase cache (fire-and-forget)
+      if (supabase) {
+        supabase.from('listening_episodes').insert([{
+          level,
+          title: episode.title,
+          audio_url: episode.audioUrl || null,
+          transcript,
+          source_name: sourceName,
+          pub_date: episode.pubDate || null,
+          vocab_theme: vocabTheme,
+          questions,
+          vocab,
+          grammar,
+        }]).then(({ error }) => {
+          if (error) console.warn('[listening] Supabase insert failed:', error.message);
+          else console.log('[listening] Saved to Supabase cache');
+        });
+      }
+
+      res.end(JSON.stringify(result));
     } catch (err) {
       console.error('[listening] error:', err.message);
       res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: 'RFI', questions: [], vocab: [], grammar: [] }));
