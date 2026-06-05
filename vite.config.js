@@ -713,17 +713,12 @@ function readingMiddleware(apiKey) {
       try { ({ questions = [] } = JSON.parse(qRaw)); } catch {}
 
       // Step 4: generate vocabulary exercise from the passage
-      const vRes = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 700,
-          system: `You are a French language teacher. From the given French passage, pick exactly 5 difficult or interesting vocabulary words that a B1-B2 learner should know. For each word, write a NEW French sentence (not from the original passage) with the word replaced by ___. The learner must pick the correct word from the word bank to fill each blank. Return ONLY raw JSON: {"vocab":[{"word":"médiatique","definition":"relating to media / media-related","sentence":"Le groupe ___ a racheté plusieurs journaux régionaux."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
-          messages: [{ role: 'user', content: passage }],
-        }),
+      const vData = await claudeCall('reading/vocab', apiKey, {
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 700,
+        system: `You are a French language teacher. From the given French passage, pick exactly 5 difficult or interesting vocabulary words that a B1-B2 learner should know. For each word, write a NEW French sentence (not from the original passage) with the word replaced by ___. The learner must pick the correct word from the word bank to fill each blank. Return ONLY raw JSON: {"vocab":[{"word":"médiatique","definition":"relating to media / media-related","sentence":"Le groupe ___ a racheté plusieurs journaux régionaux."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
+        messages: [{ role: 'user', content: passage }],
       });
-      const vData = await vRes.json();
       let vRaw = vData.content?.[0]?.text?.trim() || '{}';
       vRaw = vRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       let vocab = [];
