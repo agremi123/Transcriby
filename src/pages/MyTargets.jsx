@@ -184,7 +184,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
     const tick = () => {
       step++;
       setReadingReveal(step);
-      animTimerRef.current = setTimeout(tick, STEP_MS);
+      if (step < 100) animTimerRef.current = setTimeout(tick, STEP_MS);
     };
     animTimerRef.current = setTimeout(tick, 200);
     return () => clearTimeout(animTimerRef.current);
