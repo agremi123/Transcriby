@@ -90,9 +90,9 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
         alt=""
         className="absolute object-contain object-center"
         style={{
-          inset: strokeWidth + 1,
-          width: size - (strokeWidth + 1) * 2,
-          height: size - (strokeWidth + 1) * 2,
+          inset: strokeWidth + gap,
+          width: size - (strokeWidth + gap) * 2,
+          height: size - (strokeWidth + gap) * 2,
           mixBlendMode: 'multiply',
         }}
       />
