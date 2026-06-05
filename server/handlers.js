@@ -378,93 +378,142 @@ export async function handlePractice(body) {
   }
 }
 
+// ── French RSS feeds for reading exercises ────────────────────────────────────
+const FRENCH_RSS_FEEDS = [
+  { name: 'Le Monde',      url: 'https://www.lemonde.fr/rss/une.xml' },
+  { name: 'France Info',   url: 'https://www.francetvinfo.fr/titres.rss' },
+  { name: 'Le Figaro',     url: 'https://www.lefigaro.fr/rss/figaro_actualites.xml' },
+  { name: '20 Minutes',    url: 'https://www.20minutes.fr/feeds/rss/actu.xml' },
+  { name: 'Libération',    url: 'https://www.liberation.fr/arc/outboundfeeds/rss/?outputType=xml' },
+  { name: 'L\'Obs',        url: 'https://www.nouvelobs.com/rss.xml' },
+  { name: 'RFI',           url: 'https://www.rfi.fr/fr/rss-podcasts-emissions.xml' },
+];
+
+function extractCdata(str) {
+  const m = str.match(/<!\[CDATA\[([\s\S]*?)\]\]>/);
+  return m ? m[1].trim() : str.replace(/<[^>]+>/g, '').trim();
+}
+
+function stripHtml(str) {
+  return str.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function parseRssItems(xml) {
+  const items = [];
+  const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+  let m;
+  while ((m = itemRegex.exec(xml)) !== null) {
+    const block = m[1];
+    const get = (tag) => {
+      const r = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i');
+      const found = block.match(r);
+      return found ? extractCdata(found[1]) : '';
+    };
+    const title       = get('title');
+    const description = stripHtml(get('description') || get('summary'));
+    const content     = stripHtml(get('content:encoded') || get('content'));
+    const link        = get('link') || block.match(/<link>([\s\S]*?)<\/link>/i)?.[1]?.trim() || '';
+    const pubDate     = get('pubDate') || get('dc:date') || '';
+    const author      = get('dc:creator') || get('author') || '';
+    if (title || description) items.push({ title, description, content, link, pubDate, author });
+  }
+  return items;
+}
+
+async function fetchRssItems(feed) {
+  try {
+    const res = await fetch(feed.url, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(5000) });
+    if (!res.ok) return [];
+    const xml = await res.text();
+    return parseRssItems(xml).map(item => ({ ...item, feedName: feed.name }));
+  } catch {
+    return [];
+  }
+}
+
 export async function handleReading(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
   if (!ANTHROPIC_API_KEY || !topic) {
-    return { statusCode: 200, body: { passage: '', source: null, questions: [] } };
+    return { statusCode: 200, body: { passage: '', source: null, title: '', author: null, date: null, vocab: [] } };
   }
 
   try {
-    // Step 1: Use web search to find a real French article about the topic
-    const searchRes = await fetch('https://api.anthropic.com/v1/messages', {
+    // Fetch all RSS feeds in parallel
+    const feedResults = await Promise.all(FRENCH_RSS_FEEDS.map(fetchRssItems));
+    const allItems = feedResults.flat().filter(i => i.title && (i.description || i.content));
+
+    if (allItems.length === 0) throw new Error('No RSS items fetched');
+
+    // Ask Claude to pick the best article and extract a verbatim passage — no fabrication
+    const itemSummaries = allItems.slice(0, 60).map((item, i) =>
+      `[${i}] ${item.feedName} — ${item.title}\n${(item.description || '').slice(0, 200)}`
+    ).join('\n\n');
+
+    const pickRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'web-search-2025-03-05',
-      },
+      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1200,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        system: `You are helping create a French reading exercise. Search for a recent French-language article or text about the given topic. Extract a clear passage of 5-8 sentences in French from a real source. Return ONLY raw JSON, no markdown:
-{
-  "passage": "the French text extracted verbatim, 5-8 sentences",
-  "source": "publication name or website (e.g. Le Monde, Le Figaro, 20minutes.fr)"
-}
-If you cannot find a real French source, write a realistic authentic passage yourself and set source to null.`,
-        messages: [{ role: 'user', content: `Find a recent French article or text about: ${topic}` }],
+        max_tokens: 100,
+        system: 'Pick the index of the article most relevant to the given topic. If none is clearly relevant, pick the most recent interesting one. Reply with ONLY the integer index, nothing else.',
+        messages: [{ role: 'user', content: `Topic: ${topic}\n\nArticles:\n${itemSummaries}` }],
       }),
     });
+    const pickData = await pickRes.json();
+    const rawIdx = pickData.content?.[0]?.text?.trim() || '0';
+    const idx = Math.min(Math.max(parseInt(rawIdx, 10) || 0, 0), allItems.length - 1);
+    const chosen = allItems[idx];
 
-    const searchData = await searchRes.json();
-    let articlePassage = '';
-    let articleSource = null;
+    // Extract a clean 5-8 sentence passage from the real article text (no writing allowed)
+    const rawText = chosen.content || chosen.description || '';
+    const extractRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 600,
+        system: `You are given the raw text of a real French news article. Extract the most readable, coherent passage of 5-8 sentences directly from this text. Do NOT rephrase, translate or add anything — copy verbatim from the source. Return ONLY the extracted French sentences, no explanation.`,
+        messages: [{ role: 'user', content: `Title: ${chosen.title}\n\n${rawText.slice(0, 2000)}` }],
+      }),
+    });
+    const extractData = await extractRes.json();
+    const passage = extractData.content?.[0]?.text?.trim() || '';
 
-    // Extract the final text response from the tool-use chain
-    const textBlock = searchData.content?.find((b) => b.type === 'text');
-    if (textBlock?.text) {
-      const txt = textBlock.text;
-      const jsonMatch = txt.match(/\{[\s\S]*"passage"[\s\S]*\}/);
-      if (jsonMatch) {
-        try {
-          const parsed = JSON.parse(jsonMatch[0]);
-          articlePassage = parsed.passage || '';
-          articleSource = parsed.source || null;
-        } catch {}
-      }
-      if (!articlePassage) articlePassage = txt.replace(/^[^{]*I['']?ll[^.]*\.\s*/i, '').trim();
-    }
+    if (!passage) throw new Error('No passage extracted');
 
-    if (!articlePassage) throw new Error('No passage found');
-
-    // Step 2: Generate questions based on the real passage
+    // Generate comprehension questions from the real passage
     const qRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 700,
-        system: `Create exactly 4 multiple-choice comprehension questions based on the French passage provided. Each question has exactly 4 options and one correct answer. Respond with raw JSON only, no markdown:
-{
-  "questions": [
-    { "question": "Comprehension question about the passage?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option A" },
-    { "question": "Another question?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option B" },
-    { "question": "Third question?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option C" },
-    { "question": "Fourth question?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "Option D" }
-  ]
-}`,
-        messages: [{ role: 'user', content: `Passage:\n${articlePassage}` }],
+        system: `Create exactly 4 multiple-choice comprehension questions about the French passage. Each has 4 options, one correct answer. Raw JSON only, no markdown:
+{"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"},{"question":"...","options":["A","B","C","D"],"answer":"B"},{"question":"...","options":["A","B","C","D"],"answer":"C"},{"question":"...","options":["A","B","C","D"],"answer":"D"}]}`,
+        messages: [{ role: 'user', content: passage }],
       }),
     });
-
     const qData = await qRes.json();
-    let raw = qData.content?.[0]?.text?.trim() || '{}';
-    raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-    const qParsed = JSON.parse(raw);
+    let qRaw = qData.content?.[0]?.text?.trim() || '{}';
+    qRaw = qRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+    const qParsed = JSON.parse(qRaw);
 
     return {
       statusCode: 200,
       body: {
-        passage: articlePassage,
-        source: articleSource,
+        passage,
+        title: chosen.title || '',
+        source: chosen.feedName || null,
+        author: chosen.author || null,
+        date: chosen.pubDate || null,
+        link: chosen.link || null,
+        vocab: [],
         questions: qParsed.questions || [],
       },
     };
   } catch {
-    return { statusCode: 200, body: { passage: '', source: null, questions: [] } };
+    return { statusCode: 200, body: { passage: '', source: null, title: '', author: null, date: null, vocab: [], questions: [] } };
   }
 }
 
