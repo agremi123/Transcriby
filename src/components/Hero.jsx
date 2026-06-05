@@ -3349,7 +3349,7 @@ function AudioSyncedTranscript({ text, currentTime, duration, pageOffset, totalW
   );
 }
 
-function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vocab = [], parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
+function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
   const [playing, setPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
@@ -3357,8 +3357,13 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
   const [pageIndex, setPageIndex] = React.useState(0);
   const [translateActive, setTranslateActive] = React.useState(false);
   const [revealedBatchCount, setRevealedBatchCount] = React.useState(0);
+  const [activeTab, setActiveTab] = React.useState('transcript');
+  // Per-question answered state for comprehension tab
+  const [answeredQ, setAnsweredQ] = React.useState({});
+  // Per-vocab blank answer state
+  const [vocabAnswers, setVocabAnswers] = React.useState({});
 
-  React.useEffect(() => { setTranslateActive(false); setRevealedBatchCount(0); setPageIndex(0); }, [transcript]);
+  React.useEffect(() => { setTranslateActive(false); setRevealedBatchCount(0); setPageIndex(0); setActiveTab('transcript'); setAnsweredQ({}); setVocabAnswers({}); }, [transcript]);
 
   // Split transcript into fixed word-count pages
   const pages = React.useMemo(() => {
