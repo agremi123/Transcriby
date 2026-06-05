@@ -1175,6 +1175,18 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
 
       // Step 3: get transcript for the clip
       let transcript = episode.generatedTranscript || '';
+      let wordTimings = null; // [{start, end}] in seconds — set when Deepgram succeeds
+
+      // Step 3-pre: if we have real podcast audio (not generated), try Deepgram for word-accurate timestamps
+      if (!episode.generatedTranscript && clipAudioBuf) {
+        console.log('[listening] Running Deepgram transcription for word timestamps…');
+        const dgResult = await deepgramTranscribe(clipAudioBuf, deepgramKey);
+        if (dgResult && dgResult.wordTimings.length > 10) {
+          transcript = dgResult.transcript;
+          wordTimings = dgResult.wordTimings;
+          console.log('[listening] Using Deepgram transcript with real timestamps');
+        }
+      }
 
       // 3a. Spreaker / Podcast Index built-in plain-text transcript (already time-aligned, truncate by words)
       if (!transcript && episode.transcriptUrl) {
