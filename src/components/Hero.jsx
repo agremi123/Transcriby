@@ -4417,6 +4417,14 @@ export default function Hero() {
     setSearchParams(next, { replace: true });
   }, [searchParams, setSearchParams]);
 
+  // Auto-switch to the correct tab when arriving from MyTargets
+  React.useEffect(() => {
+    if (!practiceType) return;
+    const tabMap = { listening: 'listening', reading: 'reading', writing: 'writing', speaking: 'speaking' };
+    const tab = tabMap[practiceType];
+    if (tab) setHeroActiveTab(tab);
+  }, [practiceType]);
+
   return (
     <section className="relative pt-12 pb-12 min-h-screen overflow-visible flex items-center">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
