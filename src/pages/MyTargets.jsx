@@ -134,6 +134,15 @@ function qbPoint(t, x0, y0, cx, cy, x1, y1) {
   ];
 }
 
+// Control point for the quadratic bezier sub-segment from t=t0 to t=t1
+function qbSubCtrl(t0, t1, x0, y0, cx, cy, x1, y1) {
+  const [p0x, p0y] = qbPoint(t0, x0, y0, cx, cy, x1, y1);
+  const p1x = (1 - t0) * cx + t0 * x1;
+  const p1y = (1 - t0) * cy + t0 * y1;
+  const bp = t0 < 1 ? (t1 - t0) / (1 - t0) : 0;
+  return [(1 - bp) * p0x + bp * p1x, (1 - bp) * p0y + bp * p1y];
+}
+
 function BadgeTick({ cx, cy }) {
   return (
     <g>
