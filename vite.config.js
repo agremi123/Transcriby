@@ -1175,7 +1175,6 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       const words = transcript.split(/\s+/);
       if (words.length > 400) transcript = words.slice(0, 400).join(' ') + '…';
 
-      const level = learnerLevel || 'B1';
 
       // Step 4: generate 4 MCQ comprehension questions + infer vocab theme — one call
       const qRes = await fetch('https://api.anthropic.com/v1/messages', {
