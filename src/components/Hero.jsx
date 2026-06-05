@@ -3780,7 +3780,15 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
           {/* Title */}
           {title && (
             <div className="mb-2 shrink-0 px-3 py-2 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
-              <h2 className="font-display text-[16px] sm:text-[18px] leading-[1.25] tracking-[-0.01em] line-clamp-2 text-navy">{title}</h2>
+              <div className="flex items-start gap-2">
+                <h2 className="font-display text-[16px] sm:text-[18px] leading-[1.25] tracking-[-0.01em] line-clamp-2 text-navy flex-1">{title}</h2>
+                {contentLevel && CEFR_BADGE[contentLevel] && (
+                  <span className="shrink-0 mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold text-white leading-none"
+                    style={{ backgroundColor: CEFR_BADGE[contentLevel].bg }}>
+                    {CEFR_BADGE[contentLevel].label}
+                  </span>
+                )}
+              </div>
               {vocabTheme && <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 mt-0.5 block">{vocabTheme}</span>}
             </div>
           )}
