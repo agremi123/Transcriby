@@ -353,8 +353,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
               const next = segPositions[si + 1];
               const isCompleted = progressTV > 0 && next.tv <= progressTV + 0.001;
               const [cpx, cpy] = qbSubCtrl(pos.tv, next.tv, arcSX, MY, arcCX, ctrlY, arcEX, MY);
-              const localStep = Math.max(0, arcRevealStep - arcOffsets[idx]);
-              const revealed = localStep >= si * 2 + 1;
+              const revealed = revealedSegs.has(`${idx},${si}`);
               const targetOpacity = isCompleted ? 0.65 : 0.28;
               return (
                 <path
@@ -367,7 +366,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                   strokeLinecap="round"
                   style={{
                     opacity: revealed ? targetOpacity : 0,
-                    transition: revealed ? 'opacity 0.18s ease' : 'none',
+                    transition: revealed ? 'opacity 0.28s ease' : 'none',
                   }}
                 />
               );
