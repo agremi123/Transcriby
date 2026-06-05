@@ -55,6 +55,39 @@ async function claudeCall(label, apiKey, body) {
   return data;
 }
 
+// OpenRouter (DeepSeek-V3) — OpenAI-compatible format
+const DEEPSEEK_MODEL = 'deepseek/deepseek-chat-v3-0324';
+async function openrouterCall(label, apiKey, { system, messages, max_tokens = 1000 }) {
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': 'https://nativa.app',
+      'X-Title': 'Nativa',
+    },
+    body: JSON.stringify({
+      model: DEEPSEEK_MODEL,
+      max_tokens,
+      messages: [
+        ...(system ? [{ role: 'system', content: system }] : []),
+        ...messages,
+      ],
+    }),
+  });
+  const data = await res.json();
+  const inputTokens  = data.usage?.prompt_tokens     || 0;
+  const outputTokens = data.usage?.completion_tokens || 0;
+  const cost = modelCost(DEEPSEEK_MODEL, inputTokens, outputTokens);
+  DEV_LOG.push({ ts: Date.now(), label, model: DEEPSEEK_MODEL, inputTokens, outputTokens, cost });
+  if (DEV_LOG.length > 2000) DEV_LOG.shift();
+  persistDevCosts();
+  console.log(`[dev/deepseek] ${label} — in:${inputTokens} out:${outputTokens} $${cost.toFixed(5)}`);
+  // Normalise to Claude-like shape so callers can do data.content?.[0]?.text
+  const text = data.choices?.[0]?.message?.content || '';
+  return { content: [{ type: 'text', text }], _raw: data };
+}
+
 function devStatsMiddleware() {
   return (req, res, next) => {
     if (req.url !== '/api/dev-stats' || req.method !== 'GET') { next(); return; }
