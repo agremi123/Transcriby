@@ -485,16 +485,20 @@ export async function handleReading(body) {
     const idx = Math.min(Math.max(parseInt(rawIdx, 10) || 0, 0), allItems.length - 1);
     const chosen = allItems[idx];
 
-    // Extract a clean 5-8 sentence passage from the real article text (no writing allowed)
-    const rawText = chosen.content || chosen.description || '';
+    // Fetch full article page, fall back to RSS content
+    let rawText = '';
+    if (chosen.link) rawText = await fetchArticleBody(chosen.link);
+    if (rawText.length < 200) rawText = chosen.content || chosen.description || '';
+    rawText = rawText.slice(0, 6000);
+
     const extractRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 600,
-        system: `You are given the raw text of a real French news article. Extract the most readable, coherent passage of 5-8 sentences directly from this text. Do NOT rephrase, translate or add anything — copy verbatim from the source. Return ONLY the extracted French sentences, no explanation.`,
-        messages: [{ role: 'user', content: `Title: ${chosen.title}\n\n${rawText.slice(0, 2000)}` }],
+        max_tokens: 900,
+        system: `Extract the most coherent and readable passage from this real French article. Copy sentences verbatim — do NOT rephrase, summarise or add anything. The passage must be at least 15 sentences long (aim for 400-600 words). Return only the extracted French text.`,
+        messages: [{ role: 'user', content: `Title: ${chosen.title}\n\n${rawText}` }],
       }),
     });
     const extractData = await extractRes.json();
