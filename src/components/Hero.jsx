@@ -2057,28 +2057,6 @@ export function AudioDemoCard({
           </button>
         </div>
 
-      {/* Main tab bar — always visible */}
-      <div className="flex border-b border-line shrink-0 overflow-x-auto">
-        {[
-          { id: 'transcript', label: 'Chat' },
-          { id: 'speaking',   label: 'Speaking' },
-          { id: 'listening',  label: 'Listening' },
-          { id: 'reading',    label: 'Reading' },
-          { id: 'writing',    label: 'Writing' },
-        ].map((t) => (
-          <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
-            className={`text-[9px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
-            {t.label}
-          </button>
-        ))}
-        {(activeTab === 'practice' || vocabLevel || practiceExercises?.length > 0) && (
-          <button type="button" onClick={() => setActiveTab('practice')}
-            className={`text-[9px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === 'practice' ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
-            {vocabLevel ? `Vocab · ${vocabLevel}` : 'Practice'}
-          </button>
-        )}
-      </div>
-
         <div ref={writeBoxRef} className="relative bg-ivory/60 border border-line/70 overflow-hidden flex-1 flex flex-col min-h-0">
           {inputMode === 'discover' ? (
             <motion.div
