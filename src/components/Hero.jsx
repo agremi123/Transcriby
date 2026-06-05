@@ -3959,7 +3959,7 @@ export default function Hero() {
   const [writingActive, setWritingActive] = React.useState(false);
   const [writingLoading, setWritingLoading] = React.useState(false);
   const [writingPrompt, setWritingPrompt] = React.useState('');
-  const [writingGuidelines, setWritingGuidelines] = React.useState([]);
+  const [writingTips, setWritingTips] = React.useState({ vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] });
   const [writingWordTarget, setWritingWordTarget] = React.useState(80);
 
   React.useEffect(() => {
@@ -3969,18 +3969,18 @@ export default function Hero() {
       fetch('/api/writing-prompt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic: practiceTopic }),
+        body: JSON.stringify({ topic: practiceTopic, learnerLevel: effectiveLevel || 'B1' }),
       })
         .then((r) => r.json())
         .then((data) => {
           setWritingPrompt(data.prompt || '');
-          setWritingGuidelines(data.guidelines || []);
+          setWritingTips(data.tips || { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] });
           setWritingWordTarget(data.wordTarget || 80);
           setWritingLoading(false);
         })
         .catch(() => setWritingLoading(false));
     }
-  }, [practiceTopic, practiceType]);
+  }, [practiceTopic, practiceType, effectiveLevel]);
 
   const [introNarrator, setIntroNarrator] = React.useState(null);
   const [introPlaying, setIntroPlaying] = React.useState(null); // null | 'lea' | 'jules'
