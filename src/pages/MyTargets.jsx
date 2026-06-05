@@ -232,9 +232,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
         const targets = grouped[cat] ?? [];
         const total   = targets.length;
         const done    = targets.filter((t) => (Number(progressMap[t.id]) || 0) >= 100).length;
-        const pct     = total > 0 ? done / total : 0;
-        const len     = lengths[idx];
-        const d       = `M ${arcSX},${MY} Q ${arcCX},${ctrlY} ${arcEX},${MY}`;
         const [lx, ly] = qbPoint(0.5, arcSX, MY, arcCX, ctrlY, arcEX, MY);
         const labelY   = side === 'above' ? ly - 11 : ly + 18;
 
