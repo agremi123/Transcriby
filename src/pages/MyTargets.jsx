@@ -465,7 +465,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
         return (
           <g key={lvl}>
             <circle cx={x} cy={MY} r={5} fill="none" stroke="#1A2340" strokeWidth="2" opacity="0.22" />
-            <text x={x} y={MY + 20} textAnchor="middle"
+            <text x={x} y={MY - 16} textAnchor="middle"
                   fontSize={LEVEL_LABEL_FS_FUTURE} fill="#1A2340" opacity="0.38"
                   fontFamily={LEVEL_LABEL_FONT} fontWeight="600">{lvl}</text>
             <image
