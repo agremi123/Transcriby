@@ -594,9 +594,8 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
         return;
       }
 
-      // 3. Generate new word with Claude
-      const claudeData = await claudeCall('word/generate', anthropicKey, {
-        model: 'claude-haiku-4-5-20251001',
+      // 3. Generate new word with DeepSeek
+      const claudeData = await openrouterCall('word/generate', openrouterKey, {
         max_tokens: 250,
         system: 'You are a French language teacher specializing in authentic Parisian French. Pick a vivid, interesting French word or expression — something a Parisian would actually say, not too basic, not too rare. Provide: the word/expression, its short English meaning, one natural example sentence in French, and an English translation of that sentence. Respond with raw JSON only, no markdown: {"word":"...","meaning":"...","example":"...","exampleTranslation":"..."}',
         messages: [{ role: 'user', content: 'Give me an interesting Parisian French word to learn today.' }],
