@@ -52,7 +52,7 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   // Arc wraps around the LEFT side of the badge image
   const badgeSize = compact ? 78 : 110;
   const sw = 2.5;
-  const arcGap = 3;            // gap between badge edge and arc stroke
+  const arcGap = compact ? 1 : 3;  // gap between badge edge and arc stroke
   const r = badgeSize / 2 + arcGap;
   const padV = 13;
 
