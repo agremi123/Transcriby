@@ -1056,31 +1056,33 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
       const words = transcript.split(/\s+/);
       if (words.length > 400) transcript = words.slice(0, 400).join(' ') + '…';
 
-      // Step 4: generate 4 MCQ comprehension questions
+      const level = learnerLevel || 'B1';
+
+      // Step 4: generate 4 MCQ comprehension questions + infer vocab theme — one call
       const qRes = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 700,
-          system: `Create exactly 4 multiple-choice comprehension questions in French based on the transcript provided. Each question has exactly 4 options and one correct answer. Respond with raw JSON only, no markdown: {"questions":[{"question":"Question?","options":["A","B","C","D"],"answer":"A"},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."}]}`,
+          max_tokens: 800,
+          system: `You are a French language teacher creating a comprehension exercise for a ${level} learner. Based on the transcript, create exactly 4 multiple-choice comprehension questions in French. Also infer the main vocabulary theme of the text (e.g. "Environnement", "Santé", "Société", "Culture", "Politique", "Technologie", "Voyage"). Adjust question difficulty to ${level} level. Respond with raw JSON only, no markdown: {"vocabTheme":"Environnement","questions":[{"question":"Question?","options":["A","B","C","D"],"answer":"A"},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."}]}`,
           messages: [{ role: 'user', content: `Transcript:\n${transcript.slice(0, 2000)}` }],
         }),
       });
       const qData = await qRes.json();
       let qRaw = qData.content?.[0]?.text?.trim() || '{}';
       qRaw = qRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-      let questions = [];
-      try { ({ questions = [] } = JSON.parse(qRaw)); } catch {}
+      let questions = [], vocabTheme = '';
+      try { const p = JSON.parse(qRaw); questions = p.questions || []; vocabTheme = p.vocabTheme || ''; } catch {}
 
-      // Step 5: generate vocabulary list
+      // Step 5: generate vocabulary list targeted to theme + level
       const vRes = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 700,
-          system: `From the given French transcript, pick exactly 5 difficult or interesting vocabulary words for a B1-B2 learner. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"...","sentence":"...___..."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
+          system: `You are a French language teacher. From the given French transcript, pick exactly 5 vocabulary words relevant to a ${level} learner${vocabTheme ? ` studying the theme "${vocabTheme}"` : ''}. Choose words appropriate for ${level} level — not too easy, not too advanced. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"English definition","sentence":"...___..."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
           messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
         }),
       });
@@ -1090,18 +1092,37 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
       let vocab = [];
       try { ({ vocab = [] } = JSON.parse(vRaw)); } catch {}
 
+      // Step 6: generate grammar points from the transcript
+      const gRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 700,
+          system: `You are a French grammar teacher. From the French transcript, identify 3 grammar structures or patterns that a ${level} learner should study. For each, quote the exact sentence from the transcript that illustrates it, name the grammar point, explain it simply in English (1-2 sentences), and give a short usage tip. Return ONLY raw JSON: {"grammar":[{"point":"Le passé composé","example":"Exact sentence from transcript","explanation":"Used to describe completed past actions.","tip":"Use avoir or être as auxiliary + past participle."},{"point":"...","example":"...","explanation":"...","tip":"..."},{"point":"...","example":"...","explanation":"...","tip":"..."}]}`,
+          messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
+        }),
+      });
+      const gData = await gRes.json();
+      let gRaw = gData.content?.[0]?.text?.trim() || '{}';
+      gRaw = gRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      let grammar = [];
+      try { ({ grammar = [] } = JSON.parse(gRaw)); } catch {}
+
       res.end(JSON.stringify({
         title: episode.title,
         audioUrl: clipAudioUrl,
         transcript,
         source: sourceName,
         date: episode.pubDate,
+        vocabTheme,
         questions,
         vocab,
+        grammar,
       }));
     } catch (err) {
       console.error('[listening] error:', err.message);
-      res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: 'RFI', questions: [], vocab: [] }));
+      res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: 'RFI', questions: [], vocab: [], grammar: [] }));
     }
   };
 }
