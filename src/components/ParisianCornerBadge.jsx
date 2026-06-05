@@ -7,7 +7,7 @@ import { getNextLevel } from '../lib/levelTargets';
 
 const SCORE_ANIM_MS = 950;
 
-export function ParisianProfileSquare({ className = '' }) {
+export function ParisianProfileSquare({ className = '', compact = false }) {
   const { profile, effectiveLevel, experienceHighlightTick } = useLearnerProfile();
   const prevPercentRef = React.useRef(null);
   const [scoreAnim, setScoreAnim] = React.useState(false);
