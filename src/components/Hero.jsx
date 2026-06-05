@@ -2566,6 +2566,137 @@ export function AudioDemoCard({
           </div>
           ) : null}
 
+          {/* ── Progress tabs ─────────────────────────────────────────── */}
+          {(activeTab === 'speaking' || activeTab === 'listening' || activeTab === 'reading' || activeTab === 'writing') && (
+            <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 space-y-4">
+
+              {/* SPEAKING PROGRESS */}
+              {activeTab === 'speaking' && (
+                <div className="space-y-3">
+                  <h3 className="text-[9px] font-mono tracking-widest uppercase text-navy/40">My Speaking Progress</h3>
+                  {overallLevel ? (
+                    <>
+                      <div className="flex items-center gap-3">
+                        <span className="font-display text-[28px] font-bold text-wine leading-none">{overallLevel}</span>
+                        <div className="flex flex-col">
+                          <span className="text-[11px] text-navy/60 font-display">Detected level</span>
+                          {overallStrength && <span className="text-[11px] text-green-600 font-display">✓ {overallStrength}</span>}
+                          {overallWeakness && <span className="text-[11px] text-wine font-display">↗ {overallWeakness}</span>}
+                        </div>
+                      </div>
+                      {Object.keys(skillProgress).length > 0 && (
+                        <div className="space-y-1.5">
+                          <p className="text-[9px] font-mono tracking-widest uppercase text-navy/35">Skills practiced</p>
+                          {Object.entries(skillProgress).map(([skill, pct]) => (
+                            <div key={skill} className="flex items-center gap-2">
+                              <div className="flex-1 h-1.5 bg-navy/8 rounded-full overflow-hidden">
+                                <div className="h-full bg-wine/60 rounded-full transition-all duration-700" style={{ width: `${Math.min(pct, 100)}%` }} />
+                              </div>
+                              <span className="text-[10px] font-display text-navy/50 w-32 truncate">{skill}</span>
+                              <span className="text-[9px] font-mono text-navy/35 tabular-nums w-6 text-right">{Math.min(pct,100)}%</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="text-center py-6 space-y-2">
+                      <p className="font-display text-[15px] text-navy/50 italic">No speaking session yet.</p>
+                      <p className="text-[12px] text-navy/35">Press the mic button and start speaking French — Léa will assess your level.</p>
+                    </div>
+                  )}
+                  <div className="pt-1 border-t border-line/40">
+                    <p className="text-[9px] font-mono tracking-widest uppercase text-navy/35 mb-2">This session</p>
+                    <div className="flex gap-4">
+                      <div><p className="text-[18px] font-display font-bold text-navy leading-none">{utterances?.length ?? 0}</p><p className="text-[9px] text-navy/40 font-mono uppercase tracking-wider mt-0.5">sentences</p></div>
+                      <div><p className="text-[18px] font-display font-bold text-wine leading-none">{dailyParisianPoints}</p><p className="text-[9px] text-navy/40 font-mono uppercase tracking-wider mt-0.5">points</p></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* LISTENING PROGRESS */}
+              {activeTab === 'listening' && (
+                <div className="space-y-3">
+                  <h3 className="text-[9px] font-mono tracking-widest uppercase text-navy/40">My Listening Progress</h3>
+                  {listeningQuestions.length > 0 ? (
+                    <>
+                      <div className="flex gap-4">
+                        {(() => {
+                          const answered = Object.keys(practiceAnsweredQ).length;
+                          const correct  = Object.entries(practiceAnsweredQ).filter(([qi, ans]) => ans === listeningQuestions[+qi]?.answer).length;
+                          return (
+                            <>
+                              <div><p className="text-[24px] font-display font-bold text-wine leading-none">{correct}/{answered}</p><p className="text-[9px] text-navy/40 font-mono uppercase tracking-wider mt-0.5">correct</p></div>
+                              <div><p className="text-[24px] font-display font-bold text-navy leading-none">{listeningQuestions.length}</p><p className="text-[9px] text-navy/40 font-mono uppercase tracking-wider mt-0.5">questions</p></div>
+                              <div><p className="text-[24px] font-display font-bold text-green-600 leading-none">{Object.keys(practiceVocabAnswers).filter(k => (practiceVocabAnswers[k]||'').trim().toLowerCase() === (listeningVocab[+k]?.word||'').toLowerCase()).length}</p><p className="text-[9px] text-navy/40 font-mono uppercase tracking-wider mt-0.5">vocab ✓</p></div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                      <div className="space-y-1.5 pt-1 border-t border-line/40">
+                        {listeningQuestions.map((q, qi) => {
+                          const ans = practiceAnsweredQ[qi];
+                          const correct = ans === q.answer;
+                          return (
+                            <div key={qi} className={`flex items-start gap-2 text-[12px] font-display ${ans ? (correct ? 'text-green-700' : 'text-wine') : 'text-navy/35'}`}>
+                              <span className="shrink-0 mt-0.5">{ans ? (correct ? '✓' : '✗') : '○'}</span>
+                              <span className="line-clamp-1">{q.question}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-6 space-y-2">
+                      <p className="font-display text-[15px] text-navy/50 italic">No listening episode loaded yet.</p>
+                      <p className="text-[12px] text-navy/35">Click "How to reach" → Listening to start a challenge.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* READING PROGRESS */}
+              {activeTab === 'reading' && (
+                <div className="space-y-3">
+                  <h3 className="text-[9px] font-mono tracking-widest uppercase text-navy/40">My Reading Progress</h3>
+                  {readingVocab.length > 0 ? (
+                    <>
+                      <div className="flex gap-4">
+                        <div><p className="text-[24px] font-display font-bold text-wine leading-none">{readingVocab.length}</p><p className="text-[9px] text-navy/40 font-mono uppercase tracking-wider mt-0.5">words read</p></div>
+                      </div>
+                      <div className="space-y-1.5 pt-1 border-t border-line/40">
+                        <p className="text-[9px] font-mono tracking-widest uppercase text-navy/35">Vocabulary from this article</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {readingVocab.slice(0, 12).map((v, i) => (
+                            <span key={i} className="inline-block bg-navy/5 border border-navy/10 px-2 py-0.5 text-[11px] font-display text-navy/70 rounded">{typeof v === 'string' ? v : v.word}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-6 space-y-2">
+                      <p className="font-display text-[15px] text-navy/50 italic">No reading session yet.</p>
+                      <p className="text-[12px] text-navy/35">Click "How to reach" → Reading to start an article.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* WRITING PROGRESS */}
+              {activeTab === 'writing' && (
+                <div className="space-y-3">
+                  <h3 className="text-[9px] font-mono tracking-widest uppercase text-navy/40">My Writing Progress</h3>
+                  <div className="text-center py-6 space-y-2">
+                    <p className="font-display text-[15px] text-navy/50 italic">No writing session yet.</p>
+                    <p className="text-[12px] text-navy/35">Switch to Write mode and start composing — Léa will correct you.</p>
+                  </div>
+                </div>
+              )}
+
+            </div>
+          )}
+
           {/* Practice tab — subtabs: Comprehension / Vocabulary / Grammar + exercises */}
           {activeTab === 'practice' && (
             <div className="flex-1 min-h-0 flex flex-col border-t border-line/50">
