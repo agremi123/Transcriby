@@ -2512,6 +2512,25 @@ export function AudioDemoCard({
                 {repeatFeedback === 'fail' && !isRecording && (
                   <p className="mt-2 font-display text-[13px] italic text-wine/70">Not quite — try again.</p>
                 )}
+
+                {/* Make it Parisien — inline below last utterance */}
+                {inputMode === 'speak' && !manualCorrection && !sentenceCongrats && !isLive && !narratorReaction && utterances.length > 0 && (
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      onClick={() => { setShowCorrectHint(false); correctNow(); }}
+                      disabled={manualCorrecting}
+                      className={`relative font-display text-[15px] italic px-4 h-9 rounded-full transition-all duration-200 whitespace-nowrap ${
+                        'bg-wine text-ivory hover:bg-wine2 shadow-sm'
+                      } disabled:opacity-60`}
+                    >
+                      Make it Parisien !
+                      {showCorrectHint && !manualCorrecting && (
+                        <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40 pointer-events-none" />
+                      )}
+                    </button>
+                  </div>
+                )}
               </>
             ) : (!isLive || !hadContentRef.current) && (
               isRecording ? (
