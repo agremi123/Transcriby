@@ -3856,7 +3856,7 @@ function TranslatableText({ text, className = '', context = '' }) {
       {tokens.map((tok, i) => {
         if (!/[a-zA-ZÀ-ÿœæ'-]/.test(tok)) return <span key={i}>{tok}</span>;
         const clean = tok.replace(/[^a-zA-ZÀ-ÿœæ'-]/g, '').toLowerCase();
-        const isActive = activeWord === clean;
+        const isActive = activeWord === clean && cacheRef.current[clean] !== undefined || (activeWord === clean && loadingWord === clean);
         return (
           <span
             key={i}
