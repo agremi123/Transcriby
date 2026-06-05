@@ -113,10 +113,10 @@ export default function DevPanel() {
 
           {/* Sub-tabs */}
           <div className="flex border-b border-navy/10 shrink-0">
-            {['summary', 'log'].map(t => (
+            {['summary', 'cache', 'log'].map(t => (
               <button key={t} type="button" onClick={() => setTab(t)}
                 className={`px-3 py-1.5 text-[9px] tracking-widest uppercase transition-colors ${tab === t ? 'border-b-2 border-wine text-wine' : 'text-navy/40 hover:text-navy/70'}`}>
-                {t}
+                {t}{t === 'cache' && cacheLog.length > 0 ? ` (${cacheLog.length})` : ''}
               </button>
             ))}
           </div>
