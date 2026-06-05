@@ -4602,7 +4602,7 @@ export default function Hero() {
             )}
           </div>
 
-          <div className="flex flex-col justify-end h-full gap-3">
+          <div className="flex items-center justify-end h-full">
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
               initialTopic={practiceType === 'reading' ? null : practiceTopic}
@@ -4617,21 +4617,6 @@ export default function Hero() {
               activeTab={heroActiveTab}
               onTabChange={setHeroActiveTab}
             />
-            {/* Tabs — white strip below the speech box */}
-            <div className="flex overflow-x-auto bg-ivory/95 border border-line/50 px-2">
-              {[
-                { id: 'transcript', label: 'Chat' },
-                { id: 'speaking',   label: 'Speaking' },
-                { id: 'listening',  label: 'Listening' },
-                { id: 'reading',    label: 'Reading' },
-                { id: 'writing',    label: 'Writing' },
-              ].map((t) => (
-                <button key={t.id} type="button" onClick={() => setHeroActiveTab(t.id)}
-                  className={`text-[9px] tracking-widest uppercase px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap shrink-0 ${heroActiveTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
-                  {t.label}
-                </button>
-              ))}
-            </div>
           </div>
         </div>
       </Container>
