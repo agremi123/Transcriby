@@ -793,7 +793,7 @@ function readingMiddleware(apiKey, openrouterKey) {
       // Extract a long verbatim passage — enough for 2 reading pages (~400-600 words)
       const extractData = await openrouterCall('reading/extract', openrouterKey, {
         max_tokens: 900,
-        system: 'Extract the most coherent and readable passage from this real French article. Copy sentences verbatim — do NOT rephrase, summarise or add anything. The passage must be at least 15 sentences long (aim for 400-600 words). Return only the extracted French text.',
+        system: 'Extract the most coherent and readable passage from this real French article. Copy sentences verbatim — do NOT rephrase, summarise or add anything. The passage must be at least 15 sentences long (aim for 400-600 words). Organise it into natural paragraphs separated by a blank line (\\n\\n): one short intro paragraph, then 2-3 body paragraphs. Return only the extracted French text with paragraph breaks.',
         messages: [{ role: 'user', content: `Title: ${chosen.title}\n\n${rawText}` }],
       });
       const passage = (extractData.content?.[0]?.text || '').trim();
