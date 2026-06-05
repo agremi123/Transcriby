@@ -31,6 +31,15 @@ function fmtTime(ts) {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
+function fmtDate(ts) {
+  const d = new Date(ts);
+  const today = new Date();
+  if (d.toDateString() === today.toDateString()) return 'today';
+  const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+  if (d.toDateString() === yesterday.toDateString()) return 'yesterday';
+  return d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+}
+
 function Chip({ ok, label }) {
   return (
     <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] ${ok ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-700 line-through'}`}>
