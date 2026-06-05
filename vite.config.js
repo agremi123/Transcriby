@@ -1232,6 +1232,8 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
         });
       }
 
+      CACHE_LOG.push({ ts: Date.now(), endpoint: 'listening', source: 'generated', level, title: episode.title, fields: { text: !!transcript, audio: !!clipAudioUrl, questions: questions.length, vocab: vocab.length, grammar: grammar.length } });
+      if (CACHE_LOG.length > 100) CACHE_LOG.shift();
       res.end(JSON.stringify(result));
     } catch (err) {
       console.error('[listening] error:', err.message);
