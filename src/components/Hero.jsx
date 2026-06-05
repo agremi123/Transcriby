@@ -4210,6 +4210,7 @@ export default function Hero() {
   const [listeningGrammar, setListeningGrammar] = React.useState([]);
   const [listeningVocabTheme, setListeningVocabTheme] = React.useState('');
   const [listeningContentLevel, setListeningContentLevel] = React.useState('');
+  const [listeningWordTimings, setListeningWordTimings] = React.useState(null);
 
   React.useEffect(() => {
     if (practiceType === 'listening' && practiceTopic && !listeningActive) {
