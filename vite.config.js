@@ -11,8 +11,17 @@ import { buildCorrectionSystemPrompts } from './server/correctionPrompts.js';
 import { sanitizeParisianCorrection, parseCorrectionResponse } from './src/lib/correctionFormat.js';
 
 // ── Dev token tracker ──────────────────────────────────────────────────────
-const DEV_LOG = []; // { ts, label, model, inputTokens, outputTokens, cost }
-const CACHE_LOG = []; // { ts, endpoint, source: 'database'|'generated', level, fields }
+const DEV_COSTS_FILE = new URL('./data/dev-costs.json', import.meta.url).pathname;
+let _persisted = { log: [], cacheLog: [] };
+try { _persisted = JSON.parse(readFileSync(DEV_COSTS_FILE, 'utf8')); } catch {}
+
+const DEV_LOG   = _persisted.log      || []; // { ts, label, model, inputTokens, outputTokens, cost }
+const CACHE_LOG = _persisted.cacheLog || []; // { ts, endpoint, source: 'database'|'generated', level, fields }
+
+function persistDevCosts() {
+  try { writeFileSync(DEV_COSTS_FILE, JSON.stringify({ log: DEV_LOG, cacheLog: CACHE_LOG })); } catch {}
+}
+
 const HAIKU_IN_PER_M  = 0.80;  // USD per million input tokens
 const HAIKU_OUT_PER_M = 4.00;  // USD per million output tokens
 const SONNET_IN_PER_M = 3.00;
