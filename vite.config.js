@@ -673,6 +673,29 @@ function rssExtractCdata(str) {
 function rssStripHtml(str) {
   return str.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }
+async function fetchArticleBody(url) {
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 6000);
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)' },
+      signal: ctrl.signal,
+    });
+    clearTimeout(t);
+    if (!res.ok) return '';
+    const html = await res.text();
+    // Extract text from <p> tags — skip nav/script/style noise
+    const bodyMatch = html.match(/<body[\s\S]*?<\/body>/i)?.[0] || html;
+    const paragraphs = [];
+    const pRe = /<p[^>]*>([\s\S]*?)<\/p>/gi;
+    let pm;
+    while ((pm = pRe.exec(bodyMatch)) !== null) {
+      const text = rssStripHtml(pm[1]);
+      if (text.length > 40) paragraphs.push(text);
+    }
+    return paragraphs.join(' ').slice(0, 6000);
+  } catch { return ''; }
+}
 function parseRssItems(xml, feedName) {
   const items = [];
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
