@@ -2026,8 +2026,8 @@ export function AudioDemoCard({
       {/* Main content column (2/3) */}
       <div className={fullscreen ? 'flex-[2] flex flex-col overflow-y-auto min-w-0' : 'flex flex-col flex-1 min-h-0'}>
       {/* Mode controls + speech box */}
-      <div className="px-7 pt-7 flex flex-col gap-2.5 flex-1 min-h-0">
-        <div className="flex items-center justify-center gap-4 shrink-0">
+      <div className="px-7 pt-4 flex flex-col gap-2 flex-1 min-h-0">
+        <div className="flex items-center justify-center gap-3 shrink-0">
           <div className="relative flex items-center rounded-full p-0.5 bg-wine/10">
             <div
               className="absolute top-0.5 bottom-0.5 rounded-full bg-wine transition-all duration-200"
@@ -2038,19 +2038,19 @@ export function AudioDemoCard({
               { id: 'write', label: 'Write' },
             ].map((m) => (
               <button key={m.id} type="button" onClick={() => (m.id === 'write' ? activateWriteMode() : activateSpeakMode())}
-                className={`relative z-10 font-display text-[15px] tracking-wide px-3.5 py-1 rounded-full capitalize transition-colors duration-200 ${lastSpeakWriteMode === m.id ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'}`}>
+                className={`relative z-10 font-display text-[13px] tracking-wide px-2.5 py-0.5 rounded-full capitalize transition-colors duration-200 ${lastSpeakWriteMode === m.id ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'}`}>
                 {m.label}
               </button>
             ))}
           </div>
 
-          <span className="text-[14px] text-navy/40 font-display italic">or</span>
+          <span className="text-[12px] text-navy/40 font-display italic">or</span>
 
           <button type="button" onClick={() => {
             setHighlightDiscover(false);
             setInputMode(inputMode === 'discover' ? 'speak' : 'discover');
           }}
-            className={`relative inline-flex items-center px-3.5 py-1 font-display text-[16px] tracking-wide rounded-full transition-all duration-300 ${
+            className={`relative inline-flex items-center px-2.5 py-0.5 font-display text-[13px] tracking-wide rounded-full transition-all duration-300 ${
               inputMode === 'discover'
                 ? 'bg-wine text-ivory ring-2 ring-wine/30'
                 : highlightDiscover
