@@ -53,58 +53,53 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   const nextLevel = getNextLevel(level);
   const badgeSrc = getLevelBadgeSrc(level);
 
-  const imgSize = compact ? 'w-[84px] h-[84px]' : 'w-[96px] h-[96px] sm:w-[112px] sm:h-[112px]';
-  const wrapSize = compact ? 'w-[84px]' : 'w-[96px] sm:w-[112px]';
-  const barNegMargin = compact ? '-mt-2.5' : '-mt-3.5 sm:-mt-4';
-  const textSize = compact ? 'text-[10px]' : 'text-[8px] sm:text-[9px]';
-  const barHeight = compact ? 'h-3' : 'h-2.5';
-  const pctTextSize = compact ? 'text-[8px]' : 'text-[7px] sm:text-[8px]';
+  const size = compact ? 100 : 120;
+  const strokeWidth = compact ? 5 : 5;
+  const r = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * r;
+  const dash = (parisianPercent / 100) * circumference;
 
   return (
     <motion.div
       animate={scoreAnim ? { scale: [1, 1.08, 1.02, 1] } : { scale: 1 }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      className={`${wrapSize} shrink-0 flex flex-col items-stretch gap-0 bg-transparent ${
-        scoreAnim ? 'parisian-badge-score-pop' : ''
-      } ${className}`}
+      className={`relative shrink-0 bg-transparent ${scoreAnim ? 'parisian-badge-score-pop' : ''} ${className}`}
+      style={{ width: size, height: size }}
       aria-label={`${profile.name}, level ${level}, ${parisianPercent}% Parisian progress`}
     >
+      {/* Ring */}
+      <svg width={size} height={size} className="absolute inset-0 -rotate-90" style={{ transform: 'rotate(-90deg)' }}>
+        {/* Track */}
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(139,30,45,0.15)" strokeWidth={strokeWidth} />
+        {/* Progress */}
+        <circle
+          cx={size / 2} cy={size / 2} r={r}
+          fill="none"
+          stroke="#8b1e2d"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeDasharray={`${dash} ${circumference}`}
+          style={{ transition: scoreAnim ? 'stroke-dasharray 0.7s ease-out' : 'stroke-dasharray 0.5s ease' }}
+        />
+      </svg>
+
+      {/* Badge image inside ring */}
       <img
         src={badgeSrc}
         alt=""
-        className={`${imgSize} object-contain object-center`}
-        style={{ mixBlendMode: 'multiply' }}
+        className="absolute object-contain object-center"
+        style={{
+          inset: strokeWidth + 4,
+          width: size - (strokeWidth + 4) * 2,
+          height: size - (strokeWidth + 4) * 2,
+          mixBlendMode: 'multiply',
+        }}
       />
 
-      <div className={`flex items-center gap-1 w-full ${barNegMargin}`}>
-        <span className={`${textSize} font-mono font-medium text-wine/70 tabular-nums leading-none shrink-0`}>
-          {level}
-        </span>
-        <div className={`relative flex-1 min-w-0 ${barHeight} rounded-full bg-wine/20 overflow-hidden`}>
-          <div
-            className={`relative h-full rounded-full bg-wine flex items-center justify-center overflow-hidden ${
-              scoreAnim ? 'transition-all duration-700 ease-out' : 'transition-all duration-500'
-            }`}
-            style={{
-              width: `${parisianPercent}%`,
-              minWidth: parisianPercent > 0 ? '1.35rem' : 0,
-            }}
-          >
-            <span className={`${pctTextSize} font-mono font-semibold tabular-nums leading-none text-ivory whitespace-nowrap px-0.5`}>
-              {parisianPercent}%
-            </span>
-          </div>
-          {parisianPercent === 0 && (
-            <span className={`absolute inset-0 flex items-center justify-center ${pctTextSize} font-mono font-semibold tabular-nums leading-none text-wine/65 pointer-events-none`}>
-              0%
-            </span>
-          )}
-        </div>
-        {nextLevel ? (
-          <span className={`${textSize} font-mono font-medium text-wine/70 tabular-nums leading-none shrink-0`}>
-            {nextLevel}
-          </span>
-        ) : null}
+      {/* Level labels at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 flex justify-between px-1" style={{ bottom: -14 }}>
+        <span className="text-[9px] font-mono font-medium text-wine/70 tabular-nums leading-none">{level}</span>
+        {nextLevel && <span className="text-[9px] font-mono font-medium text-wine/40 tabular-nums leading-none">{nextLevel}</span>}
       </div>
     </motion.div>
   );
