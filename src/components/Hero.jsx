@@ -1954,32 +1954,6 @@ export function AudioDemoCard({
             {source === 'tab' ? 'Tab audio' : 'Recording'}
           </span>
         )}
-        <button
-          type="button"
-          onClick={toggleTabRecording}
-          disabled={status === 'connecting' || manualCorrecting || stoppingRecording || awaitingRepeat || (isRecording && source === 'mic')}
-          className={`relative w-11 h-11 rounded-full border inline-flex items-center justify-center transition-all shrink-0 ${
-            isRecording && source === 'tab'
-              ? 'bg-wine border-wine text-ivory hover:bg-wine2'
-              : 'border-wine/35 text-wine/70 hover:border-wine/55 hover:text-wine bg-ivory/80'
-          } disabled:opacity-50`}
-          aria-label={isRecording && source === 'tab' ? 'Stop tab recording' : 'Record tab audio'}
-          title="Record audio from a browser tab"
-        >
-          {isRecording && source === 'tab' ? (
-            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden>
-              <rect x="2" y="2" width="10" height="10" rx="1.5" fill="#F6F1E8" />
-            </svg>
-          ) : (
-            <svg width="16" height="14" viewBox="0 0 18 16" fill="none" aria-hidden>
-              <rect x="1" y="2" width="12" height="9" rx="1.2" stroke="currentColor" strokeWidth="1.3" />
-              <path d="M13 5.5h3.5a1 1 0 011 1v3a1 1 0 01-1 1H13" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-            </svg>
-          )}
-          {isRecording && source === 'tab' && (
-            <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-50" />
-          )}
-        </button>
         <div className="relative flex flex-col items-center">
           {(showStartHint || highlightMic || showRepeatHint) && !isRecording && (
             <motion.div
