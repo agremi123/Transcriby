@@ -509,6 +509,9 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
               </p>
               <p style={{ color: 'rgba(246,241,232,0.4)', fontSize: 10, marginBottom: 10, lineHeight: 1.4 }}>{desc(t)}</p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {isAuto && studyCheck && (
+                  <span style={{ color: 'rgba(251,191,36,0.9)', fontSize: 10, fontFamily: "'SF Mono','Fira Mono',monospace", fontWeight: 700, marginRight: 'auto', animation: 'checkPop 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards' }}>+10 pts Parisian</span>
+                )}
                 <button
                   style={{
                     background: '#8B1E2D',
@@ -520,6 +523,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                     fontStyle: 'italic',
                     cursor: 'pointer',
                     pointerEvents: 'all',
+                    marginLeft: isAuto && studyCheck ? undefined : 'auto',
                     ...(isAuto && studyHl ? { animation: 'studyHlPulse 0.4s ease-in-out infinite alternate', boxShadow: '0 0 0 2px rgba(139,30,45,0.5)' } : {}),
                   }}
                   onMouseDown={isAuto ? undefined : () => navigate(practiceUrl(t.topic, themeInfo, themeInfo?.cat ?? t.category))}
@@ -529,7 +533,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                 {isAuto && studyCheck && (
                   <span style={{ color: '#16a34a', fontSize: 15, fontWeight: 700, animation: 'checkPop 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards' }}>✓</span>
                 )}
-                <span style={{ color: 'rgba(251,191,36,0.75)', fontSize: 10, fontFamily: "'SF Mono','Fira Mono',monospace", fontWeight: 700 }}>+{xp(t)} XP to Parisian</span>
               </div>
             </div>
           </foreignObject>
