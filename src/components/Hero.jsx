@@ -4192,6 +4192,7 @@ export default function Hero() {
   const [listeningQuestions, setListeningQuestions] = React.useState([]);
   const [listeningGrammar, setListeningGrammar] = React.useState([]);
   const [listeningVocabTheme, setListeningVocabTheme] = React.useState('');
+  const [listeningContentLevel, setListeningContentLevel] = React.useState('');
 
   React.useEffect(() => {
     if (practiceType === 'listening' && practiceTopic && !listeningActive) {
