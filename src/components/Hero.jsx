@@ -2961,11 +2961,10 @@ export function AudioDemoCard({
       )}
 
       {/* Combined row: tabs (left) + controls (right) */}
-      <div className="flex items-start border-t border-line/50 shrink-0">
+      <div className="flex items-start shrink-0">
         {/* Left column: tabs + correction UI */}
         <div className="flex-1 min-w-0 flex flex-col">
-          <div className="flex overflow-x-auto">
-            <div className="w-7 shrink-0 border-b-2 border-transparent" />
+          <div className="ml-7 flex overflow-x-auto border-t border-line/50">
             {[
               { id: 'transcript', label: 'Chat' },
               { id: 'speaking',   label: 'Speaking' },
