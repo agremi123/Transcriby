@@ -20,11 +20,8 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
       prevPercentRef.current = parisianPercent;
       return undefined;
     }
-
     if (!experienceHighlightTick) return undefined;
-
     if (prevPercentRef.current === parisianPercent) return undefined;
-
     setScoreAnim(true);
     if (scoreAnimTimerRef.current) window.clearTimeout(scoreAnimTimerRef.current);
     scoreAnimTimerRef.current = window.setTimeout(() => {
@@ -32,7 +29,6 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
       prevPercentRef.current = parisianPercent;
       scoreAnimTimerRef.current = null;
     }, SCORE_ANIM_MS);
-
     return () => {
       if (scoreAnimTimerRef.current) {
         window.clearTimeout(scoreAnimTimerRef.current);
@@ -53,55 +49,85 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   const nextLevel = getNextLevel(level);
   const badgeSrc = getLevelBadgeSrc(level);
 
-  const size = compact ? 120 : 140;
-  const strokeWidth = compact ? 2 : 2.5;
-  const gap = 2; // px between ring and badge edge
-  const r = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * r;
-  const dash = (parisianPercent / 100) * circumference;
+  // Left half-circle progress indicator
+  const badgeSize = compact ? 78 : 110;
+  const sw = 2;         // stroke width
+  const gap = 3;        // gap between arc endpoint and badge
+  const r = badgeSize / 2;
+  const padV = 14;      // vertical padding for level labels
+
+  // Arc circle center in SVG space
+  const cx = sw / 2 + r;
+  const cy = padV + sw / 2 + r;
+  const svgW = sw / 2 + r + gap + badgeSize + sw / 2;
+  const svgH = padV + sw + badgeSize + padV;
+
+  // Left semicircle: bottom (cx, cy+r) → top (cx, cy-r) counterclockwise (through left side)
+  const halfCirc = Math.PI * r;
+  const dash = (parisianPercent / 100) * halfCirc;
 
   return (
     <motion.div
       animate={scoreAnim ? { scale: [1, 1.08, 1.02, 1] } : { scale: 1 }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       className={`relative shrink-0 bg-transparent ${scoreAnim ? 'parisian-badge-score-pop' : ''} ${className}`}
-      style={{ width: size, height: size }}
+      style={{ width: svgW, height: svgH }}
       aria-label={`${profile.name}, level ${level}, ${parisianPercent}% Parisian progress`}
     >
-      {/* Ring */}
-      <svg width={size} height={size} className="absolute inset-0 -rotate-90" style={{ transform: 'rotate(-90deg)' }}>
-        {/* Track */}
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(139,30,45,0.15)" strokeWidth={strokeWidth} />
-        {/* Progress */}
-        <circle
-          cx={size / 2} cy={size / 2} r={r}
+      <svg
+        width={svgW} height={svgH}
+        className="absolute inset-0"
+        style={{ overflow: 'visible' }}
+      >
+        {/* Track: left half-circle (faint) */}
+        <path
+          d={`M ${cx},${cy + r} A ${r},${r} 0 0,0 ${cx},${cy - r}`}
+          fill="none"
+          stroke="rgba(139,30,45,0.15)"
+          strokeWidth={sw}
+          strokeLinecap="round"
+        />
+        {/* Progress: fills bottom→top */}
+        <path
+          d={`M ${cx},${cy + r} A ${r},${r} 0 0,0 ${cx},${cy - r}`}
           fill="none"
           stroke="#8b1e2d"
-          strokeWidth={strokeWidth}
+          strokeWidth={sw}
           strokeLinecap="round"
-          strokeDasharray={`${dash} ${circumference}`}
+          strokeDasharray={`${dash} ${halfCirc}`}
           style={{ transition: scoreAnim ? 'stroke-dasharray 0.7s ease-out' : 'stroke-dasharray 0.5s ease' }}
         />
+        {/* B1 label at bottom */}
+        <text
+          x={cx - 2} y={cy + r + 11}
+          textAnchor="middle" fontSize={8}
+          fill="#8b1e2d" fontFamily="'SF Mono','Fira Mono',monospace"
+          fontWeight="600" opacity={0.65}
+        >{level}</text>
+        {/* B2 label at top */}
+        {nextLevel && (
+          <text
+            x={cx - 2} y={cy - r - 5}
+            textAnchor="middle" fontSize={8}
+            fill="#8b1e2d" fontFamily="'SF Mono','Fira Mono',monospace"
+            fontWeight="600" opacity={0.4}
+          >{nextLevel}</text>
+        )}
       </svg>
 
-      {/* Badge image inside ring */}
+      {/* Badge image — sits to the right of the arc */}
       <img
         src={badgeSrc}
         alt=""
         className="absolute object-contain object-center"
         style={{
-          inset: strokeWidth + gap,
-          width: size - (strokeWidth + gap) * 2,
-          height: size - (strokeWidth + gap) * 2,
+          top: padV + sw / 2,
+          left: cx + gap,
+          width: badgeSize,
+          height: badgeSize,
           mixBlendMode: 'multiply',
         }}
       />
-
-      {/* Level labels at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 flex justify-between px-1" style={{ bottom: -14 }}>
-        <span className="text-[9px] font-mono font-medium text-wine/70 tabular-nums leading-none">{level}</span>
-        {nextLevel && <span className="text-[9px] font-mono font-medium text-wine/40 tabular-nums leading-none">{nextLevel}</span>}
-      </div>
     </motion.div>
   );
 }
