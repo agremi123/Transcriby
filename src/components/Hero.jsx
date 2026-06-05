@@ -3107,38 +3107,35 @@ export function AudioDemoCard({
             }
 
             return null;
-          })()}
-        </div>
-
-        {/* Right: Reset + Mic (always same slot in speak mode) */}
+              })()}
+            </div>
+          )}
+        </div>{/* end left column */}
+        {/* Right controls */}
         {inputMode === 'write' ? (
-        <div className="flex items-center gap-2 min-w-0 h-10 self-end shrink-0">
-          <div className="flex items-center gap-3 h-10">
-            <div className="flex items-center gap-3">
-                {writeText.trim().length > 0 && (
-                  <button type="button" onClick={resetTranscript}
-                    className="text-[12px] tracking-widest uppercase text-navy/30 hover:text-navy/60 transition-colors self-center">
-                    Reset
-                  </button>
-                )}
-                <button type="button" onClick={finishWriteInput}
-                  disabled={!writeText.trim() || writeText.trim() === writeSubmittedText}
-                  className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-full bg-wine hover:bg-wine2 disabled:bg-wine/10 disabled:text-wine/35 disabled:cursor-default transition-colors font-display text-[16px] italic text-ivory"
-                  aria-label="Fini">
-                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
-                    <path d="M2 6.5l2.5 2.5L10 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  Fini
-                </button>
-              </div>
+          <div className="shrink-0 flex items-center gap-3 pr-4 py-1">
+            {writeText.trim().length > 0 && (
+              <button type="button" onClick={resetTranscript}
+                className="text-[12px] tracking-widest uppercase text-navy/30 hover:text-navy/60 transition-colors">
+                Reset
+              </button>
+            )}
+            <button type="button" onClick={finishWriteInput}
+              disabled={!writeText.trim() || writeText.trim() === writeSubmittedText}
+              className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-full bg-wine hover:bg-wine2 disabled:bg-wine/10 disabled:text-wine/35 disabled:cursor-default transition-colors font-display text-[16px] italic text-ivory"
+              aria-label="Fini">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
+                <path d="M2 6.5l2.5 2.5L10 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Fini
+            </button>
           </div>
-        </div>
         ) : inputMode === 'speak' ? (
-        <div className="shrink-0 self-start">
-          {speakActionControls}
-        </div>
+          <div className="shrink-0 pr-3 py-1">
+            {speakActionControls}
+          </div>
         ) : null}
-      </div>
+      </div>{/* end combined row */}
 
       {(error || tabCaptureError) && (
         <p className="px-7 pb-2 text-[12px] text-wine">{error || tabCaptureError}</p>
