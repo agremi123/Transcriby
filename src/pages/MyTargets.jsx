@@ -230,8 +230,16 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
           delay += SETTLE;
         } else {
           delay += DECO_HL;
-          // deco: quick +10, no tooltip
-          at(delay, () => setPointsAnim({ svgX: dx, svgY: dy, color }));
+          // deco: tooltip using nearest lesson target
+          const decoTarget = total > 0 ? targets[ci % Math.max(total, 1)] : null;
+          if (decoTarget) {
+            const theme = themes[ci % themes.length] ?? cat;
+            const themeInfo = { cat, idx: ci + 1, total: circles.length, theme };
+            at(delay, () => setAutoTooltip({ svgX: dx, svgY: dy, target: decoTarget, color, themeInfo }));
+            at(delay + STUDY_DELAY, () => setStudyHl(true));
+          }
+          delay += TT;
+          at(delay, () => { setAutoTooltip(null); setStudyHl(false); setPointsAnim({ svgX: dx, svgY: dy, color }); });
           delay += DECO_PTS;
           at(delay, () => { setHlCircle(null); setPointsAnim(null); setSettledCircles(p => new Set([...p, key])); });
           delay += DECO_SETTLE;
