@@ -35,7 +35,7 @@ export default function DevPanel() {
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
-  const [tab, setTab] = React.useState('summary'); // 'summary' | 'log'
+  const [tab, setTab] = React.useState('summary'); // 'summary' | 'log' | 'cache'
 
   const load = React.useCallback(() => {
     setLoading(true);
