@@ -57,7 +57,7 @@ function devStatsMiddleware() {
     }
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ totIn, totOut, totCost, byLabel, log: DEV_LOG.slice(-50) }));
+    res.end(JSON.stringify({ totIn, totOut, totCost, byLabel, log: DEV_LOG.slice(-50), cacheLog: CACHE_LOG.slice(-50) }));
   };
 }
 // ────────────────────────────────────────────────────────────────────────────
