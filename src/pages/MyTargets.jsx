@@ -336,6 +336,10 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
               const t = c.isDeco ? (total > 0 ? targets[ci % total] : null) : c.dot.target;
               const isDone = !c.isDeco && c.dot.isDone;
               const isPartial = !c.isDeco && c.dot.isPartial;
+              const isReading = cat === 'Reading';
+              // circle ci revealed at step 2*ci+2 (after its preceding segment at 2*ci+1)
+              const circRevealed = !isReading || readingReveal >= ci * 2 + 2;
+              const circOpacity = isDone ? 0.85 : isPartial ? 0.55 : (c.isDeco ? 0.4 : 0.35);
               return (
                 <g key={ci} style={{ cursor: 'pointer' }}
                    onMouseEnter={() => t && openDot({ svgX: dx, svgY: dy, target: t, color, themeInfo })}
@@ -343,8 +347,17 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                   <circle cx={dx} cy={dy} r={18} fill="transparent" />
                   <circle cx={dx} cy={dy} r={4}
                           fill="white" stroke={color} strokeWidth={c.isDeco ? 1.2 : 1.4}
-                          opacity={isDone ? 0.85 : isPartial ? 0.55 : (c.isDeco ? 0.4 : 0.35)} />
-                  {isPartial && <circle cx={dx} cy={dy} r={2} fill={color} opacity="0.7" />}
+                          style={{
+                            opacity: circRevealed ? circOpacity : 0,
+                            transform: circRevealed ? 'scale(1)' : 'scale(0)',
+                            transformBox: 'fill-box',
+                            transformOrigin: 'center',
+                            transition: circRevealed ? 'opacity 0.15s ease, transform 0.15s cubic-bezier(0.34,1.56,0.64,1)' : 'none',
+                          }} />
+                  {isPartial && (
+                    <circle cx={dx} cy={dy} r={2} fill={color}
+                            style={{ opacity: circRevealed ? 0.7 : 0, transition: circRevealed ? 'opacity 0.15s ease' : 'none' }} />
+                  )}
                 </g>
               );
             })}
