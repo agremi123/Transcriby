@@ -3839,6 +3839,7 @@ function ListeningPanel({ loading, title, audioUrl, transcript, wordTimings = nu
                 duration={duration}
                 pageOffset={pageOffset}
                 allWordWeights={allWordWeights}
+                wordTimings={wordTimings}
                 onWordClick={seekToWord}
                 className="font-display text-[17px] leading-[1.65] text-navy/80"
               />
