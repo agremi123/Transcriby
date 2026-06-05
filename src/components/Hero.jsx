@@ -3660,7 +3660,16 @@ function AudioSyncedTranscript({ text, currentTime, duration, pageOffset, allWor
   );
 }
 
-function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
+const CEFR_BADGE = {
+  A1: { bg: '#16a34a', label: 'A1' },
+  A2: { bg: '#0d9488', label: 'A2' },
+  B1: { bg: '#2563eb', label: 'B1' },
+  B2: { bg: '#d97706', label: 'B2' },
+  C1: { bg: '#dc2626', label: 'C1' },
+  C2: { bg: '#7c3aed', label: 'C2' },
+};
+
+function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', contentLevel = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
   const [playing, setPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
