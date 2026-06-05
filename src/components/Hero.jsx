@@ -4505,7 +4505,8 @@ export default function Hero() {
               <Reveal delay={0.18} className="text-wine italic">From Parisiens.</Reveal>
             </h1>
 
-            {/* Jules et Léa — clickable introductions */}
+            {/* Jules et Léa — hidden on practice tabs */}
+            {!['speaking','listening','reading','writing'].includes(heroActiveTab) && (
             <Reveal delay={0.25} className="overflow-visible">
               <div className="mt-6 flex items-center justify-center gap-8 sm:gap-10 relative z-20 overflow-visible">
                 {narrators.map((n) => {
