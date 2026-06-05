@@ -3113,7 +3113,7 @@ export function AudioDemoCard({
         </div>{/* end left column */}
         {/* Right controls */}
         {inputMode === 'write' ? (
-          <div className="shrink-0 flex items-center gap-3 pr-4 py-1 border-t border-line/50">
+          <div className="shrink-0 flex items-center gap-3 pr-4 py-1">
             {writeText.trim().length > 0 && (
               <button type="button" onClick={resetTranscript}
                 className="text-[12px] tracking-widest uppercase text-navy/30 hover:text-navy/60 transition-colors">
