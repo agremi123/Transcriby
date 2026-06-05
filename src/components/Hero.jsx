@@ -4441,6 +4441,7 @@ export default function Hero() {
                 questions={listeningQuestions}
                 grammar={listeningGrammar}
                 vocabTheme={listeningVocabTheme}
+                contentLevel={listeningContentLevel}
                 parisianPercent={profile?.parisianPercent ?? 0}
                 dailyParisianPoints={dailyParisianPoints}
                 onSpendExperience={spendExperience}
