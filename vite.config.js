@@ -1316,7 +1316,7 @@ function speakingPromptMiddleware(apiKey) {
   };
 }
 
-function writingPromptMiddleware(apiKey) {
+function writingPromptMiddleware(apiKey, openrouterKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/writing-prompt' || req.method !== 'POST') { next(); return; }
     let topic = '', learnerLevel = 'B1';
