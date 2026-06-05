@@ -982,7 +982,10 @@ function sourceMatchesLevel(sourceLevel, learnerLevel) {
   return li >= lo && li <= hi + 1; // +1 gives some stretch
 }
 
-function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
+function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseUrl, supabaseKey) {
+  let supabase = null;
+  if (supabaseUrl && supabaseKey) supabase = createClient(supabaseUrl, supabaseKey);
+
   return async (req, res, next) => {
     if (req.url !== '/api/listening' || req.method !== 'POST') { next(); return; }
     let topic = '', learnerLevel = '';
@@ -998,6 +1001,49 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
       res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: '', questions: [], vocab: [], grammar: [] })); return;
     }
     try {
+      // Check Supabase cache first
+      const level = learnerLevel || 'B1';
+      if (supabase) {
+        try {
+          const { data: cached } = await supabase
+            .from('listening_episodes')
+            .select('*')
+            .eq('level', level)
+            .order('created_at', { ascending: false })
+            .limit(20);
+          if (cached && cached.length > 0) {
+            const row = cached[Math.floor(Math.random() * cached.length)];
+            console.log(`[listening] Cache hit for level=${level}: "${row.title}"`);
+            // Re-trim audio from stored URL if available
+            let clipAudioUrl = null;
+            if (row.audio_url) {
+              try {
+                const buf = await makeAudioClip(row.audio_url);
+                const sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
+                SESSION_AUDIO.set(sid, buf);
+                setTimeout(() => SESSION_AUDIO.delete(sid), 60 * 60 * 1000);
+                clipAudioUrl = `/api/audio-session/${sid}`;
+              } catch {
+                clipAudioUrl = `/api/audio-proxy?url=${encodeURIComponent(row.audio_url)}`;
+              }
+            }
+            res.end(JSON.stringify({
+              title: row.title,
+              audioUrl: clipAudioUrl,
+              transcript: row.transcript,
+              source: row.source_name,
+              date: row.pub_date,
+              vocabTheme: row.vocab_theme,
+              questions: row.questions || [],
+              vocab: row.vocab || [],
+              grammar: row.grammar || [],
+            }));
+            return;
+          }
+        } catch (e) {
+          console.warn('[listening] Supabase cache lookup failed:', e.message);
+        }
+      }
       // Step 1: try podcast sources — prefer level-matched ones first
       const found = await fetchPodcastEpisode(learnerLevel);
       let episode = found?.episode || null;
