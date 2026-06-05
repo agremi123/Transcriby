@@ -2026,7 +2026,7 @@ export function AudioDemoCard({
       {/* Main content column (2/3) */}
       <div className={fullscreen ? 'flex-[2] flex flex-col overflow-y-auto min-w-0' : 'flex flex-col flex-1 min-h-0'}>
       {/* Mode controls + speech box */}
-      <div className="px-7 pt-4 flex flex-col gap-2.5 flex-1 min-h-0">
+      <div className="px-7 pt-7 flex flex-col gap-2.5 flex-1 min-h-0">
         <div className="flex items-center justify-center gap-4 shrink-0">
           <div className="relative flex items-center rounded-full p-0.5 bg-wine/10">
             <div
