@@ -73,16 +73,16 @@ export default function Nav() {
         <Logo />
         <div />
         <div className="flex items-center gap-2.5 sm:gap-3 mr-16">
-          <ParisianCornerBadge inline />
-          <NavReachNextLevel />
           <button
             type="button"
             onClick={() => handleLogout(resetWelcomeOnboarding)}
-            className="text-[11px] text-navy/35 hover:text-navy/60 transition-colors ml-1"
+            className="text-[11px] text-navy/35 hover:text-navy/60 transition-colors"
             title="Log out"
           >
             Log out
           </button>
+          <ParisianCornerBadge inline />
+          <NavReachNextLevel />
         </div>
       </Container>
     </motion.nav>
