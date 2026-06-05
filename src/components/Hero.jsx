@@ -3444,6 +3444,37 @@ function PassageWithVocabHighlights({ passage, vocabEntries, highlightActive, cl
   );
 }
 
+const TITLE_SIZES = [22, 19, 16, 14, 12];
+
+function AutoFitTitle({ title }) {
+  const ref = React.useRef(null);
+  const [sizeIdx, setSizeIdx] = React.useState(0);
+
+  React.useLayoutEffect(() => {
+    setSizeIdx(0);
+  }, [title]);
+
+  React.useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight) || TITLE_SIZES[sizeIdx] * 1.3;
+    const fits = el.scrollHeight <= lineHeight * 2 + 2;
+    if (!fits && sizeIdx < TITLE_SIZES.length - 1) {
+      setSizeIdx(i => i + 1);
+    }
+  });
+
+  return (
+    <h2
+      ref={ref}
+      className="font-display leading-[1.3] tracking-[-0.01em] text-navy"
+      style={{ fontSize: TITLE_SIZES[sizeIdx], overflow: 'hidden' }}
+    >
+      {title}
+    </h2>
+  );
+}
+
 function ReadingArticlePanel({
   loading,
   title,
