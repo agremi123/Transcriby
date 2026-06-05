@@ -2617,7 +2617,7 @@ export function AudioDemoCard({
                                   type="text"
                                   value={userAns === '__editing__' ? '' : userAns}
                                   onChange={(e) => setPracticeVocabAnswers((p) => ({ ...p, [vi]: e.target.value }))}
-                                  onKeyDown={(e) => { if (e.key === 'Enter' && userAns.trim()) setPracticeVocabAnswers((p) => ({ ...p, [vi]: userAns.trim() })); }}
+                                  onKeyDown={(e) => { if (e.key === 'Enter' && userAns.trim()) { const ans = userAns.trim(); const isC = ans.toLowerCase() === v.word.toLowerCase(); setPracticeVocabAnswers((p) => ({ ...p, [vi]: ans })); firePointsDelta(isC ? 2 : -1); } }}
                                   placeholder="Votre réponse…"
                                   className="flex-1 border border-navy/20 px-2 py-1 text-[13px] font-display text-navy focus:outline-none focus:border-wine/50 bg-transparent"
                                 />
