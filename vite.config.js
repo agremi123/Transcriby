@@ -874,6 +874,44 @@ function audioProxyMiddleware() {
   };
 }
 
+/**
+ * Returns true when `text` looks like a podcast show-intro / promo blurb
+ * rather than actual episode content. Used to discard RSS desc fallbacks and
+ * scraped UI noise.
+ */
+function isBoilerplateContent(text) {
+  if (!text) return true;
+  const clean = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const wordCount = clean.split(/\s+/).length;
+  if (wordCount < 60) return true; // real episodes are always longer
+
+  const signals = [
+    /bienvenue sur\b/i,
+    /je (vous invite|t'invite)\b/i,
+    /je suis .{2,30}(coach|professeur|formateur|animateur)/i,
+    /abonnez[- ]vous/i,
+    /abonne[- ]toi/i,
+    /\bpodcast pour\b/i,
+    /niveaux?\s+(intermédiaire|avancé|débutant)/i,
+    /libérer (ta|votre) fluidi/i,
+    /trois formats\b/i,
+    /log\s*in.*sign\s*up/i,
+    /sign\s*up.*log\s*in/i,
+    /renforce ta confiance/i,
+    /absorbe du vocabulaire/i,
+    /apprendre en dormant/i,
+    /améliore ton (français|niveau)/i,
+    /empowering .{1,20} french learners/i,
+    /❤[︎]?/,
+    /\bby deborah\b/i,
+  ];
+
+  const hits = signals.filter((re) => re.test(clean)).length;
+  if (hits >= 2) return true;
+  if (hits >= 1 && wordCount < 120) return true;
+  return false;
+}
+
 // French podcast sources for listening exercises
 const FRENCH_PODCAST_SOURCES = [
   { id: 'rfi', name: 'RFI — Journal en Français Facile', level: 'A2-B1', rssUrl: 'https://www.rfi.fr/fr/podcasts/journal-en-francais-facile/feed/' },
