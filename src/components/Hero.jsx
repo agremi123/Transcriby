@@ -3132,6 +3132,28 @@ export function AudioDemoCard({
       )}
 
     </motion.div>
+
+    {/* Tab bar — below the speech box */}
+    <div className="flex border-t border-line overflow-x-auto shrink-0 mt-1">
+      {[
+        { id: 'transcript', label: 'Chat' },
+        { id: 'speaking',   label: 'Speaking' },
+        { id: 'listening',  label: 'Listening' },
+        { id: 'reading',    label: 'Reading' },
+        { id: 'writing',    label: 'Writing' },
+      ].map((t) => (
+        <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
+          className={`text-[9px] tracking-widest uppercase px-3 py-2 border-t-2 -mt-px transition-colors whitespace-nowrap shrink-0 ${activeTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
+          {t.label}
+        </button>
+      ))}
+      {(activeTab === 'practice' || vocabLevel || practiceExercises?.length > 0) && (
+        <button type="button" onClick={() => setActiveTab('practice')}
+          className={`text-[9px] tracking-widest uppercase px-3 py-2 border-t-2 -mt-px transition-colors whitespace-nowrap shrink-0 ${activeTab === 'practice' ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
+          {vocabLevel ? `Vocab · ${vocabLevel}` : 'Practice'}
+        </button>
+      )}
+    </div>
     </>
   );
 }
