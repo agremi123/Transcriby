@@ -10,6 +10,57 @@ import { sendHandlerResult } from './server/node-response.js';
 import { buildCorrectionSystemPrompts } from './server/correctionPrompts.js';
 import { sanitizeParisianCorrection, parseCorrectionResponse } from './src/lib/correctionFormat.js';
 
+// ── Dev token tracker ──────────────────────────────────────────────────────
+const DEV_LOG = []; // { ts, label, model, inputTokens, outputTokens, cost }
+const HAIKU_IN_PER_M  = 0.80;  // USD per million input tokens
+const HAIKU_OUT_PER_M = 4.00;  // USD per million output tokens
+const SONNET_IN_PER_M = 3.00;
+const SONNET_OUT_PER_M = 15.00;
+
+function modelCost(model, inputTokens, outputTokens) {
+  const isHaiku = model.includes('haiku');
+  const inRate  = isHaiku ? HAIKU_IN_PER_M  : SONNET_IN_PER_M;
+  const outRate = isHaiku ? HAIKU_OUT_PER_M : SONNET_OUT_PER_M;
+  return (inputTokens / 1e6) * inRate + (outputTokens / 1e6) * outRate;
+}
+
+async function claudeCall(label, apiKey, body) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  const inputTokens  = data.usage?.input_tokens  || 0;
+  const outputTokens = data.usage?.output_tokens || 0;
+  const cost = modelCost(body.model || '', inputTokens, outputTokens);
+  DEV_LOG.push({ ts: Date.now(), label, model: body.model || '', inputTokens, outputTokens, cost });
+  if (DEV_LOG.length > 200) DEV_LOG.shift();
+  console.log(`[dev] ${label} — in:${inputTokens} out:${outputTokens} $${cost.toFixed(5)}`);
+  return data;
+}
+
+function devStatsMiddleware() {
+  return (req, res, next) => {
+    if (req.url !== '/api/dev-stats' || req.method !== 'GET') { next(); return; }
+    const totIn  = DEV_LOG.reduce((s, e) => s + e.inputTokens,  0);
+    const totOut = DEV_LOG.reduce((s, e) => s + e.outputTokens, 0);
+    const totCost = DEV_LOG.reduce((s, e) => s + e.cost, 0);
+    const byLabel = {};
+    for (const e of DEV_LOG) {
+      if (!byLabel[e.label]) byLabel[e.label] = { calls: 0, inputTokens: 0, outputTokens: 0, cost: 0 };
+      byLabel[e.label].calls++;
+      byLabel[e.label].inputTokens  += e.inputTokens;
+      byLabel[e.label].outputTokens += e.outputTokens;
+      byLabel[e.label].cost         += e.cost;
+    }
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ totIn, totOut, totCost, byLabel, log: DEV_LOG.slice(-50) }));
+  };
+}
+// ────────────────────────────────────────────────────────────────────────────
+
 function readEnvFile(dir) {
   try {
     const content = readFileSync(resolve(dir, '.env'), 'utf8');
