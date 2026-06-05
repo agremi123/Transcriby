@@ -1285,6 +1285,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
         title: episode.title,
         audioUrl: clipAudioUrl,
         transcript,
+        wordTimings,
         source: sourceName,
         date: episode.pubDate,
         vocabTheme,
