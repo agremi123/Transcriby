@@ -340,22 +340,12 @@ function correctionMiddleware(apiKey) {
     const system = systemPrompts[register] || systemPrompts.Parisien;
 
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: Math.min(1400, 240 + Math.ceil(text.length / 2.5)),
-          system,
-          messages: [{ role: 'user', content: text }],
-        }),
+      const data = await claudeCall('correct/correction', apiKey, {
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: Math.min(1400, 240 + Math.ceil(text.length / 2.5)),
+        system,
+        messages: [{ role: 'user', content: text }],
       });
-
-      const data = await response.json();
       let raw = data.content?.[0]?.text?.trim() || '{}';
       raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       const parsed = parseCorrectionResponse(raw, text);
