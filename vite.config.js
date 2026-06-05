@@ -701,17 +701,12 @@ function readingMiddleware(apiKey) {
       if (!passage) throw new Error('no passage');
 
       // Step 3: generate comprehension questions
-      const qRes = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 700,
-          system: `Create exactly 4 comprehension questions based on the French passage: 2 fill-in-the-blank and 2 multiple choice. Return ONLY raw JSON, no markdown: {"questions":[{"type":"fill","sentence":"sentence with ___ blank","answer":"word","hint":"base form"},{"type":"fill","sentence":"another with ___","answer":"word","hint":"base"},{"type":"mcq","question":"Question?","options":["A","B","C","D"],"answer":"A"},{"type":"mcq","question":"Question2?","options":["A","B","C","D"],"answer":"B"}]}`,
-          messages: [{ role: 'user', content: passage }],
-        }),
+      const qData = await claudeCall('reading/questions', apiKey, {
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 700,
+        system: `Create exactly 4 comprehension questions based on the French passage: 2 fill-in-the-blank and 2 multiple choice. Return ONLY raw JSON, no markdown: {"questions":[{"type":"fill","sentence":"sentence with ___ blank","answer":"word","hint":"base form"},{"type":"fill","sentence":"another with ___","answer":"word","hint":"base"},{"type":"mcq","question":"Question?","options":["A","B","C","D"],"answer":"A"},{"type":"mcq","question":"Question2?","options":["A","B","C","D"],"answer":"B"}]}`,
+        messages: [{ role: 'user', content: passage }],
       });
-      const qData = await qRes.json();
       let qRaw = qData.content?.[0]?.text?.trim() || '{}';
       qRaw = qRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       let questions = [];
