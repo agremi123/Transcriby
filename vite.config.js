@@ -948,10 +948,17 @@ async function fetchPodcastEpisode(learnerLevel = '') {
         const desc = (b.match(/<description><!\[CDATA\[([\s\S]*?)\]\]>/) || b.match(/<description>([^<]*)<\/description>/))?.[1]?.trim() || '';
         // Spreaker / Podcast Index built-in plain-text transcript
         const transcriptUrl = (b.match(/<podcast:transcript[^>]+type="text\/plain"[^>]+url="([^"]+)"/) || b.match(/<podcast:transcript[^>]+url="([^"]+)"[^>]+type="text\/plain"/))?.[1] || '';
-        if (audioUrl && title) items.push({ title, audioUrl, link, pubDate, desc, transcriptUrl });
+        // Reject items whose RSS description is clearly a show-intro blurb
+        const cleanDesc = desc.replace(/<[^>]+>/g, '').trim();
+        if (audioUrl && title && !isBoilerplateContent(cleanDesc || title)) {
+          items.push({ title, audioUrl, link, pubDate, desc, transcriptUrl });
+        } else if (audioUrl && title && !cleanDesc) {
+          // No desc at all — still valid (transcript will come from audio/page scrape)
+          items.push({ title, audioUrl, link, pubDate, desc, transcriptUrl });
+        }
       }
 
-      if (!items.length) { console.log(`[listening] ${source.id} 0 items`); continue; }
+      if (!items.length) { console.log(`[listening] ${source.id} 0 usable items`); continue; }
 
       // Pick randomly from the 5 most recent episodes
       const episode = items[Math.floor(Math.random() * Math.min(5, items.length))];
