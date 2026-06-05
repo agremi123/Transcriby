@@ -1297,6 +1297,12 @@ export function AudioDemoCard({
     setAssessingLevel(false);
   };
 
+  const firePointsDelta = React.useCallback((value) => {
+    gainDailyParisianPoints(value);
+    setPointsDelta({ value, id: Date.now() });
+    setTimeout(() => setPointsDelta(null), 1400);
+  }, [gainDailyParisianPoints]);
+
   const loadPractice = async (topic, { openFullscreen = false } = {}) => {
     const t = topic || overallWeakness;
     if (!t) return;
