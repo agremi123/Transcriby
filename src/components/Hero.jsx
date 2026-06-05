@@ -757,6 +757,8 @@ export function AudioDemoCard({
   const [practiceSubTab, setPracticeSubTab] = React.useState('comprehension');
   const [practiceVocabAnswers, setPracticeVocabAnswers] = React.useState({});
   const [practiceAnsweredQ, setPracticeAnsweredQ] = React.useState({});
+  const [pointsDelta, setPointsDelta] = React.useState(null); // { value: +3 | -1, id: number } for animation
+  const { dailyParisianPoints } = useLearnerProfile();
   const [assessingLevel, setAssessingLevel] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState('transcript');
   const [practiceExercises, setPracticeExercises] = React.useState(null);
