@@ -388,26 +388,36 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
               const t = c.isDeco ? (total > 0 ? targets[ci % total] : null) : c.dot.target;
               const isDone = !c.isDeco && c.dot.isDone;
               const isPartial = !c.isDeco && c.dot.isPartial;
-              const localStep = Math.max(0, arcRevealStep - arcOffsets[idx]);
-              const circRevealed = localStep >= ci * 2 + 2;
+              const circKey = `${idx},${ci}`;
+              const circSettled = settledCircles.has(circKey);
+              const isHighlighted = hlCircle?.arcIdx === idx && hlCircle?.ci === ci;
+              const circVisible = circSettled || isHighlighted;
               const circOpacity = isDone ? 0.85 : isPartial ? 0.55 : (c.isDeco ? 0.4 : 0.35);
               return (
                 <g key={ci} style={{ cursor: 'pointer' }}
                    onMouseEnter={() => t && openDot({ svgX: dx, svgY: dy, target: t, color, themeInfo })}
                    onMouseLeave={closeDot}>
                   <circle cx={dx} cy={dy} r={18} fill="transparent" />
+                  {isHighlighted && (
+                    <>
+                      <circle cx={dx} cy={dy} r={7} fill={color}
+                              style={{ transformBox: 'fill-box', transformOrigin: 'center', animation: 'hlPulse 0.45s ease-in-out infinite alternate', opacity: 0.25 }} />
+                      <circle cx={dx} cy={dy} r={11} fill="none" stroke={color} strokeWidth={1}
+                              style={{ transformBox: 'fill-box', transformOrigin: 'center', animation: 'hlRing 0.55s ease-in-out infinite alternate', opacity: 0.35 }} />
+                    </>
+                  )}
                   <circle cx={dx} cy={dy} r={4}
                           fill="white" stroke={color} strokeWidth={c.isDeco ? 1.2 : 1.4}
                           style={{
-                            opacity: circRevealed ? circOpacity : 0,
-                            transform: circRevealed ? 'scale(1)' : 'scale(0)',
+                            opacity: circVisible ? circOpacity : 0,
+                            transform: circVisible ? 'scale(1)' : 'scale(0)',
                             transformBox: 'fill-box',
                             transformOrigin: 'center',
-                            transition: circRevealed ? 'opacity 0.15s ease, transform 0.15s cubic-bezier(0.34,1.56,0.64,1)' : 'none',
+                            transition: circVisible ? 'opacity 0.15s ease, transform 0.15s cubic-bezier(0.34,1.56,0.64,1)' : 'none',
                           }} />
                   {isPartial && (
                     <circle cx={dx} cy={dy} r={2} fill={color}
-                            style={{ opacity: circRevealed ? 0.7 : 0, transition: circRevealed ? 'opacity 0.15s ease' : 'none' }} />
+                            style={{ opacity: circVisible ? 0.7 : 0, transition: circVisible ? 'opacity 0.15s ease' : 'none' }} />
                   )}
                 </g>
               );
