@@ -86,8 +86,8 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
         style={{
           top: badgeTop,
           left: badgeLeft,
-          width: badgeSize,
-          height: badgeSize,
+          width: imgSize,
+          height: imgSize,
           mixBlendMode: 'multiply',
         }}
       />
