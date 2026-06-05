@@ -526,6 +526,9 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                 >
                   Study →
                 </button>
+                {isAuto && studyCheck && (
+                  <span style={{ color: '#16a34a', fontSize: 15, fontWeight: 700, animation: 'checkPop 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards' }}>✓</span>
+                )}
                 <span style={{ color: 'rgba(251,191,36,0.75)', fontSize: 10, fontFamily: "'SF Mono','Fira Mono',monospace", fontWeight: 700 }}>+{xp(t)} XP to Parisian</span>
               </div>
             </div>
