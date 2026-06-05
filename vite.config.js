@@ -656,7 +656,7 @@ function readingMiddleware(apiKey) {
     try {
       // Step 1: use web search to find a real French article passage
       const searchData = await claudeCall('reading/web-search', apiKey, {
-        model: 'claude-sonnet-4-5',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         system: `You are a French reading exercise creator for language learners. Search for a real recent French-language article or news piece that would be engaging and culturally relevant for someone learning French (topics like French culture, Paris life, French cinema, food, current events in France, French society, sport in France, etc.). Extract verbatim 5-8 sentences from the article in French at roughly B1-B2 level. Output ONLY a JSON object, nothing else: {"title":"article title in French","passage":"...verbatim French sentences...","source":"publication name e.g. Le Monde","author":"author name or null","date":"publication date e.g. 12 juin 2025 or null"}`,
