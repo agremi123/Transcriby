@@ -1316,17 +1316,12 @@ function translateWordMiddleware(apiKey) {
     res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
     if (!apiKey || !word.trim()) { res.end(JSON.stringify({ translation: '' })); return; }
     try {
-      const r = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 40,
-          system: 'French-English dictionary. Return ONLY the English translation of the given French word (1–4 words max). No punctuation, no explanation.',
-          messages: [{ role: 'user', content: context ? `"${word}" (context: ${context.slice(0, 120)})` : `"${word}"` }],
-        }),
+      const d = await claudeCall('translate/word', apiKey, {
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 40,
+        system: 'French-English dictionary. Return ONLY the English translation of the given French word (1–4 words max). No punctuation, no explanation.',
+        messages: [{ role: 'user', content: context ? `"${word}" (context: ${context.slice(0, 120)})` : `"${word}"` }],
       });
-      const d = await r.json();
       res.end(JSON.stringify({ translation: d.content?.[0]?.text?.trim() || '' }));
     } catch { res.end(JSON.stringify({ translation: '' })); }
   };
