@@ -2083,16 +2083,26 @@ export function AudioDemoCard({
           </button>
         </div>
 
-      {/* Always render this row to keep card height stable; hide when not in practice */}
-      <div className={`flex border-b border-line shrink-0 transition-opacity duration-200 ${(activeTab === 'practice' || vocabLevel || practiceExercises?.length > 0) ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-        <button type="button" onClick={() => setActiveTab('transcript')}
-          className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${activeTab === 'transcript' ? 'border-navy text-navy' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
-          Chat
-        </button>
-        <button type="button" onClick={() => setActiveTab('practice')}
-          className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${activeTab === 'practice' ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
-          {vocabLevel ? `Vocab & grammar · ${vocabLevel}` : `Practice — ${overallWeakness}`}
-        </button>
+      {/* Main tab bar — always visible */}
+      <div className="flex border-b border-line shrink-0 overflow-x-auto">
+        {[
+          { id: 'transcript', label: 'Chat' },
+          { id: 'speaking',   label: 'Speaking' },
+          { id: 'listening',  label: 'Listening' },
+          { id: 'reading',    label: 'Reading' },
+          { id: 'writing',    label: 'Writing' },
+        ].map((t) => (
+          <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
+            className={`text-[9px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
+            {t.label}
+          </button>
+        ))}
+        {(activeTab === 'practice' || vocabLevel || practiceExercises?.length > 0) && (
+          <button type="button" onClick={() => setActiveTab('practice')}
+            className={`text-[9px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === 'practice' ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
+            {vocabLevel ? `Vocab · ${vocabLevel}` : 'Practice'}
+          </button>
+        )}
       </div>
 
         <div ref={writeBoxRef} className="relative bg-ivory/60 border border-line/70 overflow-hidden flex-1 flex flex-col min-h-0">
