@@ -3674,7 +3674,7 @@ function AudioSyncedTranscript({ text, currentTime, duration, pageOffset, allWor
 const CEFR_BADGE = {
   A1: { bg: '#16a34a', label: 'A1' },
   A2: { bg: '#0d9488', label: 'A2' },
-  B1: { bg: '#1a2340', label: 'B1' },
+  B1: { bg: '#8b1e2d', label: 'B1' },
   B2: { bg: '#d97706', label: 'B2' },
   C1: { bg: '#8b1e2d', label: 'C1' },
   C2: { bg: '#4a1942', label: 'C2' },
