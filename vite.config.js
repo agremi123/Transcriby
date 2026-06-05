@@ -12,6 +12,7 @@ import { sanitizeParisianCorrection, parseCorrectionResponse } from './src/lib/c
 
 // ── Dev token tracker ──────────────────────────────────────────────────────
 const DEV_LOG = []; // { ts, label, model, inputTokens, outputTokens, cost }
+const CACHE_LOG = []; // { ts, endpoint, source: 'database'|'generated', level, fields }
 const HAIKU_IN_PER_M  = 0.80;  // USD per million input tokens
 const HAIKU_OUT_PER_M = 4.00;  // USD per million output tokens
 const SONNET_IN_PER_M = 3.00;
