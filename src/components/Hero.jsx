@@ -3531,7 +3531,7 @@ function ReadingArticlePanel({
   const byline = [author, date, source].filter(Boolean).join(' — ');
 
   return (
-    <div className="flex flex-col pr-4" style={{ height: 520 }}>
+    <div className="flex flex-col" style={{ height: 520 }}>
       {loading ? (
         <div className="flex items-center gap-3 mt-auto mb-auto">
           <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
