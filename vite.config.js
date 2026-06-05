@@ -1102,6 +1102,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
               title: row.title,
               audioUrl: clipAudioUrl,
               transcript: row.transcript,
+              wordTimings: row.word_timings || null,
               source: row.source_name,
               date: row.pub_date,
               vocabTheme: row.vocab_theme,
