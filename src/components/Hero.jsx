@@ -3721,7 +3721,7 @@ function ListeningPanel({ loading, title, audioUrl, transcript, wordTimings = nu
     audioRef.current.currentTime = pct * duration;
   };
 
-  // Syllable weights for every word in the full transcript
+  // Syllable weights for every word — used as fallback when no Deepgram timings
   const allWordWeights = React.useMemo(() => {
     if (!transcript) return [];
     return transcript.split(/\s+/).filter(Boolean).map(frSyllables);
@@ -3730,22 +3730,34 @@ function ListeningPanel({ loading, title, audioUrl, transcript, wordTimings = nu
 
   const pageOffset = pageIndex * WORDS_PER_PAGE;
 
-  // Click a word → seek audio to its estimated (syllable-weighted) position
+  // Click a word → seek audio to its exact (Deepgram) or estimated (syllable-weighted) position
   const seekToWord = (globalWordIdx) => {
-    if (!audioRef.current || !duration || !totalWeight) return;
-    const wBefore = allWordWeights.slice(0, globalWordIdx).reduce((s, w) => s + w, 0);
-    audioRef.current.currentTime = (wBefore / totalWeight) * duration;
+    if (!audioRef.current) return;
+    if (wordTimings && wordTimings[globalWordIdx]) {
+      audioRef.current.currentTime = wordTimings[globalWordIdx].start;
+    } else if (duration && totalWeight) {
+      const wBefore = allWordWeights.slice(0, globalWordIdx).reduce((s, w) => s + w, 0);
+      audioRef.current.currentTime = (wBefore / totalWeight) * duration;
+    }
   };
 
   // Auto-advance page when playhead passes the last word of the current page
   React.useEffect(() => {
-    if (!duration || !totalWeight) return;
-    const pageWeightEnd = allWordWeights.slice(0, pageOffset + WORDS_PER_PAGE).reduce((s, w) => s + w, 0);
-    const pageEnd = (pageWeightEnd / totalWeight) * duration;
-    if (currentTime >= pageEnd && pageIndex < totalPages - 1) {
-      setPageIndex((p) => p + 1);
+    const lastWordOnPage = pageOffset + WORDS_PER_PAGE - 1;
+    if (wordTimings) {
+      const lastTiming = wordTimings[Math.min(lastWordOnPage, wordTimings.length - 1)];
+      if (lastTiming && currentTime >= lastTiming.end && pageIndex < totalPages - 1) {
+        setPageIndex((p) => p + 1);
+      }
+    } else {
+      if (!duration || !totalWeight) return;
+      const pageWeightEnd = allWordWeights.slice(0, pageOffset + WORDS_PER_PAGE).reduce((s, w) => s + w, 0);
+      const pageEnd = (pageWeightEnd / totalWeight) * duration;
+      if (currentTime >= pageEnd && pageIndex < totalPages - 1) {
+        setPageIndex((p) => p + 1);
+      }
     }
-  }, [currentTime, duration, totalWeight, allWordWeights, pageOffset, pageIndex, totalPages]);
+  }, [currentTime, duration, totalWeight, allWordWeights, wordTimings, pageOffset, pageIndex, totalPages]);
 
   const fmtDate = (d) => {
     if (!d) return '';
