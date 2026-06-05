@@ -445,11 +445,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
         style={{ mixBlendMode: 'multiply' }}
       />
 
-      {/* future line — thinner, not yet achieved */}
-      {futureLevels.length > 0 && (
-        <line x1={arcEX} y1={MY} x2={VW - PAD} y2={MY}
-              stroke="#8B1E2D" strokeWidth="2" strokeLinecap="round" opacity="0.22" />
-      )}
       {futureLevels.map((lvl, i) => {
         const x = arcEX + (i + 1) * FUT_PX;
         return (
