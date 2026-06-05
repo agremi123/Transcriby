@@ -3797,9 +3797,94 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
   );
 }
 
-function WritingChallengePanel({ loading, prompt = '', guidelines = [], wordTarget = 80 }) {
+/** Splits French text into clickable words that fetch translations on demand. */
+function TranslatableText({ text, className = '', context = '' }) {
+  const [cache, setCache] = React.useState({});
+  const [loadingWord, setLoadingWord] = React.useState(null);
+  const [activeWord, setActiveWord] = React.useState(null);
+  const [tooltipPos, setTooltipPos] = React.useState({ top: 0, left: 0 });
+
+  // Close tooltip on outside click
+  React.useEffect(() => {
+    if (!activeWord) return undefined;
+    const handler = () => setActiveWord(null);
+    document.addEventListener('mousedown', handler, true);
+    return () => document.removeEventListener('mousedown', handler, true);
+  }, [activeWord]);
+
+  const handleClick = React.useCallback(async (raw, rect) => {
+    const clean = raw.replace(/[^a-zA-ZÀ-ÿœæ'-]/g, '').toLowerCase();
+    if (!clean || clean.length < 2) return;
+    setTooltipPos({ top: rect.top, left: rect.left + rect.width / 2 });
+    setActiveWord(clean);
+    if (cache[clean] !== undefined) return;
+    setLoadingWord(clean);
+    try {
+      const r = await fetch('/api/translate-word', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ word: clean, context: (context || text).slice(0, 150) }),
+      });
+      const { translation } = await r.json();
+      setCache(c => ({ ...c, [clean]: translation || clean }));
+    } catch {
+      setCache(c => ({ ...c, [clean]: clean }));
+    } finally {
+      setLoadingWord(null);
+    }
+  }, [cache, context, text]);
+
+  // Tokenise keeping punctuation/spaces as separate tokens
+  const tokens = React.useMemo(() => text.split(/([^a-zA-ZÀ-ÿœæ'-]+)/u), [text]);
+
+  const tooltip = activeWord ? createPortal(
+    <div
+      className="pointer-events-none fixed z-[300] min-w-[7rem] max-w-[15rem] rounded-md border border-navy/10 bg-navy px-3 py-2 text-center text-[12px] leading-snug text-ivory shadow-[0_8px_28px_rgba(26,35,64,0.32)]"
+      style={{ top: tooltipPos.top, left: tooltipPos.left, transform: 'translate(-50%, calc(-100% - 9px))' }}
+    >
+      {loadingWord === activeWord
+        ? <span className="opacity-50">…</span>
+        : formatTranslationWords(cache[activeWord] ?? '…')}
+    </div>,
+    document.body,
+  ) : null;
+
   return (
-    <div className="flex flex-col pr-4" style={{ height: 520 }}>
+    <span className={className}>
+      {tokens.map((tok, i) => {
+        if (!/[a-zA-ZÀ-ÿœæ'-]/.test(tok)) return <span key={i}>{tok}</span>;
+        const clean = tok.replace(/[^a-zA-ZÀ-ÿœæ'-]/g, '').toLowerCase();
+        const isActive = activeWord === clean;
+        return (
+          <span
+            key={i}
+            role="button"
+            tabIndex={0}
+            className={`cursor-pointer rounded-sm px-[1px] transition-colors ${isActive ? 'bg-wine/15 text-navy' : 'hover:bg-wine/10'}`}
+            onMouseDown={(e) => { e.stopPropagation(); handleClick(tok, e.currentTarget.getBoundingClientRect()); }}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(tok, e.currentTarget.getBoundingClientRect()); } }}
+          >
+            {tok}
+          </span>
+        );
+      })}
+      {tooltip}
+    </span>
+  );
+}
+
+const TIPS_SECTIONS = [
+  { key: 'vocab',       label: 'Vocabulaire',  icon: '📖', pill: true  },
+  { key: 'expressions', label: 'Expressions',  icon: '💬', pill: true  },
+  { key: 'grammar',     label: 'Grammaire',    icon: '📝', pill: false },
+  { key: 'conjugation', label: 'Conjugaisons', icon: '🔄', pill: false },
+  { key: 'connecteurs', label: 'Connecteurs',  icon: '🔗', pill: true  },
+];
+
+function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 80 }) {
+  const hasTips = TIPS_SECTIONS.some(s => (tips[s.key] || []).length > 0);
+  return (
+    <div className="flex flex-col pr-4 overflow-y-auto" style={{ height: 520 }}>
       {loading ? (
         <div className="flex items-center gap-3 mt-auto mb-auto">
           <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
@@ -3807,35 +3892,64 @@ function WritingChallengePanel({ loading, prompt = '', guidelines = [], wordTarg
         </div>
       ) : (
         <>
-          <div className="mb-5 shrink-0 px-4 py-3 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
-            <p className="text-[10px] tracking-widest uppercase text-wine/60 mb-1 font-mono">Writing Challenge</p>
-            <p className="font-display text-[17px] leading-snug text-navy">{prompt || 'Écris en français sur ce sujet…'}</p>
+          {/* Challenge */}
+          <div className="mb-4 shrink-0 px-4 py-3 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
+            <p className="text-[10px] tracking-widest uppercase text-wine/60 mb-1.5 font-mono">Writing Challenge</p>
+            <p className="font-display text-[17px] leading-snug text-navy">
+              <TranslatableText text={prompt || 'Écris en français sur ce sujet…'} />
+            </p>
           </div>
 
+          {/* Word target */}
           <div className="mb-4 shrink-0 flex items-center gap-2">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
               <circle cx="7" cy="7" r="6" stroke="#8B1E2D" strokeWidth="1.2" opacity="0.4"/>
               <path d="M7 4v3.5l2 1.5" stroke="#8B1E2D" strokeWidth="1.2" strokeLinecap="round" opacity="0.4"/>
             </svg>
-            <span className="text-[12px] font-mono text-navy/40">Objectif : ~{wordTarget} mots</span>
+            <span className="text-[11px] font-mono text-navy/40">Objectif : ~{wordTarget} mots</span>
           </div>
 
-          {guidelines.length > 0 && (
-            <div className="border border-line/40 bg-paper/60 px-4 py-3 space-y-2 shrink-0">
-              <p className="text-[10px] tracking-widest uppercase text-navy/35 font-mono">Conseils</p>
-              <ul className="space-y-1.5">
-                {guidelines.map((tip, i) => (
-                  <li key={i} className="flex items-start gap-2 text-[13px] text-navy/60 font-display">
-                    <span className="text-wine/40 shrink-0 mt-0.5">—</span>
-                    <span>{tip}</span>
-                  </li>
-                ))}
-              </ul>
+          {/* Conseils */}
+          {hasTips && (
+            <div className="border border-line/40 bg-paper/60 px-4 py-3 shrink-0">
+              <p className="text-[10px] tracking-widest uppercase text-navy/35 font-mono mb-3">Conseils</p>
+              <div className="space-y-3">
+                {TIPS_SECTIONS.map(({ key, label, icon, pill }) => {
+                  const items = tips[key] || [];
+                  if (!items.length) return null;
+                  return (
+                    <div key={key}>
+                      <p className="text-[9px] tracking-widest uppercase text-navy/30 font-mono mb-1.5">{icon} {label}</p>
+                      {pill ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          {items.map((item, i) => (
+                            <span key={i} className="inline-flex items-center border border-navy/15 bg-ivory/80 px-2 py-0.5 text-[12px] font-display text-navy/70 rounded-sm">
+                              <TranslatableText text={item} context={prompt} />
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <ul className="space-y-1">
+                          {items.map((item, i) => (
+                            <li key={i} className="flex items-start gap-1.5 text-[12px] font-display text-navy/65 leading-snug">
+                              <span className="text-wine/35 shrink-0 mt-0.5">—</span>
+                              <TranslatableText text={item} context={prompt} />
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 
-          <div className="flex-1" />
-          <p className="text-[11px] text-navy/30 font-display italic mt-4">Écris dans la zone de texte à droite, puis clique sur <em>Make it Parisien!</em> pour avoir une correction.</p>
+          <div className="flex-1 min-h-[16px]" />
+          <p className="text-[11px] text-navy/30 font-display italic mt-3 shrink-0">
+            Écris dans la zone de texte à droite, puis clique sur <em>Make it Parisien!</em> pour une correction.
+            <span className="block mt-0.5 text-wine/40">← Clique sur un mot pour le traduire.</span>
+          </p>
         </>
       )}
     </div>
