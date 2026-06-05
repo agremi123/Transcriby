@@ -163,8 +163,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
   const arcEX   = VW - PAD - futW;
   const arcCX   = (arcSX + arcEX) / 2;
 
-  const bgRefs = React.useRef(ARC_DEFS.map(() => null));
-  const [lengths, setLengths] = React.useState(ARC_DEFS.map(() => 580));
   const [hoveredDot, setHoveredDot] = React.useState(null);
   const closeTimer = React.useRef(null);
 
@@ -179,10 +177,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
     if (justOpened.current) return;
     closeTimer.current = setTimeout(() => setHoveredDot(null), 120);
   };
-
-  React.useLayoutEffect(() => {
-    setLengths(bgRefs.current.map((r) => r?.getTotalLength() ?? 580));
-  }, []);
 
   const BADGE_SIZE = 160;
   const BADGE_Y    = MY + 18;
