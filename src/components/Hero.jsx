@@ -3846,7 +3846,7 @@ function TranslatableText({ text, className = '', context = '' }) {
     >
       {loadingWord === activeWord
         ? <span className="opacity-50">…</span>
-        : formatTranslationWords(cache[activeWord] ?? '…')}
+        : formatTranslationWords(cacheRef.current[activeWord] ?? '…')}
     </div>,
     document.body,
   ) : null;
