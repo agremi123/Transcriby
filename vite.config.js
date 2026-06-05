@@ -1085,8 +1085,36 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
         } catch {}
       }
 
-      // 3d. RSS description fallback
-      if (!transcript || transcript.length < 40) transcript = (episode.desc || '').replace(/<[^>]+>/g, '').trim();
+      // 3d. RSS description fallback — ONLY if it isn't a show-intro blurb
+      if (!transcript || transcript.length < 40) {
+        const rawDesc = (episode.desc || '').replace(/<[^>]+>/g, '').trim();
+        if (!isBoilerplateContent(rawDesc)) {
+          transcript = rawDesc;
+        } else {
+          console.log('[listening] RSS desc looks like show intro — skipping desc fallback');
+        }
+      }
+
+      // 3e. Boilerplate guard — if what we have is still promotional noise, generate synthetically
+      if (isBoilerplateContent(transcript)) {
+        console.log('[listening] Transcript is boilerplate — generating synthetic episode with Claude');
+        const genRes = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 700,
+            system: `You are a French radio journalist for "Journal en Français Facile" on RFI. Write a short French news or culture bulletin (220-280 words, ${learnerLevel || 'B1'}-level vocabulary) on a real-world topic. Use natural spoken French. Return ONLY raw JSON: {"transcript":"Full text of the bulletin"}`,
+            messages: [{ role: 'user', content: `Inspiration: ${episode.title || topic || 'actualité française'}` }],
+          }),
+        });
+        try {
+          const gd = await genRes.json();
+          let gRaw = (gd.content?.[0]?.text?.trim() || '{}').replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+          const { transcript: genT } = JSON.parse(gRaw);
+          if (genT && genT.length > 50) transcript = genT;
+        } catch {}
+      }
 
       if (!transcript || transcript.length < 40) throw new Error('No transcript available');
 
