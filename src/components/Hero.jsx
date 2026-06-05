@@ -2623,10 +2623,12 @@ export function AudioDemoCard({
 
       {/* Léa / Jules reaction — after stop or finishing write */}
       {narratorReaction && !manualCorrection && !manualCorrecting && (
-        <NarratorReactionPanel
-          reaction={narratorReaction}
-          onDone={() => setNarratorReaction(null)}
-        />
+        <div className={fullscreen ? undefined : 'absolute left-0 right-0 bottom-[64px] z-10'}>
+          <NarratorReactionPanel
+            reaction={narratorReaction}
+            onDone={() => setNarratorReaction(null)}
+          />
+        </div>
       )}
 
       {/* Level assessment panel — also outside speech box */}
