@@ -270,17 +270,12 @@ function correctionMiddleware(apiKey) {
       try {
         if (dimensionBreakdown) {
           const dimensionPrompt = `You are a French language expert. Assess this spoken French answer on three dimensions separately. Clarity = how clear and understandable the response is. Grammar = grammatical accuracy (verbs, agreements, tenses). Vocabulary = range and appropriateness of word choice. Return raw JSON only, no markdown: {"clarity":"B1","grammar":"A2","vocabulary":"B1"}. Each value must be exactly one of: A1, A2, B1, B2, C1, C2.`;
-          const response = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-            body: JSON.stringify({
+          const data = await claudeCall('correct/dimension-assessment', apiKey, {
               model: 'claude-haiku-4-5-20251001',
               max_tokens: 80,
               system: dimensionPrompt,
               messages: [{ role: 'user', content: text }],
-            }),
           });
-          const data = await response.json();
           let raw = data.content?.[0]?.text?.trim() || '{}';
           raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
           let clarity = null;
