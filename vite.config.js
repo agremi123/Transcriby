@@ -1024,6 +1024,8 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
                 clipAudioUrl = `/api/audio-proxy?url=${encodeURIComponent(row.audio_url)}`;
               }
             }
+            CACHE_LOG.push({ ts: Date.now(), endpoint: 'listening', source: 'database', level, title: row.title, fields: { text: !!row.transcript, audio: !!row.audio_url, questions: (row.questions||[]).length, vocab: (row.vocab||[]).length, grammar: (row.grammar||[]).length } });
+            if (CACHE_LOG.length > 100) CACHE_LOG.shift();
             res.end(JSON.stringify({
               title: row.title,
               audioUrl: clipAudioUrl,
