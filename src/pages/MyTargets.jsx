@@ -314,9 +314,8 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
               const next = segPositions[si + 1];
               const isCompleted = progressTV > 0 && next.tv <= progressTV + 0.001;
               const [cpx, cpy] = qbSubCtrl(pos.tv, next.tv, arcSX, MY, arcCX, ctrlY, arcEX, MY);
-              const isReading = cat === 'Reading';
-              // segment si revealed at step 2*si+1; circles at 2*ci+2, so seg before circ
-              const revealed = !isReading || readingReveal >= si * 2 + 1;
+              const localStep = Math.max(0, arcRevealStep - arcOffsets[idx]);
+              const revealed = localStep >= si * 2 + 1;
               const targetOpacity = isCompleted ? 0.65 : 0.28;
               return (
                 <path
