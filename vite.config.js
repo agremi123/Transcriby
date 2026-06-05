@@ -1230,17 +1230,12 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       try { const p = JSON.parse(qRaw); questions = p.questions || []; vocabTheme = p.vocabTheme || ''; } catch {}
 
       // Step 5: generate vocabulary list targeted to theme + level
-      const vRes = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 700,
-          system: `You are a French language teacher. From the given French transcript, pick exactly 5 vocabulary words relevant to a ${level} learner${vocabTheme ? ` studying the theme "${vocabTheme}"` : ''}. Choose words appropriate for ${level} level — not too easy, not too advanced. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"English definition","sentence":"...___..."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
-          messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
-        }),
+      const vData = await claudeCall('listening/vocab', anthropicKey, {
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 700,
+        system: `You are a French language teacher. From the given French transcript, pick exactly 5 vocabulary words relevant to a ${level} learner${vocabTheme ? ` studying the theme "${vocabTheme}"` : ''}. Choose words appropriate for ${level} level — not too easy, not too advanced. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"English definition","sentence":"...___..."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
+        messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
       });
-      const vData = await vRes.json();
       let vRaw = vData.content?.[0]?.text?.trim() || '{}';
       vRaw = vRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       let vocab = [];
