@@ -1926,6 +1926,28 @@ export function AudioDemoCard({
         )
       )}
       <div className="flex flex-row items-center gap-2">
+        {/* Parisian Points display */}
+        <div className="relative flex flex-col items-center mr-1 select-none">
+          <span className="text-[8px] font-mono tracking-widest uppercase text-navy/35 whitespace-nowrap leading-tight">My Parisian Points</span>
+          <div className="relative flex items-center justify-center">
+            <span key={dailyParisianPoints} className="font-display text-[20px] font-bold text-wine leading-none tabular-nums"
+              style={{ animation: 'parisianPointsPop 0.35s cubic-bezier(0.34,1.56,0.64,1)' }}>
+              {dailyParisianPoints}
+            </span>
+            {pointsDelta && (
+              <span
+                key={pointsDelta.id}
+                className={`absolute -top-4 left-1/2 -translate-x-1/2 font-display font-bold text-[13px] whitespace-nowrap pointer-events-none`}
+                style={{
+                  color: pointsDelta.value > 0 ? '#16a34a' : '#8B1E2D',
+                  animation: 'parisianDeltaFloat 1.4s ease-out forwards',
+                }}
+              >
+                {pointsDelta.value > 0 ? `+${pointsDelta.value}` : pointsDelta.value}
+              </span>
+            )}
+          </div>
+        </div>
         {isRecording && (
           <span className="font-display text-[14px] text-wine flex items-center gap-1 whitespace-nowrap">
             <span className="w-1.5 h-1.5 rounded-full bg-wine animate-pulse" />
