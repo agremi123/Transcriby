@@ -4617,8 +4617,8 @@ export default function Hero() {
               activeTab={heroActiveTab}
               onTabChange={setHeroActiveTab}
             />
-            {/* Tabs — in the white space below the speech box */}
-            <div className="flex overflow-x-auto">
+            {/* Tabs — white strip below the speech box */}
+            <div className="flex overflow-x-auto bg-ivory/95 border border-line/50 px-2">
               {[
                 { id: 'transcript', label: 'Chat' },
                 { id: 'speaking',   label: 'Speaking' },
@@ -4627,7 +4627,7 @@ export default function Hero() {
                 { id: 'writing',    label: 'Writing' },
               ].map((t) => (
                 <button key={t.id} type="button" onClick={() => setHeroActiveTab(t.id)}
-                  className={`text-[9px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors whitespace-nowrap shrink-0 ${heroActiveTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
+                  className={`text-[9px] tracking-widest uppercase px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap shrink-0 ${heroActiveTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
                   {t.label}
                 </button>
               ))}
