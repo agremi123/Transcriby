@@ -2957,10 +2957,12 @@ export function AudioDemoCard({
       )}
 
       {/* Bottom bar */}
-      <div className="px-7 pt-2 pb-3 flex items-center justify-between gap-4 min-h-0 overflow-visible shrink-0">
-        {/* Left: Parisien correction UI or "Make it Parisien !" */}
+      <div className="px-7 pt-2 pb-3 flex items-center justify-end gap-4 min-h-0 overflow-visible shrink-0">
+        {/* Left: Parisien correction UI (loading/save states) */}
         <div className="min-w-0 flex-1 overflow-visible">
           {inputMode === 'speak' && (() => {
+            const hasRecorded = utterances.length > 0;
+            const hasCorrected = !!manualCorrection || !!sentenceCongrats;
             const hasRecorded = utterances.length > 0;
             const hasCorrected = !!manualCorrection || !!sentenceCongrats;
             const isDark = hasRecorded && !hasCorrected && !isLive && !narratorReaction;
