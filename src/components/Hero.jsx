@@ -3505,7 +3505,7 @@ function ReadingArticlePanel({
           {/* Title */}
           {title && (
             <div className="mb-5 shrink-0 px-4 py-3 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
-              <h2 className="font-display text-[26px] sm:text-[30px] leading-[1.2] tracking-[-0.01em] line-clamp-2 text-navy">
+              <h2 className="font-display text-[26px] sm:text-[30px] leading-[1.2] tracking-[-0.01em] text-navy">
                 {title}
               </h2>
             </div>
