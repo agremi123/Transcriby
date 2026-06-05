@@ -921,23 +921,37 @@ async function fetchPodcastEpisode() {
   return null;
 }
 
+// Map learner CEFR level to preferred source difficulty range
+function sourceMatchesLevel(sourceLevel, learnerLevel) {
+  if (!learnerLevel || !sourceLevel) return true;
+  const order = ['A1','A2','B1','B2','C1','C2'];
+  const li = order.indexOf(learnerLevel);
+  // Source level is a range like "A2-B1" — check if learner level is in range
+  const parts = sourceLevel.split('-');
+  const lo = order.indexOf(parts[0]);
+  const hi = order.indexOf(parts[parts.length - 1]);
+  if (lo < 0 || hi < 0) return true;
+  return li >= lo && li <= hi + 1; // +1 gives some stretch
+}
+
 function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/listening' || req.method !== 'POST') { next(); return; }
-    let topic = '';
+    let topic = '', learnerLevel = '';
     try {
       const body = JSON.parse(await readBody(req));
       topic = body.topic || '';
+      learnerLevel = body.learnerLevel || '';
     } catch {
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
     }
     res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
     if (!anthropicKey) {
-      res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: '', questions: [], vocab: [] })); return;
+      res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: '', questions: [], vocab: [], grammar: [] })); return;
     }
     try {
-      // Step 1: try all podcast sources in random order
-      const found = await fetchPodcastEpisode();
+      // Step 1: try podcast sources — prefer level-matched ones first
+      const found = await fetchPodcastEpisode(learnerLevel);
       let episode = found?.episode || null;
       const sourceName = found?.source?.name || 'RFI — Journal en Français Facile';
       let generatedAudioUrl = null;
