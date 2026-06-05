@@ -3434,17 +3434,42 @@ function ReadingArticlePanel({
 
 const WORDS_PER_PAGE = 120;
 
-function AudioSyncedTranscript({ text, currentTime, duration, pageOffset, totalWords, onWordClick, className }) {
+// Count French syllables for a word — vowel groups + punctuation pause weight
+function frSyllables(word) {
+  const clean = word.replace(/[^a-zA-ZàâäéèêëîïôùûüÿœæçÀÂÄÉÈÊËÎÏÔÙÛÜŸŒÆÇ]/g, '');
+  if (!clean) return 0.3; // punctuation-only token → tiny pause
+  const vowels = clean.match(/[aeiouyàâäéèêëîïôùûüÿœæ]/gi) || [];
+  const syl = Math.max(1, vowels.length);
+  // Add a small pause weight for sentence-ending punctuation
+  const hasPause = /[.!?;]/.test(word);
+  return syl + (hasPause ? 1.2 : 0);
+}
+
+function AudioSyncedTranscript({ text, currentTime, duration, pageOffset, allWordWeights, onWordClick, className }) {
   const words = React.useMemo(() => text.split(/\s+/).filter(Boolean), [text]);
 
   const currentWordIdx = React.useMemo(() => {
-    if (!duration || !totalWords) return -1;
-    const pageStart = (pageOffset / totalWords) * duration;
-    const pageEnd = ((pageOffset + words.length) / totalWords) * duration;
-    if (currentTime < pageStart || currentTime >= pageEnd) return -1;
-    const progress = (currentTime - pageStart) / (pageEnd - pageStart);
-    return Math.min(Math.floor(progress * words.length), words.length - 1);
-  }, [currentTime, duration, words.length, pageOffset, totalWords]);
+    if (!duration || !allWordWeights || allWordWeights.length === 0) return -1;
+    const totalWeight = allWordWeights.reduce((s, w) => s + w, 0);
+    if (!totalWeight) return -1;
+
+    // Time boundaries for this page
+    const pageWeightStart = allWordWeights.slice(0, pageOffset).reduce((s, w) => s + w, 0);
+    const pageWeightEnd   = allWordWeights.slice(0, pageOffset + words.length).reduce((s, w) => s + w, 0);
+    const tStart = (pageWeightStart / totalWeight) * duration;
+    const tEnd   = (pageWeightEnd   / totalWeight) * duration;
+
+    if (currentTime < tStart || currentTime >= tEnd) return -1;
+
+    // Walk through words on this page to find which one we're in
+    let elapsed = tStart;
+    for (let i = 0; i < words.length; i++) {
+      const wDur = (allWordWeights[pageOffset + i] / totalWeight) * duration;
+      if (currentTime < elapsed + wDur) return i;
+      elapsed += wDur;
+    }
+    return words.length - 1;
+  }, [currentTime, duration, words, pageOffset, allWordWeights]);
 
   return (
     <p className={className}>
