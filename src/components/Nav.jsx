@@ -75,9 +75,6 @@ export default function Nav() {
         <div className="flex items-center gap-2.5 sm:gap-3">
           <NavReachNextLevel />
           <ParisianCornerBadge inline />
-          {!onJudgePage && (
-            <ButtonPrimary to="/dashboard" showArrow={false}>Judge my French</ButtonPrimary>
-          )}
           <button
             type="button"
             onClick={() => handleLogout(resetWelcomeOnboarding)}
