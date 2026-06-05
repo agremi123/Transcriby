@@ -784,15 +784,20 @@ function readingMiddleware(apiKey, openrouterKey) {
       const idx = Math.min(Math.max(parseInt(rawIdx, 10) || 0, 0), allItems.length - 1);
       const chosen = allItems[idx];
 
-      // Step 3: extract a verbatim passage from the real article text — no fabrication
-      const rawText = (chosen.content || chosen.description || '').slice(0, 2000);
+      // Step 3: fetch full article page, fall back to RSS content
+      let rawText = '';
+      if (chosen.link) rawText = await fetchArticleBody(chosen.link);
+      if (rawText.length < 200) rawText = (chosen.content || chosen.description || '');
+      rawText = rawText.slice(0, 6000);
+
+      // Extract a long verbatim passage — enough for 2 reading pages (~400-600 words)
       const extractData = await openrouterCall('reading/extract', openrouterKey, {
-        max_tokens: 500,
-        system: 'Extract the most readable 5-8 sentences directly from this real French article text. Copy verbatim — do NOT rephrase, summarise or add anything. Return only the extracted French sentences.',
+        max_tokens: 900,
+        system: 'Extract the most coherent and readable passage from this real French article. Copy sentences verbatim — do NOT rephrase, summarise or add anything. The passage must be at least 15 sentences long (aim for 400-600 words). Return only the extracted French text.',
         messages: [{ role: 'user', content: `Title: ${chosen.title}\n\n${rawText}` }],
       });
       const passage = (extractData.content?.[0]?.text || '').trim();
-      if (!passage || passage.length < 40) throw new Error('No passage extracted');
+      if (!passage || passage.length < 100) throw new Error('No passage extracted');
 
       // Step 4: comprehension questions
       const qData = await openrouterCall('reading/questions', openrouterKey, {
