@@ -350,9 +350,8 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
               const t = c.isDeco ? (total > 0 ? targets[ci % total] : null) : c.dot.target;
               const isDone = !c.isDeco && c.dot.isDone;
               const isPartial = !c.isDeco && c.dot.isPartial;
-              const isReading = cat === 'Reading';
-              // circle ci revealed at step 2*ci+2 (after its preceding segment at 2*ci+1)
-              const circRevealed = !isReading || readingReveal >= ci * 2 + 2;
+              const localStep = Math.max(0, arcRevealStep - arcOffsets[idx]);
+              const circRevealed = localStep >= ci * 2 + 2;
               const circOpacity = isDone ? 0.85 : isPartial ? 0.55 : (c.isDeco ? 0.4 : 0.35);
               return (
                 <g key={ci} style={{ cursor: 'pointer' }}
