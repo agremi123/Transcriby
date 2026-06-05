@@ -1234,8 +1234,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       try { ({ vocab = [] } = JSON.parse(vRaw)); } catch {}
 
       // Step 6: generate grammar points from the transcript
-      const gData = await claudeCall('listening/grammar', anthropicKey, {
-        model: 'claude-haiku-4-5-20251001',
+      const gData = await openrouterCall('listening/grammar', openrouterKey, {
         max_tokens: 700,
         system: `You are a French grammar teacher. From the French transcript, identify 3 grammar structures or patterns that a ${level} learner should study. For each, quote the exact sentence from the transcript that illustrates it, name the grammar point, explain it simply in English (1-2 sentences), and give a short usage tip. Return ONLY raw JSON: {"grammar":[{"point":"Le passé composé","example":"Exact sentence from transcript","explanation":"Used to describe completed past actions.","tip":"Use avoir or être as auxiliary + past participle."},{"point":"...","example":"...","explanation":"...","tip":"..."},{"point":"...","example":"...","explanation":"...","tip":"..."}]}`,
         messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
