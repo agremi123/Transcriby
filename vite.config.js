@@ -55,9 +55,11 @@ async function claudeCall(label, apiKey, body) {
   return data;
 }
 
-// OpenRouter (DeepSeek-V3) — OpenAI-compatible format
+// OpenRouter — OpenAI-compatible, supports DeepSeek + Perplexity + others
 const DEEPSEEK_MODEL = 'deepseek/deepseek-chat-v3-0324';
-async function openrouterCall(label, apiKey, { system, messages, max_tokens = 1000 }) {
+const PERPLEXITY_IN_PER_M  = 0.20;
+const PERPLEXITY_OUT_PER_M = 0.20;
+async function openrouterCall(label, apiKey, { system, messages, max_tokens = 1000, model = DEEPSEEK_MODEL }) {
   const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -67,7 +69,7 @@ async function openrouterCall(label, apiKey, { system, messages, max_tokens = 10
       'X-Title': 'Nativa',
     },
     body: JSON.stringify({
-      model: DEEPSEEK_MODEL,
+      model,
       max_tokens,
       messages: [
         ...(system ? [{ role: 'system', content: system }] : []),
