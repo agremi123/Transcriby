@@ -1223,8 +1223,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       try { const p = JSON.parse(qRaw); questions = p.questions || []; vocabTheme = p.vocabTheme || ''; } catch {}
 
       // Step 5: generate vocabulary list targeted to theme + level
-      const vData = await claudeCall('listening/vocab', anthropicKey, {
-        model: 'claude-haiku-4-5-20251001',
+      const vData = await openrouterCall('listening/vocab', openrouterKey, {
         max_tokens: 700,
         system: `You are a French language teacher. From the given French transcript, pick exactly 5 vocabulary words relevant to a ${level} learner${vocabTheme ? ` studying the theme "${vocabTheme}"` : ''}. Choose words appropriate for ${level} level — not too easy, not too advanced. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"English definition","sentence":"...___..."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
         messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
