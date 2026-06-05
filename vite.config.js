@@ -1248,6 +1248,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
         source: sourceName,
         date: episode.pubDate,
         vocabTheme,
+        contentLevel,
         questions,
         vocab,
         grammar,
