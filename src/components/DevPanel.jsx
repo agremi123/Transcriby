@@ -59,6 +59,7 @@ export default function DevPanel() {
   const byLabel = data?.byLabel || {};
   const entries = Object.entries(byLabel).sort((a, b) => b[1].cost - a[1].cost);
   const log = data?.log || [];
+  const cacheLog = data?.cacheLog || [];
 
   return (
     <div className="fixed bottom-3 left-3 z-[9999] font-mono text-[11px]">
