@@ -2523,9 +2523,9 @@ export function AudioDemoCard({
 
           {/* Practice tab */}
           {activeTab === 'practice' && (
-            <div className="px-4 pt-3 pb-4 border-t border-line/50 space-y-4">
-              {/* Subtabs */}
-              <div className="flex gap-0 border-b border-line/40 -mx-4 px-4 mb-2">
+            <div className="flex-1 min-h-0 flex flex-col border-t border-line/50">
+              {/* Subtabs — fixed height row */}
+              <div className="flex gap-0 border-b border-line/40 shrink-0">
                 <button
                   type="button"
                   onClick={() => setPracticeSubTab('comprehension')}
@@ -2541,78 +2541,82 @@ export function AudioDemoCard({
                   Vocabulary
                 </button>
               </div>
-              {/* Comprehension subtab */}
-              {practiceSubTab === 'comprehension' && (
-                <>
-                  {practiceTopics.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pb-2 border-b border-line/40">
-                      {practiceTopics.map((topic) => {
-                        const pct = Math.min(skillProgress[topic] ?? 0, 100);
-                        return (
-                          <button
-                            key={topic}
-                            type="button"
-                            onClick={() => startPractice(topic)}
-                            className="relative overflow-hidden border border-line/60 hover:border-wine/40 transition-colors group"
-                            style={{ height: 24 }}
-                          >
-                            <div
-                              className="absolute inset-y-0 left-0 bg-wine/10 group-hover:bg-wine/15 transition-all duration-500"
-                              style={{ width: `${pct}%` }}
-                            />
-                            <div className="relative flex items-center gap-2 px-2 h-full">
-                              <span className="text-[11px] text-navy/60 group-hover:text-navy transition-colors whitespace-nowrap">{topic}</span>
-                              <span className="text-[9px] font-mono text-navy/30 tabular-nums">{pct}%</span>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                  {loadingPractice ? <CorrectionLoading /> : practiceExercises && practiceExercises.length > 0
-                    ? (() => {
-                        const anyAt100 = Object.values(skillProgress).some((p) => p >= 100);
-                        return (
-                          <>
-                            {practiceExercises.map((ex, i) => {
-                              const key = ex.objective || overallWeakness || 'general';
-                              return (
-                                <PracticeExercise
-                                  key={ex._id ?? i}
-                                  exercise={ex}
-                                  onCorrect={() => handleExerciseCorrect(i, key)}
-                                />
-                              );
-                            })}
-                            {!anyAt100 && (
-                              <div className="pt-2">
-                                {loadingMore ? <CorrectionLoading /> : (
-                                  <button type="button" onClick={practiceMore}
-                                    className="w-full flex flex-col items-center gap-0.5 text-wine/60 hover:text-wine transition-colors">
-                                    <span className="text-[10px] tracking-widest uppercase">more</span>
-                                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden>
-                                      <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                                    </svg>
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                            {anyAt100 && (
-                              <p className="text-[11px] tracking-widest uppercase text-green-600 pt-1">100% — skill mastered!</p>
-                            )}
-                          </>
-                        );
-                      })()
-                    : practiceExercises !== null
-                      ? <p className="text-[13px] text-navy/40">No exercises generated.</p>
-                      : null}
-                </>
-              )}
 
-              {/* Vocabulary subtab */}
-              {practiceSubTab === 'vocabulary' && (
-                <VocabExercise vocab={readingVocab} onGoodAnswer={gainDailyParisianPoints} />
-              )}
+              {/* Scrollable content area */}
+              <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-4">
+                {/* Comprehension subtab */}
+                {practiceSubTab === 'comprehension' && (
+                  <>
+                    {practiceTopics.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 pb-2 border-b border-line/40">
+                        {practiceTopics.map((topic) => {
+                          const pct = Math.min(skillProgress[topic] ?? 0, 100);
+                          return (
+                            <button
+                              key={topic}
+                              type="button"
+                              onClick={() => startPractice(topic)}
+                              className="relative overflow-hidden border border-line/60 hover:border-wine/40 transition-colors group"
+                              style={{ height: 24 }}
+                            >
+                              <div
+                                className="absolute inset-y-0 left-0 bg-wine/10 group-hover:bg-wine/15 transition-all duration-500"
+                                style={{ width: `${pct}%` }}
+                              />
+                              <div className="relative flex items-center gap-2 px-2 h-full">
+                                <span className="text-[11px] text-navy/60 group-hover:text-navy transition-colors whitespace-nowrap">{topic}</span>
+                                <span className="text-[9px] font-mono text-navy/30 tabular-nums">{pct}%</span>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                    {loadingPractice ? <CorrectionLoading /> : practiceExercises && practiceExercises.length > 0
+                      ? (() => {
+                          const anyAt100 = Object.values(skillProgress).some((p) => p >= 100);
+                          return (
+                            <>
+                              {practiceExercises.map((ex, i) => {
+                                const key = ex.objective || overallWeakness || 'general';
+                                return (
+                                  <PracticeExercise
+                                    key={ex._id ?? i}
+                                    exercise={ex}
+                                    onCorrect={() => handleExerciseCorrect(i, key)}
+                                  />
+                                );
+                              })}
+                              {!anyAt100 && (
+                                <div className="pt-2">
+                                  {loadingMore ? <CorrectionLoading /> : (
+                                    <button type="button" onClick={practiceMore}
+                                      className="w-full flex flex-col items-center gap-0.5 text-wine/60 hover:text-wine transition-colors">
+                                      <span className="text-[10px] tracking-widest uppercase">more</span>
+                                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden>
+                                        <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                                      </svg>
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                              {anyAt100 && (
+                                <p className="text-[11px] tracking-widest uppercase text-green-600 pt-1">100% — skill mastered!</p>
+                              )}
+                            </>
+                          );
+                        })()
+                      : practiceExercises !== null
+                        ? <p className="text-[13px] text-navy/40">No exercises generated.</p>
+                        : null}
+                  </>
+                )}
+
+                {/* Vocabulary subtab */}
+                {practiceSubTab === 'vocabulary' && (
+                  <VocabExercise vocab={readingVocab} onGoodAnswer={gainDailyParisianPoints} />
+                )}
+              </div>
             </div>
           )}
 
