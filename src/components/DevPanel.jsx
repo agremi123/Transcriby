@@ -176,6 +176,38 @@ export default function DevPanel() {
                 ))}
               </div>
             )}
+
+            {tab === 'cache' && (
+              <div className="divide-y divide-navy/5">
+                {cacheLog.length === 0 && (
+                  <div className="text-center py-6 text-navy/30 text-[10px]">No cached/generated content yet</div>
+                )}
+                {[...cacheLog].reverse().map((e, i) => {
+                  const isDB = e.source === 'database';
+                  const f = e.fields || {};
+                  return (
+                    <div key={i} className="px-3 py-2 hover:bg-navy/[0.02]">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-navy/30 shrink-0">{fmtTime(e.ts)}</span>
+                        <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-semibold shrink-0 ${isDB ? 'bg-emerald-700 text-white' : 'bg-amber-600 text-white'}`}>
+                          {isDB ? '● DB' : '⚡ GEN'}
+                        </span>
+                        <span className="text-navy/50 shrink-0 text-[9px] uppercase tracking-wider">{e.endpoint}</span>
+                        <span className="text-navy/30 shrink-0 text-[9px]">lv.{e.level}</span>
+                      </div>
+                      {e.title && <div className="text-navy/60 text-[10px] truncate mb-1" title={e.title}>{e.title}</div>}
+                      <div className="flex flex-wrap gap-1">
+                        <Chip ok={f.text} label="text" />
+                        <Chip ok={f.audio} label="audio" />
+                        <Chip ok={f.questions > 0} label={`${f.questions ?? 0} questions`} />
+                        <Chip ok={f.vocab > 0} label={`${f.vocab ?? 0} vocab`} />
+                        <Chip ok={f.grammar > 0} label={`${f.grammar ?? 0} grammar`} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       )}
