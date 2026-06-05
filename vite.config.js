@@ -871,6 +871,33 @@ async function makeAudioClip(audioUrl) {
   return trimmed;
 }
 
+/**
+ * Transcribes an audio buffer using Deepgram nova-2 (French).
+ * Returns { transcript: string, wordTimings: [{start, end}] } on success, null on failure.
+ */
+async function deepgramTranscribe(audioBuffer, deepgramKey) {
+  if (!deepgramKey || !audioBuffer) return null;
+  try {
+    const res = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&language=fr&punctuate=true&smart_format=true', {
+      method: 'POST',
+      headers: { 'Authorization': `Token ${deepgramKey}`, 'Content-Type': 'audio/mpeg' },
+      body: audioBuffer,
+      signal: AbortSignal.timeout(30000),
+    });
+    const data = await res.json();
+    const alt = data?.results?.channels?.[0]?.alternatives?.[0];
+    if (!alt?.transcript) return null;
+    const words = alt.words || [];
+    const wordTimings = words.map(w => ({ start: w.start, end: w.end }));
+    const transcript = words.map(w => w.punctuated_word || w.word).join(' ');
+    console.log(`[deepgram] Transcribed ${words.length} words`);
+    return { transcript, wordTimings };
+  } catch (e) {
+    console.warn('[deepgram] Transcription failed:', e.message);
+    return null;
+  }
+}
+
 function audioProxyMiddleware() {
   return async (req, res, next) => {
     if (!req.url.startsWith('/api/audio-proxy')) { next(); return; }
