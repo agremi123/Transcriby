@@ -1361,7 +1361,7 @@ Return ONLY raw JSON (no markdown):
   };
 }
 
-function translateWordMiddleware(apiKey) {
+function translateWordMiddleware(apiKey, openrouterKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/translate-word' || req.method !== 'POST') { next(); return; }
     let word = '', context = '';
