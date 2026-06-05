@@ -2050,7 +2050,7 @@ export function AudioDemoCard({
             setHighlightDiscover(false);
             setInputMode(inputMode === 'discover' ? 'speak' : 'discover');
           }}
-            className={`relative inline-flex items-center px-2.5 py-0.5 font-display text-[13px] tracking-wide rounded-full transition-all duration-300 ${
+            className={`relative inline-flex items-center px-2.5 py-1 font-display text-[13px] tracking-wide rounded-full transition-all duration-300 ${
               inputMode === 'discover'
                 ? 'bg-wine text-ivory ring-2 ring-wine/30'
                 : highlightDiscover
