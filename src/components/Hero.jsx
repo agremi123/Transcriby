@@ -4396,6 +4396,9 @@ export default function Hero() {
               onLearnModeHandled={clearLearnParams}
               onPracticeTopicHandled={practiceType === 'reading' ? undefined : clearPracticeParam}
               readingVocab={listeningActive ? listeningVocab : readingVocab}
+              listeningQuestions={listeningQuestions}
+              listeningVocab={listeningVocab}
+              listeningGrammar={listeningGrammar}
             />
           </div>
         </div>
