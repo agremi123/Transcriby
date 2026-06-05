@@ -72,6 +72,7 @@ export default function App() {
         <GoogleAuthHandler />
         <ParisianCornerBadge />
         <WelcomeOnboarding />
+        {import.meta.env.DEV && <DevPanel />}
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
