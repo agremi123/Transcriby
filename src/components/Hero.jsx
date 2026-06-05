@@ -2576,7 +2576,7 @@ export function AudioDemoCard({
                                 }
                                 return (
                                   <button key={oi} type="button" disabled={!!answered}
-                                    onClick={() => setPracticeAnsweredQ((prev) => ({ ...prev, [qi]: opt }))}
+                                    onClick={() => { setPracticeAnsweredQ((prev) => ({ ...prev, [qi]: opt })); firePointsDelta(isCorrect ? 3 : -1); }}
                                     className={`text-left px-3 py-1.5 text-[13px] font-display ${cls}`}>
                                     <span className="text-[10px] font-mono text-navy/30 mr-2">{String.fromCharCode(65 + oi)}.</span>
                                     {opt}
