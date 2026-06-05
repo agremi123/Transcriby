@@ -175,35 +175,74 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
   const [hoveredDot, setHoveredDot] = React.useState(null);
   const closeTimer = React.useRef(null);
 
-  // Sequential reveal animation: Reading → Listening → Writing → Speaking
-  const DECO_COUNT_ANIM = 14;
-  const MIN_GAP_ANIM    = 0.07;
-  const arcStepCounts = ARC_DEFS.map(({ cat }) => {
-    const targets = grouped[cat] ?? [];
-    const total   = targets.length;
-    const lessonTVals = targets.map((_, i) => (i + 1) / (total + 1));
-    const decoCount = Array.from({ length: DECO_COUNT_ANIM }, (_, i) => (i + 1) / (DECO_COUNT_ANIM + 1))
-      .filter(tv => lessonTVals.every(lt => Math.abs(lt - tv) > MIN_GAP_ANIM)).length;
-    return 2 * (decoCount + total) + 1;
-  });
-  const arcOffsets = arcStepCounts.map((_, i) =>
-    arcStepCounts.slice(0, i).reduce((s, n) => s + n, 0)
-  );
-  const totalAnimSteps = arcOffsets[arcOffsets.length - 1] + arcStepCounts[arcStepCounts.length - 1];
+  // ── Phased animation: seg → highlight → tooltip → +10 → settle → next seg ──
+  const [revealedSegs,   setRevealedSegs]   = React.useState(new Set());
+  const [settledCircles, setSettledCircles] = React.useState(new Set());
+  const [hlCircle,       setHlCircle]       = React.useState(null); // { arcIdx, ci }
+  const [autoTooltip,    setAutoTooltip]    = React.useState(null); // same shape as hoveredDot
+  const [pointsAnim,     setPointsAnim]     = React.useState(null); // { svgX, svgY, color }
+  const [studyHl,        setStudyHl]        = React.useState(false);
+  const animTimersRef = React.useRef([]);
 
-  const [arcRevealStep, setArcRevealStep] = React.useState(0);
-  const animTimerRef = React.useRef(null);
   React.useEffect(() => {
-    const STEP_MS = 160;
-    let step = 0;
-    const tick = () => {
-      step++;
-      setArcRevealStep(step);
-      if (step < totalAnimSteps) animTimerRef.current = setTimeout(tick, STEP_MS);
-    };
-    animTimerRef.current = setTimeout(tick, 300);
-    return () => clearTimeout(animTimerRef.current);
-  }, [totalAnimSteps]);
+    const SEG = 280, HL = 280, TT = 900, PTS = 480, SETTLE = 140;
+    const DECO_C = 14, MIN_G = 0.07;
+    let delay = 400;
+    const timers = [];
+    const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+
+    ARC_DEFS.forEach(({ cat, ctrlY, color }, arcIdx) => {
+      const targets = grouped[cat] ?? [];
+      const total   = targets.length;
+      const lTVals  = targets.map((_, i) => (i + 1) / (total + 1));
+      const decoTVs = Array.from({ length: DECO_C }, (_, i) => (i + 1) / (DECO_C + 1))
+        .filter(tv => lTVals.every(lt => Math.abs(lt - tv) > MIN_G));
+      const circles = [
+        ...decoTVs.map(tv => ({ tv, isDeco: true })),
+        ...targets.map((t, i) => ({ tv: (i + 1) / (total + 1), isDeco: false, target: t })),
+      ].sort((a, b) => a.tv - b.tv);
+      const themes = ARC_THEMES[cat] ?? [];
+
+      // first segment (arcSX → circle 0)
+      at(delay, () => setRevealedSegs(p => new Set([...p, `${arcIdx},0`])));
+      delay += SEG;
+
+      circles.forEach((circle, ci) => {
+        const [dx, dy] = qbPoint(circle.tv, arcSX, MY, arcCX, ctrlY, arcEX, MY);
+        const key = `${arcIdx},${ci}`;
+
+        // 1. highlight circle
+        at(delay, () => setHlCircle({ arcIdx, ci }));
+        delay += HL;
+
+        if (!circle.isDeco) {
+          // 2. tooltip
+          const theme = themes[ci % themes.length] ?? cat;
+          const themeInfo = { cat, idx: ci + 1, total: circles.length, theme };
+          at(delay, () => setAutoTooltip({ svgX: dx, svgY: dy, target: circle.target, color, themeInfo }));
+          at(delay + 350, () => setStudyHl(true)); // study button pulses mid-tooltip
+          delay += TT;
+          // 3. +10 appears, tooltip closes
+          at(delay, () => { setAutoTooltip(null); setStudyHl(false); setPointsAnim({ svgX: dx, svgY: dy, color }); });
+          delay += PTS;
+          // 4. settle
+          at(delay, () => { setHlCircle(null); setPointsAnim(null); setSettledCircles(p => new Set([...p, key])); });
+          delay += SETTLE;
+        } else {
+          // deco: settle after highlight only
+          at(delay, () => { setHlCircle(null); setSettledCircles(p => new Set([...p, key])); });
+          delay += SETTLE;
+        }
+
+        // next segment
+        at(delay, () => setRevealedSegs(p => new Set([...p, `${arcIdx},${ci + 1}`])));
+        delay += SEG;
+      });
+    });
+
+    animTimersRef.current = timers;
+    return () => timers.forEach(clearTimeout);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const justOpened = React.useRef(false);
   const openDot  = (info) => {
