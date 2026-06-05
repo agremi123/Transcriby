@@ -53,11 +53,18 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   const nextLevel = getNextLevel(level);
   const badgeSrc = getLevelBadgeSrc(level);
 
+  const imgSize = compact ? 'w-[52px] h-[52px]' : 'w-[96px] h-[96px] sm:w-[112px] sm:h-[112px]';
+  const wrapSize = compact ? 'w-[52px]' : 'w-[96px] sm:w-[112px]';
+  const barNegMargin = compact ? '-mt-1.5' : '-mt-3.5 sm:-mt-4';
+  const textSize = compact ? 'text-[7px]' : 'text-[8px] sm:text-[9px]';
+  const barHeight = compact ? 'h-1.5' : 'h-2';
+  const pctTextSize = compact ? 'text-[6px]' : 'text-[7px] sm:text-[8px]';
+
   return (
     <motion.div
       animate={scoreAnim ? { scale: [1, 1.08, 1.02, 1] } : { scale: 1 }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      className={`w-[96px] sm:w-[112px] shrink-0 flex flex-col items-stretch gap-0 bg-transparent ${
+      className={`${wrapSize} shrink-0 flex flex-col items-stretch gap-0 bg-transparent ${
         scoreAnim ? 'parisian-badge-score-pop' : ''
       } ${className}`}
       aria-label={`${profile.name}, level ${level}, ${parisianPercent}% Parisian progress`}
@@ -65,15 +72,15 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
       <img
         src={badgeSrc}
         alt=""
-        className="w-[96px] h-[96px] sm:w-[112px] sm:h-[112px] object-contain object-center"
+        className={`${imgSize} object-contain object-center`}
         style={{ mixBlendMode: 'multiply' }}
       />
 
-      <div className="flex items-center gap-1 w-full -mt-3.5 sm:-mt-4">
-        <span className="text-[8px] sm:text-[9px] font-mono font-medium text-wine/70 tabular-nums leading-none shrink-0">
+      <div className={`flex items-center gap-1 w-full ${barNegMargin}`}>
+        <span className={`${textSize} font-mono font-medium text-wine/70 tabular-nums leading-none shrink-0`}>
           {level}
         </span>
-        <div className="relative flex-1 min-w-0 h-2 rounded-full bg-wine/20 overflow-hidden">
+        <div className={`relative flex-1 min-w-0 ${barHeight} rounded-full bg-wine/20 overflow-hidden`}>
           <div
             className={`relative h-full rounded-full bg-wine flex items-center justify-center overflow-hidden ${
               scoreAnim ? 'transition-all duration-700 ease-out' : 'transition-all duration-500'
@@ -83,18 +90,18 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
               minWidth: parisianPercent > 0 ? '1.35rem' : 0,
             }}
           >
-            <span className="text-[7px] sm:text-[8px] font-mono font-semibold tabular-nums leading-none text-ivory whitespace-nowrap px-0.5">
+            <span className={`${pctTextSize} font-mono font-semibold tabular-nums leading-none text-ivory whitespace-nowrap px-0.5`}>
               {parisianPercent}%
             </span>
           </div>
           {parisianPercent === 0 && (
-            <span className="absolute inset-0 flex items-center justify-center text-[7px] sm:text-[8px] font-mono font-semibold tabular-nums leading-none text-wine/65 pointer-events-none">
+            <span className={`absolute inset-0 flex items-center justify-center ${pctTextSize} font-mono font-semibold tabular-nums leading-none text-wine/65 pointer-events-none`}>
               0%
             </span>
           )}
         </div>
         {nextLevel ? (
-          <span className="text-[8px] sm:text-[9px] font-mono font-medium text-wine/70 tabular-nums leading-none shrink-0">
+          <span className={`${textSize} font-mono font-medium text-wine/70 tabular-nums leading-none shrink-0`}>
             {nextLevel}
           </span>
         ) : null}
