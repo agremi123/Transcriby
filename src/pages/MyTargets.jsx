@@ -259,15 +259,37 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
         ].sort((a, b) => a.tv - b.tv);
         const totalCircles = allCircles.length;
 
+        // Segment lines between consecutive circles
+        const doneDots = dots.filter(d => d.isDone);
+        const progressTV = doneDots.length > 0 ? Math.max(...doneDots.map(d => d.tv)) : 0;
+        const segPositions = [
+          { x: arcSX, y: MY, tv: 0 },
+          ...allCircles.map(c => {
+            const [cx, cy] = qbPoint(c.tv, arcSX, MY, arcCX, ctrlY, arcEX, MY);
+            return { x: cx, y: cy, tv: c.tv };
+          }),
+          { x: arcEX, y: MY, tv: 1 },
+        ];
+
         return (
           <g key={cat}>
-            <path ref={(el) => { bgRefs.current[idx] = el; }}
-                  d={d} fill="none" stroke={color} strokeWidth="1.8" opacity="0.15" />
-            <path d={d} fill="none" stroke={color} strokeWidth="2"
-                  opacity={pct > 0 ? 0.80 : 0}
-                  strokeDasharray={len} strokeDashoffset={len * (1 - pct)}
+            {/* Individual dashed segments between consecutive circles */}
+            {segPositions.slice(0, -1).map((pos, si) => {
+              const next = segPositions[si + 1];
+              const isCompleted = progressTV > 0 && next.tv <= progressTV + 0.001;
+              return (
+                <line
+                  key={`seg-${si}`}
+                  x1={pos.x} y1={pos.y}
+                  x2={next.x} y2={next.y}
+                  stroke={color}
+                  strokeWidth={1.5}
+                  strokeDasharray={isCompleted ? 'none' : '4 6'}
                   strokeLinecap="round"
-                  style={{ transition: 'stroke-dashoffset 0.9s cubic-bezier(0.4,0,0.2,1)' }} />
+                  opacity={isCompleted ? 0.65 : 0.28}
+                />
+              );
+            })}
             <g>
               <rect x={lx - 28} y={labelY - 10} width={56} height={14}
                     fill="white" stroke={color} strokeWidth="0.8" opacity="0.7" rx="1" />
