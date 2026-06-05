@@ -2633,6 +2633,7 @@ export function AudioDemoCard({
 
       {/* Level assessment panel — also outside speech box */}
       {(assessingLevel || overallLevel) && (
+        <div className={fullscreen ? undefined : 'absolute left-0 right-0 bottom-[64px] z-10 overflow-y-auto'}>
         <motion.div
           initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
