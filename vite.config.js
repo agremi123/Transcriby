@@ -1309,6 +1309,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
           questions,
           vocab,
           grammar,
+          word_timings: wordTimings || null,
         }]).then(({ error }) => {
           if (error) console.warn('[listening] Supabase insert failed:', error.message);
           else console.log('[listening] Saved to Supabase cache');
