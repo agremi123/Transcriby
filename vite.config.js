@@ -17,6 +17,7 @@ try { _persisted = JSON.parse(readFileSync(DEV_COSTS_FILE, 'utf8')); } catch {}
 
 const DEV_LOG   = _persisted.log      || []; // { ts, label, model, inputTokens, outputTokens, cost }
 const CACHE_LOG = _persisted.cacheLog || []; // { ts, endpoint, source: 'database'|'generated', level, fields }
+const SESSION_START = Date.now(); // used to split all-time vs this-session stats
 
 function persistDevCosts() {
   try { writeFileSync(DEV_COSTS_FILE, JSON.stringify({ log: DEV_LOG, cacheLog: CACHE_LOG })); } catch {}
