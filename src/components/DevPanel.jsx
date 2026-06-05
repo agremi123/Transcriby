@@ -110,19 +110,19 @@ export default function DevPanel() {
           {data && (
             <div className="flex gap-4 px-3 py-2 border-b border-navy/10 shrink-0 bg-navy/[0.03]">
               <div className="flex flex-col">
-                <span className="text-[9px] text-navy/40 uppercase tracking-wider">Total cost</span>
-                <span className="text-wine font-bold text-[14px]">{fmtCost(data.totCost)}</span>
+                <span className="text-[9px] text-navy/40 uppercase tracking-wider">All-time cost</span>
+                <span className="text-wine font-bold text-[14px]">{fmtCost(data.allTimeCost ?? data.totCost)}</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-[9px] text-navy/40 uppercase tracking-wider">Input tkns</span>
-                <span className="text-navy font-semibold">{fmt(data.totIn)}</span>
+                <span className="text-[9px] text-navy/40 uppercase tracking-wider">This session</span>
+                <span className="text-navy font-semibold">{fmtCost(data.totCost)}</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-[9px] text-navy/40 uppercase tracking-wider">Output tkns</span>
-                <span className="text-navy font-semibold">{fmt(data.totOut)}</span>
+                <span className="text-[9px] text-navy/40 uppercase tracking-wider">Calls (all)</span>
+                <span className="text-navy font-semibold">{data.allTimeCallCount ?? log.length}</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-[9px] text-navy/40 uppercase tracking-wider">API calls</span>
+                <span className="text-[9px] text-navy/40 uppercase tracking-wider">This session</span>
                 <span className="text-navy font-semibold">{log.length}</span>
               </div>
             </div>
