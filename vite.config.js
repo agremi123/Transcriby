@@ -653,7 +653,7 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
   };
 }
 
-function readingMiddleware(apiKey) {
+function readingMiddleware(apiKey, openrouterKey) {
   const DATA_DIR = resolve(process.cwd(), 'data');
   const SESSIONS_FILE = resolve(DATA_DIR, 'reading-sessions.json');
 
