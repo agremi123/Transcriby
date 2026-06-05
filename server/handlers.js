@@ -431,6 +431,26 @@ async function fetchRssItems(feed) {
   }
 }
 
+async function fetchArticleBody(url) {
+  try {
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)' },
+      signal: AbortSignal.timeout(6000),
+    });
+    if (!res.ok) return '';
+    const html = await res.text();
+    const bodyMatch = html.match(/<body[\s\S]*?<\/body>/i)?.[0] || html;
+    const paragraphs = [];
+    const pRe = /<p[^>]*>([\s\S]*?)<\/p>/gi;
+    let pm;
+    while ((pm = pRe.exec(bodyMatch)) !== null) {
+      const text = stripHtml(pm[1]);
+      if (text.length > 40) paragraphs.push(text);
+    }
+    return paragraphs.join(' ').slice(0, 6000);
+  } catch { return ''; }
+}
+
 export async function handleReading(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
