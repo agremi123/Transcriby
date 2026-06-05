@@ -81,6 +81,7 @@ export default function Nav() {
           >
             Log out
           </button>
+          <ParisianCornerBadge inline />
           <NavReachNextLevel />
         </div>
       </Container>
