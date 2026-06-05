@@ -3508,12 +3508,10 @@ function ReadingArticlePanel({
         </div>
       ) : (
         <>
-          {/* Title */}
+          {/* Title — auto-shrinks to fit 2 lines, never truncated */}
           {title && (
             <div className="mb-5 shrink-0 px-4 py-3 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
-              <h2 className="font-display text-[18px] sm:text-[20px] leading-[1.3] tracking-[-0.01em] text-navy line-clamp-2">
-                {title}
-              </h2>
+              <AutoFitTitle title={title} />
             </div>
           )}
 
