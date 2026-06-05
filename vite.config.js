@@ -1160,18 +1160,31 @@ function speakingPromptMiddleware(apiKey) {
 function writingPromptMiddleware(apiKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/writing-prompt' || req.method !== 'POST') { next(); return; }
-    let topic = '';
-    try { topic = (JSON.parse(await readBody(req))).topic || ''; } catch {}
+    let topic = '', learnerLevel = 'B1';
+    try { const b = JSON.parse(await readBody(req)); topic = b.topic || ''; learnerLevel = b.learnerLevel || 'B1'; } catch {}
     res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
-    if (!apiKey) { res.end(JSON.stringify({ prompt: '', guidelines: [], wordTarget: 80 })); return; }
+    const empty = { prompt: '', tips: { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] }, wordTarget: 80 };
+    if (!apiKey) { res.end(JSON.stringify(empty)); return; }
     try {
       const r = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 300,
-          system: `You are a French writing coach. Generate a specific, engaging writing prompt in French for a B1-B2 learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss. Return ONLY raw JSON: {"prompt":"The writing task in French (1-2 sentences)","guidelines":["tip 1 in French","tip 2 in French","tip 3 in French"],"wordTarget":80}`,
+          max_tokens: 500,
+          system: `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss.
+Return ONLY raw JSON (no markdown):
+{
+  "prompt": "The writing task in French (1-2 vivid sentences)",
+  "tips": {
+    "vocab": ["3-4 key French vocabulary words they should use, each as a single word or short noun phrase"],
+    "expressions": ["2-3 idiomatic French expressions that fit the topic"],
+    "grammar": ["1-2 grammar structures to practise, described briefly in French"],
+    "conjugation": ["1-2 specific tenses to use, e.g. 'le passé composé', 'le conditionnel'"],
+    "connecteurs": ["4-5 logical connectors in French, e.g. 'cependant', 'en revanche', 'par conséquent'"]
+  },
+  "wordTarget": 80
+}`,
           messages: [{ role: 'user', content: `Topic: ${topic}` }],
         }),
       });
@@ -1179,8 +1192,43 @@ function writingPromptMiddleware(apiKey) {
       let raw = d.content?.[0]?.text?.trim() || '{}';
       raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       const parsed = JSON.parse(raw);
-      res.end(JSON.stringify({ prompt: parsed.prompt || '', guidelines: parsed.guidelines || [], wordTarget: parsed.wordTarget || 80 }));
-    } catch { res.end(JSON.stringify({ prompt: '', guidelines: [], wordTarget: 80 })); }
+      const tips = parsed.tips || {};
+      res.end(JSON.stringify({
+        prompt: parsed.prompt || '',
+        tips: {
+          vocab: tips.vocab || [],
+          expressions: tips.expressions || [],
+          grammar: tips.grammar || [],
+          conjugation: tips.conjugation || [],
+          connecteurs: tips.connecteurs || [],
+        },
+        wordTarget: parsed.wordTarget || 80,
+      }));
+    } catch { res.end(JSON.stringify(empty)); }
+  };
+}
+
+function translateWordMiddleware(apiKey) {
+  return async (req, res, next) => {
+    if (req.url !== '/api/translate-word' || req.method !== 'POST') { next(); return; }
+    let word = '', context = '';
+    try { const b = JSON.parse(await readBody(req)); word = b.word || ''; context = b.context || ''; } catch {}
+    res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+    if (!apiKey || !word.trim()) { res.end(JSON.stringify({ translation: '' })); return; }
+    try {
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 40,
+          system: 'French-English dictionary. Return ONLY the English translation of the given French word (1–4 words max). No punctuation, no explanation.',
+          messages: [{ role: 'user', content: context ? `"${word}" (context: ${context.slice(0, 120)})` : `"${word}"` }],
+        }),
+      });
+      const d = await r.json();
+      res.end(JSON.stringify({ translation: d.content?.[0]?.text?.trim() || '' }));
+    } catch { res.end(JSON.stringify({ translation: '' })); }
   };
 }
 
