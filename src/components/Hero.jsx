@@ -1897,7 +1897,7 @@ export function AudioDemoCard({
   const hasContent = utterances.length > 0 || !!partialTranscript || !!settledText;
   if (hasContent) hadContentRef.current = true;
 
-  const transcriptHeight = fullscreen ? 'flex-1' : 'h-[360px]';
+  const transcriptHeight = 'flex-1 min-h-0';
 
   const speakActionControls = inputMode === 'speak' ? (
     <div className="flex items-center gap-6 shrink-0">
