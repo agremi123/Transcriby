@@ -115,7 +115,7 @@ const NAV_LAYOUT_ROUTES = ['/', '/dashboard', '/expressions', '/targets'];
 export default function ParisianCornerBadge({ inline = false }) {
   const { pathname } = useLocation();
 
-  if (inline) return <ParisianProfileSquare />;
+  if (inline) return <ParisianProfileSquare compact />;
 
   if (NAV_LAYOUT_ROUTES.includes(pathname)) return null;
 
