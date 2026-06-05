@@ -4142,6 +4142,7 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
 export default function Hero() {
   const { effectiveLevel, profile, spendExperience, dailyParisianPoints } = useLearnerProfile();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [heroActiveTab, setHeroActiveTab] = React.useState('transcript');
   const learnMode = searchParams.get('learn');
   const learnLevel = searchParams.get('level');
   const practiceTopic = searchParams.get('practice');
