@@ -175,20 +175,35 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
   const [hoveredDot, setHoveredDot] = React.useState(null);
   const closeTimer = React.useRef(null);
 
-  // Sequential reveal animation for the Reading arc
-  const [readingReveal, setReadingReveal] = React.useState(0);
+  // Sequential reveal animation: Reading → Listening → Writing → Speaking
+  const DECO_COUNT_ANIM = 14;
+  const MIN_GAP_ANIM    = 0.07;
+  const arcStepCounts = ARC_DEFS.map(({ cat }) => {
+    const targets = grouped[cat] ?? [];
+    const total   = targets.length;
+    const lessonTVals = targets.map((_, i) => (i + 1) / (total + 1));
+    const decoCount = Array.from({ length: DECO_COUNT_ANIM }, (_, i) => (i + 1) / (DECO_COUNT_ANIM + 1))
+      .filter(tv => lessonTVals.every(lt => Math.abs(lt - tv) > MIN_GAP_ANIM)).length;
+    return 2 * (decoCount + total) + 1;
+  });
+  const arcOffsets = arcStepCounts.map((_, i) =>
+    arcStepCounts.slice(0, i).reduce((s, n) => s + n, 0)
+  );
+  const totalAnimSteps = arcOffsets[arcOffsets.length - 1] + arcStepCounts[arcStepCounts.length - 1];
+
+  const [arcRevealStep, setArcRevealStep] = React.useState(0);
   const animTimerRef = React.useRef(null);
   React.useEffect(() => {
-    const STEP_MS = 110;
+    const STEP_MS = 160;
     let step = 0;
     const tick = () => {
       step++;
-      setReadingReveal(step);
-      if (step < 100) animTimerRef.current = setTimeout(tick, STEP_MS);
+      setArcRevealStep(step);
+      if (step < totalAnimSteps) animTimerRef.current = setTimeout(tick, STEP_MS);
     };
-    animTimerRef.current = setTimeout(tick, 200);
+    animTimerRef.current = setTimeout(tick, 300);
     return () => clearTimeout(animTimerRef.current);
-  }, []);
+  }, [totalAnimSteps]);
 
   const justOpened = React.useRef(false);
   const openDot  = (info) => {
