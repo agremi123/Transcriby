@@ -4601,6 +4601,7 @@ export default function Hero() {
                 })}
               </div>
             </Reveal>
+            )}
 
             <Reveal delay={0.35}>
               <p className="mt-6 max-w-[500px] text-[15px] leading-[1.6] text-navy/70">
