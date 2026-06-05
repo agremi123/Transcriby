@@ -3085,23 +3085,7 @@ export function AudioDemoCard({
               );
             }
 
-            return (
-              <button
-                type="button"
-                onClick={() => { setShowCorrectHint(false); correctNow(); }}
-                disabled={manualCorrecting || !hasRecorded || isLive || !!narratorReaction}
-                className={`relative font-display text-[16px] italic px-4 h-10 rounded-full transition-all duration-200 whitespace-nowrap ${
-                  isDark
-                    ? 'bg-wine text-ivory hover:bg-wine2 cursor-pointer shadow-md'
-                    : 'bg-wine/10 text-wine/50 border border-wine/20 cursor-default'
-                } disabled:opacity-60`}
-              >
-                Make it Parisien !
-                {showCorrectHint && isDark && !manualCorrecting && (
-                  <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40 pointer-events-none" />
-                )}
-              </button>
-            );
+            return null;
           })()}
         </div>
 
