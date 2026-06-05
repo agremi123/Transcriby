@@ -3778,6 +3778,9 @@ export default function Hero() {
   const [listeningSource, setListeningSource] = React.useState(null);
   const [listeningDate, setListeningDate] = React.useState(null);
   const [listeningVocab, setListeningVocab] = React.useState([]);
+  const [listeningQuestions, setListeningQuestions] = React.useState([]);
+  const [listeningGrammar, setListeningGrammar] = React.useState([]);
+  const [listeningVocabTheme, setListeningVocabTheme] = React.useState('');
 
   React.useEffect(() => {
     if (practiceType === 'listening' && practiceTopic && !listeningActive) {
@@ -3786,7 +3789,7 @@ export default function Hero() {
       fetch('/api/listening', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic: practiceTopic }),
+        body: JSON.stringify({ topic: practiceTopic, learnerLevel: effectiveLevel || 'B1' }),
       })
         .then((r) => r.json())
         .then((data) => {
@@ -3796,11 +3799,14 @@ export default function Hero() {
           setListeningSource(data.source || null);
           setListeningDate(data.date || null);
           setListeningVocab(data.vocab || []);
+          setListeningQuestions(data.questions || []);
+          setListeningGrammar(data.grammar || []);
+          setListeningVocabTheme(data.vocabTheme || '');
           setListeningLoading(false);
         })
         .catch(() => setListeningLoading(false));
     }
-  }, [practiceTopic, practiceType]);
+  }, [practiceTopic, practiceType, effectiveLevel]);
 
   // Speaking challenge state
   const [speakingActive, setSpeakingActive] = React.useState(false);
