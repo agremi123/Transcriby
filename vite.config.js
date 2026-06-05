@@ -81,7 +81,7 @@ async function openrouterCall(label, apiKey, { system, messages, max_tokens = 10
   const inputTokens  = data.usage?.prompt_tokens     || 0;
   const outputTokens = data.usage?.completion_tokens || 0;
   const cost = modelCost(model, inputTokens, outputTokens);
-  DEV_LOG.push({ ts: Date.now(), label, model: DEEPSEEK_MODEL, inputTokens, outputTokens, cost });
+  DEV_LOG.push({ ts: Date.now(), label, model, inputTokens, outputTokens, cost });
   if (DEV_LOG.length > 2000) DEV_LOG.shift();
   persistDevCosts();
   console.log(`[dev/openrouter:${model.split('/')[0]}] ${label} — in:${inputTokens} out:${outputTokens} $${cost.toFixed(5)}`);
