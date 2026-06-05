@@ -55,20 +55,25 @@ async function claudeCall(label, apiKey, body) {
 function devStatsMiddleware() {
   return (req, res, next) => {
     if (req.url !== '/api/dev-stats' || req.method !== 'GET') { next(); return; }
-    const totIn  = DEV_LOG.reduce((s, e) => s + e.inputTokens,  0);
-    const totOut = DEV_LOG.reduce((s, e) => s + e.outputTokens, 0);
-    const totCost = DEV_LOG.reduce((s, e) => s + e.cost, 0);
+    // This-session entries only
+    const sessionLog = DEV_LOG.filter(e => e.ts >= SESSION_START);
+    const totIn   = sessionLog.reduce((s, e) => s + e.inputTokens,  0);
+    const totOut  = sessionLog.reduce((s, e) => s + e.outputTokens, 0);
+    const totCost = sessionLog.reduce((s, e) => s + e.cost, 0);
     const byLabel = {};
-    for (const e of DEV_LOG) {
+    for (const e of sessionLog) {
       if (!byLabel[e.label]) byLabel[e.label] = { calls: 0, inputTokens: 0, outputTokens: 0, cost: 0 };
       byLabel[e.label].calls++;
       byLabel[e.label].inputTokens  += e.inputTokens;
       byLabel[e.label].outputTokens += e.outputTokens;
       byLabel[e.label].cost         += e.cost;
     }
+    // All-time totals
+    const allTimeCost      = DEV_LOG.reduce((s, e) => s + e.cost, 0);
+    const allTimeCallCount = DEV_LOG.length;
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ totIn, totOut, totCost, byLabel, log: DEV_LOG.slice(-50), cacheLog: CACHE_LOG.slice(-50) }));
+    res.end(JSON.stringify({ totIn, totOut, totCost, byLabel, log: sessionLog.slice(-50), allTimeCost, allTimeCallCount, cacheLog: CACHE_LOG.slice(-100) }));
   };
 }
 // ────────────────────────────────────────────────────────────────────────────
