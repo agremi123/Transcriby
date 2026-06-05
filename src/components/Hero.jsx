@@ -3512,7 +3512,7 @@ function ReadingArticlePanel({
           )}
 
           {/* Full article text — scrolls internally, fills remaining space */}
-          <div className="flex-1 min-h-0 overflow-y-auto pr-1">
+          <div className="flex-1 min-h-0 overflow-y-auto scroll-thin pr-1">
             <PassageWithVocabHighlights
               passage={passage}
               vocabEntries={revealedWords}
