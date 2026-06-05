@@ -73,8 +73,8 @@ export default function Nav() {
         <Logo />
         <div />
         <div className="flex items-center gap-2.5 sm:gap-3">
-          <NavReachNextLevel />
           <ParisianCornerBadge inline />
+          <NavReachNextLevel />
           <button
             type="button"
             onClick={() => handleLogout(resetWelcomeOnboarding)}
