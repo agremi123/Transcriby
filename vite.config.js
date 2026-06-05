@@ -763,8 +763,7 @@ function readingMiddleware(apiKey, openrouterKey) {
       try { ({ questions = [] } = JSON.parse(qRaw)); } catch {}
 
       // Step 4: generate vocabulary exercise from the passage
-      const vData = await claudeCall('reading/vocab', apiKey, {
-        model: 'claude-haiku-4-5-20251001',
+      const vData = await openrouterCall('reading/vocab', openrouterKey, {
         max_tokens: 700,
         system: `You are a French language teacher. From the given French passage, pick exactly 5 difficult or interesting vocabulary words that a B1-B2 learner should know. For each word, write a NEW French sentence (not from the original passage) with the word replaced by ___. The learner must pick the correct word from the word bank to fill each blank. Return ONLY raw JSON: {"vocab":[{"word":"médiatique","definition":"relating to media / media-related","sentence":"Le groupe ___ a racheté plusieurs journaux régionaux."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
         messages: [{ role: 'user', content: passage }],
