@@ -3669,7 +3669,7 @@ const CEFR_BADGE = {
   C2: { bg: '#7c3aed', label: 'C2' },
 };
 
-function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', contentLevel = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
+function ListeningPanel({ loading, title, audioUrl, transcript, wordTimings = null, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', contentLevel = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
   const [playing, setPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
