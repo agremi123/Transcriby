@@ -31,6 +31,14 @@ function fmtTime(ts) {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
+function Chip({ ok, label }) {
+  return (
+    <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] ${ok ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-700 line-through'}`}>
+      {label}
+    </span>
+  );
+}
+
 export default function DevPanel() {
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState(null);
