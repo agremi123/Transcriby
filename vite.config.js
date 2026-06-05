@@ -656,6 +656,56 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
   };
 }
 
+const FRENCH_RSS_FEEDS = [
+  { name: 'Le Monde',    url: 'https://www.lemonde.fr/rss/une.xml' },
+  { name: 'France Info', url: 'https://www.francetvinfo.fr/titres.rss' },
+  { name: 'Le Figaro',   url: 'https://www.lefigaro.fr/rss/figaro_actualites.xml' },
+  { name: '20 Minutes',  url: 'https://www.20minutes.fr/feeds/rss/actu.xml' },
+  { name: 'Libération',  url: 'https://www.liberation.fr/arc/outboundfeeds/rss/?outputType=xml' },
+  { name: "L'Obs",       url: 'https://www.nouvelobs.com/rss.xml' },
+  { name: 'RFI',         url: 'https://www.rfi.fr/fr/rss-podcasts-emissions.xml' },
+];
+
+function rssExtractCdata(str) {
+  const m = str.match(/<!\[CDATA\[([\s\S]*?)\]\]>/);
+  return m ? m[1].trim() : str.replace(/<[^>]+>/g, '').trim();
+}
+function rssStripHtml(str) {
+  return str.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+function parseRssItems(xml, feedName) {
+  const items = [];
+  const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+  let m;
+  while ((m = itemRegex.exec(xml)) !== null) {
+    const block = m[1];
+    const get = (tag) => {
+      const r = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i');
+      const found = block.match(r);
+      return found ? rssExtractCdata(found[1]) : '';
+    };
+    const title       = get('title');
+    const description = rssStripHtml(get('description') || get('summary'));
+    const content     = rssStripHtml(get('content:encoded') || get('content'));
+    const link        = get('link') || block.match(/<link>([\s\S]*?)<\/link>/i)?.[1]?.trim() || '';
+    const pubDate     = get('pubDate') || get('dc:date') || '';
+    const author      = get('dc:creator') || get('author') || '';
+    if (title || description) items.push({ title, description, content, link, pubDate, author, feedName });
+  }
+  return items;
+}
+async function fetchRssFeed(feed) {
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 5000);
+    const res = await fetch(feed.url, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: ctrl.signal });
+    clearTimeout(t);
+    if (!res.ok) return [];
+    const xml = await res.text();
+    return parseRssItems(xml, feed.name);
+  } catch { return []; }
+}
+
 function readingMiddleware(apiKey, openrouterKey) {
   const DATA_DIR = resolve(process.cwd(), 'data');
   const SESSIONS_FILE = resolve(DATA_DIR, 'reading-sessions.json');
@@ -687,94 +737,65 @@ function readingMiddleware(apiKey, openrouterKey) {
     } catch {
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
     }
-    if (!apiKey || !topic) {
+    if (!topic) {
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ passage: '', source: null, questions: [] })); return;
     }
     try {
-      // Step 1: use Perplexity (web search) to find a real French article passage
-      const searchData = await openrouterCall('reading/web-search', openrouterKey, {
-        model: 'perplexity/llama-3.1-sonar-small-128k-online',
-        max_tokens: 800,
-        system: `You are a French reading exercise creator. Search the web for a real, recent French-language article relevant to the given topic. Extract 5-8 sentences verbatim in French at B1-B2 level. Output ONLY a JSON object, no markdown: {"title":"article title in French","passage":"...verbatim French sentences...","source":"publication name e.g. Le Monde","author":"author name or null","date":"publication date or null"}`,
-        messages: [{ role: 'user', content: `Find a recent French article for language learners about: ${topic}` }],
+      // Step 1: fetch all RSS feeds in parallel
+      const feedResults = await Promise.all(FRENCH_RSS_FEEDS.map(fetchRssFeed));
+      const allItems = feedResults.flat().filter(i => i.title && (i.description || i.content));
+      if (allItems.length === 0) throw new Error('No RSS items fetched');
+
+      // Step 2: ask AI to pick the best matching article (returns index only)
+      const summaries = allItems.slice(0, 60).map((item, i) =>
+        `[${i}] ${item.feedName} — ${item.title}\n${(item.description || '').slice(0, 180)}`
+      ).join('\n\n');
+
+      const pickData = await openrouterCall('reading/pick', openrouterKey, {
+        max_tokens: 10,
+        system: 'Reply with ONLY the integer index of the article most relevant to the topic. No other text.',
+        messages: [{ role: 'user', content: `Topic: ${topic}\n\n${summaries}` }],
       });
+      const rawIdx = (pickData.content?.[0]?.text || '0').trim();
+      const idx = Math.min(Math.max(parseInt(rawIdx, 10) || 0, 0), allItems.length - 1);
+      const chosen = allItems[idx];
 
-      let passage = '';
-      let title = '';
-      let source = null;
-      let author = null;
-      let date = null;
+      // Step 3: extract a verbatim passage from the real article text — no fabrication
+      const rawText = (chosen.content || chosen.description || '').slice(0, 2000);
+      const extractData = await openrouterCall('reading/extract', openrouterKey, {
+        max_tokens: 500,
+        system: 'Extract the most readable 5-8 sentences directly from this real French article text. Copy verbatim — do NOT rephrase, summarise or add anything. Return only the extracted French sentences.',
+        messages: [{ role: 'user', content: `Title: ${chosen.title}\n\n${rawText}` }],
+      });
+      const passage = (extractData.content?.[0]?.text || '').trim();
+      if (!passage || passage.length < 40) throw new Error('No passage extracted');
 
-      const txt = (searchData.content?.[0]?.text || '').trim();
-      const jsonMatches = [...txt.matchAll(/\{[\s\S]*?"passage"[\s\S]*?\}/g)];
-      if (jsonMatches.length > 0) {
-        try {
-          const parsed = JSON.parse(jsonMatches[jsonMatches.length - 1][0]);
-          passage = parsed.passage || '';
-          title = parsed.title || '';
-          source = parsed.source || null;
-          author = parsed.author || null;
-          date = parsed.date || null;
-        } catch {}
-      }
-      // Fallback: pull French lines directly from the response
-      if (!passage) {
-        const frenchLines = txt.split('\n')
-          .filter((l) => l.trim().length > 20 && (/[àâäéèêëîïôöùûüç]/i.test(l) || /\b(le|la|les|un|une|des|et|est|en|de)\b/i.test(l)));
-        if (frenchLines.length > 0) passage = frenchLines.slice(0, 8).join(' ').trim();
-      }
-
-      // Step 2: if web search gave nothing useful, generate a synthetic passage
-      if (!passage || passage.length < 40) {
-        const genData = await openrouterCall('reading/generate-passage', openrouterKey, {
-            max_tokens: 600,
-            system: 'Write an engaging authentic French passage of 6 sentences about the given topic, at B1-B2 level, suitable for French learners. Also give it a title. Output ONLY raw JSON: {"title":"...","passage":"...6 sentences in French..."}',
-            messages: [{ role: 'user', content: `Topic: ${topic}` }],
-        });
-        let genRaw = genData.content?.[0]?.text?.trim() || '{}';
-        genRaw = genRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-        try {
-          const genParsed = JSON.parse(genRaw);
-          passage = genParsed.passage || '';
-          title = genParsed.title || '';
-        } catch {
-          passage = genRaw;
-        }
-        source = null;
-        author = null;
-        date = null;
-      }
-
-      if (!passage) throw new Error('no passage');
-
-      // Step 3: generate comprehension questions
+      // Step 4: comprehension questions
       const qData = await openrouterCall('reading/questions', openrouterKey, {
         max_tokens: 700,
         system: `Create exactly 4 comprehension questions based on the French passage: 2 fill-in-the-blank and 2 multiple choice. Return ONLY raw JSON, no markdown: {"questions":[{"type":"fill","sentence":"sentence with ___ blank","answer":"word","hint":"base form"},{"type":"fill","sentence":"another with ___","answer":"word","hint":"base"},{"type":"mcq","question":"Question?","options":["A","B","C","D"],"answer":"A"},{"type":"mcq","question":"Question2?","options":["A","B","C","D"],"answer":"B"}]}`,
         messages: [{ role: 'user', content: passage }],
       });
-      let qRaw = qData.content?.[0]?.text?.trim() || '{}';
-      qRaw = qRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      let qRaw = (qData.content?.[0]?.text || '{}').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
       let questions = [];
       try { ({ questions = [] } = JSON.parse(qRaw)); } catch {}
 
-      // Step 4: generate vocabulary exercise from the passage
+      // Step 5: vocabulary exercise
       const vData = await openrouterCall('reading/vocab', openrouterKey, {
         max_tokens: 700,
-        system: `You are a French language teacher. From the given French passage, pick exactly 5 difficult or interesting vocabulary words that a B1-B2 learner should know. For each word, write a NEW French sentence (not from the original passage) with the word replaced by ___. The learner must pick the correct word from the word bank to fill each blank. Return ONLY raw JSON: {"vocab":[{"word":"médiatique","definition":"relating to media / media-related","sentence":"Le groupe ___ a racheté plusieurs journaux régionaux."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
+        system: `From the given French passage, pick exactly 5 difficult or interesting vocabulary words. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"...","sentence":"...___..."}]}`,
         messages: [{ role: 'user', content: passage }],
       });
-      let vRaw = vData.content?.[0]?.text?.trim() || '{}';
-      vRaw = vRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      let vRaw = (vData.content?.[0]?.text || '{}').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
       let vocab = [];
       try { ({ vocab = [] } = JSON.parse(vRaw)); } catch {}
 
-      // Save session
-      saveSession({ id: Date.now(), topic, title, passage, source, author, date, questions, vocab, createdAt: new Date().toISOString() });
+      const { title, feedName: source, author, pubDate: date, link } = chosen;
+      saveSession({ id: Date.now(), topic, title, passage, source, author, date, link, questions, vocab, createdAt: new Date().toISOString() });
 
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ title, passage, source, author, date, questions, vocab }));
+      res.end(JSON.stringify({ title, passage, source, author, date, link, questions, vocab }));
     } catch (err) {
       console.error('[reading] error:', err.message);
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
