@@ -3556,7 +3556,7 @@ function ReadingArticlePanel({
           </div>
 
           {/* Byline, daily points circle, translate */}
-          <div className="mt-4 shrink-0 border-t pt-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
+          <div className="mt-4 shrink-0 border-t pt-3 pl-4 pr-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
             {byline ? (
               <p className="text-[10px] font-mono tracking-[0.12em] mb-3 truncate" style={{ color: '#8b1e2d' }}>
                 {byline}
