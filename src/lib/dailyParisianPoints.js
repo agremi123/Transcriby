@@ -23,11 +23,11 @@ export function loadDailyParisianPoints() {
 }
 
 export function addDailyParisianPoints(amount = DAILY_PARISIAN_POINTS_PER_CORRECT) {
-  const bump = Math.max(0, Number(amount) || 0);
+  const delta = Number(amount) || 0;
   const current = loadDailyParisianPoints();
   const next = {
     date: todayKey(),
-    points: current.points + bump,
+    points: Math.max(0, current.points + delta), // floor at 0 — never negative
   };
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
