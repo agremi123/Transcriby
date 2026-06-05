@@ -524,7 +524,7 @@ function interviewFeedbackMiddleware() {
   };
 }
 
-function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey) {
+function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, openrouterKey) {
   const AUDIO_DIR = resolve(process.cwd(), 'public', 'word-audio');
   let supabase = null;
 
