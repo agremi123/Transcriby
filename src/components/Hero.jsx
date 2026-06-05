@@ -2048,18 +2048,17 @@ export function AudioDemoCard({
           </button>
         </div>
 
-      {(activeTab === 'practice' || vocabLevel || practiceExercises?.length > 0) && (
-        <div className="flex border-b border-line shrink-0">
-          <button type="button" onClick={() => setActiveTab('transcript')}
-            className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${activeTab === 'transcript' ? 'border-navy text-navy' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
-            Chat
-          </button>
-          <button type="button" onClick={() => setActiveTab('practice')}
-            className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${activeTab === 'practice' ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
-            {vocabLevel ? `Vocab & grammar · ${vocabLevel}` : `Practice — ${overallWeakness}`}
-          </button>
-        </div>
-      )}
+      {/* Always render this row to keep card height stable; hide when not in practice */}
+      <div className={`flex border-b border-line shrink-0 transition-opacity duration-200 ${(activeTab === 'practice' || vocabLevel || practiceExercises?.length > 0) ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        <button type="button" onClick={() => setActiveTab('transcript')}
+          className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${activeTab === 'transcript' ? 'border-navy text-navy' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
+          Chat
+        </button>
+        <button type="button" onClick={() => setActiveTab('practice')}
+          className={`text-[10px] tracking-widest uppercase px-3 py-2 border-b-2 transition-colors ${activeTab === 'practice' ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
+          {vocabLevel ? `Vocab & grammar · ${vocabLevel}` : `Practice — ${overallWeakness}`}
+        </button>
+      </div>
 
         <div ref={writeBoxRef} className={`relative bg-ivory/60 border border-line/70 overflow-hidden${fullscreen ? ' flex-1 flex flex-col min-h-0' : ' h-[360px]'}`}>
           {inputMode === 'discover' ? (
