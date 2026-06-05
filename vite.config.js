@@ -1104,17 +1104,12 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       if (!episode) {
         // All sources failed — generate with Claude + ElevenLabs
         console.log('[listening] All sources unavailable — generating episode with Claude + ElevenLabs');
-        const genRes = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
-          body: JSON.stringify({
+        const genData = await claudeCall('listening/generate-episode', anthropicKey, {
             model: 'claude-haiku-4-5-20251001',
             max_tokens: 900,
             system: 'You are a French radio journalist for "Journal en Français Facile" on RFI. Write a short French news bulletin (250-300 words, B1-B2 level) on a current cultural, social, or environmental topic. Use natural spoken French. Return ONLY raw JSON: {"title":"Episode title","transcript":"Full text of the bulletin"}',
             messages: [{ role: 'user', content: `Topic hint: ${topic || 'culture française'}` }],
-          }),
         });
-        const genData = await genRes.json();
         let genRaw = (genData.content?.[0]?.text?.trim() || '{}').replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
         let generated = {};
         try { generated = JSON.parse(genRaw); } catch {}
