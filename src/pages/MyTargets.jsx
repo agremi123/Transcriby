@@ -279,15 +279,16 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
 
         return (
           <g key={cat}>
-            {/* Individual dashed segments between consecutive circles */}
+            {/* Individual dashed arc segments between consecutive circles */}
             {segPositions.slice(0, -1).map((pos, si) => {
               const next = segPositions[si + 1];
               const isCompleted = progressTV > 0 && next.tv <= progressTV + 0.001;
+              const [cpx, cpy] = qbSubCtrl(pos.tv, next.tv, arcSX, MY, arcCX, ctrlY, arcEX, MY);
               return (
-                <line
+                <path
                   key={`seg-${si}`}
-                  x1={pos.x} y1={pos.y}
-                  x2={next.x} y2={next.y}
+                  d={`M ${pos.x},${pos.y} Q ${cpx},${cpy} ${next.x},${next.y}`}
+                  fill="none"
                   stroke={color}
                   strokeWidth={1.5}
                   strokeDasharray={isCompleted ? 'none' : '4 6'}
