@@ -45,7 +45,8 @@ async function claudeCall(label, apiKey, body) {
   const outputTokens = data.usage?.output_tokens || 0;
   const cost = modelCost(body.model || '', inputTokens, outputTokens);
   DEV_LOG.push({ ts: Date.now(), label, model: body.model || '', inputTokens, outputTokens, cost });
-  if (DEV_LOG.length > 200) DEV_LOG.shift();
+  if (DEV_LOG.length > 2000) DEV_LOG.shift();
+  persistDevCosts();
   console.log(`[dev] ${label} — in:${inputTokens} out:${outputTokens} $${cost.toFixed(5)}`);
   return data;
 }
