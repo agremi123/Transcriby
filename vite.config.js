@@ -730,8 +730,7 @@ function readingMiddleware(apiKey, openrouterKey) {
 
       // Step 2: if web search gave nothing useful, generate a synthetic passage
       if (!passage || passage.length < 40) {
-        const genData = await claudeCall('reading/generate-passage', apiKey, {
-            model: 'claude-haiku-4-5-20251001',
+        const genData = await openrouterCall('reading/generate-passage', openrouterKey, {
             max_tokens: 600,
             system: 'Write an engaging authentic French passage of 6 sentences about the given topic, at B1-B2 level, suitable for French learners. Also give it a title. Output ONLY raw JSON: {"title":"...","passage":"...6 sentences in French..."}',
             messages: [{ role: 'user', content: `Topic: ${topic}` }],
