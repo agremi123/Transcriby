@@ -1271,13 +1271,10 @@ function writingPromptMiddleware(apiKey) {
     const empty = { prompt: '', tips: { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] }, wordTarget: 80 };
     if (!apiKey) { res.end(JSON.stringify(empty)); return; }
     try {
-      const r = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 500,
-          system: `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss.
+      const d = await claudeCall('writing/prompt', apiKey, {
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 500,
+        system: `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss.
 Return ONLY raw JSON (no markdown):
 {
   "prompt": "The writing task in French (1-2 vivid sentences)",
@@ -1290,10 +1287,8 @@ Return ONLY raw JSON (no markdown):
   },
   "wordTarget": 80
 }`,
-          messages: [{ role: 'user', content: `Topic: ${topic}` }],
-        }),
+        messages: [{ role: 'user', content: `Topic: ${topic}` }],
       });
-      const d = await r.json();
       let raw = d.content?.[0]?.text?.trim() || '{}';
       raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       const parsed = JSON.parse(raw);
