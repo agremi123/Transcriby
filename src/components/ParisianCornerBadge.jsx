@@ -49,22 +49,25 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   const nextLevel = getNextLevel(level);
   const badgeSrc = getLevelBadgeSrc(level);
 
-  // Left half-circle progress indicator
+  // Arc wraps around the LEFT side of the badge image
   const badgeSize = compact ? 78 : 110;
-  const sw = 2;         // stroke width
-  const gap = 3;        // gap between arc endpoint and badge
-  const r = badgeSize / 2;
-  const padV = 14;      // vertical padding for level labels
+  const sw = 2.5;
+  const arcGap = 3;            // gap between badge edge and arc stroke
+  const r = badgeSize / 2 + arcGap;
+  const padV = 13;
 
-  // Arc circle center in SVG space
+  // Arc center = badge center
   const cx = sw / 2 + r;
   const cy = padV + sw / 2 + r;
-  const svgW = sw / 2 + r + gap + badgeSize + sw / 2;
-  const svgH = padV + sw + badgeSize + padV;
+  const svgW = cx + badgeSize / 2 + sw / 2;  // left extent + right half of badge
+  const svgH = padV * 2 + sw + badgeSize;
 
-  // Left semicircle: bottom (cx, cy+r) → top (cx, cy-r) counterclockwise (through left side)
   const halfCirc = Math.PI * r;
   const dash = (parisianPercent / 100) * halfCirc;
+
+  // Badge top-left corner (badge is centered at cx, cy)
+  const badgeLeft = cx - badgeSize / 2;
+  const badgeTop  = cy - badgeSize / 2;
 
   return (
     <motion.div
@@ -74,12 +77,26 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
       style={{ width: svgW, height: svgH }}
       aria-label={`${profile.name}, level ${level}, ${parisianPercent}% Parisian progress`}
     >
+      {/* Badge image — centered, arc overlays its left side */}
+      <img
+        src={badgeSrc}
+        alt=""
+        className="absolute object-contain object-center"
+        style={{
+          top: badgeTop,
+          left: badgeLeft,
+          width: badgeSize,
+          height: badgeSize,
+          mixBlendMode: 'multiply',
+        }}
+      />
+
       <svg
         width={svgW} height={svgH}
         className="absolute inset-0"
         style={{ overflow: 'visible' }}
       >
-        {/* Track: left half-circle (faint) */}
+        {/* Track: left half-circle around badge (faint) */}
         <path
           d={`M ${cx},${cy + r} A ${r},${r} 0 0,0 ${cx},${cy - r}`}
           fill="none"
@@ -97,37 +114,23 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
           strokeDasharray={`${dash} ${halfCirc}`}
           style={{ transition: scoreAnim ? 'stroke-dasharray 0.7s ease-out' : 'stroke-dasharray 0.5s ease' }}
         />
-        {/* B1 label at bottom */}
+        {/* B1 label below arc start */}
         <text
-          x={cx - 2} y={cy + r + 11}
+          x={cx} y={cy + r + 11}
           textAnchor="middle" fontSize={8}
           fill="#8b1e2d" fontFamily="'SF Mono','Fira Mono',monospace"
           fontWeight="600" opacity={0.65}
         >{level}</text>
-        {/* B2 label at top */}
+        {/* B2 label above arc end */}
         {nextLevel && (
           <text
-            x={cx - 2} y={cy - r - 5}
+            x={cx} y={cy - r - 4}
             textAnchor="middle" fontSize={8}
             fill="#8b1e2d" fontFamily="'SF Mono','Fira Mono',monospace"
             fontWeight="600" opacity={0.4}
           >{nextLevel}</text>
         )}
       </svg>
-
-      {/* Badge image — sits to the right of the arc */}
-      <img
-        src={badgeSrc}
-        alt=""
-        className="absolute object-contain object-center"
-        style={{
-          top: padV + sw / 2,
-          left: cx + gap,
-          width: badgeSize,
-          height: badgeSize,
-          mixBlendMode: 'multiply',
-        }}
-      />
     </motion.div>
   );
 }
