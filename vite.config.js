@@ -1026,7 +1026,7 @@ function sourceMatchesLevel(sourceLevel, learnerLevel) {
   return li >= lo && li <= hi + 1; // +1 gives some stretch
 }
 
-function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseUrl, supabaseKey) {
+function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseUrl, supabaseKey, openrouterKey) {
   let supabase = null;
   if (supabaseUrl && supabaseKey) supabase = createClient(supabaseUrl, supabaseKey);
 
