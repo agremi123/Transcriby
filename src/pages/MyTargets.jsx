@@ -182,6 +182,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
   const [autoTooltip,    setAutoTooltip]    = React.useState(null); // same shape as hoveredDot
   const [pointsAnim,     setPointsAnim]     = React.useState(null); // { svgX, svgY, color }
   const [studyHl,        setStudyHl]        = React.useState(false);
+  const [studyCheck,     setStudyCheck]     = React.useState(false);
   const animTimersRef = React.useRef([]);
 
   React.useEffect(() => {
