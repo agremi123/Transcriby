@@ -1931,7 +1931,7 @@ export function AudioDemoCard({
       )}
       <div className="flex flex-row items-center gap-2">
         {/* Parisian Points display */}
-        <div className="relative flex flex-col items-center mr-1 select-none">
+        <div className="relative flex flex-col items-center mr-1 select-none px-3 py-1.5 rounded-xl bg-wine/[0.04] border border-wine/10">
           <span className="text-[8px] font-mono tracking-widest uppercase text-navy/70 whitespace-nowrap leading-tight">My Parisian Points</span>
           <div className="relative flex items-center justify-center">
             <span key={dailyParisianPoints} className="font-display text-[20px] font-bold text-wine leading-none tabular-nums"
