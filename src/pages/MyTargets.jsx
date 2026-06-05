@@ -175,6 +175,21 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
   const [hoveredDot, setHoveredDot] = React.useState(null);
   const closeTimer = React.useRef(null);
 
+  // Sequential reveal animation for the Reading arc
+  const [readingReveal, setReadingReveal] = React.useState(0);
+  const animTimerRef = React.useRef(null);
+  React.useEffect(() => {
+    const STEP_MS = 110;
+    let step = 0;
+    const tick = () => {
+      step++;
+      setReadingReveal(step);
+      animTimerRef.current = setTimeout(tick, STEP_MS);
+    };
+    animTimerRef.current = setTimeout(tick, 200);
+    return () => clearTimeout(animTimerRef.current);
+  }, []);
+
   const justOpened = React.useRef(false);
   const openDot  = (info) => {
     clearTimeout(closeTimer.current);
