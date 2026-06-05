@@ -23,15 +23,18 @@ function persistDevCosts() {
   try { writeFileSync(DEV_COSTS_FILE, JSON.stringify({ log: DEV_LOG, cacheLog: CACHE_LOG })); } catch {}
 }
 
-const HAIKU_IN_PER_M  = 0.80;  // USD per million input tokens
-const HAIKU_OUT_PER_M = 4.00;  // USD per million output tokens
-const SONNET_IN_PER_M = 3.00;
-const SONNET_OUT_PER_M = 15.00;
+const HAIKU_IN_PER_M     = 0.80;
+const HAIKU_OUT_PER_M    = 4.00;
+const SONNET_IN_PER_M    = 3.00;
+const SONNET_OUT_PER_M   = 15.00;
+const DEEPSEEK_IN_PER_M  = 0.27;  // DeepSeek-V3 via OpenRouter
+const DEEPSEEK_OUT_PER_M = 1.10;
 
 function modelCost(model, inputTokens, outputTokens) {
-  const isHaiku = model.includes('haiku');
-  const inRate  = isHaiku ? HAIKU_IN_PER_M  : SONNET_IN_PER_M;
-  const outRate = isHaiku ? HAIKU_OUT_PER_M : SONNET_OUT_PER_M;
+  let inRate, outRate;
+  if (model.includes('deepseek')) { inRate = DEEPSEEK_IN_PER_M; outRate = DEEPSEEK_OUT_PER_M; }
+  else if (model.includes('haiku')) { inRate = HAIKU_IN_PER_M; outRate = HAIKU_OUT_PER_M; }
+  else { inRate = SONNET_IN_PER_M; outRate = SONNET_OUT_PER_M; }
   return (inputTokens / 1e6) * inRate + (outputTokens / 1e6) * outRate;
 }
 
