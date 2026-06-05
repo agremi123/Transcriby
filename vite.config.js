@@ -638,23 +638,13 @@ function readingMiddleware(apiKey) {
     }
     try {
       // Step 1: use web search to find a real French article passage
-      const searchRes = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-beta': 'web-search-2025-03-05',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-5',
-          max_tokens: 1000,
-          tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-          system: `You are a French reading exercise creator for language learners. Search for a real recent French-language article or news piece that would be engaging and culturally relevant for someone learning French (topics like French culture, Paris life, French cinema, food, current events in France, French society, sport in France, etc.). Extract verbatim 5-8 sentences from the article in French at roughly B1-B2 level. Output ONLY a JSON object, nothing else: {"title":"article title in French","passage":"...verbatim French sentences...","source":"publication name e.g. Le Monde","author":"author name or null","date":"publication date e.g. 12 juin 2025 or null"}`,
-          messages: [{ role: 'user', content: `Find a recent engaging French article for language learners about: ${topic}` }],
-        }),
+      const searchData = await claudeCall('reading/web-search', apiKey, {
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        system: `You are a French reading exercise creator for language learners. Search for a real recent French-language article or news piece that would be engaging and culturally relevant for someone learning French (topics like French culture, Paris life, French cinema, food, current events in France, French society, sport in France, etc.). Extract verbatim 5-8 sentences from the article in French at roughly B1-B2 level. Output ONLY a JSON object, nothing else: {"title":"article title in French","passage":"...verbatim French sentences...","source":"publication name e.g. Le Monde","author":"author name or null","date":"publication date e.g. 12 juin 2025 or null"}`,
+        messages: [{ role: 'user', content: `Find a recent engaging French article for language learners about: ${topic}` }],
       });
-      const searchData = await searchRes.json();
 
       let passage = '';
       let title = '';
