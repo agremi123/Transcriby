@@ -53,12 +53,12 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   const nextLevel = getNextLevel(level);
   const badgeSrc = getLevelBadgeSrc(level);
 
-  const imgSize = compact ? 'w-[52px] h-[52px]' : 'w-[96px] h-[96px] sm:w-[112px] sm:h-[112px]';
-  const wrapSize = compact ? 'w-[52px]' : 'w-[96px] sm:w-[112px]';
-  const barNegMargin = compact ? '-mt-1.5' : '-mt-3.5 sm:-mt-4';
-  const textSize = compact ? 'text-[7px]' : 'text-[8px] sm:text-[9px]';
-  const barHeight = compact ? 'h-1.5' : 'h-2';
-  const pctTextSize = compact ? 'text-[6px]' : 'text-[7px] sm:text-[8px]';
+  const imgSize = compact ? 'w-[64px] h-[64px]' : 'w-[96px] h-[96px] sm:w-[112px] sm:h-[112px]';
+  const wrapSize = compact ? 'w-[64px]' : 'w-[96px] sm:w-[112px]';
+  const barNegMargin = compact ? '-mt-2.5' : '-mt-3.5 sm:-mt-4';
+  const textSize = compact ? 'text-[8px]' : 'text-[8px] sm:text-[9px]';
+  const barHeight = compact ? 'h-2' : 'h-2';
+  const pctTextSize = compact ? 'text-[7px]' : 'text-[7px] sm:text-[8px]';
 
   return (
     <motion.div
