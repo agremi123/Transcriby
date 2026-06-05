@@ -3598,8 +3598,8 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
 
 
           {/* Transcript — fills remaining space */}
-          <div className="flex-1 min-h-0 overflow-y-auto overflow-hidden flex flex-col">
-            <div className="flex-1 overflow-hidden">
+          <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
+            <div className="flex-1">
               <AudioSyncedTranscript
                 text={currentPageText}
                 currentTime={currentTime}
