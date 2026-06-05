@@ -727,6 +727,9 @@ export function AudioDemoCard({
   onLearnModeHandled,
   onPracticeTopicHandled,
   readingVocab = [],
+  listeningQuestions = [],
+  listeningVocab = [],
+  listeningGrammar = [],
 }) {
   const { effectiveLevel, gainExperience, gainDailyParisianPoints } = useLearnerProfile();
   const {
