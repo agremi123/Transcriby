@@ -2526,71 +2526,205 @@ export function AudioDemoCard({
           </div>
           ) : null}
 
-          {/* Practice tab — exercises only, no subtabs (comprehension/vocab/grammar live in the left panel) */}
+          {/* Practice tab — subtabs: Comprehension / Vocabulary / Grammar + exercises */}
           {activeTab === 'practice' && (
-            <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-4 border-t border-line/50">
-              {practiceTopics.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 pb-2 border-b border-line/40">
-                  {practiceTopics.map((topic) => {
-                    const pct = Math.min(skillProgress[topic] ?? 0, 100);
-                    return (
-                      <button
-                        key={topic}
-                        type="button"
-                        onClick={() => startPractice(topic)}
-                        className="relative overflow-hidden border border-line/60 hover:border-wine/40 transition-colors group"
-                        style={{ height: 24 }}
-                      >
-                        <div
-                          className="absolute inset-y-0 left-0 bg-wine/10 group-hover:bg-wine/15 transition-all duration-500"
-                          style={{ width: `${pct}%` }}
-                        />
-                        <div className="relative flex items-center gap-2 px-2 h-full">
-                          <span className="text-[11px] text-navy/60 group-hover:text-navy transition-colors whitespace-nowrap">{topic}</span>
-                          <span className="text-[9px] font-mono text-navy/30 tabular-nums">{pct}%</span>
+            <div className="flex-1 min-h-0 flex flex-col border-t border-line/50">
+              {/* Subtab bar */}
+              <div className="flex gap-0 border-b border-line/40 shrink-0">
+                {[
+                  { id: 'comprehension', label: 'Comprehension' },
+                  { id: 'vocabulary',    label: 'Vocabulary' },
+                  { id: 'grammar',       label: 'Grammar' },
+                  { id: 'exercises',     label: 'Exercises' },
+                ].map((st) => (
+                  <button key={st.id} type="button" onClick={() => setPracticeSubTab(st.id)}
+                    className={`text-[9px] tracking-widest uppercase px-3 py-1.5 border-b-2 transition-colors whitespace-nowrap ${practiceSubTab === st.id ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
+                    {st.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Subtab content */}
+              <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-4">
+
+                {/* COMPREHENSION subtab */}
+                {practiceSubTab === 'comprehension' && (
+                  listeningQuestions.length === 0
+                    ? <p className="text-[13px] text-navy/40 italic">No questions available — load a listening episode first.</p>
+                    : listeningQuestions.map((q, qi) => {
+                        const answered = practiceAnsweredQ[qi];
+                        return (
+                          <div key={qi} className="space-y-2">
+                            <p className="font-display text-[15px] leading-snug text-navy">{q.question}</p>
+                            <div className="flex flex-col gap-1">
+                              {(q.options || []).map((opt, oi) => {
+                                const isSelected = answered === opt;
+                                const isCorrect = opt === q.answer;
+                                let cls = 'border border-line/60 text-navy/70 hover:border-wine/40 hover:text-navy transition-colors';
+                                if (answered) {
+                                  if (isCorrect) cls = 'border border-green-500 bg-green-50 text-green-700';
+                                  else if (isSelected) cls = 'border border-wine/60 bg-wine/5 text-wine';
+                                  else cls = 'border border-line/30 text-navy/30';
+                                }
+                                return (
+                                  <button key={oi} type="button" disabled={!!answered}
+                                    onClick={() => setPracticeAnsweredQ((prev) => ({ ...prev, [qi]: opt }))}
+                                    className={`text-left px-3 py-1.5 text-[13px] font-display ${cls}`}>
+                                    <span className="text-[10px] font-mono text-navy/30 mr-2">{String.fromCharCode(65 + oi)}.</span>
+                                    {opt}
+                                    {answered && isCorrect && <span className="ml-1.5 text-green-600 text-[11px]">✓</span>}
+                                    {isSelected && !isCorrect && <span className="ml-1.5 text-wine text-[11px]">✗</span>}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })
+                )}
+
+                {/* VOCABULARY subtab */}
+                {practiceSubTab === 'vocabulary' && (
+                  listeningVocab.length === 0
+                    ? <p className="text-[13px] text-navy/40 italic">No vocabulary available — load a listening episode first.</p>
+                    : listeningVocab.map((v, vi) => {
+                        const userAns = practiceVocabAnswers[vi] ?? '';
+                        const submitted = userAns !== '' && userAns !== '__editing__';
+                        const correct = submitted && userAns.trim().toLowerCase() === v.word.toLowerCase();
+                        return (
+                          <div key={vi} className={`p-3 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
+                            <div className="flex items-start gap-2 mb-2">
+                              <span className="text-[10px] font-mono text-navy/30 mt-0.5 shrink-0">{vi + 1}.</span>
+                              <p className="font-display text-[14px] leading-snug text-navy flex-1">
+                                {v.sentence?.replace('___', '______') || '___'}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {submitted ? (
+                                <span className={`font-display text-[14px] font-medium ${correct ? 'text-green-600' : 'text-wine'}`}>
+                                  {userAns} {correct ? '✓' : `✗ → ${v.word}`}
+                                </span>
+                              ) : (
+                                <input
+                                  type="text"
+                                  value={userAns === '__editing__' ? '' : userAns}
+                                  onChange={(e) => setPracticeVocabAnswers((p) => ({ ...p, [vi]: e.target.value }))}
+                                  onKeyDown={(e) => { if (e.key === 'Enter' && userAns.trim()) setPracticeVocabAnswers((p) => ({ ...p, [vi]: userAns.trim() })); }}
+                                  placeholder="Votre réponse…"
+                                  className="flex-1 border border-navy/20 px-2 py-1 text-[13px] font-display text-navy focus:outline-none focus:border-wine/50 bg-transparent"
+                                />
+                              )}
+                              {!submitted && userAns.trim() && (
+                                <button type="button" onClick={() => setPracticeVocabAnswers((p) => ({ ...p, [vi]: userAns.trim() }))}
+                                  className="px-2 py-1 text-[11px] font-mono bg-wine text-ivory hover:bg-wine/80 transition-colors">
+                                  OK
+                                </button>
+                              )}
+                              {submitted && (
+                                <button type="button" onClick={() => setPracticeVocabAnswers((p) => ({ ...p, [vi]: '' }))}
+                                  className="text-[10px] font-mono text-navy/30 hover:text-navy/60 transition-colors">retry</button>
+                              )}
+                            </div>
+                            <p className="text-[11px] text-navy/45 mt-1 italic">{v.definition}</p>
+                          </div>
+                        );
+                      })
+                )}
+
+                {/* GRAMMAR subtab */}
+                {practiceSubTab === 'grammar' && (
+                  listeningGrammar.length === 0
+                    ? <p className="text-[13px] text-navy/40 italic">No grammar points available — load a listening episode first.</p>
+                    : listeningGrammar.map((g, gi) => (
+                        <div key={gi} className="border border-line/50 p-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 bg-wine/8 px-1.5 py-0.5">Grammaire</span>
+                            <span className="font-display text-[15px] text-navy font-medium">{g.point}</span>
+                          </div>
+                          {g.example && (
+                            <blockquote className="border-l-2 border-navy/20 pl-2 mb-2">
+                              <p className="font-display text-[13px] italic text-navy/70 leading-snug">« {g.example} »</p>
+                            </blockquote>
+                          )}
+                          <p className="text-[13px] text-navy/75 leading-snug mb-1">{g.explanation}</p>
+                          {g.tip && (
+                            <p className="text-[12px] font-mono text-wine/70">
+                              <span className="text-[9px] uppercase tracking-widest mr-1">Tip:</span>{g.tip}
+                            </p>
+                          )}
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-              {loadingPractice ? <CorrectionLoading /> : practiceExercises && practiceExercises.length > 0
-                ? (() => {
-                    const anyAt100 = Object.values(skillProgress).some((p) => p >= 100);
-                    return (
-                      <>
-                        {practiceExercises.map((ex, i) => {
-                          const key = ex.objective || overallWeakness || 'general';
+                      ))
+                )}
+
+                {/* EXERCISES subtab */}
+                {practiceSubTab === 'exercises' && (
+                  <>
+                    {practiceTopics.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 pb-2 border-b border-line/40">
+                        {practiceTopics.map((topic) => {
+                          const pct = Math.min(skillProgress[topic] ?? 0, 100);
                           return (
-                            <PracticeExercise
-                              key={ex._id ?? i}
-                              exercise={ex}
-                              onCorrect={() => handleExerciseCorrect(i, key)}
-                            />
+                            <button
+                              key={topic}
+                              type="button"
+                              onClick={() => startPractice(topic)}
+                              className="relative overflow-hidden border border-line/60 hover:border-wine/40 transition-colors group"
+                              style={{ height: 24 }}
+                            >
+                              <div
+                                className="absolute inset-y-0 left-0 bg-wine/10 group-hover:bg-wine/15 transition-all duration-500"
+                                style={{ width: `${pct}%` }}
+                              />
+                              <div className="relative flex items-center gap-2 px-2 h-full">
+                                <span className="text-[11px] text-navy/60 group-hover:text-navy transition-colors whitespace-nowrap">{topic}</span>
+                                <span className="text-[9px] font-mono text-navy/30 tabular-nums">{pct}%</span>
+                              </div>
+                            </button>
                           );
                         })}
-                        {!anyAt100 && (
-                          <div className="pt-2">
-                            {loadingMore ? <CorrectionLoading /> : (
-                              <button type="button" onClick={practiceMore}
-                                className="w-full flex flex-col items-center gap-0.5 text-wine/60 hover:text-wine transition-colors">
-                                <span className="text-[10px] tracking-widest uppercase">more</span>
-                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden>
-                                  <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                              </button>
-                            )}
-                          </div>
-                        )}
-                        {anyAt100 && (
-                          <p className="text-[11px] tracking-widest uppercase text-green-600 pt-1">100% — skill mastered!</p>
-                        )}
-                      </>
-                    );
-                  })()
-                : practiceExercises !== null
-                  ? <p className="text-[13px] text-navy/40">No exercises generated.</p>
-                  : null}
+                      </div>
+                    )}
+                    {loadingPractice ? <CorrectionLoading /> : practiceExercises && practiceExercises.length > 0
+                      ? (() => {
+                          const anyAt100 = Object.values(skillProgress).some((p) => p >= 100);
+                          return (
+                            <>
+                              {practiceExercises.map((ex, i) => {
+                                const key = ex.objective || overallWeakness || 'general';
+                                return (
+                                  <PracticeExercise
+                                    key={ex._id ?? i}
+                                    exercise={ex}
+                                    onCorrect={() => handleExerciseCorrect(i, key)}
+                                  />
+                                );
+                              })}
+                              {!anyAt100 && (
+                                <div className="pt-2">
+                                  {loadingMore ? <CorrectionLoading /> : (
+                                    <button type="button" onClick={practiceMore}
+                                      className="w-full flex flex-col items-center gap-0.5 text-wine/60 hover:text-wine transition-colors">
+                                      <span className="text-[10px] tracking-widest uppercase">more</span>
+                                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden>
+                                        <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                                      </svg>
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                              {anyAt100 && (
+                                <p className="text-[11px] tracking-widest uppercase text-green-600 pt-1">100% — skill mastered!</p>
+                              )}
+                            </>
+                          );
+                        })()
+                      : practiceExercises !== null
+                        ? <p className="text-[13px] text-navy/40">No exercises generated.</p>
+                        : null}
+                  </>
+                )}
+
+              </div>
             </div>
           )}
 
