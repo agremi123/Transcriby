@@ -678,17 +678,12 @@ function readingMiddleware(apiKey) {
 
       // Step 2: if web search gave nothing useful, generate a synthetic passage
       if (!passage || passage.length < 40) {
-        const genRes = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-          body: JSON.stringify({
+        const genData = await claudeCall('reading/generate-passage', apiKey, {
             model: 'claude-haiku-4-5-20251001',
             max_tokens: 600,
             system: 'Write an engaging authentic French passage of 6 sentences about the given topic, at B1-B2 level, suitable for French learners. Also give it a title. Output ONLY raw JSON: {"title":"...","passage":"...6 sentences in French..."}',
             messages: [{ role: 'user', content: `Topic: ${topic}` }],
-          }),
         });
-        const genData = await genRes.json();
         let genRaw = genData.content?.[0]?.text?.trim() || '{}';
         genRaw = genRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
         try {
