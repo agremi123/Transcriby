@@ -786,7 +786,7 @@ function readingMiddleware(apiKey, openrouterKey) {
   };
 }
 
-function practiceMiddleware(apiKey) {
+function practiceMiddleware(apiKey, openrouterKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/practice' || req.method !== 'POST') { next(); return; }
     let topic = '';
