@@ -1216,8 +1216,8 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       });
       let qRaw = qData.content?.[0]?.text?.trim() || '{}';
       qRaw = qRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-      let questions = [], vocabTheme = '';
-      try { const p = JSON.parse(qRaw); questions = p.questions || []; vocabTheme = p.vocabTheme || ''; } catch {}
+      let questions = [], vocabTheme = '', contentLevel = level;
+      try { const p = JSON.parse(qRaw); questions = p.questions || []; vocabTheme = p.vocabTheme || ''; contentLevel = p.contentLevel || level; } catch {}
 
       // Step 5: generate vocabulary list targeted to theme + level
       const vData = await openrouterCall('listening/vocab', openrouterKey, {
