@@ -3415,26 +3415,32 @@ function VocabWordHighlight({ word, definition }) {
 }
 
 function PassageWithVocabHighlights({ passage, vocabEntries, highlightActive, className }) {
-  const segments = React.useMemo(
-    () => (highlightActive ? buildPassageSegments(passage, vocabEntries) : [{ type: 'text', value: passage }]),
-    [passage, vocabEntries, highlightActive],
-  );
+  // Split into paragraphs on blank lines or numbered lines (e.g. "1. ...")
+  const paragraphs = React.useMemo(() => {
+    return (passage || '')
+      .split(/\n{2,}/)
+      .map(p => p.trim())
+      .filter(Boolean);
+  }, [passage]);
+
+  const paraClass = className || "font-display text-[15px] sm:text-[16px] leading-[1.75] text-navy/80";
 
   return (
-    <p className={className || "font-display text-[15px] sm:text-[16px] leading-[1.75] text-navy/80"}>
-      {segments.map((seg, i) => {
-        if (seg.type === 'text') {
-          return <React.Fragment key={i}>{seg.value}</React.Fragment>;
-        }
+    <div className="space-y-4">
+      {paragraphs.map((para, pi) => {
+        const segments = highlightActive
+          ? buildPassageSegments(para, vocabEntries)
+          : [{ type: 'text', value: para }];
         return (
-          <VocabWordHighlight
-            key={i}
-            word={seg.value}
-            definition={seg.entry.definition}
-          />
+          <p key={pi} className={paraClass}>
+            {segments.map((seg, i) => {
+              if (seg.type === 'text') return <React.Fragment key={i}>{seg.value}</React.Fragment>;
+              return <VocabWordHighlight key={i} word={seg.value} definition={seg.entry.definition} />;
+            })}
+          </p>
         );
       })}
-    </p>
+    </div>
   );
 }
 
