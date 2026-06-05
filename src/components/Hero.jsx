@@ -2484,20 +2484,15 @@ export function AudioDemoCard({
                   )}
                 </div>
 
-                {/* Inline narrator reaction — appears below the last sentence */}
-                {narratorReaction && !manualCorrection && !manualCorrecting && (() => {
-                  const n = DEMO_NARRATORS[narratorReaction.id];
-                  return n ? (
-                    <div className="flex items-start gap-3 mt-3 pt-3 border-t border-line/30">
-                      <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/30 shrink-0">
-                        <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
-                      </div>
-                      <p className="font-display text-[16px] italic text-navy/80 leading-snug flex-1 min-w-0 pt-1">
-                        {narratorReaction.text}
-                      </p>
-                    </div>
-                  ) : null;
-                })()}
+                {/* Inline narrator reaction — auto-plays audio */}
+                {narratorReaction && !manualCorrection && !manualCorrecting && (
+                  <div className="mt-2">
+                    <NarratorReactionPanel
+                      reaction={narratorReaction}
+                      onDone={() => setNarratorReaction(null)}
+                    />
+                  </div>
+                )}
 
                 {showRepeatLine && (
                   <div className="mt-2 flex items-start gap-2.5">
