@@ -542,17 +542,12 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey) {
       }
 
       // 3. Generate new word with Claude
-      const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 250,
-          system: 'You are a French language teacher specializing in authentic Parisian French. Pick a vivid, interesting French word or expression — something a Parisian would actually say, not too basic, not too rare. Provide: the word/expression, its short English meaning, one natural example sentence in French, and an English translation of that sentence. Respond with raw JSON only, no markdown: {"word":"...","meaning":"...","example":"...","exampleTranslation":"..."}',
-          messages: [{ role: 'user', content: 'Give me an interesting Parisian French word to learn today.' }],
-        }),
+      const claudeData = await claudeCall('word/generate', anthropicKey, {
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 250,
+        system: 'You are a French language teacher specializing in authentic Parisian French. Pick a vivid, interesting French word or expression — something a Parisian would actually say, not too basic, not too rare. Provide: the word/expression, its short English meaning, one natural example sentence in French, and an English translation of that sentence. Respond with raw JSON only, no markdown: {"word":"...","meaning":"...","example":"...","exampleTranslation":"..."}',
+        messages: [{ role: 'user', content: 'Give me an interesting Parisian French word to learn today.' }],
       });
-      const claudeData = await claudeRes.json();
       let raw = claudeData.content?.[0]?.text?.trim() || '{}';
       raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       parsed = JSON.parse(raw);
