@@ -66,9 +66,9 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   const halfCirc = Math.PI * r;
   const dash = (parisianPercent / 100) * halfCirc;
 
-  // Badge top-left corner (badge is centered at cx, cy)
-  const badgeLeft = cx - badgeSize / 2;
-  const badgeTop  = cy - badgeSize / 2;
+  // Badge top-left corner (badge is centered at cx, cy; imgSize may differ from badgeSize)
+  const badgeLeft = cx - imgSize / 2;
+  const badgeTop  = cy - imgSize / 2;
 
   return (
     <motion.div
