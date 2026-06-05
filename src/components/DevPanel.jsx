@@ -205,7 +205,7 @@ export default function DevPanel() {
                   return (
                     <div key={i} className="px-3 py-2 hover:bg-navy/[0.02]">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-navy/30 shrink-0">{fmtTime(e.ts)}</span>
+                        <span className="text-navy/30 shrink-0">{fmtDate(e.ts)} {fmtTime(e.ts)}</span>
                         <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-semibold shrink-0 ${isDB ? 'bg-emerald-700 text-white' : 'bg-amber-600 text-white'}`}>
                           {isDB ? '● DB' : '⚡ GEN'}
                         </span>
