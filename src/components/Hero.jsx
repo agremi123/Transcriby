@@ -3541,23 +3541,31 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
     audioRef.current.currentTime = pct * duration;
   };
 
-  const totalTranscriptWords = React.useMemo(() => transcript ? transcript.split(/\s+/).length : 0, [transcript]);
+  // Syllable weights for every word in the full transcript
+  const allWordWeights = React.useMemo(() => {
+    if (!transcript) return [];
+    return transcript.split(/\s+/).filter(Boolean).map(frSyllables);
+  }, [transcript]);
+  const totalWeight = React.useMemo(() => allWordWeights.reduce((s, w) => s + w, 0), [allWordWeights]);
+
   const pageOffset = pageIndex * WORDS_PER_PAGE;
 
-  // Click a word → seek audio to its estimated position
+  // Click a word → seek audio to its estimated (syllable-weighted) position
   const seekToWord = (globalWordIdx) => {
-    if (!audioRef.current || !duration || !totalTranscriptWords) return;
-    audioRef.current.currentTime = (globalWordIdx / totalTranscriptWords) * duration;
+    if (!audioRef.current || !duration || !totalWeight) return;
+    const wBefore = allWordWeights.slice(0, globalWordIdx).reduce((s, w) => s + w, 0);
+    audioRef.current.currentTime = (wBefore / totalWeight) * duration;
   };
 
   // Auto-advance page when playhead passes the last word of the current page
   React.useEffect(() => {
-    if (!duration || !totalTranscriptWords) return;
-    const pageEnd = ((pageOffset + WORDS_PER_PAGE) / totalTranscriptWords) * duration;
+    if (!duration || !totalWeight) return;
+    const pageWeightEnd = allWordWeights.slice(0, pageOffset + WORDS_PER_PAGE).reduce((s, w) => s + w, 0);
+    const pageEnd = (pageWeightEnd / totalWeight) * duration;
     if (currentTime >= pageEnd && pageIndex < totalPages - 1) {
       setPageIndex((p) => p + 1);
     }
-  }, [currentTime, duration, totalTranscriptWords, pageOffset, pageIndex, totalPages]);
+  }, [currentTime, duration, totalWeight, allWordWeights, pageOffset, pageIndex, totalPages]);
 
   const fmtDate = (d) => {
     if (!d) return '';
