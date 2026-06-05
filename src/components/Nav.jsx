@@ -71,8 +71,9 @@ export default function Nav() {
     >
       <Container className="flex items-center justify-between h-[72px]">
         <Logo />
-        <ParisianCornerBadge inline />
+        <div />
         <div className="flex items-center gap-2.5 sm:gap-3">
+          <ParisianCornerBadge inline />
           <NavReachNextLevel />
           <button
             type="button"
