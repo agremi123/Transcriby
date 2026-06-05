@@ -53,8 +53,9 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   const nextLevel = getNextLevel(level);
   const badgeSrc = getLevelBadgeSrc(level);
 
-  const size = compact ? 100 : 120;
-  const strokeWidth = compact ? 2.5 : 3;
+  const size = compact ? 120 : 140;
+  const strokeWidth = compact ? 2 : 2.5;
+  const gap = 2; // px between ring and badge edge
   const r = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * r;
   const dash = (parisianPercent / 100) * circumference;
