@@ -1928,7 +1928,7 @@ export function AudioDemoCard({
       <div className="flex flex-row items-center gap-2">
         {/* Parisian Points display */}
         <div className="relative flex flex-col items-center mr-1 select-none">
-          <span className="text-[8px] font-mono tracking-widest uppercase text-navy/35 whitespace-nowrap leading-tight">My Parisian Points</span>
+          <span className="text-[8px] font-mono tracking-widest uppercase text-navy/70 whitespace-nowrap leading-tight">My Parisian Points</span>
           <div className="relative flex items-center justify-center">
             <span key={dailyParisianPoints} className="font-display text-[20px] font-bold text-wine leading-none tabular-nums"
               style={{ animation: 'parisianPointsPop 0.35s cubic-bezier(0.34,1.56,0.64,1)' }}>
