@@ -3131,7 +3131,7 @@ export function AudioDemoCard({
             </button>
           </div>
         ) : inputMode === 'speak' ? (
-          <div className="shrink-0 pr-3 py-1 border-t border-line/50">
+          <div className="shrink-0 pr-3 py-1">
             {speakActionControls}
           </div>
         ) : null}
