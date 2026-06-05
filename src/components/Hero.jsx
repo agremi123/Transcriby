@@ -2960,24 +2960,27 @@ export function AudioDemoCard({
         </div>
       )}
 
-      {/* Tabs */}
-      <div className="flex border-t border-line/50 overflow-x-auto shrink-0">
-        {[
-          { id: 'transcript', label: 'Chat' },
-          { id: 'speaking',   label: 'Speaking' },
-          { id: 'listening',  label: 'Listening' },
-          { id: 'reading',    label: 'Reading' },
-          { id: 'writing',    label: 'Writing' },
-        ].map((t) => (
-          <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
-            className={`text-[9px] tracking-widest uppercase px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Bottom bar */}
-      <div className="px-7 pt-2 pb-3 flex items-center justify-end gap-4 min-h-0 overflow-visible shrink-0">
+      {/* Combined row: tabs (left) + controls (right) */}
+      <div className="flex items-start border-t border-line/50 shrink-0">
+        {/* Left column: tabs + correction UI */}
+        <div className="flex-1 min-w-0 flex flex-col">
+          <div className="flex overflow-x-auto pl-7">
+            {[
+              { id: 'transcript', label: 'Chat' },
+              { id: 'speaking',   label: 'Speaking' },
+              { id: 'listening',  label: 'Listening' },
+              { id: 'reading',    label: 'Reading' },
+              { id: 'writing',    label: 'Writing' },
+            ].map((t) => (
+              <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
+                className={`text-[9px] tracking-widest uppercase px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
+                {t.label}
+              </button>
+            ))}
+          </div>
+          {/* Correction UI - only rendered when active */}
+          {inputMode === 'speak' && (manualCorrecting || hasSpeakCorrection || !!sentenceCongrats) && (
+          <div className="px-7 pt-1 pb-3 flex items-center gap-4 min-h-0 overflow-visible">
         {/* Left: Parisien correction UI (loading/save states only) */}
         <div className="min-w-0 flex-1 overflow-visible">
           {inputMode === 'speak' && (() => {
