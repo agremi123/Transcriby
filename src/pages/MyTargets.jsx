@@ -368,7 +368,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
         const zoneL = tx - 6, zoneT = ty, zoneW = TW + 12, zoneH = svgY + 22 - ty;
         return (
           <>
-          <foreignObject x={tx} y={ty} width={TW} height={TH} style={{ overflow: 'visible' }} pointerEvents="all">
+          <foreignObject x={tx} y={ty} width={TW} height={400} style={{ overflow: 'visible' }} pointerEvents="all">
             <div xmlns="http://www.w3.org/1999/xhtml"
                  onMouseEnter={() => clearTimeout(closeTimer.current)}
                  onMouseLeave={() => { clearTimeout(closeTimer.current); setHoveredDot(null); }}
@@ -379,7 +379,8 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                    padding: '15px 17px',
                    boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
                    pointerEvents: 'all',
-                   height: '100%',
+                   display: 'inline-block',
+                   width: TW,
                    boxSizing: 'border-box',
                  }}>
               <p style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'rgba(246,241,232,0.9)', fontSize: 9, fontFamily: "'SF Mono','Fira Mono',monospace", letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8, background: 'rgba(255,255,255,0.1)', padding: '3px 8px', borderRadius: 2 }}>
