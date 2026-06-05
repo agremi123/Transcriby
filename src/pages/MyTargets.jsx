@@ -223,10 +223,13 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
           // 3. study button pulses
           at(delay + STUDY_DELAY, () => setStudyHl(true));
           delay += TT;
-          // 4. +10 floats, tooltip + study close
-          at(delay, () => { setAutoTooltip(null); setStudyHl(false); setPointsAnim({ svgX: dx, svgY: dy, color }); });
+          // 4. checkmark appears, study hl clears
+          at(delay, () => { setStudyHl(false); setStudyCheck(true); });
+          delay += CHECK_PAUSE;
+          // 5. +10 floats, tooltip + checkmark close
+          at(delay, () => { setAutoTooltip(null); setStudyCheck(false); setPointsAnim({ svgX: dx, svgY: dy, color }); });
           delay += PTS;
-          // 5. circle settles, +10 clears
+          // 6. circle settles, +10 clears
           at(delay, () => { setHlCircle(null); setPointsAnim(null); setSettledCircles(p => new Set([...p, key])); });
           delay += SETTLE;
         } else {
@@ -240,7 +243,10 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
             at(delay + STUDY_DELAY, () => setStudyHl(true));
           }
           delay += TT;
-          at(delay, () => { setAutoTooltip(null); setStudyHl(false); setPointsAnim({ svgX: dx, svgY: dy, color }); });
+          // checkmark then +10
+          at(delay, () => { setStudyHl(false); setStudyCheck(true); });
+          delay += CHECK_PAUSE;
+          at(delay, () => { setAutoTooltip(null); setStudyCheck(false); setPointsAnim({ svgX: dx, svgY: dy, color }); });
           delay += DECO_PTS;
           at(delay, () => { setHlCircle(null); setPointsAnim(null); setSettledCircles(p => new Set([...p, key])); });
           delay += DECO_SETTLE;
