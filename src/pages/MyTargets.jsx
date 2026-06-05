@@ -461,27 +461,27 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
         );
       })}
 
-      {/* dot tooltip */}
-      {hoveredDot && (() => {
-        const { svgX, svgY, target: t, color, themeInfo } = hoveredDot;
+      {/* dot tooltip (hover or auto) */}
+      {(hoveredDot || autoTooltip) && (() => {
+        const isAuto = !hoveredDot && !!autoTooltip;
+        const dot = hoveredDot || autoTooltip;
+        const { svgX, svgY, target: t, color, themeInfo } = dot;
         const themeName = themeInfo?.theme ?? label(t);
         const TW = 310, TH = 120;
         const tx = Math.min(Math.max(svgX - TW / 2, 4), VW - TW - 4);
         const ty = svgY - TH + 10;
-        const zoneL = tx - 6, zoneT = ty, zoneW = TW + 12, zoneH = svgY + 22 - ty;
         return (
           <>
-          <foreignObject x={tx} y={ty} width={TW} height={TH} style={{ overflow: 'visible' }} pointerEvents="all">
+          <foreignObject x={tx} y={ty} width={TW} height={TH} style={{ overflow: 'visible' }} pointerEvents={isAuto ? 'none' : 'all'}>
             <div xmlns="http://www.w3.org/1999/xhtml"
-                 onMouseEnter={() => clearTimeout(closeTimer.current)}
-                 onMouseLeave={() => { clearTimeout(closeTimer.current); setHoveredDot(null); }}
+                 onMouseEnter={isAuto ? undefined : () => clearTimeout(closeTimer.current)}
+                 onMouseLeave={isAuto ? undefined : () => { clearTimeout(closeTimer.current); setHoveredDot(null); }}
                  style={{
                    background: '#1A2340',
                    border: '1px solid rgba(255,255,255,0.12)',
                    borderRadius: 4,
                    padding: '15px 17px',
                    boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-                   pointerEvents: 'all',
                    height: '100%',
                    boxSizing: 'border-box',
                  }}>
@@ -503,8 +503,9 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                     fontStyle: 'italic',
                     cursor: 'pointer',
                     pointerEvents: 'all',
+                    ...(isAuto && studyHl ? { animation: 'studyHlPulse 0.4s ease-in-out infinite alternate', boxShadow: '0 0 0 2px rgba(139,30,45,0.5)' } : {}),
                   }}
-                  onMouseDown={() => navigate(practiceUrl(t.topic, themeInfo, themeInfo?.cat ?? t.category))}
+                  onMouseDown={isAuto ? undefined : () => navigate(practiceUrl(t.topic, themeInfo, themeInfo?.cat ?? t.category))}
                 >
                   Study →
                 </button>
@@ -512,14 +513,31 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
               </div>
             </div>
           </foreignObject>
-          <circle cx={svgX} cy={svgY} r={18} fill="transparent"
-                  onMouseEnter={() => clearTimeout(closeTimer.current)}
-                  onMouseLeave={closeDot} />
-          <circle cx={svgX} cy={svgY} r={4} fill="white" stroke={color} strokeWidth="1.4"
-                  style={{ pointerEvents: 'none' }} />
+          {!isAuto && (
+            <>
+              <circle cx={svgX} cy={svgY} r={18} fill="transparent"
+                      onMouseEnter={() => clearTimeout(closeTimer.current)}
+                      onMouseLeave={closeDot} />
+              <circle cx={svgX} cy={svgY} r={4} fill="white" stroke={color} strokeWidth="1.4"
+                      style={{ pointerEvents: 'none' }} />
+            </>
+          )}
           </>
         );
       })()}
+
+      {/* +10 pts float animation */}
+      {pointsAnim && (
+        <foreignObject
+          x={pointsAnim.svgX - 44} y={pointsAnim.svgY - 52}
+          width={88} height={48}
+          style={{ overflow: 'visible', pointerEvents: 'none' }}>
+          <div xmlns="http://www.w3.org/1999/xhtml"
+               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'floatUpFade 0.48s ease-out forwards' }}>
+            <span style={{ color: '#16a34a', fontSize: 13, fontWeight: 700, fontFamily: "'SF Mono','Fira Mono',monospace", whiteSpace: 'nowrap', textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>✓ +10 pts</span>
+          </div>
+        </foreignObject>
+      )}
     </svg>
   );
 }
