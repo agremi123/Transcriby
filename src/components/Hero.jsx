@@ -3799,7 +3799,8 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
 
 /** Splits French text into clickable words that fetch translations on demand. */
 function TranslatableText({ text, className = '', context = '' }) {
-  const [cache, setCache] = React.useState({});
+  const cacheRef = React.useRef({});
+  const [, forceUpdate] = React.useReducer(x => x + 1, 0);
   const [loadingWord, setLoadingWord] = React.useState(null);
   const [activeWord, setActiveWord] = React.useState(null);
   const [tooltipPos, setTooltipPos] = React.useState({ top: 0, left: 0 });
@@ -3817,7 +3818,7 @@ function TranslatableText({ text, className = '', context = '' }) {
     if (!clean || clean.length < 2) return;
     setTooltipPos({ top: rect.top, left: rect.left + rect.width / 2 });
     setActiveWord(clean);
-    if (cache[clean] !== undefined) return;
+    if (cacheRef.current[clean] !== undefined) return;
     setLoadingWord(clean);
     try {
       const r = await fetch('/api/translate-word', {
@@ -3826,13 +3827,14 @@ function TranslatableText({ text, className = '', context = '' }) {
         body: JSON.stringify({ word: clean, context: (context || text).slice(0, 150) }),
       });
       const { translation } = await r.json();
-      setCache(c => ({ ...c, [clean]: translation || clean }));
+      cacheRef.current[clean] = translation || clean;
+      forceUpdate();
     } catch {
-      setCache(c => ({ ...c, [clean]: clean }));
+      cacheRef.current[clean] = clean;
     } finally {
       setLoadingWord(null);
     }
-  }, [cache, context, text]);
+  }, [context, text]);
 
   // Tokenise keeping punctuation/spaces as separate tokens
   const tokens = React.useMemo(() => text.split(/([^a-zA-ZÀ-ÿœæ'-]+)/u), [text]);
