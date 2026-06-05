@@ -3616,15 +3616,27 @@ function frSyllables(word) {
   return syl + (hasPause ? 1.2 : 0);
 }
 
-function AudioSyncedTranscript({ text, currentTime, duration, pageOffset, allWordWeights, onWordClick, className }) {
+function AudioSyncedTranscript({ text, currentTime, duration, pageOffset, allWordWeights, wordTimings, onWordClick, className }) {
   const words = React.useMemo(() => text.split(/\s+/).filter(Boolean), [text]);
 
   const currentWordIdx = React.useMemo(() => {
+    // --- Real Deepgram timestamps path ---
+    if (wordTimings && wordTimings.length > 0) {
+      // Find which word on this page contains currentTime
+      for (let i = 0; i < words.length; i++) {
+        const g = pageOffset + i;
+        const t = wordTimings[g];
+        if (!t) continue;
+        if (currentTime >= t.start && currentTime < t.end + 0.05) return i;
+      }
+      return -1;
+    }
+
+    // --- Syllable-weight fallback ---
     if (!duration || !allWordWeights || allWordWeights.length === 0) return -1;
     const totalWeight = allWordWeights.reduce((s, w) => s + w, 0);
     if (!totalWeight) return -1;
 
-    // Time boundaries for this page
     const pageWeightStart = allWordWeights.slice(0, pageOffset).reduce((s, w) => s + w, 0);
     const pageWeightEnd   = allWordWeights.slice(0, pageOffset + words.length).reduce((s, w) => s + w, 0);
     const tStart = (pageWeightStart / totalWeight) * duration;
@@ -3632,7 +3644,6 @@ function AudioSyncedTranscript({ text, currentTime, duration, pageOffset, allWor
 
     if (currentTime < tStart || currentTime >= tEnd) return -1;
 
-    // Walk through words on this page to find which one we're in
     let elapsed = tStart;
     for (let i = 0; i < words.length; i++) {
       const wDur = (allWordWeights[pageOffset + i] / totalWeight) * duration;
@@ -3640,7 +3651,7 @@ function AudioSyncedTranscript({ text, currentTime, duration, pageOffset, allWor
       elapsed += wDur;
     }
     return words.length - 1;
-  }, [currentTime, duration, words, pageOffset, allWordWeights]);
+  }, [currentTime, duration, words, pageOffset, allWordWeights, wordTimings]);
 
   return (
     <p className={className}>
