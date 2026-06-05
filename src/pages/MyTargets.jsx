@@ -187,7 +187,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
 
   React.useEffect(() => {
     // Lesson circle timing (full sequence)
-    const HL = 900, TT = 2600, STUDY_DELAY = 700, PTS = 1100, SETTLE = 400, SEG = 750;
+    const HL = 900, TT = 2600, STUDY_DELAY = 700, CHECK_PAUSE = 700, PTS = 1100, SETTLE = 400, SEG = 750;
     // Deco circle timing (no tooltip, just +10)
     const DECO_HL = 500, DECO_PTS = 600, DECO_SETTLE = 200, DECO_SEG = 500;
     const DECO_C = 14, MIN_G = 0.07;
