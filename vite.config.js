@@ -1078,6 +1078,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
               source: row.source_name,
               date: row.pub_date,
               vocabTheme: row.vocab_theme,
+              contentLevel: row.content_level || row.level || 'B1',
               questions: row.questions || [],
               vocab: row.vocab || [],
               grammar: row.grammar || [],
