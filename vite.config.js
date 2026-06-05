@@ -1325,8 +1325,7 @@ function writingPromptMiddleware(apiKey, openrouterKey) {
     const empty = { prompt: '', tips: { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] }, wordTarget: 80 };
     if (!apiKey) { res.end(JSON.stringify(empty)); return; }
     try {
-      const d = await claudeCall('writing/prompt', apiKey, {
-        model: 'claude-haiku-4-5-20251001',
+      const d = await openrouterCall('writing/prompt', openrouterKey, {
         max_tokens: 500,
         system: `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss.
 Return ONLY raw JSON (no markdown):
