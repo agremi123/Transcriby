@@ -1242,17 +1242,12 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       try { ({ vocab = [] } = JSON.parse(vRaw)); } catch {}
 
       // Step 6: generate grammar points from the transcript
-      const gRes = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 700,
-          system: `You are a French grammar teacher. From the French transcript, identify 3 grammar structures or patterns that a ${level} learner should study. For each, quote the exact sentence from the transcript that illustrates it, name the grammar point, explain it simply in English (1-2 sentences), and give a short usage tip. Return ONLY raw JSON: {"grammar":[{"point":"Le passé composé","example":"Exact sentence from transcript","explanation":"Used to describe completed past actions.","tip":"Use avoir or être as auxiliary + past participle."},{"point":"...","example":"...","explanation":"...","tip":"..."},{"point":"...","example":"...","explanation":"...","tip":"..."}]}`,
-          messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
-        }),
+      const gData = await claudeCall('listening/grammar', anthropicKey, {
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 700,
+        system: `You are a French grammar teacher. From the French transcript, identify 3 grammar structures or patterns that a ${level} learner should study. For each, quote the exact sentence from the transcript that illustrates it, name the grammar point, explain it simply in English (1-2 sentences), and give a short usage tip. Return ONLY raw JSON: {"grammar":[{"point":"Le passé composé","example":"Exact sentence from transcript","explanation":"Used to describe completed past actions.","tip":"Use avoir or être as auxiliary + past participle."},{"point":"...","example":"...","explanation":"...","tip":"..."},{"point":"...","example":"...","explanation":"...","tip":"..."}]}`,
+        messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
       });
-      const gData = await gRes.json();
       let gRaw = gData.content?.[0]?.text?.trim() || '{}';
       gRaw = gRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       let grammar = [];
