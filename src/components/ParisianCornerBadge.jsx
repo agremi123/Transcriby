@@ -56,7 +56,7 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   const imgSize = compact ? 'w-[64px] h-[64px]' : 'w-[96px] h-[96px] sm:w-[112px] sm:h-[112px]';
   const wrapSize = compact ? 'w-[64px]' : 'w-[96px] sm:w-[112px]';
   const barNegMargin = compact ? '-mt-2.5' : '-mt-3.5 sm:-mt-4';
-  const textSize = compact ? 'text-[8px]' : 'text-[8px] sm:text-[9px]';
+  const textSize = compact ? 'text-[10px]' : 'text-[8px] sm:text-[9px]';
   const barHeight = compact ? 'h-3' : 'h-2.5';
   const pctTextSize = compact ? 'text-[8px]' : 'text-[7px] sm:text-[8px]';
 
