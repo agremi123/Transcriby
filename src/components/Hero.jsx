@@ -2980,10 +2980,8 @@ export function AudioDemoCard({
           </div>
           {/* Correction UI - only rendered when active */}
           {inputMode === 'speak' && (manualCorrecting || hasSpeakCorrection || !!sentenceCongrats) && (
-          <div className="px-7 pt-1 pb-3 flex items-center gap-4 min-h-0 overflow-visible">
-        {/* Left: Parisien correction UI (loading/save states only) */}
-        <div className="min-w-0 flex-1 overflow-visible">
-          {inputMode === 'speak' && (() => {
+            <div className="px-7 pt-1 pb-3 min-w-0 overflow-visible">
+              {(() => {
             const isBarLineSpeaking = (lineText) => (
               wordPlaying
               && lineText
