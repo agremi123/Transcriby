@@ -4617,7 +4617,7 @@ export default function Hero() {
             )}
           </div>
 
-          <div className="flex items-center justify-end h-full">
+          <div className="flex items-center justify-end h-full pr-16">
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
               initialTopic={practiceType === 'reading' ? null : practiceTopic}
