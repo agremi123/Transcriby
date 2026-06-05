@@ -84,7 +84,7 @@ async function openrouterCall(label, apiKey, { system, messages, max_tokens = 10
   DEV_LOG.push({ ts: Date.now(), label, model: DEEPSEEK_MODEL, inputTokens, outputTokens, cost });
   if (DEV_LOG.length > 2000) DEV_LOG.shift();
   persistDevCosts();
-  console.log(`[dev/deepseek] ${label} — in:${inputTokens} out:${outputTokens} $${cost.toFixed(5)}`);
+  console.log(`[dev/openrouter:${model.split('/')[0]}] ${label} — in:${inputTokens} out:${outputTokens} $${cost.toFixed(5)}`);
   // Normalise to Claude-like shape so callers can do data.content?.[0]?.text
   const text = data.choices?.[0]?.message?.content || '';
   return { content: [{ type: 'text', text }], _raw: data };
