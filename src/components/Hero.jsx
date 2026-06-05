@@ -2692,6 +2692,7 @@ export function AudioDemoCard({
             </div>
           )}
         </motion.div>
+        </div>
       )}
 
       {/* Bottom bar */}
