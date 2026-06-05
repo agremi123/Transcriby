@@ -3601,15 +3601,6 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="flex gap-0 border-b border-line/40 shrink-0 -mr-4 mb-2">
-            {TABS.map((tab) => (
-              <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)}
-                className={`text-[9px] tracking-widest uppercase px-3 py-1.5 border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.id ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
-                {tab.label}
-              </button>
-            ))}
-          </div>
 
           {/* Tab content — fills remaining space */}
           <div className="flex-1 min-h-0 overflow-y-auto">
