@@ -4214,6 +4214,7 @@ export default function Hero() {
           setListeningQuestions(data.questions || []);
           setListeningGrammar(data.grammar || []);
           setListeningVocabTheme(data.vocabTheme || '');
+          setListeningContentLevel(data.contentLevel || '');
           setListeningLoading(false);
         })
         .catch(() => setListeningLoading(false));
