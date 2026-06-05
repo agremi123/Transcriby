@@ -885,8 +885,11 @@ const FRENCH_PODCAST_SOURCES = [
 
 function shuffleArray(arr) { return arr.slice().sort(() => Math.random() - 0.5); }
 
-async function fetchPodcastEpisode() {
-  const sources = shuffleArray(FRENCH_PODCAST_SOURCES);
+async function fetchPodcastEpisode(learnerLevel = '') {
+  // Sort: level-matched sources first, then the rest — both groups shuffled
+  const matched = shuffleArray(FRENCH_PODCAST_SOURCES.filter((s) => sourceMatchesLevel(s.level, learnerLevel)));
+  const rest = shuffleArray(FRENCH_PODCAST_SOURCES.filter((s) => !sourceMatchesLevel(s.level, learnerLevel)));
+  const sources = [...matched, ...rest];
   for (const source of sources) {
     try {
       const r = await fetch(source.rssUrl, {
