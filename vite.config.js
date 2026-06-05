@@ -1258,6 +1258,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       if (supabase) {
         supabase.from('listening_episodes').insert([{
           level,
+          content_level: contentLevel,
           title: episode.title,
           audio_url: episode.audioUrl || null,
           transcript,
