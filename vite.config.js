@@ -689,13 +689,12 @@ function readingMiddleware(apiKey, openrouterKey) {
       res.end(JSON.stringify({ passage: '', source: null, questions: [] })); return;
     }
     try {
-      // Step 1: use web search to find a real French article passage
-      const searchData = await claudeCall('reading/web-search', apiKey, {
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        system: `You are a French reading exercise creator for language learners. Search for a real recent French-language article or news piece that would be engaging and culturally relevant for someone learning French (topics like French culture, Paris life, French cinema, food, current events in France, French society, sport in France, etc.). Extract verbatim 5-8 sentences from the article in French at roughly B1-B2 level. Output ONLY a JSON object, nothing else: {"title":"article title in French","passage":"...verbatim French sentences...","source":"publication name e.g. Le Monde","author":"author name or null","date":"publication date e.g. 12 juin 2025 or null"}`,
-        messages: [{ role: 'user', content: `Find a recent engaging French article for language learners about: ${topic}` }],
+      // Step 1: use Perplexity (web search) to find a real French article passage
+      const searchData = await openrouterCall('reading/web-search', openrouterKey, {
+        model: 'perplexity/llama-3.1-sonar-small-128k-online',
+        max_tokens: 800,
+        system: `You are a French reading exercise creator. Search the web for a real, recent French-language article relevant to the given topic. Extract 5-8 sentences verbatim in French at B1-B2 level. Output ONLY a JSON object, no markdown: {"title":"article title in French","passage":"...verbatim French sentences...","source":"publication name e.g. Le Monde","author":"author name or null","date":"publication date or null"}`,
+        messages: [{ role: 'user', content: `Find a recent French article for language learners about: ${topic}` }],
       });
 
       let passage = '';
@@ -704,28 +703,23 @@ function readingMiddleware(apiKey, openrouterKey) {
       let author = null;
       let date = null;
 
-      // Try to find a JSON block in the response text
-      const textBlock = searchData.content?.find((b) => b.type === 'text');
-      if (textBlock?.text) {
-        const txt = textBlock.text.trim();
-        // Try to parse the last JSON object containing "passage"
-        const jsonMatches = [...txt.matchAll(/\{[\s\S]*?"passage"[\s\S]*?\}/g)];
-        if (jsonMatches.length > 0) {
-          try {
-            const parsed = JSON.parse(jsonMatches[jsonMatches.length - 1][0]);
-            passage = parsed.passage || '';
-            title = parsed.title || '';
-            source = parsed.source || null;
-            author = parsed.author || null;
-            date = parsed.date || null;
-          } catch {}
-        }
-        // Fallback: extract French lines
-        if (!passage) {
-          const lines = txt.split('\n').filter((l) => l.trim().length > 20);
-          const frenchLines = lines.filter((l) => /[àâäéèêëîïôöùûüç]/i.test(l) || /\b(le|la|les|un|une|des|et|est|en|de|du|au|ce|qu|pour)\b/i.test(l));
-          if (frenchLines.length > 0) passage = frenchLines.slice(0, 8).join(' ').trim();
-        }
+      const txt = (searchData.content?.[0]?.text || '').trim();
+      const jsonMatches = [...txt.matchAll(/\{[\s\S]*?"passage"[\s\S]*?\}/g)];
+      if (jsonMatches.length > 0) {
+        try {
+          const parsed = JSON.parse(jsonMatches[jsonMatches.length - 1][0]);
+          passage = parsed.passage || '';
+          title = parsed.title || '';
+          source = parsed.source || null;
+          author = parsed.author || null;
+          date = parsed.date || null;
+        } catch {}
+      }
+      // Fallback: pull French lines directly from the response
+      if (!passage) {
+        const frenchLines = txt.split('\n')
+          .filter((l) => l.trim().length > 20 && (/[àâäéèêëîïôöùûüç]/i.test(l) || /\b(le|la|les|un|une|des|et|est|en|de)\b/i.test(l)));
+        if (frenchLines.length > 0) passage = frenchLines.slice(0, 8).join(' ').trim();
       }
 
       // Step 2: if web search gave nothing useful, generate a synthetic passage
@@ -1389,15 +1383,15 @@ export default defineConfig(() => {
           server.middlewares.use(interviewFeedbackMiddleware());
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
           server.middlewares.use(devStatsMiddleware());
-          server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY));
-          server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY));
+          server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
+          server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(audioProxyMiddleware());
           server.middlewares.use(sessionAudioMiddleware());
-          server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY));
+          server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(speakingPromptMiddleware(env.ANTHROPIC_API_KEY));
-          server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY));
-          server.middlewares.use(translateWordMiddleware(env.ANTHROPIC_API_KEY));
-          server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY));
+          server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
+          server.middlewares.use(translateWordMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
+          server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(elevenLabsTtsMiddleware(env.ELEVENLABS_API_KEY));
         },
         configurePreviewServer(server) {
@@ -1407,15 +1401,15 @@ export default defineConfig(() => {
           server.middlewares.use(interviewFeedbackMiddleware());
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
           server.middlewares.use(devStatsMiddleware());
-          server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY));
-          server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY));
+          server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
+          server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(audioProxyMiddleware());
           server.middlewares.use(sessionAudioMiddleware());
-          server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY));
+          server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(speakingPromptMiddleware(env.ANTHROPIC_API_KEY));
-          server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY));
-          server.middlewares.use(translateWordMiddleware(env.ANTHROPIC_API_KEY));
-          server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY));
+          server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
+          server.middlewares.use(translateWordMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
+          server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(elevenLabsTtsMiddleware(env.ELEVENLABS_API_KEY));
         },
       },
