@@ -3434,6 +3434,13 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
   const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   const pct = duration ? (currentTime / duration) * 100 : 0;
 
+  const TABS = [
+    { id: 'transcript', label: 'Transcript' },
+    { id: 'comprehension', label: 'Comprehension' },
+    { id: 'vocabulary', label: 'Vocabulary' },
+    { id: 'grammar', label: 'Grammar' },
+  ];
+
   return (
     <div className="flex flex-col pr-4" style={{ height: 520 }}>
       {loading ? (
@@ -3455,11 +3462,12 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
           {title && (
             <div className="mb-2 shrink-0 px-3 py-2 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
               <h2 className="font-display text-[16px] sm:text-[18px] leading-[1.25] tracking-[-0.01em] line-clamp-2 text-navy">{title}</h2>
+              {vocabTheme && <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 mt-0.5 block">{vocabTheme}</span>}
             </div>
           )}
 
           {/* Audio bar */}
-          <div className="shrink-0 mb-3">
+          <div className="shrink-0 mb-2">
             {audioUrl && <audio ref={audioRef} src={audioUrl} preload="metadata"
               onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
               onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
@@ -3482,68 +3490,170 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
             </div>
           </div>
 
-          {/* Transcript page — fills remaining space */}
-          <div className="flex-1 min-h-0 overflow-hidden">
-            <AudioSyncedTranscript
-              text={currentPageText}
-              currentTime={currentTime}
-              duration={duration}
-              pageOffset={pageOffset}
-              totalWords={totalTranscriptWords}
-              onWordClick={seekToWord}
-              className="font-display text-[17px] leading-[1.65] text-navy/80"
-            />
+          {/* Tabs */}
+          <div className="flex gap-0 border-b border-line/40 shrink-0 -mr-4 mb-2">
+            {TABS.map((tab) => (
+              <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)}
+                className={`text-[9px] tracking-widest uppercase px-3 py-1.5 border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.id ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
+                {tab.label}
+              </button>
+            ))}
           </div>
 
-          {/* Pagination — bottom-right, just above the red line */}
-          {totalPages > 1 && (
-            <div className="flex justify-end items-center gap-1 shrink-0 mb-1">
-              <button type="button" onClick={() => setPageIndex((p) => Math.max(0, p - 1))} disabled={pageIndex === 0}
-                className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.5 2L3.5 6l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </button>
-              <span className="text-[10px] font-mono text-navy/40 tabular-nums">{pageIndex + 1}/{totalPages}</span>
-              <button type="button" onClick={() => setPageIndex((p) => Math.min(totalPages - 1, p + 1))} disabled={pageIndex === totalPages - 1}
-                className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </button>
-            </div>
-          )}
+          {/* Tab content — fills remaining space */}
+          <div className="flex-1 min-h-0 overflow-y-auto">
 
-          {/* Footer: byline + points + translate */}
-          <div className="shrink-0 border-t pt-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
-            {byline && <p className="text-[10px] font-mono tracking-[0.12em] mb-2 truncate" style={{ color: '#8b1e2d' }}>{byline}</p>}
+            {/* Transcript tab */}
+            {activeTab === 'transcript' && (
+              <div className="overflow-hidden h-full flex flex-col">
+                <div className="flex-1 overflow-hidden">
+                  <AudioSyncedTranscript
+                    text={currentPageText}
+                    currentTime={currentTime}
+                    duration={duration}
+                    pageOffset={pageOffset}
+                    totalWords={totalTranscriptWords}
+                    onWordClick={seekToWord}
+                    className="font-display text-[17px] leading-[1.65] text-navy/80"
+                  />
+                </div>
+                {totalPages > 1 && (
+                  <div className="flex justify-end items-center gap-1 shrink-0 pt-1">
+                    <button type="button" onClick={() => setPageIndex((p) => Math.max(0, p - 1))} disabled={pageIndex === 0}
+                      className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.5 2L3.5 6l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </button>
+                    <span className="text-[10px] font-mono text-navy/40 tabular-nums">{pageIndex + 1}/{totalPages}</span>
+                    <button type="button" onClick={() => setPageIndex((p) => Math.min(totalPages - 1, p + 1))} disabled={pageIndex === totalPages - 1}
+                      className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Comprehension tab */}
+            {activeTab === 'comprehension' && (
+              <div className="space-y-4 pr-1">
+                {questions.length === 0 ? (
+                  <p className="text-[13px] text-navy/40 italic">No questions available.</p>
+                ) : questions.map((q, qi) => {
+                  const answered = answeredQ[qi];
+                  return (
+                    <div key={qi} className="space-y-2">
+                      <p className="font-display text-[15px] leading-snug text-navy">{q.question}</p>
+                      <div className="flex flex-col gap-1">
+                        {(q.options || []).map((opt, oi) => {
+                          const isSelected = answered === opt;
+                          const isCorrect = opt === q.answer;
+                          let cls = 'border border-line/60 text-navy/70 hover:border-wine/40 hover:text-navy transition-colors';
+                          if (answered) {
+                            if (isCorrect) cls = 'border border-green-500 bg-green-50 text-green-700';
+                            else if (isSelected) cls = 'border border-wine/60 bg-wine/5 text-wine';
+                            else cls = 'border border-line/30 text-navy/30';
+                          }
+                          return (
+                            <button key={oi} type="button" disabled={!!answered}
+                              onClick={() => setAnsweredQ((prev) => ({ ...prev, [qi]: opt }))}
+                              className={`text-left px-3 py-1.5 text-[13px] font-display ${cls}`}>
+                              <span className="text-[10px] font-mono text-navy/30 mr-2">{String.fromCharCode(65 + oi)}.</span>
+                              {opt}
+                              {answered && isCorrect && <span className="ml-1.5 text-green-600 text-[11px]">✓</span>}
+                              {isSelected && !isCorrect && <span className="ml-1.5 text-wine text-[11px]">✗</span>}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Vocabulary tab */}
+            {activeTab === 'vocabulary' && (
+              <div className="space-y-4 pr-1">
+                {vocab.length === 0 ? (
+                  <p className="text-[13px] text-navy/40 italic">No vocabulary available.</p>
+                ) : vocab.map((v, vi) => {
+                  const userAns = vocabAnswers[vi] ?? '';
+                  const submitted = userAns !== '' && userAns !== '__editing__';
+                  const correct = submitted && userAns.trim().toLowerCase() === v.word.toLowerCase();
+                  return (
+                    <div key={vi} className={`p-3 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
+                      <div className="flex items-start gap-2 mb-2">
+                        <span className="text-[10px] font-mono text-navy/30 mt-0.5 shrink-0">{vi + 1}.</span>
+                        <p className="font-display text-[14px] leading-snug text-navy flex-1">
+                          {v.sentence?.replace('___', '______') || '___'}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {submitted ? (
+                          <span className={`font-display text-[14px] font-medium ${correct ? 'text-green-600' : 'text-wine'}`}>
+                            {userAns} {correct ? '✓' : `✗ → ${v.word}`}
+                          </span>
+                        ) : (
+                          <input
+                            type="text"
+                            value={userAns === '__editing__' ? '' : userAns}
+                            onChange={(e) => setVocabAnswers((p) => ({ ...p, [vi]: e.target.value }))}
+                            onKeyDown={(e) => { if (e.key === 'Enter' && userAns.trim()) setVocabAnswers((p) => ({ ...p, [vi]: userAns.trim() })); }}
+                            placeholder="Votre réponse…"
+                            className="flex-1 border border-navy/20 px-2 py-1 text-[13px] font-display text-navy focus:outline-none focus:border-wine/50 bg-transparent"
+                          />
+                        )}
+                        {!submitted && userAns.trim() && (
+                          <button type="button" onClick={() => setVocabAnswers((p) => ({ ...p, [vi]: userAns.trim() }))}
+                            className="px-2 py-1 text-[11px] font-mono bg-wine text-ivory hover:bg-wine/80 transition-colors">
+                            OK
+                          </button>
+                        )}
+                        {submitted && (
+                          <button type="button" onClick={() => setVocabAnswers((p) => ({ ...p, [vi]: '' }))}
+                            className="text-[10px] font-mono text-navy/30 hover:text-navy/60 transition-colors">retry</button>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-navy/45 mt-1 italic">{v.definition}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Grammar tab */}
+            {activeTab === 'grammar' && (
+              <div className="space-y-4 pr-1">
+                {grammar.length === 0 ? (
+                  <p className="text-[13px] text-navy/40 italic">No grammar points available.</p>
+                ) : grammar.map((g, gi) => (
+                  <div key={gi} className="border border-line/50 p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 bg-wine/8 px-1.5 py-0.5">Grammaire</span>
+                      <span className="font-display text-[15px] text-navy font-medium">{g.point}</span>
+                    </div>
+                    {g.example && (
+                      <blockquote className="border-l-2 border-navy/20 pl-2 mb-2">
+                        <p className="font-display text-[13px] italic text-navy/70 leading-snug">« {g.example} »</p>
+                      </blockquote>
+                    )}
+                    <p className="text-[13px] text-navy/75 leading-snug mb-1">{g.explanation}</p>
+                    {g.tip && (
+                      <p className="text-[12px] font-mono text-wine/70">
+                        <span className="text-[9px] uppercase tracking-widest mr-1">Tip:</span>{g.tip}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Footer: byline + points */}
+          <div className="shrink-0 border-t pt-2" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
+            {byline && <p className="text-[10px] font-mono tracking-[0.12em] mb-1.5 truncate" style={{ color: '#8b1e2d' }}>{byline}</p>}
             <div className="flex items-center gap-2">
               <DailyParisianPointsIndicator points={dailyParisianPoints} />
-
-              <div className="flex-1" />
-
-              {/* Translate */}
-              {vocab.length > 0 && !translateActive && (
-                <motion.div className="flex items-center gap-1.5 pointer-events-none mr-1"
-                  initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 1, 0] }}
-                  transition={{ duration: 1.8, repeat: Infinity, repeatDelay: 1.2, ease: 'easeInOut' }}>
-                  <span className="font-display text-[11px] italic text-wine/70 whitespace-nowrap">Use your points</span>
-                  <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden>
-                    <path d="M1 5h11M8 1l4 4-4 4" stroke="#8B1E2D" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
-                  </svg>
-                </motion.div>
-              )}
-              {vocab.length > 0 && (
-                <div className="flex flex-col items-end gap-1 shrink-0">
-                  <button type="button" onClick={handleTranslateClick}
-                    className={`${NAV_CTA_CLASS} ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}>
-                    Translate hard words
-                  </button>
-                  {translateActive && hasMoreHints && revealedBatchCount > 0 && (
-                    <button type="button" onClick={() => { if (!canAffordHint) return; onSpendExperience?.(HINT_COST); setRevealedBatchCount((c) => Math.min(c + 1, hintBatches.length)); setTranslateActive(true); }}
-                      disabled={!canAffordHint}
-                      className={`text-[9px] font-mono tracking-widest uppercase transition-colors ${canAffordHint ? 'text-wine/70 hover:text-wine' : 'text-navy/25 cursor-not-allowed'}`}>
-                      {canAffordHint ? `+ more words — ${HINT_COST} pts` : `need ${HINT_COST} Parisianism`}
-                    </button>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         </>
