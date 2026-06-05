@@ -1193,8 +1193,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       if (isBoilerplateContent(transcript)) {
         console.log('[listening] Transcript is boilerplate — generating synthetic episode with Claude');
         try {
-          const gd = await claudeCall('listening/boilerplate-fallback', anthropicKey, {
-            model: 'claude-haiku-4-5-20251001',
+          const gd = await openrouterCall('listening/boilerplate-fallback', openrouterKey, {
             max_tokens: 700,
             system: `You are a French radio journalist for "Journal en Français Facile" on RFI. Write a short French news or culture bulletin (220-280 words, ${learnerLevel || 'B1'}-level vocabulary) on a real-world topic. Use natural spoken French. Return ONLY raw JSON: {"transcript":"Full text of the bulletin"}`,
             messages: [{ role: 'user', content: `Inspiration: ${episode.title || topic || 'actualité française'}` }],
