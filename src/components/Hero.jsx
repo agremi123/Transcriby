@@ -3549,12 +3549,8 @@ function ListeningPanel({ loading, title, audioUrl, transcript, source, date, vo
   const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   const pct = duration ? (currentTime / duration) * 100 : 0;
 
-  const TABS = [
-    { id: 'transcript', label: 'Transcript' },
-    { id: 'comprehension', label: 'Comprehension' },
-    { id: 'vocabulary', label: 'Vocabulary' },
-    { id: 'grammar', label: 'Grammar' },
-  ];
+  // Only transcript tab lives in the listening panel now;
+  // comprehension / vocabulary / grammar are in the AudioDemoCard speech box.
 
   return (
     <div className="flex flex-col pr-4" style={{ height: 520 }}>
