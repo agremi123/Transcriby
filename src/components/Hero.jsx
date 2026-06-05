@@ -4233,6 +4233,7 @@ export default function Hero() {
           setListeningGrammar(data.grammar || []);
           setListeningVocabTheme(data.vocabTheme || '');
           setListeningContentLevel(data.contentLevel || '');
+          setListeningWordTimings(data.wordTimings || null);
           setListeningLoading(false);
         })
         .catch(() => setListeningLoading(false));
