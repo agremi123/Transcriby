@@ -369,13 +369,13 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
       {hoveredDot && (() => {
         const { svgX, svgY, target: t, color, themeInfo } = hoveredDot;
         const themeName = themeInfo?.theme ?? label(t);
-        const TW = 310, TH = 150;
+        const TW = 310, TH = 120;
         const tx = Math.min(Math.max(svgX - TW / 2, 4), VW - TW - 4);
         const ty = svgY - TH + 10;
         const zoneL = tx - 6, zoneT = ty, zoneW = TW + 12, zoneH = svgY + 22 - ty;
         return (
           <>
-          <foreignObject x={tx} y={ty} width={TW} height={400} style={{ overflow: 'visible' }} pointerEvents="all">
+          <foreignObject x={tx} y={ty} width={TW} height={TH} style={{ overflow: 'visible' }} pointerEvents="all">
             <div xmlns="http://www.w3.org/1999/xhtml"
                  onMouseEnter={() => clearTimeout(closeTimer.current)}
                  onMouseLeave={() => { clearTimeout(closeTimer.current); setHoveredDot(null); }}
@@ -386,8 +386,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                    padding: '15px 17px',
                    boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
                    pointerEvents: 'all',
-                   display: 'inline-block',
-                   width: TW,
+                   height: '100%',
                    boxSizing: 'border-box',
                  }}>
               <p style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'rgba(246,241,232,0.9)', fontSize: 9, fontFamily: "'SF Mono','Fira Mono',monospace", letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8, background: 'rgba(255,255,255,0.1)', padding: '3px 8px', borderRadius: 2 }}>
