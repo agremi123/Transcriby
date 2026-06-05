@@ -762,7 +762,9 @@ export function AudioDemoCard({
   const [pointsDelta, setPointsDelta] = React.useState(null); // { value: +3 | -1, id: number } for animation
   const { dailyParisianPoints } = useLearnerProfile();
   const [assessingLevel, setAssessingLevel] = React.useState(false);
-  const [activeTab, setActiveTab] = React.useState('transcript');
+  const [activeTabInternal, setActiveTabInternal] = React.useState('transcript');
+  const activeTab = activeTabProp ?? activeTabInternal;
+  const setActiveTab = React.useCallback((t) => { setActiveTabInternal(t); onTabChange?.(t); }, [onTabChange]);
   const [practiceExercises, setPracticeExercises] = React.useState(null);
   const [loadingPractice, setLoadingPractice] = React.useState(false);
   const [skillProgress, setSkillProgress] = React.useState({});
