@@ -2060,7 +2060,7 @@ export function AudioDemoCard({
         </button>
       </div>
 
-        <div ref={writeBoxRef} className={`relative bg-ivory/60 border border-line/70 overflow-hidden${fullscreen ? ' flex-1 flex flex-col min-h-0' : ' h-[360px]'}`}>
+        <div ref={writeBoxRef} className="relative bg-ivory/60 border border-line/70 overflow-hidden flex-1 flex flex-col min-h-0">
           {inputMode === 'discover' ? (
             <motion.div
               key="word-panel"
