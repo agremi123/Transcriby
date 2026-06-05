@@ -1369,8 +1369,7 @@ function translateWordMiddleware(apiKey, openrouterKey) {
     res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
     if (!apiKey || !word.trim()) { res.end(JSON.stringify({ translation: '' })); return; }
     try {
-      const d = await claudeCall('translate/word', apiKey, {
-        model: 'claude-haiku-4-5-20251001',
+      const d = await openrouterCall('translate/word', openrouterKey, {
         max_tokens: 40,
         system: 'French-English dictionary. Return ONLY the English translation of the given French word (1–4 words max). No punctuation, no explanation.',
         messages: [{ role: 'user', content: context ? `"${word}" (context: ${context.slice(0, 120)})` : `"${word}"` }],
