@@ -32,7 +32,8 @@ const DEEPSEEK_OUT_PER_M = 1.10;
 
 function modelCost(model, inputTokens, outputTokens) {
   let inRate, outRate;
-  if (model.includes('deepseek')) { inRate = DEEPSEEK_IN_PER_M; outRate = DEEPSEEK_OUT_PER_M; }
+  if (model.includes('perplexity') || model.includes('sonar')) { inRate = PERPLEXITY_IN_PER_M; outRate = PERPLEXITY_OUT_PER_M; }
+  else if (model.includes('deepseek')) { inRate = DEEPSEEK_IN_PER_M; outRate = DEEPSEEK_OUT_PER_M; }
   else if (model.includes('haiku')) { inRate = HAIKU_IN_PER_M; outRate = HAIKU_OUT_PER_M; }
   else { inRate = SONNET_IN_PER_M; outRate = SONNET_OUT_PER_M; }
   return (inputTokens / 1e6) * inRate + (outputTokens / 1e6) * outRate;
