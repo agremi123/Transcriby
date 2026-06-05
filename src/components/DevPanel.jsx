@@ -183,7 +183,7 @@ export default function DevPanel() {
                 )}
                 {[...log].reverse().map((e, i) => (
                   <div key={i} className="flex items-center gap-2 px-3 py-1.5 hover:bg-navy/[0.02]">
-                    <span className="text-navy/30 shrink-0">{fmtTime(e.ts)}</span>
+                    <span className="text-navy/30 shrink-0">{fmtDate(e.ts)} {fmtTime(e.ts)}</span>
                     <span className="inline-block px-1.5 py-0.5 rounded text-[9px] text-ivory shrink-0" style={{ background: labelColor(e.label) }}>
                       {e.label}
                     </span>
