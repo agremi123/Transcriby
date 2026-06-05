@@ -1218,17 +1218,12 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
 
 
       // Step 4: generate 4 MCQ comprehension questions + infer vocab theme — one call
-      const qRes = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 800,
-          system: `You are a French language teacher creating a comprehension exercise for a ${level} learner. Based on the transcript, create exactly 4 multiple-choice comprehension questions in French. Also infer the main vocabulary theme of the text (e.g. "Environnement", "Santé", "Société", "Culture", "Politique", "Technologie", "Voyage"). Adjust question difficulty to ${level} level. Respond with raw JSON only, no markdown: {"vocabTheme":"Environnement","questions":[{"question":"Question?","options":["A","B","C","D"],"answer":"A"},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."}]}`,
-          messages: [{ role: 'user', content: `Transcript:\n${transcript.slice(0, 2000)}` }],
-        }),
+      const qData = await claudeCall('listening/questions', anthropicKey, {
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 800,
+        system: `You are a French language teacher creating a comprehension exercise for a ${level} learner. Based on the transcript, create exactly 4 multiple-choice comprehension questions in French. Also infer the main vocabulary theme of the text (e.g. "Environnement", "Santé", "Société", "Culture", "Politique", "Technologie", "Voyage"). Adjust question difficulty to ${level} level. Respond with raw JSON only, no markdown: {"vocabTheme":"Environnement","questions":[{"question":"Question?","options":["A","B","C","D"],"answer":"A"},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."}]}`,
+        messages: [{ role: 'user', content: `Transcript:\n${transcript.slice(0, 2000)}` }],
       });
-      const qData = await qRes.json();
       let qRaw = qData.content?.[0]?.text?.trim() || '{}';
       qRaw = qRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       let questions = [], vocabTheme = '';
