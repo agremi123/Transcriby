@@ -185,9 +185,9 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
   const animTimersRef = React.useRef([]);
 
   React.useEffect(() => {
-    const SEG = 280, HL = 280, TT = 900, PTS = 480, SETTLE = 140;
+    const SEG = 500, HL = 600, TT = 1600, PTS = 750, SETTLE = 250, DECO_HL = 350;
     const DECO_C = 14, MIN_G = 0.07;
-    let delay = 400;
+    let delay = 600;
     const timers = [];
     const at = (ms, fn) => timers.push(setTimeout(fn, ms));
 
@@ -203,41 +203,42 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
       ].sort((a, b) => a.tv - b.tv);
       const themes = ARC_THEMES[cat] ?? [];
 
-      // first segment (arcSX → circle 0)
-      at(delay, () => setRevealedSegs(p => new Set([...p, `${arcIdx},0`])));
-      delay += SEG;
-
       circles.forEach((circle, ci) => {
         const [dx, dy] = qbPoint(circle.tv, arcSX, MY, arcCX, ctrlY, arcEX, MY);
         const key = `${arcIdx},${ci}`;
 
-        // 1. highlight circle
+        // 1. highlight circle (glow ring, dot pops)
         at(delay, () => setHlCircle({ arcIdx, ci }));
         delay += HL;
 
         if (!circle.isDeco) {
-          // 2. tooltip
+          // 2. tooltip auto-shows
           const theme = themes[ci % themes.length] ?? cat;
           const themeInfo = { cat, idx: ci + 1, total: circles.length, theme };
           at(delay, () => setAutoTooltip({ svgX: dx, svgY: dy, target: circle.target, color, themeInfo }));
-          at(delay + 350, () => setStudyHl(true)); // study button pulses mid-tooltip
+          // 3. study button pulses mid-tooltip
+          at(delay + 500, () => setStudyHl(true));
           delay += TT;
-          // 3. +10 appears, tooltip closes
+          // 4. +10 floats, tooltip closes
           at(delay, () => { setAutoTooltip(null); setStudyHl(false); setPointsAnim({ svgX: dx, svgY: dy, color }); });
           delay += PTS;
-          // 4. settle
+          // 5. settle circle
           at(delay, () => { setHlCircle(null); setPointsAnim(null); setSettledCircles(p => new Set([...p, key])); });
           delay += SETTLE;
         } else {
-          // deco: settle after highlight only
+          // deco: settle right after highlight
           at(delay, () => { setHlCircle(null); setSettledCircles(p => new Set([...p, key])); });
-          delay += SETTLE;
+          delay += DECO_HL;
         }
 
-        // next segment
-        at(delay, () => setRevealedSegs(p => new Set([...p, `${arcIdx},${ci + 1}`])));
+        // 6. line rallies TO this circle (segment index ci = prev → circle ci)
+        at(delay, () => setRevealedSegs(p => new Set([...p, `${arcIdx},${ci}`])));
         delay += SEG;
       });
+
+      // final segment: last circle → arcEX
+      at(delay, () => setRevealedSegs(p => new Set([...p, `${arcIdx},${circles.length}`])));
+      delay += SEG;
     });
 
     animTimersRef.current = timers;
