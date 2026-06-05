@@ -2623,7 +2623,7 @@ export function AudioDemoCard({
                                 />
                               )}
                               {!submitted && userAns.trim() && (
-                                <button type="button" onClick={() => setPracticeVocabAnswers((p) => ({ ...p, [vi]: userAns.trim() }))}
+                                <button type="button" onClick={() => { const ans = userAns.trim(); const isC = ans.toLowerCase() === v.word.toLowerCase(); setPracticeVocabAnswers((p) => ({ ...p, [vi]: ans })); firePointsDelta(isC ? 2 : -1); }}
                                   className="px-2 py-1 text-[11px] font-mono bg-wine text-ivory hover:bg-wine/80 transition-colors">
                                   OK
                                 </button>
