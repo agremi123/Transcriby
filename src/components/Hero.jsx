@@ -1996,7 +1996,7 @@ export function AudioDemoCard({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={fullscreen
         ? 'fixed inset-6 z-50 bg-paper flex overflow-hidden'
-        : 'relative w-full max-w-[640px] bg-paper hairline flex flex-col'}
+        : 'relative w-full max-w-[640px] bg-paper hairline flex flex-col overflow-hidden'}
       style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)', height: 523 }}
     >
       {/* Close button in fullscreen */}
