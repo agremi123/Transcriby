@@ -4162,7 +4162,7 @@ export default function Hero() {
               <WritingChallengePanel
                 loading={writingLoading}
                 prompt={writingPrompt}
-                guidelines={writingGuidelines}
+                tips={writingTips}
                 wordTarget={writingWordTarget}
               />
             ) : (
