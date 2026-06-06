@@ -2049,12 +2049,6 @@ export function AudioDemoCard({
             </span>
           )}
         </div>
-        {isRecording && (
-          <span className="font-display text-[14px] text-wine flex items-center gap-1 whitespace-nowrap">
-            <span className="w-1.5 h-1.5 rounded-full bg-wine animate-pulse" />
-            {source === 'tab' ? 'Tab audio' : 'Recording'}
-          </span>
-        )}
         <div className="relative flex flex-col items-center">
           {(showStartHint || highlightMic || showRepeatHint) && !isRecording && (
             <motion.div
@@ -2071,25 +2065,26 @@ export function AudioDemoCard({
               </svg>
             </motion.div>
           )}
+          {/* Sound-wave rings when recording */}
+          {isRecording && (
+            <>
+              <span className="absolute w-[52px] h-[52px] rounded-full bg-wine/25 animate-ping pointer-events-none" style={{ animationDuration: '1.1s' }} />
+              <span className="absolute w-[68px] h-[68px] rounded-full bg-wine/12 animate-ping pointer-events-none" style={{ animationDuration: '1.1s', animationDelay: '0.4s' }} />
+            </>
+          )}
           <button type="button" onClick={toggleRecording} disabled={status === 'connecting' || manualCorrecting || stoppingRecording || (isRecording && source === 'tab')}
-            className={`relative w-11 h-11 rounded-full bg-wine hover:bg-wine2 disabled:opacity-60 inline-flex items-center justify-center transition-all ${
-              (highlightMic || showRepeatHint) && !isRecording ? 'scale-110 shadow-md ring-2 ring-wine/35' : ''
+            className={`relative w-11 h-11 rounded-full bg-wine disabled:opacity-60 inline-flex items-center justify-center transition-all ${
+              isRecording ? 'scale-105 shadow-[0_0_0_3px_rgba(139,30,45,0.3)]' :
+              (highlightMic || showRepeatHint) ? 'hover:bg-wine2 scale-110 shadow-md ring-2 ring-wine/35' : 'hover:bg-wine2'
             }`}
             aria-label="Toggle microphone recording">
-            {isRecording ? (
-              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden>
-                <rect x="2" y="2" width="10" height="10" rx="1.5" fill="#F6F1E8" />
-              </svg>
-            ) : (
-              <svg width="13" height="16" viewBox="0 0 16 20" fill="none" aria-hidden>
-                <rect x="5" y="1" width="6" height="11" rx="3" fill="#F6F1E8" />
-                <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="#F6F1E8" strokeWidth="1.4" strokeLinecap="round" />
-              </svg>
-            )}
+            <svg width="13" height="16" viewBox="0 0 16 20" fill="none" aria-hidden>
+              <rect x="5" y="1" width="6" height="11" rx="3" fill="#F6F1E8" />
+              <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="#F6F1E8" strokeWidth="1.4" strokeLinecap="round" />
+            </svg>
             {(showStartHint || highlightMic || showRepeatHint) && !isRecording && (
               <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
             )}
-            {isRecording && <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-50" />}
           </button>
         </div>
       </div>
