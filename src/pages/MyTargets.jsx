@@ -185,6 +185,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
   const [pointsAnim,     setPointsAnim]     = React.useState(null); // { svgX, svgY, color }
   const [studyHl,        setStudyHl]        = React.useState(false);
   const [studyCheck,     setStudyCheck]     = React.useState(false);
+  const [animDone,       setAnimDone]       = React.useState(false);
   const animTimersRef = React.useRef([]);
 
   React.useEffect(() => {
