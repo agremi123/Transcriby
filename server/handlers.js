@@ -724,6 +724,27 @@ export async function handleSpeakingPrompt(body) {
   }
 }
 
+export async function handleSpeakingReaction(body) {
+  const { ANTHROPIC_API_KEY } = getEnv();
+  const { utterance = '', narratorId = 'lea', topic = '', openingLine = '' } = body || {};
+  const empty = { text: '', translation: '' };
+  if (!ANTHROPIC_API_KEY || !utterance.trim()) return { statusCode: 200, body: empty };
+
+  const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+  const gender = narratorId === 'lea' ? 'une Parisienne' : 'un Parisien';
+  try {
+    const result = await claudeJSON({
+      apiKey: ANTHROPIC_API_KEY,
+      system: `Tu es ${name}, ${gender} natif(ve) qui aide un étudiant à pratiquer le français oral.\nLe sujet de conversation: "${topic || 'conversation libre'}"\nTu as lancé la conversation en disant: "${openingLine}"\nL'étudiant vient de parler. Réponds naturellement en 1-2 phrases courtes en français.\nSois curieux(se), encourageant(e), et rebondis sur ce qu'il a dit.\nJSON: {"text":"...", "translation":"..."}`,
+      user: `L'étudiant a dit: "${utterance}"`,
+      maxTokens: 200,
+    });
+    return { statusCode: 200, body: { text: result.text || '', translation: result.translation || '' } };
+  } catch {
+    return { statusCode: 200, body: empty };
+  }
+}
+
 // ── Trigger background replenishment via self-call ───────────────────────────
 async function triggerReplenish() {
   const base = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:5173';
