@@ -2189,9 +2189,25 @@ export function AudioDemoCard({
 
           <span className="text-[14px] text-navy/40 font-display italic">or</span>
 
-          <button type="button" onClick={() => {
+          <button type="button" onClick={async () => {
             setHighlightDiscover(false);
-            setInputMode(inputMode === 'discover' ? 'speak' : 'discover');
+            // Switch to Chat tab + speak mode
+            setActiveTab('transcript');
+            setInputMode('speak');
+            setLastSpeakWriteMode('speak');
+            if (parisianWordChallengeLoading) return;
+            setParisianWordChallengeLoading(true);
+            setParisianWordChallenge(null);
+            try {
+              const res = await fetch('/api/word', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+              const data = await res.json();
+              if (!data?.word) return;
+              const narratorId = Math.random() < 0.5 ? 'lea' : 'jules';
+              const intro = `Voici ton mot parisien du jour : « ${data.word} ». Ça veut dire "${data.meaning}". Par exemple : "${data.example}". Essaie maintenant de l'utiliser dans une phrase !`;
+              setParisianWordChallenge({ word: data.word, meaning: data.meaning, example: data.example, exampleTranslation: data.exampleTranslation, narratorId });
+              playNarratorLine({ id: narratorId, text: intro });
+            } catch {}
+            setParisianWordChallengeLoading(false);
           }}
             className={`relative inline-flex items-center px-4 py-1.5 font-display text-[15px] tracking-wide rounded-full transition-all duration-300 ${
               inputMode === 'discover'
