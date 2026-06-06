@@ -4390,11 +4390,14 @@ export default function Hero() {
           setReadingSource(data.source || null);
           setReadingAuthor(data.author || null);
           setReadingDate(data.date || null);
-          setReadingVocab(data.vocab || []);
-          setReadingQuestions(data.questions || []);
-          setReadingGrammar(data.grammar || []);
-          setReadingConjugation(data.conjugation || []);
           setReadingLoading(false);
+          // Reveal exercises one tab at a time
+          setExerciseSubTab('comprehension');
+          setReadingQuestions(data.questions || []);
+          setTimeout(() => { setExerciseSubTab('vocabulary'); setReadingVocab(data.vocab || []); }, 700);
+          setTimeout(() => { setExerciseSubTab('grammar'); setReadingGrammar(data.grammar || []); }, 1400);
+          setTimeout(() => { setExerciseSubTab('conjugation'); setReadingConjugation(data.conjugation || []); }, 2100);
+          setTimeout(() => setExerciseSubTab('comprehension'), 2800);
         })
         .catch(() => setReadingLoading(false));
     }
