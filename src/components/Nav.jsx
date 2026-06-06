@@ -21,7 +21,10 @@ function NavReachNextLevel() {
   );
 
   return (
-    <div className="relative hidden sm:inline-flex items-center mt-6">
+    <div className="relative hidden sm:inline-flex items-center gap-3 mt-6">
+      <div style={{ marginTop: 78, marginLeft: 62 }}>
+        <ParisianProfileSquare compact className="pointer-events-none" />
+      </div>
       <ParisianExperienceHint />
       <div className="relative">
         <Link
