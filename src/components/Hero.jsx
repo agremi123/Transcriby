@@ -4975,7 +4975,6 @@ export default function Hero() {
               </div>
             </Reveal>
             </div>
-            )}
           </div>
 
           <div className="flex items-center justify-end h-full pr-16">
