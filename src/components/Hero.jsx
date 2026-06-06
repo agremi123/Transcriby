@@ -2524,7 +2524,7 @@ export function AudioDemoCard({
                   {showWriteHint && (
                     <span key={`border-${writeHintKey}`} className="absolute top-3 left-3 right-3 bottom-3 rounded-lg border-2 border-wine/30 animate-pulse pointer-events-none" aria-hidden />
                   )}
-                  {!writeText.trim() && (
+                  {!writeText.trim() && activeTab !== 'writing' && (
                     <div className="flex items-center gap-3 px-4 pt-4 pb-2 shrink-0">
                       <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0">
                         <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
