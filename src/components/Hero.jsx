@@ -4633,6 +4633,30 @@ export default function Hero() {
     if (tab) setHeroActiveTab(tab);
   }, [practiceType]);
 
+  // Trigger exercise generation when user clicks an exercise tab directly
+  const tabTriggeredRef = React.useRef(new Set());
+  const DEFAULT_EXERCISE_TOPICS = {
+    reading: 'La vie parisienne',
+    listening: 'La culture française',
+    speaking: 'Mon quotidien à Paris',
+    writing: 'Paris et ses secrets',
+  };
+  React.useEffect(() => {
+    const type = heroActiveTab;
+    if (!['reading', 'listening', 'speaking', 'writing'].includes(type)) return;
+    if (tabTriggeredRef.current.has(type)) return;
+    tabTriggeredRef.current.add(type);
+    // If already triggered via URL params from MyTargets, skip
+    if (practiceType === type && practiceTopic) return;
+    const topic = DEFAULT_EXERCISE_TOPICS[type];
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      next.set('practice', topic);
+      next.set('ptype', type);
+      return next;
+    }, { replace: true });
+  }, [heroActiveTab]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <section className="relative pt-12 pb-12 min-h-screen overflow-visible flex items-center">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
