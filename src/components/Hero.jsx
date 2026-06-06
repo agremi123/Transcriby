@@ -2177,64 +2177,17 @@ export function AudioDemoCard({
                 {exerciseSubTab === 'comprehension' && (
                   exerciseQuestions.length === 0
                     ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">Chargement des questions…</p>
-                    : exerciseQuestions.map((q, qi) => {
-                        const [answered, setAnswered] = React.useState(null);
-                        return (
-                          <div key={qi} className="space-y-1.5">
-                            <p className="font-display text-[13px] text-navy leading-snug">{q.question}</p>
-                            <div className="space-y-1">
-                              {(q.options || []).map((opt, oi) => {
-                                const chosen = answered === opt;
-                                const correct = opt === q.answer;
-                                const cls = answered
-                                  ? chosen && correct ? 'bg-green-50 border-green-400 text-green-700'
-                                    : chosen ? 'bg-red-50 border-red-400 text-wine'
-                                    : correct ? 'bg-green-50/40 border-green-200 text-green-600'
-                                    : 'border-line/30 text-navy/35'
-                                  : 'border-line/50 text-navy/70 hover:border-wine/40 hover:bg-wine/5 cursor-pointer';
-                                return (
-                                  <button key={oi} type="button" disabled={!!answered}
-                                    onClick={() => { if (!answered) { setAnswered(opt); firePointsDelta(opt === q.answer ? 3 : -1); } }}
-                                    className={`w-full text-left px-2.5 py-1.5 border text-[12px] font-display transition-colors ${cls}`}>
-                                    {opt}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        );
-                      })
+                    : exerciseQuestions.map((q, qi) => (
+                        <ComprehensionItem key={qi} q={q} qi={qi} firePointsDelta={firePointsDelta} />
+                      ))
                 )}
                 {/* VOCABULAIRE */}
                 {exerciseSubTab === 'vocabulary' && (
                   exerciseVocab.length === 0
                     ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">Chargement du vocabulaire…</p>
-                    : exerciseVocab.map((v, vi) => {
-                        const [ans, setAns] = React.useState('');
-                        const [submitted, setSubmitted] = React.useState(false);
-                        const correct = submitted && ans.trim().toLowerCase() === (v.word || '').toLowerCase();
-                        return (
-                          <div key={vi} className={`p-2.5 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
-                            <p className="font-display text-[13px] leading-snug text-navy mb-1.5">{v.sentence?.replace('___', '______') || '___'}</p>
-                            <div className="flex items-center gap-2">
-                              {submitted ? (
-                                <span className={`font-display text-[13px] font-medium ${correct ? 'text-green-600' : 'text-wine'}`}>{ans} {correct ? '✓' : `✗ → ${v.word}`}</span>
-                              ) : (
-                                <input type="text" value={ans} onChange={e => setAns(e.target.value)}
-                                  onKeyDown={e => { if (e.key === 'Enter' && ans.trim()) { setSubmitted(true); firePointsDelta(ans.trim().toLowerCase() === v.word.toLowerCase() ? 2 : -1); } }}
-                                  placeholder="Votre réponse…"
-                                  className="flex-1 border border-navy/20 px-2 py-0.5 text-[12px] font-display text-navy focus:outline-none focus:border-wine/50 bg-transparent" />
-                              )}
-                              {!submitted && ans.trim() && (
-                                <button type="button" onClick={() => { setSubmitted(true); firePointsDelta(ans.trim().toLowerCase() === v.word.toLowerCase() ? 2 : -1); }}
-                                  className="px-2 py-0.5 text-[10px] font-mono bg-wine text-ivory hover:bg-wine/80 transition-colors">OK</button>
-                              )}
-                              {submitted && <button type="button" onClick={() => { setAns(''); setSubmitted(false); }} className="text-[10px] font-mono text-navy/30 hover:text-navy/60">retry</button>}
-                            </div>
-                            <p className="text-[11px] text-navy/45 mt-1 italic">{v.definition}</p>
-                          </div>
-                        );
-                      })
+                    : exerciseVocab.map((v, vi) => (
+                        <VocabItem key={vi} v={v} vi={vi} firePointsDelta={firePointsDelta} />
+                      ))
                 )}
                 {/* GRAMMAIRE */}
                 {exerciseSubTab === 'grammar' && (
