@@ -86,17 +86,17 @@ export function ParisianExperienceHint({ className = '', showBadge = false }) {
         duration: 0.5,
         x: { repeat: Infinity, duration: 1.8, ease: 'easeInOut', delay: 1.1 },
       }}
-      className={`absolute right-full mr-2.5 inset-y-0 flex items-center gap-2 pointer-events-none ${className}`.trim()}
+      className={`absolute left-full ml-2.5 inset-y-0 flex items-center gap-2 pointer-events-none ${className}`.trim()}
       aria-hidden
     >
-      <span className="font-display text-[15px] sm:text-[16px] italic text-wine leading-[1.25] text-right w-[172px]">
+      <svg width="7" height="9" viewBox="0 0 10 8" fill="none" className="shrink-0 rotate-[90deg]">
+        <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6" />
+      </svg>
+      <span className="font-display text-[15px] sm:text-[16px] italic text-wine leading-[1.25] text-left w-[172px]">
         Click here to gain
         <br />
         Parisian experience
       </span>
-      <svg width="7" height="9" viewBox="0 0 10 8" fill="none" className="shrink-0 rotate-[-90deg]">
-        <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6" />
-      </svg>
     </motion.div>
   );
 }
