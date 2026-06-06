@@ -69,7 +69,6 @@ export default function App() {
     <BrowserRouter>
       <LearnerProfileProvider>
         <GoogleAuthHandler />
-        <ParisianCornerBadge />
         <WelcomeOnboarding />
         {import.meta.env.DEV && <DevPanel />}
         <Routes>
