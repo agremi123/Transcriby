@@ -2557,6 +2557,151 @@ export function AudioDemoCard({
           </div>
           </div>
           ) : null}
+      </div>}
+
+      {/* ── Exercise tabs — shown when any exercise is active ── */}
+      {exerciseActive && (
+        <div className="flex flex-col flex-1 min-h-0">
+          {/* Subtab bar */}
+          <div className="flex gap-0 border-b border-line/40 shrink-0 px-4">
+            {[
+              { id: 'comprehension', label: 'Compréhension' },
+              { id: 'vocabulaire',   label: 'Vocabulaire' },
+              { id: 'grammaire',     label: 'Grammaire' },
+              { id: 'conjugaison',   label: 'Conjugaison' },
+            ].map((st) => (
+              <button key={st.id} type="button" onClick={() => setPracticeSubTab(st.id)}
+                className={`text-[10px] tracking-widest uppercase px-3 py-2.5 border-b-2 transition-colors whitespace-nowrap ${practiceSubTab === st.id ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
+                {st.label}
+              </button>
+            ))}
+          </div>
+          {/* Subtab content */}
+          <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-4">
+
+            {/* COMPRÉHENSION */}
+            {practiceSubTab === 'comprehension' && (
+              listeningQuestions.length === 0
+                ? <p className="text-[13px] text-navy/40 italic">Pas encore de questions — lancez un épisode d'écoute.</p>
+                : listeningQuestions.map((q, qi) => {
+                    const answered = practiceAnsweredQ[qi];
+                    const correct = answered === q.answer;
+                    return (
+                      <div key={qi} className="space-y-2">
+                        <p className="font-display text-[14px] text-navy leading-snug">{q.question}</p>
+                        <div className="space-y-1">
+                          {q.options?.map((opt, oi) => {
+                            const chosen = answered === opt;
+                            const isCorrect = opt === q.answer;
+                            const cls = answered
+                              ? chosen && correct ? 'bg-green-50 border-green-400 text-green-700'
+                                : chosen ? 'bg-red-50 border-red-400 text-red-700'
+                                : isCorrect && answered ? 'bg-green-50 border-green-200 text-green-600'
+                                : 'border-line/40 text-navy/40'
+                              : 'border-line/50 text-navy/70 hover:border-wine/40 hover:bg-wine/5 cursor-pointer';
+                            return (
+                              <button key={oi} type="button"
+                                disabled={!!answered}
+                                onClick={() => { if (!answered) { setPracticeAnsweredQ(p => ({ ...p, [qi]: opt })); firePointsDelta(opt === q.answer ? 3 : -1); } }}
+                                className={`w-full text-left px-3 py-2 border text-[13px] font-display transition-colors ${cls}`}>
+                                {opt}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })
+            )}
+
+            {/* VOCABULAIRE */}
+            {practiceSubTab === 'vocabulaire' && (
+              listeningVocab.length === 0
+                ? <p className="text-[13px] text-navy/40 italic">Pas encore de vocabulaire — lancez un épisode d'écoute.</p>
+                : listeningVocab.map((v, vi) => {
+                    const userAns = practiceVocabAnswers[vi] ?? '';
+                    const submitted = userAns !== '' && userAns !== '__editing__';
+                    const correct = submitted && userAns.trim().toLowerCase() === v.word.toLowerCase();
+                    return (
+                      <div key={vi} className={`p-3 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
+                        <div className="flex items-start gap-2 mb-2">
+                          <span className="text-[10px] font-mono text-navy/30 mt-0.5 shrink-0">{vi + 1}.</span>
+                          <p className="font-display text-[14px] leading-snug text-navy flex-1">
+                            {v.sentence?.replace('___', '______') || '___'}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {submitted ? (
+                            <span className={`font-display text-[14px] font-medium ${correct ? 'text-green-600' : 'text-wine'}`}>
+                              {userAns} {correct ? '✓' : `✗ → ${v.word}`}
+                            </span>
+                          ) : (
+                            <input type="text"
+                              value={userAns === '__editing__' ? '' : userAns}
+                              onChange={(e) => setPracticeVocabAnswers((p) => ({ ...p, [vi]: e.target.value }))}
+                              onKeyDown={(e) => { if (e.key === 'Enter' && userAns.trim()) { const ans = userAns.trim(); const isC = ans.toLowerCase() === v.word.toLowerCase(); setPracticeVocabAnswers((p) => ({ ...p, [vi]: ans })); firePointsDelta(isC ? 2 : -1); } }}
+                              placeholder="Votre réponse…"
+                              className="flex-1 border border-navy/20 px-2 py-1 text-[13px] font-display text-navy focus:outline-none focus:border-wine/50 bg-transparent"
+                            />
+                          )}
+                          {!submitted && userAns.trim() && (
+                            <button type="button" onClick={() => { const ans = userAns.trim(); const isC = ans.toLowerCase() === v.word.toLowerCase(); setPracticeVocabAnswers((p) => ({ ...p, [vi]: ans })); firePointsDelta(isC ? 2 : -1); }}
+                              className="px-2 py-1 text-[11px] font-mono bg-wine text-ivory hover:bg-wine/80 transition-colors">OK</button>
+                          )}
+                          {submitted && (
+                            <button type="button" onClick={() => setPracticeVocabAnswers((p) => ({ ...p, [vi]: '' }))}
+                              className="text-[10px] font-mono text-navy/30 hover:text-navy/60 transition-colors">retry</button>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-navy/45 mt-1 italic">{v.definition}</p>
+                      </div>
+                    );
+                  })
+            )}
+
+            {/* GRAMMAIRE */}
+            {practiceSubTab === 'grammaire' && (
+              listeningGrammar.length === 0
+                ? <p className="text-[13px] text-navy/40 italic">Pas encore de points de grammaire — lancez un épisode d'écoute.</p>
+                : listeningGrammar.map((g, gi) => (
+                    <div key={gi} className="border border-line/50 p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 bg-wine/8 px-1.5 py-0.5">Grammaire</span>
+                        <span className="font-display text-[15px] text-navy font-medium">{g.point}</span>
+                      </div>
+                      {g.example && (
+                        <blockquote className="border-l-2 border-navy/20 pl-2 mb-2">
+                          <p className="font-display text-[13px] italic text-navy/70 leading-snug">« {g.example} »</p>
+                        </blockquote>
+                      )}
+                      <p className="text-[13px] text-navy/75 leading-snug mb-1">{g.explanation}</p>
+                      {g.tip && (
+                        <p className="text-[12px] font-mono text-wine/70">
+                          <span className="text-[9px] uppercase tracking-widest mr-1">Tip:</span>{g.tip}
+                        </p>
+                      )}
+                    </div>
+                  ))
+            )}
+
+            {/* CONJUGAISON */}
+            {practiceSubTab === 'conjugaison' && (
+              practiceExercises && practiceExercises.length > 0
+                ? practiceExercises.map((ex, i) => (
+                    <PracticeExercise
+                      key={ex._id ?? i}
+                      exercise={ex}
+                      onCorrect={() => handleExerciseCorrect(i, ex.objective || overallWeakness || 'general')}
+                    />
+                  ))
+                : loadingPractice
+                  ? <CorrectionLoading />
+                  : <p className="text-[13px] text-navy/40 italic">Pas encore d'exercices — lancez une activité.</p>
+            )}
+
+          </div>
+        </div>
+      )}
 
           {/* ── Progress tabs ─────────────────────────────────────────── */}
           {(activeTab === 'speaking' || activeTab === 'listening' || activeTab === 'reading' || activeTab === 'writing') && (
