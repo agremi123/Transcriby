@@ -627,7 +627,6 @@ export async function handleReading(body) {
       // Mark as served (fire-and-forget)
       supabase.from('reading_articles').update({ served: true }).eq('id', row.id).then(() => {});
       // Trigger replenishment in background
-      triggerReplenish().catch(() => {});
       return {
         statusCode: 200,
         body: {
@@ -646,7 +645,6 @@ export async function handleReading(body) {
     // Save to DB for future use (fire-and-forget)
     if (supabase) {
       supabase.from('reading_articles').insert([{ ...bundle, served: true }]).then(() => {});
-      triggerReplenish().catch(() => {});
     }
     return { statusCode: 200, body: bundle };
   } catch {
@@ -675,7 +673,6 @@ export async function handleWritingPrompt(body) {
     if (rows && rows.length > 0) {
       const row = rows[0];
       supabase.from('writing_prompts').update({ served: true }).eq('id', row.id).then(() => {});
-      triggerReplenish().catch(() => {});
       return { statusCode: 200, body: { prompt: row.prompt, tips: row.tips || empty.tips, wordTarget: row.word_target || 80 } };
     }
   }
@@ -685,7 +682,6 @@ export async function handleWritingPrompt(body) {
     const bundle = await generateWritingBundle(ANTHROPIC_API_KEY, level, topic);
     if (supabase) {
       supabase.from('writing_prompts').insert([{ ...bundle, served: true }]).then(() => {});
-      triggerReplenish().catch(() => {});
     }
     return { statusCode: 200, body: { prompt: bundle.prompt, tips: bundle.tips, wordTarget: bundle.word_target } };
   } catch {
@@ -712,7 +708,6 @@ export async function handleSpeakingPrompt(body) {
     if (rows && rows.length > 0) {
       const row = rows[0];
       supabase.from('speaking_prompts').update({ served: true }).eq('id', row.id).then(() => {});
-      triggerReplenish().catch(() => {});
       return { statusCode: 200, body: { narratorId: row.narrator_id, openingLine: row.opening_line, openingLineTranslation: row.opening_line_translation, topicLabel: row.topic_label } };
     }
   }
@@ -722,7 +717,6 @@ export async function handleSpeakingPrompt(body) {
     const bundle = await generateSpeakingBundle(ANTHROPIC_API_KEY, topic);
     if (supabase) {
       supabase.from('speaking_prompts').insert([{ ...bundle, served: true }]).then(() => {});
-      triggerReplenish().catch(() => {});
     }
     return { statusCode: 200, body: { narratorId: bundle.narrator_id, openingLine: bundle.opening_line, openingLineTranslation: bundle.opening_line_translation, topicLabel: bundle.topic_label } };
   } catch {
@@ -899,8 +893,7 @@ export async function handleListening(body) {
         .limit(20);
       if (cached && cached.length > 0) {
         const row = cached[Math.floor(Math.random() * cached.length)];
-        triggerReplenish().catch(() => {});
-        return {
+          return {
           statusCode: 200,
           body: {
             title: row.title,
@@ -946,7 +939,6 @@ export async function handleListening(body) {
         questions: bundle.questions, vocab: bundle.vocab,
         grammar: bundle.grammar, conjugation: bundle.conjugation,
       }]).then(({ error }) => { if (error) console.warn('[listening] insert failed:', error.message); });
-      triggerReplenish().catch(() => {});
     }
 
     return {
