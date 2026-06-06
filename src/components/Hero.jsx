@@ -3391,21 +3391,38 @@ export function AudioDemoCard({
         </div>{/* end left column */}
         {/* Right controls */}
         {inputMode === 'write' ? (
-          <div className="shrink-0 flex items-center gap-3 pr-4 py-1">
+          <div className="shrink-0 flex items-center gap-2 pr-3 py-1">
             {writeText.trim().length > 0 && (
               <button type="button" onClick={resetTranscript}
-                className="text-[12px] tracking-widest uppercase text-navy/30 hover:text-navy/60 transition-colors">
-                Reset
+                className="relative w-11 h-11 rounded-full border border-navy/20 text-navy/50 hover:border-wine/40 hover:text-wine/70 inline-flex items-center justify-center transition-colors shrink-0"
+                aria-label="Reset">
+                <span className="text-[9px] tracking-widest uppercase leading-none">Reset</span>
               </button>
             )}
+            {/* Parisian Points */}
+            <div className="relative flex items-center justify-center w-11 h-11 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none mr-1">
+              <div className="flex flex-col items-center gap-0">
+                <span key={dailyParisianPoints} className="font-display text-[15px] font-bold text-wine leading-none tabular-nums"
+                  style={{ animation: 'parisianPointsPop 0.35s cubic-bezier(0.34,1.56,0.64,1)' }}>
+                  {dailyParisianPoints}
+                </span>
+                <span className="text-[7px] font-mono tracking-wider uppercase text-wine/60 leading-tight">pts</span>
+              </div>
+              {pointsDelta && (
+                <span key={pointsDelta.id} className="absolute -top-4 left-1/2 -translate-x-1/2 font-display font-bold text-[13px] whitespace-nowrap pointer-events-none"
+                  style={{ color: pointsDelta.value > 0 ? '#16a34a' : '#8B1E2D', animation: 'parisianDeltaFloat 1.4s ease-out forwards' }}>
+                  {pointsDelta.value > 0 ? `+${pointsDelta.value}` : pointsDelta.value}
+                </span>
+              )}
+            </div>
+            {/* Submit button — same size as mic */}
             <button type="button" onClick={finishWriteInput}
               disabled={!writeText.trim() || writeText.trim() === writeSubmittedText}
-              className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-full bg-wine hover:bg-wine2 disabled:bg-wine/10 disabled:text-wine/35 disabled:cursor-default transition-colors font-display text-[16px] italic text-ivory"
-              aria-label="Fini">
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
-                <path d="M2 6.5l2.5 2.5L10 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              className="relative w-11 h-11 rounded-full bg-wine hover:bg-wine2 disabled:opacity-40 disabled:cursor-default inline-flex items-center justify-center transition-all hover:scale-105"
+              aria-label="Submit writing">
+              <svg width="13" height="13" viewBox="0 0 12 12" fill="none" aria-hidden>
+                <path d="M2 6.5l2.5 2.5L10 3" stroke="#F6F1E8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Fini
             </button>
           </div>
         ) : inputMode === 'speak' ? (
