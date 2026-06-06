@@ -495,9 +495,9 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
         const dot = hoveredDot || autoTooltip;
         const { svgX, svgY, target: t, color, themeInfo } = dot;
         const themeName = themeInfo?.theme ?? label(t);
-        const TW = 310, TH = 120;
+        const TW = 200, TH = 80;
         const tx = Math.min(Math.max(svgX - TW / 2, 4), VW - TW - 4);
-        const ty = svgY - TH - 18; // leave space for stem + circle below
+        const ty = svgY - TH - 18;
         return (
           <>
           <foreignObject x={tx} y={ty} width={TW} height={TH} style={{ overflow: 'visible' }} pointerEvents={isAuto ? 'none' : 'all'}>
@@ -508,17 +508,17 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                    background: '#1A2340',
                    border: '1px solid rgba(255,255,255,0.12)',
                    borderRadius: 4,
-                   padding: '15px 17px',
+                   padding: '12px 16px',
                    boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
                    height: '100%',
                    boxSizing: 'border-box',
+                   display: 'flex',
+                   flexDirection: 'column',
+                   justifyContent: 'space-between',
                  }}>
-              <p style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'rgba(246,241,232,0.9)', fontSize: 9, fontFamily: "'SF Mono','Fira Mono',monospace", letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8, background: 'rgba(255,255,255,0.1)', padding: '3px 8px', borderRadius: 2 }}>
-                {t.category || t.pathCategory}
-                <span style={{ color: 'rgba(246,241,232,0.35)', letterSpacing: '0.05em' }}>—</span>
+              <p style={{ color: 'rgba(246,241,232,0.95)', fontSize: 13, fontFamily: "Georgia,'Times New Roman',serif", fontStyle: 'italic', marginBottom: 10 }}>
                 {themeName}
               </p>
-              <p style={{ color: 'rgba(246,241,232,0.4)', fontSize: 10, marginBottom: 10, lineHeight: 1.4 }}>{desc(t)}</p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {isAuto && studyCheck && (
                   <span style={{ color: 'rgba(251,191,36,0.9)', fontSize: 10, fontFamily: "'SF Mono','Fira Mono',monospace", fontWeight: 700, marginRight: 'auto', animation: 'checkPop 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards' }}>+10 pts Parisian</span>
