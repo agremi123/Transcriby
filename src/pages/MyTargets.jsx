@@ -465,13 +465,10 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
           width={BADGE_SIZE} height={BADGE_SIZE}
           style={{ mixBlendMode: 'multiply' }}
         />
-        <circle cx={arcEX} cy={BADGE_Y + 10} r={10} fill="white" stroke="#1A2340" strokeWidth="1.5" opacity="0.3" />
-
         {futureLevels.map((lvl, i) => {
           const x = arcEX + (i + 1) * FUT_PX;
           return (
             <g key={lvl}>
-              <circle cx={x} cy={MY} r={5} fill="none" stroke="#1A2340" strokeWidth="2" opacity="0.22" />
               <text x={x} y={MY - 16} textAnchor="middle"
                     fontSize={LEVEL_LABEL_FS_FUTURE} fill="#1A2340" opacity="0.38"
                     fontFamily={LEVEL_LABEL_FONT} fontWeight="600">{lvl}</text>
@@ -481,7 +478,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                 width={BADGE_SIZE} height={BADGE_SIZE}
                 opacity="1"
               />
-              <circle cx={x} cy={BADGE_Y + 10} r={10} fill="white" stroke="#1A2340" strokeWidth="1.5" opacity="0.22" />
             </g>
           );
         })}
