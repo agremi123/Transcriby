@@ -2714,7 +2714,49 @@ export function AudioDemoCard({
             </div>
           )}
           <div ref={scrollRef} className="scroll-premium flex-1 min-h-0 max-h-full px-3.5 pt-3 pb-6 overflow-y-auto overscroll-contain">
-            {hasContent ? (
+            {activeTab === 'transcript' ? (
+              /* ── Chat conversation thread ── */
+              <div className="flex flex-col gap-4">
+                {chatHistory.map(msg => (
+                  msg.role === 'lea' ? (
+                    <div key={msg.id} className="flex items-start gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => !msg.loading && msg.text && playNarratorLine({ id: msg.narratorId || 'lea', text: msg.text })}
+                        className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105 mt-0.5"
+                        aria-label="Replay"
+                      >
+                        <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
+                        {wordPlaying && parisianSpeakingText === msg.text && (
+                          <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
+                        )}
+                      </button>
+                      {msg.loading ? (
+                        <div className="flex items-center gap-1.5 h-10 pl-1">
+                          {[0, 150, 300].map(delay => (
+                            <span key={delay} className="w-2 h-2 bg-navy/25 rounded-full animate-bounce" style={{ animationDelay: `${delay}ms` }} />
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="font-display text-[16px] italic text-navy/80 leading-snug pt-2 max-w-[85%]">{msg.text}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <div key={msg.id} className="flex justify-end">
+                      <p className="font-display text-[16px] text-navy leading-snug bg-navy/[0.06] rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[82%]">{msg.text}</p>
+                    </div>
+                  )
+                ))}
+                {/* Live utterance while recording */}
+                {isRecording && (settledText || partialTranscript) && (
+                  <div className="flex justify-end">
+                    <p className="font-display text-[16px] text-navy/50 italic leading-snug bg-navy/[0.04] rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[82%]">
+                      {settledText}{partialTranscript && (settledText ? ' ' : '')}{partialTranscript}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : hasContent ? (
               <>
                 <div className="font-display text-[17px] leading-snug text-navy flex flex-col gap-2 min-w-0" spellCheck={false}>
                   {mainUtterances.map((utt) => {
