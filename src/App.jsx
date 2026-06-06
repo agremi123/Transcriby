@@ -12,7 +12,6 @@ import Dashboard from './pages/Dashboard';
 import MyExpressions from './pages/MyExpressions';
 import MyTargets from './pages/MyTargets';
 import ReadingExercise from './pages/ReadingExercise';
-import ParisianCornerBadge from './components/ParisianCornerBadge';
 import WelcomeOnboarding from './components/WelcomeOnboarding';
 import DevPanel from './components/DevPanel';
 import { LearnerProfileProvider, useLearnerProfile } from './context/LearnerProfileContext';
