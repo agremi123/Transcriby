@@ -2169,7 +2169,7 @@ export function AudioDemoCard({
               { id: 'write', label: 'Write' },
             ].filter((m) => (activeTab !== 'writing' || m.id === 'write') && (activeTab !== 'speaking' || m.id === 'speak')).map((m) => (
               <button key={m.id} type="button" onClick={() => (m.id === 'write' ? activateWriteMode() : activateSpeakMode())}
-                className={`relative z-10 font-display text-[15px] tracking-wide px-4 py-1.5 rounded-full capitalize transition-colors duration-200 ${lastSpeakWriteMode === m.id ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'}`}>
+                className={`relative z-10 font-display text-[15px] tracking-wide px-4 py-1.5 rounded-full capitalize transition-colors duration-200 ${(lastSpeakWriteMode === m.id || activeTab === 'writing' || activeTab === 'speaking') ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'}`}>
                 {m.label}
               </button>
             ))}
