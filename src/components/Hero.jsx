@@ -2259,7 +2259,7 @@ export function AudioDemoCard({
                 </>
               ) : null}
             </motion.div>
-          ) : activeTab !== 'practice' && inputMode === 'write' ? (
+          ) : !isExerciseTab && activeTab !== 'practice' && inputMode === 'write' ? (
             <div className={`${transcriptHeight} flex flex-col relative`}>
               {showChatDiff ? (
                 <div
