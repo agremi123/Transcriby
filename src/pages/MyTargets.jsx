@@ -338,7 +338,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
         const total   = targets.length;
         const done    = targets.filter((t) => (Number(progressMap[t.id]) || 0) >= 100).length;
         const [lx, ly] = qbPoint(0.5, arcSX, MY, arcCX, ctrlY, arcEX, MY);
-        const labelY   = side === 'above' ? ly - 11 : ly + 18;
+        const labelY   = side === 'above' ? ly - 22 : ly + 28;
 
         const dots = targets.map((t, i) => {
           const tv       = (i + 1) / (total + 1);
