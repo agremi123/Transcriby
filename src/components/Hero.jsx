@@ -3149,9 +3149,9 @@ export function AudioDemoCard({
           <div className="ml-7 flex overflow-x-auto border-t border-line/50">
             {[
               { id: 'transcript', label: 'Chat' },
-              { id: 'speaking',   label: 'Speaking' },
               { id: 'listening',  label: 'Listening' },
               { id: 'reading',    label: 'Reading' },
+              { id: 'speaking',   label: 'Speaking' },
               { id: 'writing',    label: 'Writing' },
             ].map((t) => (
               <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
