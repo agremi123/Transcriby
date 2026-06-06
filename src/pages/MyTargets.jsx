@@ -164,8 +164,8 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
 
   const VW      = 1000;
   const PAD     = 22;
-  const PAST_PX = 110;
-  const FUT_PX  = 110;
+  const PAST_PX = 155;
+  const FUT_PX  = 155;
   const pastW   = pastLevels.length * PAST_PX;
   const futW    = futureLevels.length * FUT_PX;
   const arcSX   = PAD + pastW;
