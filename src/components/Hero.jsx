@@ -4753,7 +4753,7 @@ export default function Hero() {
                 dailyParisianPoints={dailyParisianPoints}
                 onSpendExperience={spendExperience}
               />
-            ) : listeningActive ? (
+            ) : heroActiveTab === 'listening' && listeningActive ? (
               <ListeningPanel
                 loading={listeningLoading}
                 title={listeningTitle}
