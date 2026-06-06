@@ -1094,6 +1094,7 @@ export function AudioDemoCard({
     setChatHistory(updated);
     setChatLeaLoading(true);
 
+    // Fetch Léa's reply + correction in parallel
     fetch('/api/speaking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1126,6 +1127,24 @@ export function AudioDemoCard({
         setChatHistory(filtered);
       })
       .finally(() => setChatLeaLoading(false));
+
+    // Correction check (fire-and-forget, attaches to user bubble)
+    fetch('/api/correct', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: userText }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.corrected && data.corrected.trim() !== userText.trim()) {
+          const withCorr = chatHistoryRef.current.map(m =>
+            m.id === userId ? { ...m, correction: data.corrected.trim() } : m
+          );
+          chatHistoryRef.current = withCorr;
+          setChatHistory(withCorr);
+        }
+      })
+      .catch(() => {});
   }, [isRecording]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto write mode when Writing tab activates; restore speak when back on Chat
