@@ -516,7 +516,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                    flexDirection: 'column',
                    justifyContent: 'space-between',
                  }}>
-              <p style={{ color: 'rgba(246,241,232,0.95)', fontSize: 11, fontFamily: "Georgia,'Times New Roman',serif", fontStyle: 'italic', marginBottom: 6 }}>
+              <p style={{ color: 'rgba(246,241,232,0.95)', fontSize: 14, fontFamily: "Georgia,'Times New Roman',serif", fontStyle: 'italic', marginBottom: 6 }}>
                 {themeName}
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
