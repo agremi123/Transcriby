@@ -2044,7 +2044,7 @@ export function AudioDemoCard({
             ))}
           </div>
 
-          <span className="text-[12px] text-navy/40 font-display italic">or</span>
+          <span className="text-[14px] text-navy/40 font-display italic">or</span>
 
           <button type="button" onClick={() => {
             setHighlightDiscover(false);
