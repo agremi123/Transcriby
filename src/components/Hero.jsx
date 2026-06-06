@@ -1002,7 +1002,7 @@ export function AudioDemoCard({
     const latestText = utterances[utterances.length - 1]?.text?.trim();
     if (!latestText) return;
     setNarratorReaction(null);
-    fetch('/api/speaking-reaction', {
+    fetch('/api/speaking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
