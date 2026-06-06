@@ -3038,6 +3038,7 @@ export function AudioDemoCard({
           {/* Word discovery panel — inside the speech box */}
 
         </div>
+      </div>}
       </div>
 
 
