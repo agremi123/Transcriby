@@ -2742,15 +2742,15 @@ export function AudioDemoCard({
                       )}
                     </div>
                   ) : (
-                    <div key={msg.id} className="flex justify-end">
-                      <p className="font-display text-[16px] text-navy leading-snug bg-navy/[0.06] rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[82%]">{msg.text}</p>
+                    <div key={msg.id}>
+                      <p className="font-display text-[16px] text-navy leading-snug">{msg.text}</p>
                     </div>
                   )
                 ))}
                 {/* Live utterance while recording */}
                 {isRecording && (settledText || partialTranscript) && (
-                  <div className="flex justify-end">
-                    <p className="font-display text-[16px] text-navy/50 italic leading-snug bg-navy/[0.04] rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[82%]">
+                  <div>
+                    <p className="font-display text-[16px] text-navy/50 italic leading-snug">
                       {settledText}{partialTranscript && (settledText ? ' ' : '')}{partialTranscript}
                     </p>
                   </div>
