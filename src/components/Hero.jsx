@@ -3447,7 +3447,7 @@ function PassageWithVocabHighlights({ passage, vocabEntries, highlightActive, cl
   );
 }
 
-const TITLE_SIZES = [22, 19, 16, 14, 12];
+const TITLE_SIZES = [26, 22, 19, 18];
 
 function AutoFitTitle({ title }) {
   const ref = React.useRef(null);
