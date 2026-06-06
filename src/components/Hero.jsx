@@ -1799,10 +1799,11 @@ export function AudioDemoCard({
       }, 10000);
     };
 
+    const onExerciseTab = ['reading', 'listening', 'speaking', 'writing'].includes(activeTabProp);
     if (initialLearnMode === 'speak') {
       setInputMode('speak');
       setLastSpeakWriteMode('speak');
-      setActiveTab('transcript');
+      if (!onExerciseTab) setActiveTab('transcript');
       setShowStartHint(true);
       setHighlightMic(true);
       clearHighlights();
@@ -1819,7 +1820,7 @@ export function AudioDemoCard({
     } else if (initialLearnMode === 'write') {
       setInputMode('write');
       setLastSpeakWriteMode('write');
-      setActiveTab('transcript');
+      if (!onExerciseTab) setActiveTab('transcript');
     } else if (initialLearnMode === 'discover') {
       setInputMode('discover');
       setHighlightDiscover(true);
