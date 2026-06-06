@@ -20,7 +20,7 @@ function NavReachNextLevel() {
   );
 
   return (
-    <div className="relative hidden sm:inline-flex items-center ml-36">
+    <div className="relative hidden sm:inline-flex items-center">
       <ParisianExperienceHint />
       <div className="relative">
         <Link
