@@ -4355,6 +4355,8 @@ export default function Hero() {
   const practiceTopic = searchParams.get('practice');
   const practiceType = searchParams.get('ptype');
 
+  const [exerciseSubTab, setExerciseSubTab] = React.useState('comprehension');
+
   const [readingActive, setReadingActive] = React.useState(false);
   const [readingTopic, setReadingTopic] = React.useState('');
   const [readingPassage, setReadingPassage] = React.useState('');
