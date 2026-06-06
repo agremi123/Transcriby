@@ -162,8 +162,8 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
   const pastLevels   = ALL_LEVELS_SVG.slice(0, curIdx);
   const futureLevels = ALL_LEVELS_SVG.slice(nextIdx + 1);
 
-  const VW      = 1000;
-  const PAD     = 22;
+  const VW      = 1200;
+  const PAD     = 115;
   const PAST_PX = 155;
   const FUT_PX  = 155;
   const pastW   = pastLevels.length * PAST_PX;
