@@ -4277,6 +4277,7 @@ export default function Hero() {
           setListeningVocab(data.vocab || []);
           setListeningQuestions(data.questions || []);
           setListeningGrammar(data.grammar || []);
+          setListeningConjugation(data.conjugation || []);
           setListeningVocabTheme(data.vocabTheme || '');
           setListeningContentLevel(data.contentLevel || '');
           setListeningWordTimings(data.wordTimings || null);
