@@ -675,6 +675,7 @@ export async function handleWritingPrompt(body) {
     if (rows && rows.length > 0) {
       const row = rows[0];
       supabase.from('writing_prompts').update({ served: true }).eq('id', row.id).then(() => {});
+      triggerReplenish();
       return { statusCode: 200, body: { prompt: row.prompt, tips: row.tips || empty.tips, wordTarget: row.word_target || 80 } };
     }
   }
