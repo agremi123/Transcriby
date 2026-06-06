@@ -205,7 +205,8 @@ body {
   scrollbar-color: rgba(26, 35, 64, 0.45) rgba(26, 35, 64, 0.06);
 }
 .scroll-thin::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
+  display: block;
 }
 .scroll-thin::-webkit-scrollbar-track {
   background: rgba(26, 35, 64, 0.06);
