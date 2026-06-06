@@ -55,7 +55,7 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   const sw = 2.5;
   const arcGap = compact ? 1 : 3;  // gap between badge edge and arc stroke
   const r = badgeSize / 2 + arcGap;
-  const padV = 13;
+  const padV = compact ? Math.max(13, Math.ceil(imgSize / 2 - r + 6)) : 13;
 
   // Arc center = badge center
   const cx = sw / 2 + r;
