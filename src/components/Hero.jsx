@@ -2180,7 +2180,7 @@ export function AudioDemoCard({
                   : 'bg-wine text-ivory hover:bg-wine2'
             }`}>
             Discover a Parisian word
-          </button>}
+          </button>
         </div>
 
         <div ref={writeBoxRef} className="relative bg-ivory/60 border border-line/70 overflow-hidden flex-1 flex flex-col min-h-0">
