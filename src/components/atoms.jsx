@@ -4,7 +4,11 @@ import { motion } from 'framer-motion';
 import { ParisianProfileSquare } from './ParisianCornerBadge';
 
 function ParisianBadgeInline() {
-  return <ParisianProfileSquare compact className="pointer-events-none" style={{ marginTop: 32 }} />;
+  return (
+    <div style={{ marginTop: 32 }}>
+      <ParisianProfileSquare compact className="pointer-events-none" />
+    </div>
+  );
 }
 
 export function Logo({ className = '' }) {
