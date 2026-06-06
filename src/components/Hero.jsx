@@ -1051,12 +1051,13 @@ export function AudioDemoCard({
     "Bonjour ! Je m'appelle Léa. Pour commencer, dis-moi une chose que tu aimes en France !",
   ];
   React.useEffect(() => {
-    if (activeTab !== 'transcript' || hasContent || chatIntroPlayedRef.current) return;
+    const alreadyHasContent = utterances.length > 0 || !!partialTranscript || !!settledText;
+    if (activeTab !== 'transcript' || alreadyHasContent || chatIntroPlayedRef.current) return;
     chatIntroPlayedRef.current = true;
     const text = CHAT_INTROS[Math.floor(Math.random() * CHAT_INTROS.length)];
     setChatIntroLine({ text, narratorId: 'lea' });
     playNarratorLine({ id: 'lea', text });
-  }, [activeTab, hasContent]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activeTab, utterances, partialTranscript, settledText]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto write mode when Writing tab activates; restore speak when back on Chat
   React.useEffect(() => {
