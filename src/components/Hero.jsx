@@ -776,7 +776,7 @@ function VocabItem({ v, vi, firePointsDelta, narratorId = 'lea' }) {
   );
 }
 
-function ConjugationItem({ c, ci, firePointsDelta }) {
+function ConjugationItem({ c, ci, firePointsDelta, narratorId = 'lea' }) {
   const [ans, setAns] = React.useState('');
   const [submitted, setSubmitted] = React.useState(false);
   const correct = submitted && ans.trim().toLowerCase() === (c.answer || '').toLowerCase();
@@ -788,7 +788,9 @@ function ConjugationItem({ c, ci, firePointsDelta }) {
         <span className="text-[9px] font-mono text-navy/40">{c.tense}</span>
         {c.hint && <span className="text-[9px] font-mono text-navy/30 ml-auto">({c.hint})</span>}
       </div>
-      <p className="font-display text-[13px] text-navy leading-snug mb-1.5">{c.sentence?.replace('___', '______') || '___'}</p>
+      <p className="font-display text-[13px] text-navy leading-snug mb-1.5">
+        <TranslatableText text={c.sentence?.replace('___', '______') || '___'} narratorId={narratorId} />
+      </p>
       <div className="flex items-center gap-2">
         {submitted ? (
           <span className={`font-display text-[13px] font-medium ${correct ? 'text-green-600' : 'text-wine'}`}>{ans} {correct ? '✓' : `✗ → ${c.answer}`}</span>
