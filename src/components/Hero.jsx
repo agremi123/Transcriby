@@ -2216,7 +2216,7 @@ export function AudioDemoCard({
                   exerciseQuestions.length === 0
                     ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">Chargement des questions…</p>
                     : exerciseQuestions.map((q, qi) => (
-                        <ComprehensionItem key={qi} q={q} qi={qi} firePointsDelta={firePointsDelta} />
+                        <ComprehensionItem key={qi} q={q} qi={qi} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} />
                       ))
                 )}
                 {/* VOCABULAIRE */}
