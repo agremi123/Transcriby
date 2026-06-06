@@ -490,9 +490,9 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
       )}
 
       {/* dot tooltip (hover or auto) */}
-      {(hoveredDot || autoTooltip) && (() => {
+      {(hoveredDot || (!hoveredDot && autoTooltip)) && (() => {
         const isAuto = !hoveredDot && !!autoTooltip;
-        const dot = hoveredDot || autoTooltip;
+        const dot = hoveredDot ?? autoTooltip;
         const { svgX, svgY, target: t, color, themeInfo } = dot;
         const themeName = themeInfo?.theme ?? label(t);
         const TW = 200, TH = 80;
