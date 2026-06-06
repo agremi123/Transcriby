@@ -1039,11 +1039,14 @@ export function AudioDemoCard({
     }
   }, [inputMode]);
 
-  // Auto write mode when Writing tab activates; clear word challenge when leaving Chat
+  // Auto write mode when Writing tab activates; restore speak when back on Chat
   React.useEffect(() => {
-    if (activeTab === 'writing' && inputMode !== 'write') {
+    if (activeTab === 'writing') {
       setInputMode('write');
       setLastSpeakWriteMode('write');
+    } else if (activeTab === 'transcript' && inputMode === 'write') {
+      setInputMode('speak');
+      setLastSpeakWriteMode('speak');
     }
     if (activeTab !== 'transcript') {
       setParisianWordChallenge(null);
