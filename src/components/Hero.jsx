@@ -2335,7 +2335,7 @@ export function AudioDemoCard({
                 </div>
               )}
             </div>
-          ) : activeTab !== 'practice' ? (
+          ) : !isExerciseTab && activeTab !== 'practice' ? (
           <div className={`${transcriptHeight} flex flex-col min-h-0 overflow-hidden`}>
           <div ref={scrollRef} className="scroll-premium flex-1 min-h-0 max-h-full px-3.5 pt-3 pb-6 overflow-y-auto overscroll-contain">
             {hasContent ? (
