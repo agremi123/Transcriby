@@ -66,8 +66,10 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   const halfCirc = Math.PI * r;
   const dash = (parisianPercent / 100) * halfCirc;
 
-  // Badge top-left corner (badge is centered at cx, cy; imgSize may differ from badgeSize)
-  const badgeLeft = cx - imgSize / 2;
+  // Shift image rightward so arc engulfs more of the badge
+  const imgShift = compact ? 10 : 0;
+  // Badge top-left corner (badge is centered at cx+imgShift, cy; imgSize may differ from badgeSize)
+  const badgeLeft = cx - imgSize / 2 + imgShift;
   const badgeTop  = cy - imgSize / 2;
 
   return (
