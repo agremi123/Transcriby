@@ -485,11 +485,12 @@ async function generateReadingBundle(apiKey) {
   let rawText = '';
   if (chosen.link) rawText = await fetchArticleBody(chosen.link);
   if (rawText.length < 200) rawText = chosen.content || chosen.description || '';
-  rawText = rawText.slice(0, 6000);
+  // Strip CJK characters that can appear in scraped page sidebars/ads
+  rawText = rawText.replace(/[　-鿿가-힯豈-﫿]/g, '').slice(0, 6000);
 
   const extractData = await claudeJSON({
     apiKey, maxTokens: 1000,
-    system: 'Extract a coherent readable passage from this French article. Copy verbatim. At least 15 sentences, 400-600 words, natural paragraphs. Return ONLY raw JSON: {"passage":"..."}',
+    system: 'Extract a coherent readable passage from this French article. The passage must be entirely in French — omit any non-French text. At least 15 sentences, 400-600 words, natural paragraphs. Return ONLY raw JSON: {"passage":"..."}',
     user: `Title: ${chosen.title}\n\n${rawText}`,
   });
   const passage = extractData.passage?.trim() || '';
