@@ -3039,7 +3039,6 @@ export function AudioDemoCard({
 
         </div>
       </div>}
-      </div>
 
 
       {/* Level assessment panel — also outside speech box */}
