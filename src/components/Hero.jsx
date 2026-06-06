@@ -2248,7 +2248,7 @@ export function AudioDemoCard({
                   exerciseConjugation.length === 0
                     ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">Chargement des conjugaisons…</p>
                     : exerciseConjugation.map((c, ci) => (
-                        <ConjugationItem key={ci} c={c} ci={ci} firePointsDelta={firePointsDelta} />
+                        <ConjugationItem key={ci} c={c} ci={ci} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} />
                       ))
                 )}
               </div>
