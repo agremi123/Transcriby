@@ -1039,6 +1039,14 @@ export function AudioDemoCard({
     }
   }, [inputMode]);
 
+  // Auto write mode when Writing tab activates
+  React.useEffect(() => {
+    if (activeTab === 'writing' && inputMode !== 'write') {
+      setInputMode('write');
+      setLastSpeakWriteMode('write');
+    }
+  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Show start hint when switching to speak mode
   React.useEffect(() => {
     if (inputMode === 'speak' && !isRecording) {
