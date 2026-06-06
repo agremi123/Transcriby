@@ -22,7 +22,10 @@ function NavReachNextLevel() {
 
   return (
     <div className="relative hidden sm:inline-flex items-center mt-6">
-      <ParisianExperienceHint showBadge />
+      <div className="absolute right-full" style={{ marginTop: 78, marginRight: -20 }}>
+        <ParisianProfileSquare compact className="pointer-events-none" />
+      </div>
+      <ParisianExperienceHint />
       <div className="relative">
         <Link
           to="/targets"
