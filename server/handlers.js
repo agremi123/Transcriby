@@ -879,22 +879,17 @@ export async function handleWord() {
 }
 
 export async function handleListening(body) {
-  const { ANTHROPIC_API_KEY, ELEVENLABS_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SERVICE_ROLE_KEY } = getEnv();
-  const learnerLevel = body?.learnerLevel || 'B1';
+  const { ANTHROPIC_API_KEY, ELEVENLABS_API_KEY } = getEnv();
+  const level = body?.learnerLevel || 'B1';
   const topic = body?.topic || '';
-  const level = learnerLevel;
 
-  const empty = { title: '', audioUrl: null, transcript: '', source: '', date: null, vocabTheme: '', questions: [], vocab: [], grammar: [] };
+  const empty = { title: '', audioUrl: null, transcript: '', source: '', date: null, vocabTheme: '', questions: [], vocab: [], grammar: [], conjugation: [] };
   if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
 
-  // Supabase client (service role preferred so it can bypass RLS)
-  let supabase = null;
-  const sbUrl = NEXT_PUBLIC_SUPABASE_URL;
-  const sbKey = SUPABASE_SERVICE_ROLE_KEY || NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (sbUrl && sbKey) supabase = createClient(sbUrl, sbKey);
+  const supabase = getSupabase();
 
   try {
-    // 1. Supabase cache lookup
+    // 1. Serve from DB stock
     if (supabase) {
       const { data: cached } = await supabase
         .from('listening_episodes')
@@ -904,7 +899,7 @@ export async function handleListening(body) {
         .limit(20);
       if (cached && cached.length > 0) {
         const row = cached[Math.floor(Math.random() * cached.length)];
-        console.log(`[listening] Cache hit for level=${level}: "${row.title}"`);
+        triggerReplenish().catch(() => {});
         return {
           statusCode: 200,
           body: {
@@ -917,6 +912,7 @@ export async function handleListening(body) {
             questions: row.questions || [],
             vocab: row.vocab || [],
             grammar: row.grammar || [],
+            conjugation: row.conjugation || [],
           },
         };
       }
