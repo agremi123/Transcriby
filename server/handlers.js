@@ -627,7 +627,8 @@ export async function handleReading(body) {
       const row = rows[0];
       // Mark as served (fire-and-forget)
       supabase.from('reading_articles').update({ served: true }).eq('id', row.id).then(() => {});
-      // Trigger replenishment in background
+      // Replenish stock in background so we never run dry
+      triggerReplenish();
       return {
         statusCode: 200,
         body: {
