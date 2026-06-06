@@ -561,18 +561,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
         );
       })()}
 
-      {/* +10 pts float animation */}
-      {pointsAnim && (
-        <foreignObject
-          x={pointsAnim.svgX - 44} y={pointsAnim.svgY - 52}
-          width={88} height={48}
-          style={{ overflow: 'visible', pointerEvents: 'none' }}>
-          <div xmlns="http://www.w3.org/1999/xhtml"
-               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'floatUpFade 0.48s ease-out forwards' }}>
-            <span style={{ color: '#16a34a', fontSize: 13, fontWeight: 700, fontFamily: "'SF Mono','Fira Mono',monospace", whiteSpace: 'nowrap', textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>✓ +10 pts</span>
-          </div>
-        </foreignObject>
-      )}
     </svg>
   );
 }
