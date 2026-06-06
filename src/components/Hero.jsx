@@ -2011,7 +2011,7 @@ export function AudioDemoCard({
   if (hasContent) hadContentRef.current = true;
 
   const transcriptHeight = 'flex-1 min-h-0';
-  const isExerciseTab = activeTab === 'reading' || activeTab === 'listening' || activeTab === 'speaking' || activeTab === 'writing';
+  const isExerciseTab = activeTab === 'reading' || activeTab === 'listening' || activeTab === 'writing';
 
   const speakActionControls = inputMode === 'speak' ? (
     <div className="flex items-center gap-6 shrink-0">
