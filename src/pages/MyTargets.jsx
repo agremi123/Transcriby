@@ -394,10 +394,10 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
               );
             })}
             <g>
-              <rect x={lx - 28} y={labelY - 10} width={56} height={14}
-                    fill="white" stroke={color} strokeWidth="0.8" opacity="0.7" rx="1" />
+              <rect x={lx - 44} y={labelY - 13} width={88} height={20}
+                    fill="white" stroke={color} strokeWidth="1" opacity="0.8" rx="2" />
               <text x={lx} y={labelY} textAnchor="middle"
-                    fill={color} fontSize="7" opacity="0.75"
+                    fill={color} fontSize="10" opacity="0.85"
                     fontFamily="'SF Mono','Fira Mono',monospace"
                     letterSpacing="0.15em" fontWeight="700">
                 {cat.toUpperCase()}
