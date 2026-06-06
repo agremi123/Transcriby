@@ -942,6 +942,7 @@ export function AudioDemoCard({
   const chatCommittedRef = React.useRef(0); // how many utterances already in history
   const [chatLeaLoading, setChatLeaLoading] = React.useState(false);
   const chatWasRecordingRef = React.useRef(false);
+  const [chatCorrectionPopup, setChatCorrectionPopup] = React.useState(null); // { msgId, corrected }
 
   // Word discovery
   const [wordData, setWordData] = React.useState(null);
