@@ -932,6 +932,10 @@ export function AudioDemoCard({
   const [parisianWordChallenge, setParisianWordChallenge] = React.useState(null);
   const [parisianWordChallengeLoading, setParisianWordChallengeLoading] = React.useState(false);
 
+  // Chat tab intro (Léa introduces herself and asks a question)
+  const chatIntroPlayedRef = React.useRef(false);
+  const [chatIntroLine, setChatIntroLine] = React.useState(null); // { text, narratorId }
+
   // Word discovery
   const [wordData, setWordData] = React.useState(null);
   const [wordLoading, setWordLoading] = React.useState(false);
