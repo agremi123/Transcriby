@@ -2068,7 +2068,142 @@ export function AudioDemoCard({
         </div>
 
         <div ref={writeBoxRef} className="relative bg-ivory/60 border border-line/70 overflow-hidden flex-1 flex flex-col min-h-0">
-          {inputMode === 'discover' ? (
+          {isExerciseTab ? (
+            <div className="flex flex-col flex-1 min-h-0">
+              {/* Exercise subtab bar */}
+              <div className="flex border-b border-line/50 shrink-0">
+                {[
+                  { id: 'comprehension', label: 'Compréhension' },
+                  { id: 'vocabulary',    label: 'Vocabulaire' },
+                  { id: 'grammar',       label: 'Grammaire' },
+                  { id: 'conjugation',   label: 'Conjugaison' },
+                ].map((t) => (
+                  <button key={t.id} type="button" onClick={() => setExerciseSubTab(t.id)}
+                    className={`text-[9px] tracking-widest uppercase px-3 py-2.5 border-b-2 transition-colors whitespace-nowrap flex-1 ${exerciseSubTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+              {/* Exercise content */}
+              <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3">
+                {/* COMPRÉHENSION */}
+                {exerciseSubTab === 'comprehension' && (
+                  exerciseQuestions.length === 0
+                    ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">Chargement des questions…</p>
+                    : exerciseQuestions.map((q, qi) => {
+                        const [answered, setAnswered] = React.useState(null);
+                        return (
+                          <div key={qi} className="space-y-1.5">
+                            <p className="font-display text-[13px] text-navy leading-snug">{q.question}</p>
+                            <div className="space-y-1">
+                              {(q.options || []).map((opt, oi) => {
+                                const chosen = answered === opt;
+                                const correct = opt === q.answer;
+                                const cls = answered
+                                  ? chosen && correct ? 'bg-green-50 border-green-400 text-green-700'
+                                    : chosen ? 'bg-red-50 border-red-400 text-wine'
+                                    : correct ? 'bg-green-50/40 border-green-200 text-green-600'
+                                    : 'border-line/30 text-navy/35'
+                                  : 'border-line/50 text-navy/70 hover:border-wine/40 hover:bg-wine/5 cursor-pointer';
+                                return (
+                                  <button key={oi} type="button" disabled={!!answered}
+                                    onClick={() => { if (!answered) { setAnswered(opt); firePointsDelta(opt === q.answer ? 3 : -1); } }}
+                                    className={`w-full text-left px-2.5 py-1.5 border text-[12px] font-display transition-colors ${cls}`}>
+                                    {opt}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })
+                )}
+                {/* VOCABULAIRE */}
+                {exerciseSubTab === 'vocabulary' && (
+                  exerciseVocab.length === 0
+                    ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">Chargement du vocabulaire…</p>
+                    : exerciseVocab.map((v, vi) => {
+                        const [ans, setAns] = React.useState('');
+                        const [submitted, setSubmitted] = React.useState(false);
+                        const correct = submitted && ans.trim().toLowerCase() === (v.word || '').toLowerCase();
+                        return (
+                          <div key={vi} className={`p-2.5 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
+                            <p className="font-display text-[13px] leading-snug text-navy mb-1.5">{v.sentence?.replace('___', '______') || '___'}</p>
+                            <div className="flex items-center gap-2">
+                              {submitted ? (
+                                <span className={`font-display text-[13px] font-medium ${correct ? 'text-green-600' : 'text-wine'}`}>{ans} {correct ? '✓' : `✗ → ${v.word}`}</span>
+                              ) : (
+                                <input type="text" value={ans} onChange={e => setAns(e.target.value)}
+                                  onKeyDown={e => { if (e.key === 'Enter' && ans.trim()) { setSubmitted(true); firePointsDelta(ans.trim().toLowerCase() === v.word.toLowerCase() ? 2 : -1); } }}
+                                  placeholder="Votre réponse…"
+                                  className="flex-1 border border-navy/20 px-2 py-0.5 text-[12px] font-display text-navy focus:outline-none focus:border-wine/50 bg-transparent" />
+                              )}
+                              {!submitted && ans.trim() && (
+                                <button type="button" onClick={() => { setSubmitted(true); firePointsDelta(ans.trim().toLowerCase() === v.word.toLowerCase() ? 2 : -1); }}
+                                  className="px-2 py-0.5 text-[10px] font-mono bg-wine text-ivory hover:bg-wine/80 transition-colors">OK</button>
+                              )}
+                              {submitted && <button type="button" onClick={() => { setAns(''); setSubmitted(false); }} className="text-[10px] font-mono text-navy/30 hover:text-navy/60">retry</button>}
+                            </div>
+                            <p className="text-[11px] text-navy/45 mt-1 italic">{v.definition}</p>
+                          </div>
+                        );
+                      })
+                )}
+                {/* GRAMMAIRE */}
+                {exerciseSubTab === 'grammar' && (
+                  exerciseGrammar.length === 0
+                    ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">Chargement de la grammaire…</p>
+                    : exerciseGrammar.map((g, gi) => (
+                        <div key={gi} className="border border-line/50 p-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 bg-wine/8 px-1.5 py-0.5">Grammaire</span>
+                            <span className="font-display text-[14px] text-navy font-medium">{g.point}</span>
+                          </div>
+                          {g.example && <blockquote className="border-l-2 border-navy/20 pl-2 mb-2"><p className="font-display text-[12px] italic text-navy/70">« {g.example} »</p></blockquote>}
+                          <p className="text-[12px] text-navy/75 leading-snug mb-1">{g.explanation}</p>
+                          {g.tip && <p className="text-[11px] font-mono text-wine/70"><span className="text-[9px] uppercase tracking-widest mr-1">Tip:</span>{g.tip}</p>}
+                        </div>
+                      ))
+                )}
+                {/* CONJUGAISON */}
+                {exerciseSubTab === 'conjugation' && (
+                  exerciseConjugation.length === 0
+                    ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">Chargement des conjugaisons…</p>
+                    : exerciseConjugation.map((c, ci) => {
+                        const [ans, setAns] = React.useState('');
+                        const [submitted, setSubmitted] = React.useState(false);
+                        const correct = submitted && ans.trim().toLowerCase() === (c.answer || '').toLowerCase();
+                        return (
+                          <div key={ci} className={`p-2.5 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <span className="text-[9px] font-mono text-wine/60 uppercase tracking-wider">{c.verb}</span>
+                              <span className="text-[9px] text-navy/30">·</span>
+                              <span className="text-[9px] font-mono text-navy/40">{c.tense}</span>
+                              {c.hint && <span className="text-[9px] font-mono text-navy/30 ml-auto">({c.hint})</span>}
+                            </div>
+                            <p className="font-display text-[13px] text-navy leading-snug mb-1.5">{c.sentence?.replace('___', '______') || '___'}</p>
+                            <div className="flex items-center gap-2">
+                              {submitted ? (
+                                <span className={`font-display text-[13px] font-medium ${correct ? 'text-green-600' : 'text-wine'}`}>{ans} {correct ? '✓' : `✗ → ${c.answer}`}</span>
+                              ) : (
+                                <input type="text" value={ans} onChange={e => setAns(e.target.value)}
+                                  onKeyDown={e => { if (e.key === 'Enter' && ans.trim()) { setSubmitted(true); firePointsDelta(ans.trim().toLowerCase() === c.answer.toLowerCase() ? 2 : -1); } }}
+                                  placeholder="Conjuguez…"
+                                  className="flex-1 border border-navy/20 px-2 py-0.5 text-[12px] font-display text-navy focus:outline-none focus:border-wine/50 bg-transparent" />
+                              )}
+                              {!submitted && ans.trim() && (
+                                <button type="button" onClick={() => { setSubmitted(true); firePointsDelta(ans.trim().toLowerCase() === c.answer.toLowerCase() ? 2 : -1); }}
+                                  className="px-2 py-0.5 text-[10px] font-mono bg-wine text-ivory hover:bg-wine/80 transition-colors">OK</button>
+                              )}
+                              {submitted && <button type="button" onClick={() => { setAns(''); setSubmitted(false); }} className="text-[10px] font-mono text-navy/30 hover:text-navy/60">retry</button>}
+                            </div>
+                          </div>
+                        );
+                      })
+                )}
+              </div>
+            </div>
+          ) : inputMode === 'discover' ? (
             <motion.div
               key="word-panel"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }}
