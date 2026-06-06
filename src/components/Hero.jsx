@@ -4253,6 +4253,7 @@ export default function Hero() {
   const [listeningVocab, setListeningVocab] = React.useState([]);
   const [listeningQuestions, setListeningQuestions] = React.useState([]);
   const [listeningGrammar, setListeningGrammar] = React.useState([]);
+  const [listeningConjugation, setListeningConjugation] = React.useState([]);
   const [listeningVocabTheme, setListeningVocabTheme] = React.useState('');
   const [listeningContentLevel, setListeningContentLevel] = React.useState('');
   const [listeningWordTimings, setListeningWordTimings] = React.useState(null);
