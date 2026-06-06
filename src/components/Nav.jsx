@@ -2,7 +2,6 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Logo, ButtonPrimary, Container, NAV_CTA_CLASS, ParisianExperienceHint } from './atoms';
-import { ParisianProfileSquare } from './ParisianCornerBadge';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
 import { getNextLevel } from '../lib/levelTargets';
 
