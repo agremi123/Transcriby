@@ -2770,6 +2770,15 @@ export function AudioDemoCard({
                   ) : (
                     <TranscriptSentenceRow key={msg.id} gutter={<TranscriptAudioSlot mode="empty" />}>
                       <span className="font-display text-[16px] text-navy leading-snug">{msg.text}</span>
+                      {msg.correction && (
+                        <button
+                          type="button"
+                          onClick={() => setChatCorrectionPopup({ msgId: msg.id, original: msg.text, corrected: msg.correction })}
+                          className="ml-2 shrink-0 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
+                        >
+                          Correct
+                        </button>
+                      )}
                     </TranscriptSentenceRow>
                   )
                 ))}
