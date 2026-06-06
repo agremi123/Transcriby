@@ -50,8 +50,8 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   const badgeSrc = getLevelBadgeSrc(level);
 
   // Arc wraps around the LEFT side of the badge image
-  const badgeSize = compact ? 54 : 110;
-  const imgSize = compact ? 116 : 130;  // image can be larger than the circle
+  const badgeSize = compact ? 64 : 110;
+  const imgSize = compact ? 134 : 130;  // image can be larger than the circle
   const sw = 2.5;
   const arcGap = compact ? 1 : 3;  // gap between badge edge and arc stroke
   const r = badgeSize / 2 + arcGap;
