@@ -76,7 +76,7 @@ export function ButtonPrimary({ children, className = '', to, showArrow = true, 
 }
 
 /** Animated hint pointing at a CTA (e.g. How to reach B2). */
-export function ParisianExperienceHint({ className = '' }) {
+export function ParisianExperienceHint({ className = '', showBadge = false }) {
   return (
     <motion.div
       initial={{ opacity: 0, x: 4 }}
@@ -89,7 +89,7 @@ export function ParisianExperienceHint({ className = '' }) {
       className={`absolute right-full mr-2.5 inset-y-0 flex items-center gap-2 pointer-events-none ${className}`.trim()}
       aria-hidden
     >
-      <ParisianBadgeInline />
+      {showBadge && <ParisianBadgeInline />}
       <span className="font-display text-[15px] sm:text-[16px] italic text-wine leading-[1.25] text-right w-[172px]">
         Click here to gain
         <br />
