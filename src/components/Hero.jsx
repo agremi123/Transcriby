@@ -2224,7 +2224,7 @@ export function AudioDemoCard({
                   exerciseVocab.length === 0
                     ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">Chargement du vocabulaire…</p>
                     : exerciseVocab.map((v, vi) => (
-                        <VocabItem key={vi} v={v} vi={vi} firePointsDelta={firePointsDelta} />
+                        <VocabItem key={vi} v={v} vi={vi} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} />
                       ))
                 )}
                 {/* GRAMMAIRE */}
