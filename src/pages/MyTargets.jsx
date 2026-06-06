@@ -486,7 +486,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
         const themeName = themeInfo?.theme ?? label(t);
         const TW = 310, TH = 120;
         const tx = Math.min(Math.max(svgX - TW / 2, 4), VW - TW - 4);
-        const ty = svgY - TH + 10;
+        const ty = svgY - TH - 18; // leave space for stem + circle below
         return (
           <>
           <foreignObject x={tx} y={ty} width={TW} height={TH} style={{ overflow: 'visible' }} pointerEvents={isAuto ? 'none' : 'all'}>
