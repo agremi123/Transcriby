@@ -4779,7 +4779,7 @@ export default function Hero() {
                 openingLineTranslation={speakingOpeningTranslation}
                 topicLabel={speakingTopicLabel}
               />
-            ) : writingActive ? (
+            ) : heroActiveTab === 'writing' && writingActive ? (
               <WritingChallengePanel
                 loading={writingLoading}
                 prompt={writingPrompt}
