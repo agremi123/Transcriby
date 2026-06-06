@@ -103,7 +103,7 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
         <path
           d={`M ${cx},${cy + r} A ${r},${r} 0 0,0 ${cx},${cy - r}`}
           fill="none"
-          stroke="rgba(139,30,45,0.15)"
+          stroke="rgba(139,30,45,0.28)"
           strokeWidth={sw}
           strokeLinecap="round"
         />
