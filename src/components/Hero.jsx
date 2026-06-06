@@ -3281,9 +3281,9 @@ export function AudioDemoCard({
             {speakActionControls}
           </div>
         ) : null}
-      </div>{/* end combined row */}
+      </div>}{/* end combined row */}
 
-      {(error || tabCaptureError) && (
+      {!exerciseActive && (error || tabCaptureError) && (
         <p className="px-7 pb-2 text-[12px] text-wine">{error || tabCaptureError}</p>
       )}
 
