@@ -870,6 +870,9 @@ export function AudioDemoCard({
   const [activeTabInternal, setActiveTabInternal] = React.useState('transcript');
   const activeTab = activeTabProp ?? activeTabInternal;
   const setActiveTab = React.useCallback((t) => { setActiveTabInternal(t); onTabChange?.(t); }, [onTabChange]);
+  // Stable narrator for exercise word pronunciation (one per session)
+  const exerciseNarratorRef = React.useRef(Math.random() < 0.5 ? 'lea' : 'jules');
+  const exerciseNarrator = activeTab === 'speaking' ? (speakingNarratorId || exerciseNarratorRef.current) : exerciseNarratorRef.current;
   const [practiceExercises, setPracticeExercises] = React.useState(null);
   const [loadingPractice, setLoadingPractice] = React.useState(false);
   const [skillProgress, setSkillProgress] = React.useState({});
