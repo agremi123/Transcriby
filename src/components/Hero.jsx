@@ -2744,7 +2744,7 @@ export function AudioDemoCard({
                           ))}
                         </div>
                       ) : (
-                        <p className="font-display text-[16px] italic text-navy/80 leading-snug pt-2 max-w-[85%]">{msg.text}</p>
+                        <p className="font-display text-[16px] italic text-navy/80 leading-snug max-w-[85%]">{msg.text}</p>
                       )}
                     </div>
                   ) : (
