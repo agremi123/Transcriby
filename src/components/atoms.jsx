@@ -5,7 +5,7 @@ import { ParisianProfileSquare } from './ParisianCornerBadge';
 
 function ParisianBadgeInline() {
   return (
-    <div style={{ marginTop: 85 }}>
+    <div style={{ marginTop: 78 }}>
       <ParisianProfileSquare compact className="pointer-events-none" />
     </div>
   );
