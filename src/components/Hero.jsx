@@ -2732,7 +2732,7 @@ export function AudioDemoCard({
                 <p className="font-display text-[17px] leading-snug text-navy/30">
                   {source === 'tab' ? 'Listening to tab audio…' : 'Start speaking…'}
                 </p>
-              ) : status !== 'connecting' && activeTab !== 'speaking' ? (
+              ) : status !== 'connecting' && activeTab !== 'speaking' && activeTab !== 'writing' ? (
                 <div className="flex items-center gap-3 py-1">
                   <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0">
                     <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
