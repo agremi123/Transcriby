@@ -265,6 +265,9 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
       delay += SEG;
     });
 
+    // Mark animation complete
+    at(delay, () => setAnimDone(true));
+
     animTimersRef.current = timers;
     return () => timers.forEach(clearTimeout);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
