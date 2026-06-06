@@ -732,6 +732,7 @@ export function AudioDemoCard({
   listeningGrammar = [],
   activeTab: activeTabProp = null,
   onTabChange = null,
+  exerciseActive = false,
 }) {
   const { effectiveLevel, gainExperience, gainDailyParisianPoints } = useLearnerProfile();
   const {
