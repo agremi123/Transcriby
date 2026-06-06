@@ -4207,6 +4207,9 @@ export default function Hero() {
   const [readingAuthor, setReadingAuthor] = React.useState(null);
   const [readingDate, setReadingDate] = React.useState(null);
   const [readingVocab, setReadingVocab] = React.useState([]);
+  const [readingQuestions, setReadingQuestions] = React.useState([]);
+  const [readingGrammar, setReadingGrammar] = React.useState([]);
+  const [readingConjugation, setReadingConjugation] = React.useState([]);
   const [readingLoading, setReadingLoading] = React.useState(false);
 
   // Detect reading mode from URL once — store in state so it survives clearPracticeParam
