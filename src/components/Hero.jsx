@@ -4822,6 +4822,7 @@ export default function Hero() {
               listeningGrammar={listeningGrammar}
               activeTab={heroActiveTab}
               onTabChange={setHeroActiveTab}
+              exerciseActive={!!(readingActive || listeningActive || speakingActive || writingActive)}
             />
           </div>
         </div>
