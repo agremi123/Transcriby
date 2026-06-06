@@ -2492,6 +2492,16 @@ export function AudioDemoCard({
                   {showWriteHint && (
                     <span key={writeHintKey} className="absolute top-3 left-3 right-3 bottom-3 rounded-lg border-2 border-wine/30 animate-pulse pointer-events-none" aria-hidden />
                   )}
+                  {!writeText.trim() && (
+                    <div className="flex items-center gap-3 px-4 pt-4 pb-2 shrink-0">
+                      <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0">
+                        <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
+                      </div>
+                      <p className="font-display text-[16px] italic text-navy/70 leading-snug">
+                        Bonjour ! Ask me anything in French — I'll help you improve. 🗼
+                      </p>
+                    </div>
+                  )}
                   <textarea
                     ref={writeTextareaRef}
                     className="flex-1 w-full px-4 pt-4 pb-4 bg-transparent resize-none outline-none font-display text-[17px] leading-snug text-navy placeholder:text-navy/30 scroll-premium relative z-[1]"
