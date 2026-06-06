@@ -89,7 +89,6 @@ export function ParisianExperienceHint({ className = '', showBadge = false }) {
       className={`absolute right-full mr-2.5 inset-y-0 flex items-center gap-2 pointer-events-none ${className}`.trim()}
       aria-hidden
     >
-      {showBadge && <ParisianBadgeInline />}
       <span className="font-display text-[15px] sm:text-[16px] italic text-wine leading-[1.25] text-right w-[172px]">
         Click here to gain
         <br />
