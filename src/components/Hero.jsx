@@ -1006,6 +1006,7 @@ export function AudioDemoCard({
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        type: 'reaction',
         utterance: latestText,
         narratorId: speakingNarratorId,
         topic: speakingTopicLabel,
