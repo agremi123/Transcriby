@@ -4233,6 +4233,9 @@ export default function Hero() {
           setReadingAuthor(data.author || null);
           setReadingDate(data.date || null);
           setReadingVocab(data.vocab || []);
+          setReadingQuestions(data.questions || []);
+          setReadingGrammar(data.grammar || []);
+          setReadingConjugation(data.conjugation || []);
           setReadingLoading(false);
         })
         .catch(() => setReadingLoading(false));
