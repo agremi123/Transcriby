@@ -823,6 +823,8 @@ export function AudioDemoCard({
   exerciseVocab = [],
   exerciseGrammar = [],
   exerciseConjugation = [],
+  exerciseSubTabProp = null,
+  onExerciseSubTabChange = null,
 }) {
   const { effectiveLevel, gainExperience, gainDailyParisianPoints } = useLearnerProfile();
   const {
