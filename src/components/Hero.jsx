@@ -4705,6 +4705,42 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
           </p>
         </>
       )}
+
+      {/* Chat Correction Popup */}
+      {chatCorrectionPopup && (
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          onClick={() => setChatCorrectionPopup(null)}
+        >
+          <div
+            className="bg-paper rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 flex flex-col gap-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => playNarratorLine({ id: 'lea', text: chatCorrectionPopup.corrected })}
+                className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
+                aria-label="Léa prononce la correction"
+              >
+                <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
+              </button>
+              <p className="font-display text-[13px] italic text-navy/50">Léa corrige</p>
+            </div>
+            <CorrectionBlock
+              original={chatCorrectionPopup.original}
+              corrected={chatCorrectionPopup.corrected}
+            />
+            <button
+              type="button"
+              onClick={() => setChatCorrectionPopup(null)}
+              className="self-end text-[12px] font-sans text-navy/40 hover:text-navy/70 transition-colors"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
