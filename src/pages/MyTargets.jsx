@@ -164,8 +164,8 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
 
   const VW      = 1000;
   const PAD     = 22;
-  const PAST_PX = 155;
-  const FUT_PX  = 155;
+  const PAST_PX = 130;
+  const FUT_PX  = 130;
   const BADGE_SIZE = 210;
   const VX      = -(BADGE_SIZE / 2 - PAD + 8); // viewBox x-start so left badge isn't clipped
   const pastW   = pastLevels.length * PAST_PX;
