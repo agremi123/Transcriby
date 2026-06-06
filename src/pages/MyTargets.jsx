@@ -520,9 +520,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                 {themeName}
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {isAuto && studyCheck && (
-                  <span style={{ color: 'rgba(251,191,36,0.9)', fontSize: 10, fontFamily: "'SF Mono','Fira Mono',monospace", fontWeight: 700, marginRight: 'auto', animation: 'checkPop 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards' }}>+10 pts Parisian</span>
-                )}
                 <button
                   style={{
                     background: '#8B1E2D',
