@@ -2559,7 +2559,7 @@ export function AudioDemoCard({
           ) : null}
 
           {/* ── Progress tabs ─────────────────────────────────────────── */}
-          {(activeTab === 'speaking' || activeTab === 'listening' || activeTab === 'reading' || activeTab === 'writing') && (
+          {false && (activeTab === 'speaking' || activeTab === 'listening' || activeTab === 'reading' || activeTab === 'writing') && (
             <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 space-y-4">
 
               {/* SPEAKING PROGRESS */}
