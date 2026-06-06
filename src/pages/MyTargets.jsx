@@ -285,7 +285,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
   return (
     <svg
       viewBox={`${VX} 0 ${VW} ${VH}`}
-      preserveAspectRatio="xMidYMid meet"
+      preserveAspectRatio="xMinYMid meet"
       className="w-full overflow-visible"
       style={{ maxHeight: 460 }}
     >
