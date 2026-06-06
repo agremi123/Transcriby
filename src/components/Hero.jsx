@@ -4644,7 +4644,7 @@ export default function Hero() {
     if (practiceType === 'speaking' && practiceTopic && !speakingActive) {
       setSpeakingActive(true);
       setSpeakingLoading(true);
-      fetch('/api/speaking-prompt', {
+      fetch('/api/speaking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topic: practiceTopic }),
