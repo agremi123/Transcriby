@@ -90,7 +90,7 @@ export function ParisianExperienceHint({ className = '' }) {
       aria-hidden
     >
       <ParisianBadgeInline />
-      <span className="font-display text-[13px] sm:text-[14px] italic text-wine leading-[1.25] text-right w-[152px]">
+      <span className="font-display text-[15px] sm:text-[16px] italic text-wine leading-[1.25] text-right w-[172px]">
         Click here to gain
         <br />
         Parisian experience
