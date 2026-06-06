@@ -49,7 +49,6 @@ async function handleLogout(resetWelcomeOnboarding) {
 
 export default function Nav() {
   const { pathname } = useLocation();
-  const { resetWelcomeOnboarding } = useLearnerProfile();
   const [scrolled, setScrolled] = React.useState(false);
   const onJudgePage = pathname === '/dashboard';
 
