@@ -1932,9 +1932,9 @@ export function AudioDemoCard({
       <div className="flex flex-row items-center gap-2">
         {/* Parisian Points display */}
         <div className="relative flex flex-col items-center mr-1 select-none">
-          <div className="relative flex items-center justify-center w-14 h-14 rounded-full bg-wine/[0.06] border-2 border-wine/20">
+          <div className="relative flex items-center justify-center w-11 h-11 rounded-full bg-wine/[0.06] border-2 border-wine/20">
             <div className="flex flex-col items-center gap-0">
-              <span key={dailyParisianPoints} className="font-display text-[18px] font-bold text-wine leading-none tabular-nums"
+              <span key={dailyParisianPoints} className="font-display text-[15px] font-bold text-wine leading-none tabular-nums"
                 style={{ animation: 'parisianPointsPop 0.35s cubic-bezier(0.34,1.56,0.64,1)' }}>
                 {dailyParisianPoints}
               </span>
