@@ -747,13 +747,15 @@ function ComprehensionItem({ q, qi, firePointsDelta, narratorId = 'lea' }) {
   );
 }
 
-function VocabItem({ v, vi, firePointsDelta }) {
+function VocabItem({ v, vi, firePointsDelta, narratorId = 'lea' }) {
   const [ans, setAns] = React.useState('');
   const [submitted, setSubmitted] = React.useState(false);
   const correct = submitted && ans.trim().toLowerCase() === (v.word || '').toLowerCase();
   return (
     <div className={`p-2.5 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
-      <p className="font-display text-[13px] leading-snug text-navy mb-1.5">{v.sentence?.replace('___', '______') || '___'}</p>
+      <p className="font-display text-[13px] leading-snug text-navy mb-1.5">
+        <TranslatableText text={v.sentence?.replace('___', '______') || '___'} narratorId={narratorId} />
+      </p>
       <div className="flex items-center gap-2">
         {submitted ? (
           <span className={`font-display text-[13px] font-medium ${correct ? 'text-green-600' : 'text-wine'}`}>{ans} {correct ? '✓' : `✗ → ${v.word}`}</span>
