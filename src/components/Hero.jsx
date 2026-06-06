@@ -4771,7 +4771,7 @@ export default function Hero() {
                 dailyParisianPoints={dailyParisianPoints}
                 onSpendExperience={spendExperience}
               />
-            ) : speakingActive ? (
+            ) : heroActiveTab === 'speaking' && speakingActive ? (
               <SpeakingChallengePanel
                 loading={speakingLoading}
                 narratorId={speakingNarrator}
