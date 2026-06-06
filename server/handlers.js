@@ -451,123 +451,332 @@ async function fetchArticleBody(url) {
   } catch { return ''; }
 }
 
+// ── Shared Claude helper ────────────────────────────────────────────────────
+async function claudeJSON({ apiKey, system, user, maxTokens = 800 }) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: maxTokens, system, messages: [{ role: 'user', content: user }] }),
+  });
+  const data = await res.json();
+  let raw = data.content?.[0]?.text?.trim() || '{}';
+  raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+  try { return JSON.parse(raw); } catch { return {}; }
+}
+
+// ── Generate a full reading bundle (article + 4 exercise types) ─────────────
+async function generateReadingBundle(apiKey) {
+  const feedResults = await Promise.all(FRENCH_RSS_FEEDS.map(fetchRssItems));
+  const allItems = feedResults.flat().filter(i => i.title && (i.description || i.content));
+  if (allItems.length === 0) throw new Error('No RSS items');
+
+  const itemSummaries = allItems.slice(0, 60).map((item, i) =>
+    `[${i}] ${item.feedName} — ${item.title}\n${(item.description || '').slice(0, 200)}`
+  ).join('\n\n');
+
+  const { index } = await claudeJSON({
+    apiKey, maxTokens: 20,
+    system: 'Pick any interesting article. Reply ONLY with raw JSON: {"index": <integer>}',
+    user: itemSummaries,
+  });
+  const idx = Math.min(Math.max(parseInt(index, 10) || 0, 0), allItems.length - 1);
+  const chosen = allItems[idx];
+
+  let rawText = '';
+  if (chosen.link) rawText = await fetchArticleBody(chosen.link);
+  if (rawText.length < 200) rawText = chosen.content || chosen.description || '';
+  rawText = rawText.slice(0, 6000);
+
+  const extractData = await claudeJSON({
+    apiKey, maxTokens: 1000,
+    system: 'Extract a coherent readable passage from this French article. Copy verbatim. At least 15 sentences, 400-600 words, natural paragraphs. Return ONLY raw JSON: {"passage":"..."}',
+    user: `Title: ${chosen.title}\n\n${rawText}`,
+  });
+  const passage = extractData.passage?.trim() || '';
+  if (!passage) throw new Error('No passage extracted');
+
+  // Run questions + exercises in parallel
+  const [qParsed, exParsed] = await Promise.all([
+    claudeJSON({
+      apiKey, maxTokens: 800,
+      system: 'Create exactly 4 multiple-choice comprehension questions about the French passage. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"}]}',
+      user: passage,
+    }),
+    claudeJSON({
+      apiKey, maxTokens: 1400,
+      system: `French language teacher. From the passage generate:
+1. 4 vocabulary fill-in-the-blank (key words from article)
+2. 1 grammar point with explanation and example
+3. 4 conjugation fill-in-the-blank (verbs from article)
+Raw JSON only:
+{"vocab":[{"word":"...","definition":"English meaning","sentence":"...___..."}],"grammar":{"point":"...","example":"...","explanation":"...","tip":"..."},"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}`,
+      user: passage,
+    }),
+  ]);
+
+  return {
+    title: chosen.title || '',
+    source: chosen.feedName || null,
+    author: chosen.author || null,
+    date: chosen.pubDate || null,
+    link: chosen.link || null,
+    passage,
+    questions: qParsed.questions || [],
+    vocab: exParsed.vocab || [],
+    grammar: exParsed.grammar ? [exParsed.grammar] : [],
+    conjugation: exParsed.conjugation || [],
+  };
+}
+
+// ── Generate a full listening bundle ────────────────────────────────────────
+async function generateListeningBundle(apiKey, level = 'B1', topic = '') {
+  const generated = await claudeJSON({
+    apiKey, maxTokens: 900,
+    system: 'French radio journalist for RFI Journal en Français Facile. Write a 250-300 word B1-B2 French bulletin on a cultural/social/environmental topic. Raw JSON: {"title":"...","transcript":"..."}',
+    user: `Level: ${level}. Topic: ${topic || 'culture française'}`,
+  });
+  const title = generated.title || 'Journal en Français Facile';
+  let transcript = generated.transcript || '';
+  if (!transcript || transcript.length < 40) throw new Error('No transcript');
+  const words = transcript.split(/\s+/);
+  if (words.length > 400) transcript = words.slice(0, 400).join(' ') + '…';
+
+  const [qParsed, vParsed, gParsed, cParsed] = await Promise.all([
+    claudeJSON({ apiKey, maxTokens: 800, system: `French teacher. 4 multiple-choice comprehension questions for ${level} learner. Also infer vocab theme. Raw JSON: {"vocabTheme":"...","questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"}]}`, user: transcript }),
+    claudeJSON({ apiKey, maxTokens: 700, system: `French teacher. 5 vocabulary fill-in-the-blank from transcript for ${level} learner. Raw JSON: {"vocab":[{"word":"...","definition":"English","sentence":"...___..."}]}`, user: transcript }),
+    claudeJSON({ apiKey, maxTokens: 700, system: `French grammar teacher. 3 grammar structures from transcript for ${level} learner. Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"..."}]}`, user: transcript }),
+    claudeJSON({ apiKey, maxTokens: 600, system: 'French teacher. 4 conjugation fill-in-the-blank using verbs from transcript. Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}', user: transcript }),
+  ]);
+
+  return {
+    title,
+    transcript,
+    source: 'RFI — Journal en Français Facile',
+    date: new Date().toUTCString(),
+    vocabTheme: qParsed.vocabTheme || '',
+    questions: qParsed.questions || [],
+    vocab: vParsed.vocab || [],
+    grammar: gParsed.grammar || [],
+    conjugation: cParsed.conjugation || [],
+  };
+}
+
+// ── Generate a writing prompt bundle ────────────────────────────────────────
+async function generateWritingBundle(apiKey, level = 'B1', topic = '') {
+  const data = await claudeJSON({
+    apiKey, maxTokens: 1000,
+    system: `French writing teacher. Create a writing challenge for a ${level} learner${topic ? ` on: ${topic}` : ''}. Include useful vocab, expressions, grammar tips, conjugation helpers, and connectors. Raw JSON: {"prompt":"Write a paragraph about...","wordTarget":80,"tips":{"vocab":["mot1","mot2"],"expressions":["expr1"],"grammar":["tip1"],"conjugation":["verb: je ___"],"connecteurs":["d'abord","ensuite"]}}`,
+    user: topic || 'choose an everyday Parisian topic',
+  });
+  return {
+    topic: topic || '',
+    prompt: data.prompt || '',
+    word_target: data.wordTarget || 80,
+    tips: data.tips || { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] },
+    level,
+  };
+}
+
+// ── Generate a speaking prompt bundle ───────────────────────────────────────
+async function generateSpeakingBundle(apiKey, topic = '') {
+  const narrators = ['lea', 'jules'];
+  const narratorId = narrators[Math.floor(Math.random() * narrators.length)];
+  const data = await claudeJSON({
+    apiKey, maxTokens: 400,
+    system: 'You are a Parisian French conversation partner. Create a natural conversation opener in French. Raw JSON: {"openingLine":"Bonjour ! ...","openingLineTranslation":"Hello! ...","topicLabel":"Topic name"}',
+    user: `Topic: ${topic || 'la vie parisienne'}`,
+  });
+  return {
+    topic: topic || '',
+    narrator_id: narratorId,
+    opening_line: data.openingLine || 'Bonjour ! Comment ça va ?',
+    opening_line_translation: data.openingLineTranslation || 'Hello! How are you?',
+    topic_label: data.topicLabel || topic || 'Conversation',
+  };
+}
+
+const MIN_STOCK = 10;
+
+// ── Supabase helper ──────────────────────────────────────────────────────────
+function getSupabase() {
+  const { NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SERVICE_ROLE_KEY } = getEnv();
+  const url = NEXT_PUBLIC_SUPABASE_URL;
+  const key = SUPABASE_SERVICE_ROLE_KEY || NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
+}
+
 export async function handleReading(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
-  if (!ANTHROPIC_API_KEY || !topic) {
-    return { statusCode: 200, body: { passage: '', source: null, title: '', author: null, date: null, vocab: [] } };
+  const empty = { passage: '', source: null, title: '', author: null, date: null, vocab: [], questions: [], grammar: [], conjugation: [] };
+  if (!ANTHROPIC_API_KEY || !topic) return { statusCode: 200, body: empty };
+
+  const supabase = getSupabase();
+
+  // 1. Serve from stock
+  if (supabase) {
+    const { data: rows } = await supabase
+      .from('reading_articles')
+      .select('*')
+      .eq('served', false)
+      .order('created_at', { ascending: true })
+      .limit(1);
+    if (rows && rows.length > 0) {
+      const row = rows[0];
+      // Mark as served (fire-and-forget)
+      supabase.from('reading_articles').update({ served: true }).eq('id', row.id).then(() => {});
+      // Trigger replenishment in background
+      triggerReplenish().catch(() => {});
+      return {
+        statusCode: 200,
+        body: {
+          passage: row.passage, title: row.title, source: row.source,
+          author: row.author, date: row.date, link: row.link,
+          vocab: row.vocab || [], questions: row.questions || [],
+          grammar: row.grammar || [], conjugation: row.conjugation || [],
+        },
+      };
+    }
   }
 
+  // 2. Stock empty — generate on-demand
   try {
-    // Fetch all RSS feeds in parallel
-    const feedResults = await Promise.all(FRENCH_RSS_FEEDS.map(fetchRssItems));
-    const allItems = feedResults.flat().filter(i => i.title && (i.description || i.content));
-
-    if (allItems.length === 0) throw new Error('No RSS items fetched');
-
-    // Ask Claude to pick the best article and extract a verbatim passage — no fabrication
-    const itemSummaries = allItems.slice(0, 60).map((item, i) =>
-      `[${i}] ${item.feedName} — ${item.title}\n${(item.description || '').slice(0, 200)}`
-    ).join('\n\n');
-
-    const pickRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 100,
-        system: 'Pick the index of the article most relevant to the given topic. If none is clearly relevant, pick the most recent interesting one. Reply with ONLY the integer index, nothing else.',
-        messages: [{ role: 'user', content: `Topic: ${topic}\n\nArticles:\n${itemSummaries}` }],
-      }),
-    });
-    const pickData = await pickRes.json();
-    const rawIdx = pickData.content?.[0]?.text?.trim() || '0';
-    const idx = Math.min(Math.max(parseInt(rawIdx, 10) || 0, 0), allItems.length - 1);
-    const chosen = allItems[idx];
-
-    // Fetch full article page, fall back to RSS content
-    let rawText = '';
-    if (chosen.link) rawText = await fetchArticleBody(chosen.link);
-    if (rawText.length < 200) rawText = chosen.content || chosen.description || '';
-    rawText = rawText.slice(0, 6000);
-
-    const extractRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 900,
-        system: `Extract the most coherent and readable passage from this real French article. Copy sentences verbatim — do NOT rephrase, summarise or add anything. The passage must be at least 15 sentences long (aim for 400-600 words). Organise it into natural paragraphs separated by a blank line (\\n\\n): one short intro paragraph, then 2-3 body paragraphs. Return only the extracted French text with paragraph breaks.`,
-        messages: [{ role: 'user', content: `Title: ${chosen.title}\n\n${rawText}` }],
-      }),
-    });
-    const extractData = await extractRes.json();
-    const passage = extractData.content?.[0]?.text?.trim() || '';
-
-    if (!passage) throw new Error('No passage extracted');
-
-    // Generate comprehension questions from the real passage
-    const qRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 700,
-        system: `Create exactly 4 multiple-choice comprehension questions about the French passage. Each has 4 options, one correct answer. Raw JSON only, no markdown:
-{"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"},{"question":"...","options":["A","B","C","D"],"answer":"B"},{"question":"...","options":["A","B","C","D"],"answer":"C"},{"question":"...","options":["A","B","C","D"],"answer":"D"}]}`,
-        messages: [{ role: 'user', content: passage }],
-      }),
-    });
-    const qData = await qRes.json();
-    let qRaw = qData.content?.[0]?.text?.trim() || '{}';
-    qRaw = qRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-    const qParsed = JSON.parse(qRaw);
-
-    // Generate vocab, grammar and conjugation exercises from the passage
-    const exRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1200,
-        system: `You are a French language teacher. From the passage, generate:
-1. 4 vocabulary fill-in-the-blank exercises (pick key words from the article)
-2. 1 grammar point from the article with an explanation and example
-3. 4 conjugation exercises based on verbs used in the article
-
-Return raw JSON only, no markdown:
-{
-  "vocab":[{"word":"mot","definition":"meaning in English","sentence":"sentence with ___ replacing the word"}],
-  "grammar":{"point":"grammar point name","example":"example sentence from article","explanation":"brief explanation in English","tip":"short learning tip"},
-  "conjugation":[{"verb":"verb infinitive","tense":"tense name","sentence":"complete sentence with ___ replacing the conjugated verb","answer":"conjugated form","hint":"person/number hint e.g. je, vous"}]
-}`,
-        messages: [{ role: 'user', content: passage }],
-      }),
-    });
-    const exData = await exRes.json();
-    let exRaw = exData.content?.[0]?.text?.trim() || '{}';
-    exRaw = exRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-    let exParsed = {};
-    try { exParsed = JSON.parse(exRaw); } catch {}
-
-    return {
-      statusCode: 200,
-      body: {
-        passage,
-        title: chosen.title || '',
-        source: chosen.feedName || null,
-        author: chosen.author || null,
-        date: chosen.pubDate || null,
-        link: chosen.link || null,
-        vocab: exParsed.vocab || [],
-        questions: qParsed.questions || [],
-        grammar: exParsed.grammar ? [exParsed.grammar] : [],
-        conjugation: exParsed.conjugation || [],
-      },
-    };
+    const bundle = await generateReadingBundle(ANTHROPIC_API_KEY);
+    // Save to DB for future use (fire-and-forget)
+    if (supabase) {
+      supabase.from('reading_articles').insert([{ ...bundle, served: true }]).then(() => {});
+      triggerReplenish().catch(() => {});
+    }
+    return { statusCode: 200, body: bundle };
   } catch {
-    return { statusCode: 200, body: { passage: '', source: null, title: '', author: null, date: null, vocab: [], questions: [], grammar: [], conjugation: [] } };
+    return { statusCode: 200, body: empty };
   }
+}
+
+export async function handleWritingPrompt(body) {
+  const { ANTHROPIC_API_KEY } = getEnv();
+  const topic = body?.topic || '';
+  const level = body?.learnerLevel || 'B1';
+  const empty = { prompt: '', tips: { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] }, wordTarget: 80 };
+  if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
+
+  const supabase = getSupabase();
+
+  // 1. Serve from stock
+  if (supabase) {
+    const { data: rows } = await supabase
+      .from('writing_prompts')
+      .select('*')
+      .eq('served', false)
+      .eq('level', level)
+      .order('created_at', { ascending: true })
+      .limit(1);
+    if (rows && rows.length > 0) {
+      const row = rows[0];
+      supabase.from('writing_prompts').update({ served: true }).eq('id', row.id).then(() => {});
+      triggerReplenish().catch(() => {});
+      return { statusCode: 200, body: { prompt: row.prompt, tips: row.tips || empty.tips, wordTarget: row.word_target || 80 } };
+    }
+  }
+
+  // 2. Generate on-demand
+  try {
+    const bundle = await generateWritingBundle(ANTHROPIC_API_KEY, level, topic);
+    if (supabase) {
+      supabase.from('writing_prompts').insert([{ ...bundle, served: true }]).then(() => {});
+      triggerReplenish().catch(() => {});
+    }
+    return { statusCode: 200, body: { prompt: bundle.prompt, tips: bundle.tips, wordTarget: bundle.word_target } };
+  } catch {
+    return { statusCode: 200, body: empty };
+  }
+}
+
+export async function handleSpeakingPrompt(body) {
+  const { ANTHROPIC_API_KEY } = getEnv();
+  const topic = body?.topic || '';
+  const empty = { narratorId: 'lea', openingLine: 'Bonjour !', openingLineTranslation: 'Hello!', topicLabel: topic };
+  if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
+
+  const supabase = getSupabase();
+
+  // 1. Serve from stock
+  if (supabase) {
+    const { data: rows } = await supabase
+      .from('speaking_prompts')
+      .select('*')
+      .eq('served', false)
+      .order('created_at', { ascending: true })
+      .limit(1);
+    if (rows && rows.length > 0) {
+      const row = rows[0];
+      supabase.from('speaking_prompts').update({ served: true }).eq('id', row.id).then(() => {});
+      triggerReplenish().catch(() => {});
+      return { statusCode: 200, body: { narratorId: row.narrator_id, openingLine: row.opening_line, openingLineTranslation: row.opening_line_translation, topicLabel: row.topic_label } };
+    }
+  }
+
+  // 2. Generate on-demand
+  try {
+    const bundle = await generateSpeakingBundle(ANTHROPIC_API_KEY, topic);
+    if (supabase) {
+      supabase.from('speaking_prompts').insert([{ ...bundle, served: true }]).then(() => {});
+      triggerReplenish().catch(() => {});
+    }
+    return { statusCode: 200, body: { narratorId: bundle.narrator_id, openingLine: bundle.opening_line, openingLineTranslation: bundle.opening_line_translation, topicLabel: bundle.topic_label } };
+  } catch {
+    return { statusCode: 200, body: empty };
+  }
+}
+
+// ── Trigger background replenishment via self-call ───────────────────────────
+async function triggerReplenish() {
+  const base = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:5173';
+  fetch(`${base}/api/replenish`, { method: 'POST' }).catch(() => {});
+}
+
+export async function handleReplenish() {
+  const { ANTHROPIC_API_KEY } = getEnv();
+  if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: { ok: true } };
+  const supabase = getSupabase();
+  if (!supabase) return { statusCode: 200, body: { ok: true } };
+
+  const counts = await Promise.all([
+    supabase.from('reading_articles').select('id', { count: 'exact', head: true }).eq('served', false),
+    supabase.from('listening_episodes').select('id', { count: 'exact', head: true }),
+    supabase.from('writing_prompts').select('id', { count: 'exact', head: true }).eq('served', false),
+    supabase.from('speaking_prompts').select('id', { count: 'exact', head: true }).eq('served', false),
+  ]);
+  const [readCount, listenCount, writeCount, speakCount] = counts.map(r => r.count || 0);
+
+  const tasks = [];
+
+  for (let i = readCount; i < MIN_STOCK; i++) {
+    tasks.push(generateReadingBundle(ANTHROPIC_API_KEY).then(b => supabase.from('reading_articles').insert([{ ...b, served: false }])).catch(() => {}));
+  }
+  for (let i = listenCount; i < MIN_STOCK; i++) {
+    tasks.push(generateListeningBundle(ANTHROPIC_API_KEY).then(b => {
+      return supabase.from('listening_episodes').insert([{
+        level: 'B1', title: b.title, audio_url: null, transcript: b.transcript,
+        source_name: b.source, pub_date: b.date, vocab_theme: b.vocabTheme,
+        questions: b.questions, vocab: b.vocab, grammar: b.grammar, conjugation: b.conjugation,
+      }]);
+    }).catch(() => {}));
+  }
+  for (let i = writeCount; i < MIN_STOCK; i++) {
+    tasks.push(generateWritingBundle(ANTHROPIC_API_KEY).then(b => supabase.from('writing_prompts').insert([{ ...b, served: false }])).catch(() => {}));
+  }
+  for (let i = speakCount; i < MIN_STOCK; i++) {
+    tasks.push(generateSpeakingBundle(ANTHROPIC_API_KEY).then(b => supabase.from('speaking_prompts').insert([{ ...b, served: false }])).catch(() => {}));
+  }
+
+  // Run up to 4 tasks concurrently to avoid timeout
+  for (let i = 0; i < tasks.length; i += 4) {
+    await Promise.allSettled(tasks.slice(i, i + 4));
+  }
+
+  return { statusCode: 200, body: { ok: true, generated: tasks.length } };
 }
 
 export async function handleWord() {
