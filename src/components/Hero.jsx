@@ -4435,14 +4435,17 @@ export default function Hero() {
           setListeningTranscript(data.transcript || '');
           setListeningSource(data.source || null);
           setListeningDate(data.date || null);
-          setListeningVocab(data.vocab || []);
-          setListeningQuestions(data.questions || []);
-          setListeningGrammar(data.grammar || []);
-          setListeningConjugation(data.conjugation || []);
           setListeningVocabTheme(data.vocabTheme || '');
           setListeningContentLevel(data.contentLevel || '');
           setListeningWordTimings(data.wordTimings || null);
           setListeningLoading(false);
+          // Reveal exercises one tab at a time
+          setExerciseSubTab('comprehension');
+          setListeningQuestions(data.questions || []);
+          setTimeout(() => { setExerciseSubTab('vocabulary'); setListeningVocab(data.vocab || []); }, 700);
+          setTimeout(() => { setExerciseSubTab('grammar'); setListeningGrammar(data.grammar || []); }, 1400);
+          setTimeout(() => { setExerciseSubTab('conjugation'); setListeningConjugation(data.conjugation || []); }, 2100);
+          setTimeout(() => setExerciseSubTab('comprehension'), 2800);
         })
         .catch(() => setListeningLoading(false));
     }
