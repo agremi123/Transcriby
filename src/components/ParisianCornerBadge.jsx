@@ -120,7 +120,7 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
         {/* B1 label left of arc bottom endpoint */}
         <text
           x={cx - 8} y={cy + r + 4}
-          textAnchor="end" fontSize={8}
+          textAnchor="end" fontSize={11}
           fill="#8b1e2d" fontFamily="'SF Mono','Fira Mono',monospace"
           fontWeight="600" opacity={0.65}
         >{level}</text>
@@ -128,7 +128,7 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
         {nextLevel && (
           <text
             x={cx - 8} y={cy - r + 4}
-            textAnchor="end" fontSize={8}
+            textAnchor="end" fontSize={11}
             fill="#8b1e2d" fontFamily="'SF Mono','Fira Mono',monospace"
             fontWeight="600" opacity={0.4}
           >{nextLevel}</text>
