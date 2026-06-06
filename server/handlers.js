@@ -523,6 +523,33 @@ export async function handleReading(body) {
     qRaw = qRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
     const qParsed = JSON.parse(qRaw);
 
+    // Generate vocab, grammar and conjugation exercises from the passage
+    const exRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1200,
+        system: `You are a French language teacher. From the passage, generate:
+1. 4 vocabulary fill-in-the-blank exercises (pick key words from the article)
+2. 1 grammar point from the article with an explanation and example
+3. 4 conjugation exercises based on verbs used in the article
+
+Return raw JSON only, no markdown:
+{
+  "vocab":[{"word":"mot","definition":"meaning in English","sentence":"sentence with ___ replacing the word"}],
+  "grammar":{"point":"grammar point name","example":"example sentence from article","explanation":"brief explanation in English","tip":"short learning tip"},
+  "conjugation":[{"verb":"verb infinitive","tense":"tense name","sentence":"complete sentence with ___ replacing the conjugated verb","answer":"conjugated form","hint":"person/number hint e.g. je, vous"}]
+}`,
+        messages: [{ role: 'user', content: passage }],
+      }),
+    });
+    const exData = await exRes.json();
+    let exRaw = exData.content?.[0]?.text?.trim() || '{}';
+    exRaw = exRaw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+    let exParsed = {};
+    try { exParsed = JSON.parse(exRaw); } catch {}
+
     return {
       statusCode: 200,
       body: {
@@ -532,12 +559,14 @@ export async function handleReading(body) {
         author: chosen.author || null,
         date: chosen.pubDate || null,
         link: chosen.link || null,
-        vocab: [],
+        vocab: exParsed.vocab || [],
         questions: qParsed.questions || [],
+        grammar: exParsed.grammar ? [exParsed.grammar] : [],
+        conjugation: exParsed.conjugation || [],
       },
     };
   } catch {
-    return { statusCode: 200, body: { passage: '', source: null, title: '', author: null, date: null, vocab: [], questions: [] } };
+    return { statusCode: 200, body: { passage: '', source: null, title: '', author: null, date: null, vocab: [], questions: [], grammar: [], conjugation: [] } };
   }
 }
 
