@@ -1964,7 +1964,7 @@ export function AudioDemoCard({
             {source === 'tab' ? 'Tab audio' : 'Recording'}
           </span>
         )}
-        <div className="relative flex flex-col items-center mb-3">
+        <div className="relative flex flex-col items-center">
           {(showStartHint || highlightMic || showRepeatHint) && !isRecording && (
             <motion.div
               initial={{ opacity: 0, y: 6 }}
