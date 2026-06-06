@@ -825,6 +825,7 @@ export async function handleListening(body) {
         questions,
         vocab,
         grammar,
+        conjugation,
       }]).then(({ error }) => {
         if (error) console.warn('[listening] Supabase insert failed:', error.message);
       });
@@ -832,10 +833,10 @@ export async function handleListening(body) {
 
     return {
       statusCode: 200,
-      body: { title, audioUrl, transcript, source: 'RFI — Journal en Français Facile', date: new Date().toUTCString(), vocabTheme, questions, vocab, grammar },
+      body: { title, audioUrl, transcript, source: 'RFI — Journal en Français Facile', date: new Date().toUTCString(), vocabTheme, questions, vocab, grammar, conjugation },
     };
   } catch (err) {
     console.error('[listening] error:', err.message);
-    return { statusCode: 200, body: empty };
+    return { statusCode: 200, body: { ...empty, conjugation: [] } };
   }
 }
