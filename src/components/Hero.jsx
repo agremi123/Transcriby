@@ -2162,7 +2162,7 @@ export function AudioDemoCard({
           {isExerciseTab ? (
             <div className="flex flex-col flex-1 min-h-0">
               {/* Exercise subtab bar */}
-              <div className="flex border-b border-line/50 shrink-0">
+              <div className="flex border-b border-line/50 shrink-0 overflow-x-auto">
                 {[
                   { id: 'comprehension', label: 'Compréhension' },
                   { id: 'vocabulary',    label: 'Vocabulaire' },
@@ -2170,7 +2170,7 @@ export function AudioDemoCard({
                   { id: 'conjugation',   label: 'Conjugaison' },
                 ].map((t) => (
                   <button key={t.id} type="button" onClick={() => setExerciseSubTab(t.id)}
-                    className={`text-[9px] tracking-widest uppercase px-3 py-2.5 border-b-2 transition-colors whitespace-nowrap flex-1 ${exerciseSubTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
+                    className={`text-[9px] tracking-widest uppercase px-3 py-2.5 border-b-2 transition-colors whitespace-nowrap shrink-0 ${exerciseSubTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
                     {t.label}
                   </button>
                 ))}
