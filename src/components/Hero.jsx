@@ -2557,7 +2557,6 @@ export function AudioDemoCard({
           </div>
           </div>
           ) : null}
-      </div>}
 
       {/* ── Exercise tabs — shown when any exercise is active ── */}
       {exerciseActive && (
