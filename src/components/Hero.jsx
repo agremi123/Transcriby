@@ -2224,10 +2224,16 @@ export function AudioDemoCard({
               (highlightMic || showRepeatHint) ? 'hover:bg-wine2 hover:scale-105 shadow-md ring-2 ring-wine/35' : 'hover:bg-wine2 hover:scale-105'
             }`}
             aria-label="Toggle microphone recording">
-            <svg width="13" height="16" viewBox="0 0 16 20" fill="none" aria-hidden>
-              <rect x="5" y="1" width="6" height="11" rx="3" fill="#F6F1E8" />
-              <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="#F6F1E8" strokeWidth="1.4" strokeLinecap="round" />
-            </svg>
+            {isRecording ? (
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
+                <rect x="1" y="1" width="10" height="10" rx="2" fill="#F6F1E8" />
+              </svg>
+            ) : (
+              <svg width="13" height="16" viewBox="0 0 16 20" fill="none" aria-hidden>
+                <rect x="5" y="1" width="6" height="11" rx="3" fill="#F6F1E8" />
+                <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="#F6F1E8" strokeWidth="1.4" strokeLinecap="round" />
+              </svg>
+            )}
             {(showStartHint || highlightMic || showRepeatHint) && !isRecording && (
               <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
             )}
