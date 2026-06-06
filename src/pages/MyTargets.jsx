@@ -421,9 +421,9 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
               const circVisible = circSettled || isHighlighted;
               const circOpacity = isDone ? 0.85 : isPartial ? 0.55 : (c.isDeco ? 0.4 : 0.35);
               return (
-                <g key={ci} style={{ cursor: circSettled ? 'pointer' : 'default', pointerEvents: circSettled ? 'all' : 'none' }}
-                   onMouseEnter={() => circSettled && t && openDot({ svgX: dx, svgY: dy, target: t, color, themeInfo })}
-                   onMouseLeave={circSettled ? closeDot : undefined}>
+                <g key={ci} style={{ cursor: (animDone && circSettled) ? 'pointer' : 'default', pointerEvents: (animDone && circSettled) ? 'all' : 'none' }}
+                   onMouseEnter={() => animDone && circSettled && t && openDot({ svgX: dx, svgY: dy, target: t, color, themeInfo })}
+                   onMouseLeave={(animDone && circSettled) ? closeDot : undefined}>
                   <circle cx={dx} cy={dy} r={18} fill="transparent" />
                   {isHighlighted && (
                     <>
