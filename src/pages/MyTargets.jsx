@@ -495,7 +495,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
         const dot = hoveredDot ?? autoTooltip;
         const { svgX, svgY, target: t, color, themeInfo } = dot;
         const themeName = themeInfo?.theme ?? label(t);
-        const TW = 150, TH = 58;
+        const TW = 150, TH = 76;
         const tx = Math.min(Math.max(svgX - TW / 2, 4), VW - TW - 4);
         const ty = svgY - TH - 18;
         return (
