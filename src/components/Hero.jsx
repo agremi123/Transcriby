@@ -2490,7 +2490,7 @@ export function AudioDemoCard({
                     </motion.div>
                   )}
                   {showWriteHint && (
-                    <span key={writeHintKey} className="absolute top-3 left-3 right-3 bottom-3 rounded-lg border-2 border-wine/30 animate-pulse pointer-events-none" aria-hidden />
+                    <span key={`border-${writeHintKey}`} className="absolute top-3 left-3 right-3 bottom-3 rounded-lg border-2 border-wine/30 animate-pulse pointer-events-none" aria-hidden />
                   )}
                   {!writeText.trim() && (
                     <div className="flex items-center gap-3 px-4 pt-4 pb-2 shrink-0">
