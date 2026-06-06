@@ -21,7 +21,7 @@ function NavReachNextLevel() {
 
   return (
     <div className="relative hidden sm:inline-flex items-center mt-6">
-      <ParisianExperienceHint />
+      <ParisianExperienceHint showBadge />
       <div className="relative">
         <Link
           to="/targets"
