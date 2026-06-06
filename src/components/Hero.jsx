@@ -4768,7 +4768,7 @@ export default function Hero() {
   }, [heroActiveTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <section className="relative pt-12 pb-12 min-h-screen overflow-visible flex items-center">
+    <section className="relative pt-12 pb-12 min-h-screen overflow-visible">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0" style={{ background: 'radial-gradient(60% 80% at 80% 30%, rgba(217,196,162,0.30), transparent 60%), linear-gradient(180deg, #F6F1E8 0%, #F2EBDA 100%)' }} />
         <img src="/assets/paris-skyline.png" alt=""
