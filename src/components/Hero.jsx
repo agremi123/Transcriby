@@ -761,6 +761,7 @@ export function AudioDemoCard({
   const [overallWeakness, setOverallWeakness] = React.useState(null);
   const [practiceTopics, setPracticeTopics] = React.useState([]);
   const [practiceSubTab, setPracticeSubTab] = React.useState('comprehension');
+  const [exerciseSubTab, setExerciseSubTab] = React.useState('comprehension');
   const [practiceVocabAnswers, setPracticeVocabAnswers] = React.useState({});
   const [practiceAnsweredQ, setPracticeAnsweredQ] = React.useState({});
   const [pointsDelta, setPointsDelta] = React.useState(null); // { value: +3 | -1, id: number } for animation
