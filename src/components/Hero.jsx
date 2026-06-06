@@ -2835,7 +2835,7 @@ export function AudioDemoCard({
           )}
 
           {/* Practice tab — subtabs: Comprehension / Vocabulary / Grammar + exercises */}
-          {activeTab === 'practice' && (
+          {!exerciseActive && activeTab === 'practice' && (
             <div className="flex-1 min-h-0 flex flex-col border-t border-line/50">
               {/* Subtab bar */}
               <div className="flex gap-0 border-b border-line/40 shrink-0">
