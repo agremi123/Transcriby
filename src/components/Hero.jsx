@@ -1063,8 +1063,69 @@ export function AudioDemoCard({
     chatIntroPlayedRef.current = true;
     const text = CHAT_INTROS[Math.floor(Math.random() * CHAT_INTROS.length)];
     setChatIntroLine({ text, narratorId: 'lea' });
+    const introMsg = { id: 'intro', role: 'lea', text, narratorId: 'lea' };
+    chatHistoryRef.current = [introMsg];
+    setChatHistory([introMsg]);
     playNarratorLine({ id: 'lea', text });
   }, [activeTab, utterances, partialTranscript, settledText]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Chat tab: on recording stop, commit utterances as user bubble then get Léa's reply
+  React.useEffect(() => {
+    const justStopped = chatWasRecordingRef.current && !isRecording;
+    chatWasRecordingRef.current = isRecording;
+    if (!justStopped || activeTab !== 'transcript') return;
+
+    const newUtts = utterances.slice(chatCommittedRef.current);
+    const userText = newUtts.map(u => u.text).join(' ').trim();
+    if (!userText) return;
+
+    chatCommittedRef.current = utterances.length;
+    const leaId = `lea-${Date.now()}`;
+    const userId = `user-${Date.now()}`;
+    const lastLeaText = [...chatHistoryRef.current].reverse().find(m => m.role === 'lea' && !m.loading)?.text || '';
+
+    const updated = [
+      ...chatHistoryRef.current,
+      { id: userId, role: 'user', text: userText },
+      { id: leaId, role: 'lea', loading: true, narratorId: 'lea' },
+    ];
+    chatHistoryRef.current = updated;
+    setChatHistory(updated);
+    setChatLeaLoading(true);
+
+    fetch('/api/speaking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'reaction',
+        utterance: userText,
+        narratorId: 'lea',
+        topic: 'conversation générale en français',
+        openingLine: lastLeaText,
+      }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.text) {
+          const resolved = chatHistoryRef.current.map(m =>
+            m.id === leaId ? { ...m, loading: false, text: data.text } : m
+          );
+          chatHistoryRef.current = resolved;
+          setChatHistory(resolved);
+          playNarratorLine({ id: 'lea', text: data.text });
+        } else {
+          const filtered = chatHistoryRef.current.filter(m => m.id !== leaId);
+          chatHistoryRef.current = filtered;
+          setChatHistory(filtered);
+        }
+      })
+      .catch(() => {
+        const filtered = chatHistoryRef.current.filter(m => m.id !== leaId);
+        chatHistoryRef.current = filtered;
+        setChatHistory(filtered);
+      })
+      .finally(() => setChatLeaLoading(false));
+  }, [isRecording]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto write mode when Writing tab activates; restore speak when back on Chat
   React.useEffect(() => {
