@@ -2253,7 +2253,7 @@ export function AudioDemoCard({
                 )}
               </div>
             </div>
-          ) : inputMode === 'discover' ? (
+          ) : inputMode === 'discover' && activeTab !== 'writing' ? (
             <motion.div
               key="word-panel"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }}
