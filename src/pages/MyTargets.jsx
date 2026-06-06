@@ -508,7 +508,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                    background: '#1A2340',
                    border: '1px solid rgba(255,255,255,0.12)',
                    borderRadius: 4,
-                   padding: '12px 16px',
+                   padding: '8px 12px',
                    boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
                    height: '100%',
                    boxSizing: 'border-box',
