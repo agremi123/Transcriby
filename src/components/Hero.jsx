@@ -2742,18 +2742,18 @@ export function AudioDemoCard({
                       )}
                     </div>
                   ) : (
-                    <div key={msg.id}>
-                      <p className="font-display text-[16px] text-navy leading-snug">{msg.text}</p>
-                    </div>
+                    <TranscriptSentenceRow key={msg.id} gutter={<TranscriptAudioSlot mode="empty" />}>
+                      <span className="font-display text-[16px] text-navy leading-snug">{msg.text}</span>
+                    </TranscriptSentenceRow>
                   )
                 ))}
                 {/* Live utterance while recording */}
                 {isRecording && (settledText || partialTranscript) && (
-                  <div>
-                    <p className="font-display text-[16px] text-navy/50 italic leading-snug">
+                  <TranscriptSentenceRow gutter={<TranscriptAudioSlot mode="loading" />}>
+                    <span className="font-display text-[16px] text-navy/50 italic leading-snug">
                       {settledText}{partialTranscript && (settledText ? ' ' : '')}{partialTranscript}
-                    </p>
-                  </div>
+                    </span>
+                  </TranscriptSentenceRow>
                 )}
               </div>
             ) : hasContent ? (
