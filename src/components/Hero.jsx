@@ -3302,13 +3302,13 @@ function DailyParisianPointsIndicator({ points }) {
         initial={{ scale: 1 }}
         animate={{ scale: [1, 1.06, 1] }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="w-10 h-10 shrink-0 rounded-full border border-wine/30 bg-wine/10 flex items-center justify-center"
+        className="w-14 h-14 shrink-0 rounded-full border border-wine/30 bg-wine/10 flex items-center justify-center"
       >
-        <span className="font-stat text-[14px] tabular-nums leading-none text-wine">
+        <span className="font-stat text-[18px] tabular-nums leading-none text-wine">
           {points}
         </span>
       </motion.div>
-      <span className="text-[7px] font-mono tracking-[0.08em] uppercase text-navy/45 leading-tight w-[3.25rem]">
+      <span className="text-[9px] font-mono tracking-[0.08em] uppercase text-navy/45 leading-tight w-[3.25rem]">
         My Daily Parisian points
       </span>
     </div>
