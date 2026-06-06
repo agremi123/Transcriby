@@ -1044,7 +1044,7 @@ export function AudioDemoCard({
     if (activeTab === 'writing') {
       setInputMode('write');
       setLastSpeakWriteMode('write');
-    } else if (activeTab === 'transcript' && inputMode === 'write') {
+    } else if (inputMode === 'write') {
       setInputMode('speak');
       setLastSpeakWriteMode('speak');
     }
