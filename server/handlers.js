@@ -918,130 +918,43 @@ export async function handleListening(body) {
       }
     }
 
-    // 2. Cache miss — generate with Claude
-    const genRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 900,
-        system: 'You are a French radio journalist for "Journal en Français Facile" on RFI. Write a short French news bulletin (250-300 words, B1-B2 level) on a current cultural, social, or environmental topic. Use natural spoken French. Return ONLY raw JSON: {"title":"Episode title","transcript":"Full text of the bulletin"}',
-        messages: [{ role: 'user', content: `Level: ${level}. Topic hint: ${topic || 'culture française'}` }],
-      }),
-    });
-    const genData = await genRes.json();
-    let genRaw = (genData.content?.[0]?.text?.trim() || '{}').replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-    let generated = {};
-    try { generated = JSON.parse(genRaw); } catch {}
-    const title = generated.title || 'Journal en Français Facile';
-    let transcript = generated.transcript || '';
-    if (!transcript || transcript.length < 40) return { statusCode: 200, body: empty };
+    // 2. Stock empty — generate on-demand
+    const bundle = await generateListeningBundle(ANTHROPIC_API_KEY, level, topic);
 
-    const words = transcript.split(/\s+/);
-    if (words.length > 400) transcript = words.slice(0, 400).join(' ') + '…';
-
-    // 3. Questions + vocab theme
-    const qRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001', max_tokens: 800,
-        system: `You are a French language teacher creating a comprehension exercise for a ${level} learner. Create exactly 4 multiple-choice comprehension questions in French. Also infer the main vocabulary theme (e.g. "Environnement", "Santé", "Société"). Return raw JSON only: {"vocabTheme":"...","questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."}]}`,
-        messages: [{ role: 'user', content: `Transcript:\n${transcript.slice(0, 2000)}` }],
-      }),
-    });
-    const qData = await qRes.json();
-    let qRaw = (qData.content?.[0]?.text?.trim() || '{}').replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-    let questions = [], vocabTheme = '';
-    try { const p = JSON.parse(qRaw); questions = p.questions || []; vocabTheme = p.vocabTheme || ''; } catch {}
-
-    // 4. Vocab
-    const vRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001', max_tokens: 700,
-        system: `You are a French language teacher. From the French transcript, pick exactly 5 vocabulary words for a ${level} learner${vocabTheme ? ` studying "${vocabTheme}"` : ''}. For each, write a sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"English definition","sentence":"...___..."}]}`,
-        messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
-      }),
-    });
-    const vData = await vRes.json();
-    let vRaw = (vData.content?.[0]?.text?.trim() || '{}').replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-    let vocab = [];
-    try { ({ vocab = [] } = JSON.parse(vRaw)); } catch {}
-
-    // 5. Grammar
-    const gRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001', max_tokens: 700,
-        system: `You are a French grammar teacher. From the transcript, identify 3 grammar structures for a ${level} learner. Return ONLY raw JSON: {"grammar":[{"point":"...","example":"exact sentence from transcript","explanation":"...","tip":"..."}]}`,
-        messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
-      }),
-    });
-    const gData = await gRes.json();
-    let gRaw = (gData.content?.[0]?.text?.trim() || '{}').replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-    let grammar = [];
-    try { ({ grammar = [] } = JSON.parse(gRaw)); } catch {}
-
-    // 6. Conjugation exercises
-    const cRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001', max_tokens: 600,
-        system: `You are a French language teacher. From the transcript, create 4 conjugation fill-in-the-blank exercises using verbs from the text. Return ONLY raw JSON: {"conjugation":[{"verb":"infinitive","tense":"tense name","sentence":"sentence with ___ replacing the conjugated form","answer":"conjugated form","hint":"je/tu/il/nous/vous/ils"}]}`,
-        messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
-      }),
-    });
-    const cData = await cRes.json();
-    let cRaw = (cData.content?.[0]?.text?.trim() || '{}').replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-    let conjugation = [];
-    try { ({ conjugation = [] } = JSON.parse(cRaw)); } catch {}
-
-    // 7. TTS audio via ElevenLabs
+    // TTS audio via ElevenLabs
     let audioUrl = null;
     if (ELEVENLABS_API_KEY) {
       try {
         const elRes = await fetch('https://api.elevenlabs.io/v1/text-to-speech/ebRwkdEFVZIx2A6YucFh', {
           method: 'POST',
           headers: { 'xi-api-key': ELEVENLABS_API_KEY, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: transcript.slice(0, 2500), model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.55, similarity_boost: 0.75 } }),
+          body: JSON.stringify({ text: bundle.transcript.slice(0, 2500), model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.55, similarity_boost: 0.75 } }),
         });
         if (elRes.ok) {
           const buf = Buffer.from(await elRes.arrayBuffer());
-          const b64 = buf.toString('base64');
-          audioUrl = `data:audio/mpeg;base64,${b64}`;
+          audioUrl = `data:audio/mpeg;base64,${buf.toString('base64')}`;
         }
       } catch (e) { console.error('[listening] ElevenLabs error:', e.message); }
     }
 
-    // 7. Save to Supabase cache (fire-and-forget)
+    // Save to DB (fire-and-forget)
     if (supabase) {
       supabase.from('listening_episodes').insert([{
-        level,
-        title,
-        audio_url: null, // generated episode — no persistent URL
-        transcript,
-        source_name: 'RFI — Journal en Français Facile',
-        pub_date: new Date().toUTCString(),
-        vocab_theme: vocabTheme,
-        questions,
-        vocab,
-        grammar,
-        conjugation,
-      }]).then(({ error }) => {
-        if (error) console.warn('[listening] Supabase insert failed:', error.message);
-      });
+        level, title: bundle.title, audio_url: null,
+        transcript: bundle.transcript, source_name: bundle.source,
+        pub_date: bundle.date, vocab_theme: bundle.vocabTheme,
+        questions: bundle.questions, vocab: bundle.vocab,
+        grammar: bundle.grammar, conjugation: bundle.conjugation,
+      }]).then(({ error }) => { if (error) console.warn('[listening] insert failed:', error.message); });
+      triggerReplenish().catch(() => {});
     }
 
     return {
       statusCode: 200,
-      body: { title, audioUrl, transcript, source: 'RFI — Journal en Français Facile', date: new Date().toUTCString(), vocabTheme, questions, vocab, grammar, conjugation },
+      body: { ...bundle, audioUrl },
     };
   } catch (err) {
     console.error('[listening] error:', err.message);
-    return { statusCode: 200, body: { ...empty, conjugation: [] } };
+    return { statusCode: 200, body: empty };
   }
 }
