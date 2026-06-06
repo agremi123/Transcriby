@@ -455,10 +455,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
 
       {/* arc end node + badge (next level) — always visible */}
       <>
-        <circle cx={arcEX} cy={MY} r={6} fill="none" stroke="#1A2340" strokeWidth="1.5" opacity="0.35" />
-        <text x={arcEX} y={MY - 16} textAnchor="middle"
-              fill="#1A2340" fontSize={LEVEL_LABEL_FS_CURRENT} fontWeight="700"
-              fontFamily={LEVEL_LABEL_FONT} opacity="0.55">{nextLevel}</text>
         <image
           href={`/badge-${nextLevel.toLowerCase()}.png`}
           x={arcEX - BADGE_SIZE / 2} y={BADGE_Y}
