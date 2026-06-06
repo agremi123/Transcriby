@@ -455,7 +455,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
             fontFamily={LEVEL_LABEL_FONT} opacity="0.55">{nextLevel}</text>
       <image
         href={`/badge-${nextLevel.toLowerCase()}.png`}
-        x={arcEX - 80} y={BADGE_Y}
+        x={arcEX - BADGE_SIZE / 2} y={BADGE_Y}
         width={160} height={160}
         style={{ mixBlendMode: 'multiply' }}
       />
