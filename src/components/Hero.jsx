@@ -2496,9 +2496,25 @@ export function AudioDemoCard({
                 </div>
               ) : !writeEditing && writeCorrection && writeCorrection.corrected?.trim() !== writeText.trim() ? (
                 <div
-                  className="flex-1 px-4 pt-4 pb-4 overflow-y-auto scroll-premium cursor-text"
+                  className="flex-1 px-4 pt-3 pb-4 overflow-y-auto scroll-premium cursor-text flex flex-col gap-3"
                   onClick={() => { setWriteEditing(true); setTimeout(() => writeTextareaRef.current?.focus(), 0); }}
                 >
+                  {activeTab === 'writing' && (
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/30 shrink-0 parisian-exp-bump">
+                        <img
+                          src={narratorReaction?.id === 'jules' ? '/assets/jules.png' : '/assets/lea.png'}
+                          alt={narratorReaction?.id === 'jules' ? 'Jules' : 'Léa'}
+                          className="w-full h-full object-cover object-top"
+                        />
+                      </div>
+                      <p className="font-display text-[13px] italic text-navy/55 leading-snug">
+                        {writeCorrection.corrected?.trim() === writeText.trim()
+                          ? 'Parfait ! Très bon français. 🎉'
+                          : 'Voici comment je l\'écrirais…'}
+                      </p>
+                    </div>
+                  )}
                   <CorrectionBlock
                     original={writeText}
                     corrected={writeCorrection.corrected}
