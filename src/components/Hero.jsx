@@ -717,11 +717,13 @@ function wait(ms) {
   return new Promise((resolve) => { window.setTimeout(resolve, ms); });
 }
 
-function ComprehensionItem({ q, qi, firePointsDelta }) {
+function ComprehensionItem({ q, qi, firePointsDelta, narratorId = 'lea' }) {
   const [answered, setAnswered] = React.useState(null);
   return (
     <div className="space-y-1.5">
-      <p className="font-display text-[13px] text-navy leading-snug">{q.question}</p>
+      <p className="font-display text-[13px] text-navy leading-snug">
+        <TranslatableText text={q.question} narratorId={narratorId} />
+      </p>
       <div className="space-y-1">
         {(q.options || []).map((opt, oi) => {
           const chosen = answered === opt;
@@ -736,7 +738,7 @@ function ComprehensionItem({ q, qi, firePointsDelta }) {
             <button key={oi} type="button" disabled={!!answered}
               onClick={() => { if (!answered) { setAnswered(opt); firePointsDelta(opt === q.answer ? 3 : -1); } }}
               className={`w-full text-left px-2.5 py-1.5 border text-[12px] font-display transition-colors ${cls}`}>
-              {opt}
+              <TranslatableText text={opt} narratorId={narratorId} />
             </button>
           );
         })}
