@@ -980,6 +980,32 @@ export function AudioDemoCard({
     return () => clearInterval(id);
   }, [isRecording]);
 
+  // Speaking tab: trigger narrator reaction when recording stops
+  const wasRecordingRef = React.useRef(false);
+  React.useEffect(() => {
+    const justStopped = wasRecordingRef.current && !isRecording;
+    wasRecordingRef.current = isRecording;
+    if (!justStopped || activeTab !== 'speaking') return;
+    const latestText = utterances[utterances.length - 1]?.text?.trim();
+    if (!latestText) return;
+    setNarratorReaction(null);
+    fetch('/api/speaking-reaction', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        utterance: latestText,
+        narratorId: speakingNarratorId,
+        topic: speakingTopicLabel,
+        openingLine: speakingOpeningLine,
+      }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.text) setNarratorReaction({ id: speakingNarratorId, text: data.text, translation: data.translation });
+      })
+      .catch(() => {});
+  }, [isRecording]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const discoverWord = async () => {
     setWordLoading(true);
     setWordData(null);
