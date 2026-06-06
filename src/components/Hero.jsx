@@ -2166,9 +2166,9 @@ export function AudioDemoCard({
             ))}
           </div>
 
-          {activeTab !== 'writing' && <span className="text-[14px] text-navy/40 font-display italic">or</span>}
+          <span className="text-[14px] text-navy/40 font-display italic">or</span>
 
-          {activeTab !== 'writing' && <button type="button" onClick={() => {
+          <button type="button" onClick={() => {
             setHighlightDiscover(false);
             setInputMode(inputMode === 'discover' ? 'speak' : 'discover');
           }}
