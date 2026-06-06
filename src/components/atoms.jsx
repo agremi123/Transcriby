@@ -1,6 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { ParisianProfileSquare } from './ParisianCornerBadge';
+
+function ParisianBadgeInline() {
+  return <ParisianProfileSquare compact className="pointer-events-none" />;
+}
 
 export function Logo({ className = '' }) {
   return (
