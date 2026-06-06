@@ -536,14 +536,15 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
               </div>
             </div>
           </foreignObject>
+          {/* Stem connecting popup to circle */}
+          <line x1={svgX} y1={ty + TH} x2={svgX} y2={svgY - 6} stroke="#1A2340" strokeWidth={2} opacity={0.5} />
+          {/* Circle rendered on top of stem, visually part of popup */}
+          <circle cx={svgX} cy={svgY} r={7} fill="#1A2340" stroke="rgba(255,255,255,0.15)" strokeWidth={1.5} style={{ pointerEvents: 'none' }} />
+          <circle cx={svgX} cy={svgY} r={4} fill={color} style={{ pointerEvents: 'none' }} />
           {!isAuto && (
-            <>
-              <circle cx={svgX} cy={svgY} r={18} fill="transparent"
-                      onMouseEnter={() => clearTimeout(closeTimer.current)}
-                      onMouseLeave={closeDot} />
-              <circle cx={svgX} cy={svgY} r={4} fill="white" stroke={color} strokeWidth="1.4"
-                      style={{ pointerEvents: 'none' }} />
-            </>
+            <circle cx={svgX} cy={svgY} r={18} fill="transparent"
+                    onMouseEnter={() => clearTimeout(closeTimer.current)}
+                    onMouseLeave={closeDot} />
           )}
           </>
         );
