@@ -4788,7 +4788,7 @@ export default function Hero() {
       <Container className="relative">
         <div className="grid lg:grid-cols-[1fr_1.5fr] gap-8 items-stretch h-[calc(100vh-96px)]">
           <div className="relative flex flex-col justify-center overflow-visible">
-            {heroActiveTab === 'reading' && readingActive ? (
+            {heroActiveTab === 'reading' && readingActive && (
               <ReadingArticlePanel
                 loading={readingLoading}
                 title={readingTitle}
@@ -4801,7 +4801,8 @@ export default function Hero() {
                 dailyParisianPoints={dailyParisianPoints}
                 onSpendExperience={spendExperience}
               />
-            ) : heroActiveTab === 'listening' && listeningActive ? (
+            )}
+            {heroActiveTab === 'listening' && listeningActive && (
               <ListeningPanel
                 loading={listeningLoading}
                 title={listeningTitle}
@@ -4819,7 +4820,8 @@ export default function Hero() {
                 dailyParisianPoints={dailyParisianPoints}
                 onSpendExperience={spendExperience}
               />
-            ) : heroActiveTab === 'speaking' && speakingActive ? (
+            )}
+            {heroActiveTab === 'speaking' && speakingActive && (
               <SpeakingChallengePanel
                 loading={speakingLoading}
                 narratorId={speakingNarrator}
@@ -4827,15 +4829,22 @@ export default function Hero() {
                 openingLineTranslation={speakingOpeningTranslation}
                 topicLabel={speakingTopicLabel}
               />
-            ) : heroActiveTab === 'writing' && writingActive ? (
+            )}
+            {heroActiveTab === 'writing' && writingActive && (
               <WritingChallengePanel
                 loading={writingLoading}
                 prompt={writingPrompt}
                 tips={writingTips}
                 wordTarget={writingWordTarget}
               />
-            ) : (
-            <div className="flex flex-col items-center text-center overflow-visible">
+            )}
+            {/* Always mounted so Reveal components don't re-animate on tab switch */}
+            <div className={`flex flex-col items-center text-center overflow-visible ${
+              (heroActiveTab === 'reading' && readingActive) ||
+              (heroActiveTab === 'listening' && listeningActive) ||
+              (heroActiveTab === 'speaking' && speakingActive) ||
+              (heroActiveTab === 'writing' && writingActive) ? 'hidden' : ''
+            }`}>
             <h1 className="font-display text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-2">
               <Reveal delay={0.08}>Learn French</Reveal>
               <Reveal delay={0.18} className="text-wine italic">From Parisiens.</Reveal>
