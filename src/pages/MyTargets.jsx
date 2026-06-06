@@ -456,7 +456,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
       <image
         href={`/badge-${nextLevel.toLowerCase()}.png`}
         x={arcEX - BADGE_SIZE / 2} y={BADGE_Y}
-        width={160} height={160}
+        width={BADGE_SIZE} height={BADGE_SIZE}
         style={{ mixBlendMode: 'multiply' }}
       />
 
