@@ -928,6 +928,10 @@ export function AudioDemoCard({
   const [parisianSpeakingText, setParisianSpeakingText] = React.useState(null);
   const [narratorVoiceLoadingKey, setNarratorVoiceLoadingKey] = React.useState(null);
 
+  // Parisian word chat challenge (Discover → Chat tab flow)
+  const [parisianWordChallenge, setParisianWordChallenge] = React.useState(null);
+  const [parisianWordChallengeLoading, setParisianWordChallengeLoading] = React.useState(false);
+
   // Word discovery
   const [wordData, setWordData] = React.useState(null);
   const [wordLoading, setWordLoading] = React.useState(false);
