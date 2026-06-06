@@ -780,7 +780,22 @@ export async function handleListening(body) {
     let grammar = [];
     try { ({ grammar = [] } = JSON.parse(gRaw)); } catch {}
 
-    // 6. TTS audio via ElevenLabs
+    // 6. Conjugation exercises
+    const cRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001', max_tokens: 600,
+        system: `You are a French language teacher. From the transcript, create 4 conjugation fill-in-the-blank exercises using verbs from the text. Return ONLY raw JSON: {"conjugation":[{"verb":"infinitive","tense":"tense name","sentence":"sentence with ___ replacing the conjugated form","answer":"conjugated form","hint":"je/tu/il/nous/vous/ils"}]}`,
+        messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
+      }),
+    });
+    const cData = await cRes.json();
+    let cRaw = (cData.content?.[0]?.text?.trim() || '{}').replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+    let conjugation = [];
+    try { ({ conjugation = [] } = JSON.parse(cRaw)); } catch {}
+
+    // 7. TTS audio via ElevenLabs
     let audioUrl = null;
     if (ELEVENLABS_API_KEY) {
       try {
