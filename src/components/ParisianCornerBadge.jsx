@@ -60,8 +60,8 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   // Arc center = badge center
   const cx = sw / 2 + r;
   const cy = padV + sw / 2 + r;
-  const svgW = cx + badgeSize / 2 + sw / 2;  // left extent + right half of badge
-  const svgH = padV * 2 + sw + badgeSize;
+  const svgW = cx + imgSize / 2 + sw / 2;  // left extent + right half of image
+  const svgH = padV * 2 + sw + imgSize;
 
   const halfCirc = Math.PI * r;
   const dash = (parisianPercent / 100) * halfCirc;
