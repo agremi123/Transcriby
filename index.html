@@ -13,16 +13,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      window.__errors=[];
-      window.onerror=function(m,s,l,c,e){window.__errors.push(m+' @ '+l+':'+c);return false;};
-      const _ce=console.error.bind(console);
-      console.error=function(...a){
-        const msg=a.map(x=>typeof x==='object'?(x?.message||x?.stack||JSON.stringify(x)):String(x)).join(' ');
-        window.__errors.push(msg);
-        _ce(...a);
-      };
-    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
