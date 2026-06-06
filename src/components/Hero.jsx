@@ -4903,6 +4903,9 @@ export default function Hero() {
               onTabChange={setHeroActiveTab}
               exerciseSubTabProp={exerciseSubTab}
               onExerciseSubTabChange={setExerciseSubTab}
+              speakingNarratorId={speakingNarrator}
+              speakingTopicLabel={speakingTopicLabel}
+              speakingOpeningLine={speakingOpeningLine}
             />
           </div>
         </div>
