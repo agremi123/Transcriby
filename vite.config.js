@@ -1380,10 +1380,37 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
 const SPEAKING_NARRATORS = ['jules', 'lea'];
 function speakingPromptMiddleware(apiKey) {
   return async (req, res, next) => {
-    if (req.url !== '/api/speaking-prompt' || req.method !== 'POST') { next(); return; }
-    let topic = '';
-    try { topic = (JSON.parse(await readBody(req))).topic || ''; } catch {}
+    const isLegacy = req.url === '/api/speaking-prompt' && req.method === 'POST';
+    const isCombined = req.url === '/api/speaking' && req.method === 'POST';
+    if (!isLegacy && !isCombined) { next(); return; }
+
+    let body = {};
+    try { body = JSON.parse(await readBody(req)); } catch {}
     res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+
+    // Reaction mode (chat reply)
+    if (isCombined && body.type === 'reaction') {
+      const { utterance = '', narratorId = 'lea', topic = '', openingLine = '' } = body;
+      if (!apiKey || !utterance.trim()) { res.end(JSON.stringify({ text: '', translation: '' })); return; }
+      try {
+        const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+        const gender = narratorId === 'lea' ? 'une Parisienne' : 'un Parisien';
+        const d = await claudeCall('speaking/reaction', apiKey, {
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 200,
+          system: `Tu es ${name}, ${gender} natif(ve) qui aide un étudiant à pratiquer le français oral.\nLe sujet de conversation: "${topic || 'conversation libre'}"\nTu as lancé la conversation en disant: "${openingLine}"\nL'étudiant vient de parler. Réponds naturellement en 1-2 phrases courtes en français.\nSois curieux(se), encourageant(e), et rebondis sur ce qu'il a dit.\nJSON: {"text":"...", "translation":"..."}`,
+          messages: [{ role: 'user', content: `L'étudiant a dit: "${utterance}"` }],
+        });
+        let raw = d.content?.[0]?.text?.trim() || '{}';
+        raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        const parsed = JSON.parse(raw);
+        res.end(JSON.stringify({ text: parsed.text || '', translation: parsed.translation || '' }));
+      } catch { res.end(JSON.stringify({ text: '', translation: '' })); }
+      return;
+    }
+
+    // Prompt mode (opening line)
+    const topic = body.topic || '';
     if (!apiKey) { res.end(JSON.stringify({ narratorId: 'lea', openingLine: '', topic })); return; }
     try {
       const narratorId = SPEAKING_NARRATORS[Math.floor(Math.random() * SPEAKING_NARRATORS.length)];
