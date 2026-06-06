@@ -825,6 +825,9 @@ export function AudioDemoCard({
   exerciseConjugation = [],
   exerciseSubTabProp = null,
   onExerciseSubTabChange = null,
+  speakingNarratorId = 'lea',
+  speakingTopicLabel = '',
+  speakingOpeningLine = '',
 }) {
   const { effectiveLevel, gainExperience, gainDailyParisianPoints } = useLearnerProfile();
   const {
