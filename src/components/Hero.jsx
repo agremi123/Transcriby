@@ -4683,6 +4683,10 @@ export default function Hero() {
               listeningQuestions={listeningQuestions}
               listeningVocab={listeningVocab}
               listeningGrammar={listeningGrammar}
+              exerciseQuestions={listeningActive ? listeningQuestions : readingQuestions}
+              exerciseVocab={listeningActive ? listeningVocab : readingVocab}
+              exerciseGrammar={listeningActive ? listeningGrammar : readingGrammar}
+              exerciseConjugation={listeningActive ? listeningConjugation : readingConjugation}
               activeTab={heroActiveTab}
               onTabChange={setHeroActiveTab}
             />
