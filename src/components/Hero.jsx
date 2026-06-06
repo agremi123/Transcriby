@@ -2563,12 +2563,20 @@ export function AudioDemoCard({
                     <span key={`border-${writeHintKey}`} className="absolute top-3 left-3 right-3 bottom-3 rounded-lg border-2 border-wine/30 animate-pulse pointer-events-none" aria-hidden />
                   )}
                   {!writeText.trim() && activeTab !== 'writing' && (
-                    <div className="flex items-center gap-3 px-4 pt-4 pb-2 shrink-0">
-                      <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0">
+                    <div className="flex items-start gap-3 px-4 pt-4 pb-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => chatIntroLine && playNarratorLine({ id: 'lea', text: chatIntroLine.text })}
+                        className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
+                        aria-label="Replay Léa's intro"
+                      >
                         <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
-                      </div>
-                      <p className="font-display text-[16px] italic text-navy/70 leading-snug">
-                        Bonjour ! Ask me anything in French — I'll help you improve. 🗼
+                        {wordPlaying && parisianSpeakingText === chatIntroLine?.text && (
+                          <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
+                        )}
+                      </button>
+                      <p className="font-display text-[16px] italic text-navy/70 leading-snug pt-1">
+                        {chatIntroLine?.text ?? 'Bonjour ! Ask me anything in French — I\'ll help you improve. 🗼'}
                       </p>
                     </div>
                   )}
