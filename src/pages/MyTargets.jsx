@@ -471,8 +471,8 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                   fontFamily={LEVEL_LABEL_FONT} fontWeight="600">{lvl}</text>
             <image
               href={`/badge-${lvl.toLowerCase()}.png`}
-              x={x - 80} y={MY + 22}
-              width={160} height={160}
+              x={x - BADGE_SIZE / 2} y={BADGE_Y}
+              width={BADGE_SIZE} height={BADGE_SIZE}
               opacity="1"
             />
           </g>
