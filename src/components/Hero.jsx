@@ -4210,13 +4210,15 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
   );
 }
 
-/** Splits French text into clickable words that fetch translations on demand. */
-function TranslatableText({ text, className = '', context = '' }) {
+/** Splits French text into clickable words that fetch translations + pronunciation on demand. */
+function TranslatableText({ text, className = '', context = '', narratorId = 'lea' }) {
   const cacheRef = React.useRef({});
+  const audioCacheRef = React.useRef({});
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
   const [loadingWord, setLoadingWord] = React.useState(null);
   const [activeWord, setActiveWord] = React.useState(null);
   const [tooltipPos, setTooltipPos] = React.useState({ top: 0, left: 0 });
+  const [playingWord, setPlayingWord] = React.useState(null);
 
   // Close tooltip on outside click
   React.useEffect(() => {
@@ -4249,17 +4251,54 @@ function TranslatableText({ text, className = '', context = '' }) {
     }
   }, [context, text]);
 
+  const handlePronounce = React.useCallback(async (clean) => {
+    if (playingWord === clean) return;
+    setPlayingWord(clean);
+    try {
+      const cached = audioCacheRef.current[clean];
+      if (cached) { new Audio(cached).play(); return; }
+      const r = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: clean, narrator: narratorId }),
+      });
+      const { audioUrl } = await r.json();
+      if (audioUrl) { audioCacheRef.current[clean] = audioUrl; new Audio(audioUrl).play(); }
+    } catch { /* silent */ } finally {
+      setPlayingWord(null);
+    }
+  }, [narratorId, playingWord]);
+
   // Tokenise keeping punctuation/spaces as separate tokens
   const tokens = React.useMemo(() => text.split(/([^a-zA-ZÀ-ÿœæ'-]+)/u), [text]);
 
   const tooltip = activeWord ? createPortal(
     <div
-      className="pointer-events-none fixed z-[300] min-w-[7rem] max-w-[15rem] rounded-md border border-navy/10 bg-navy px-3 py-2 text-center text-[12px] leading-snug text-ivory shadow-[0_8px_28px_rgba(26,35,64,0.32)]"
+      className="fixed z-[300] min-w-[7rem] max-w-[15rem] rounded-md border border-navy/10 bg-navy px-3 py-2 shadow-[0_8px_28px_rgba(26,35,64,0.32)]"
       style={{ top: tooltipPos.top, left: tooltipPos.left, transform: 'translate(-50%, calc(-100% - 9px))' }}
+      onMouseDown={(e) => e.stopPropagation()}
     >
-      {loadingWord === activeWord
-        ? <span className="opacity-50">…</span>
-        : formatTranslationWords(cacheRef.current[activeWord] ?? '…')}
+      <div className="flex items-center gap-2 justify-center">
+        <span className="text-[12px] leading-snug text-ivory text-center">
+          {loadingWord === activeWord
+            ? <span className="opacity-50">…</span>
+            : formatTranslationWords(cacheRef.current[activeWord] ?? '…')}
+        </span>
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); handlePronounce(activeWord); }}
+          className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full hover:bg-white/15 transition-colors text-ivory/50 hover:text-ivory"
+          aria-label="Écouter"
+        >
+          {playingWord === activeWord
+            ? <span className="w-1.5 h-1.5 rounded-full bg-wine/80 animate-ping" />
+            : <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 5v4h2.5L8 12V2L4.5 5H2z" fill="currentColor" stroke="none"/>
+                <path d="M10.5 4.5a3.5 3.5 0 010 5"/>
+              </svg>
+          }
+        </button>
+      </div>
     </div>,
     document.body,
   ) : null;
