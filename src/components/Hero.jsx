@@ -2235,11 +2235,11 @@ export function AudioDemoCard({
                         <div key={gi} className="border border-line/50 p-3">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 bg-wine/8 px-1.5 py-0.5">Grammaire</span>
-                            <span className="font-display text-[14px] text-navy font-medium">{g.point}</span>
+                            <span className="font-display text-[14px] text-navy font-medium"><TranslatableText text={g.point} narratorId={exerciseNarrator} /></span>
                           </div>
-                          {g.example && <blockquote className="border-l-2 border-navy/20 pl-2 mb-2"><p className="font-display text-[12px] italic text-navy/70">« {g.example} »</p></blockquote>}
-                          <p className="text-[12px] text-navy/75 leading-snug mb-1">{g.explanation}</p>
-                          {g.tip && <p className="text-[11px] font-mono text-wine/70"><span className="text-[9px] uppercase tracking-widest mr-1">Tip:</span>{g.tip}</p>}
+                          {g.example && <blockquote className="border-l-2 border-navy/20 pl-2 mb-2"><p className="font-display text-[12px] italic text-navy/70">« <TranslatableText text={g.example} narratorId={exerciseNarrator} /> »</p></blockquote>}
+                          <p className="text-[12px] text-navy/75 leading-snug mb-1"><TranslatableText text={g.explanation} narratorId={exerciseNarrator} /></p>
+                          {g.tip && <p className="text-[11px] font-mono text-wine/70"><span className="text-[9px] uppercase tracking-widest mr-1">Tip:</span><TranslatableText text={g.tip} narratorId={exerciseNarrator} /></p>}
                         </div>
                       ))
                 )}
