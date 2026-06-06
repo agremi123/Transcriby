@@ -4853,6 +4853,8 @@ export default function Hero() {
               exerciseConjugation={listeningActive ? listeningConjugation : readingConjugation}
               activeTab={heroActiveTab}
               onTabChange={setHeroActiveTab}
+              exerciseSubTabProp={exerciseSubTab}
+              onExerciseSubTabChange={setExerciseSubTab}
             />
           </div>
         </div>
