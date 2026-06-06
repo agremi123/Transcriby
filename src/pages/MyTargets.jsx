@@ -460,6 +460,8 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
         width={BADGE_SIZE} height={BADGE_SIZE}
         style={{ mixBlendMode: 'multiply' }}
       />
+      {/* Empty circle above B2 badge */}
+      <circle cx={arcEX} cy={BADGE_Y + 10} r={10} fill="white" stroke="#1A2340" strokeWidth="1.5" opacity="0.3" />
 
       {futureLevels.map((lvl, i) => {
         const x = arcEX + (i + 1) * FUT_PX;
@@ -475,6 +477,8 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
               width={BADGE_SIZE} height={BADGE_SIZE}
               opacity="1"
             />
+            {/* Empty circle above future badge */}
+            <circle cx={x} cy={BADGE_Y + 10} r={10} fill="white" stroke="#1A2340" strokeWidth="1.5" opacity="0.22" />
           </g>
         );
       })}
