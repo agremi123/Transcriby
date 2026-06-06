@@ -2158,7 +2158,7 @@ export function AudioDemoCard({
             {[
               { id: 'speak', label: 'Speak' },
               { id: 'write', label: 'Write' },
-            ].map((m) => (
+            ].filter((m) => activeTab !== 'writing' || m.id === 'write').map((m) => (
               <button key={m.id} type="button" onClick={() => (m.id === 'write' ? activateWriteMode() : activateSpeakMode())}
                 className={`relative z-10 font-display text-[15px] tracking-wide px-4 py-1.5 rounded-full capitalize transition-colors duration-200 ${lastSpeakWriteMode === m.id ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'}`}>
                 {m.label}
@@ -2166,9 +2166,9 @@ export function AudioDemoCard({
             ))}
           </div>
 
-          <span className="text-[14px] text-navy/40 font-display italic">or</span>
+          {activeTab !== 'writing' && <span className="text-[14px] text-navy/40 font-display italic">or</span>}
 
-          <button type="button" onClick={() => {
+          {activeTab !== 'writing' && <button type="button" onClick={() => {
             setHighlightDiscover(false);
             setInputMode(inputMode === 'discover' ? 'speak' : 'discover');
           }}
