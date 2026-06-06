@@ -711,6 +711,7 @@ export async function handleSpeakingPrompt(body) {
     if (rows && rows.length > 0) {
       const row = rows[0];
       supabase.from('speaking_prompts').update({ served: true }).eq('id', row.id).then(() => {});
+      triggerReplenish();
       return { statusCode: 200, body: { narratorId: row.narrator_id, openingLine: row.opening_line, openingLineTranslation: row.opening_line_translation, topicLabel: row.topic_label } };
     }
   }
