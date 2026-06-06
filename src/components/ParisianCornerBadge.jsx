@@ -117,18 +117,18 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
           strokeDasharray={`${dash} ${halfCirc}`}
           style={{ transition: scoreAnim ? 'stroke-dasharray 0.7s ease-out' : 'stroke-dasharray 0.5s ease' }}
         />
-        {/* B1 label at arc bottom tip */}
+        {/* B1 label at arc bottom endpoint */}
         <text
-          x={cx} y={cy + r + 9}
-          textAnchor="middle" fontSize={8}
+          x={cx + 6} y={cy + r + 4}
+          textAnchor="start" fontSize={8}
           fill="#8b1e2d" fontFamily="'SF Mono','Fira Mono',monospace"
           fontWeight="600" opacity={0.65}
         >{level}</text>
-        {/* B2 label at arc top tip */}
+        {/* B2 label at arc top endpoint */}
         {nextLevel && (
           <text
-            x={cx} y={cy - r - 3}
-            textAnchor="middle" fontSize={8}
+            x={cx + 6} y={cy - r + 4}
+            textAnchor="start" fontSize={8}
             fill="#8b1e2d" fontFamily="'SF Mono','Fira Mono',monospace"
             fontWeight="600" opacity={0.4}
           >{nextLevel}</text>
