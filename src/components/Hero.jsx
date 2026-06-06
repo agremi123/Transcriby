@@ -3500,7 +3500,7 @@ function DailyParisianPointsIndicator({ points }) {
         </span>
       </motion.div>
       <span className="text-[9px] font-mono tracking-[0.08em] uppercase text-navy/45 leading-tight w-[3.25rem]">
-        My Daily Parisian points
+        My Parisian Points
       </span>
     </div>
   );
