@@ -465,9 +465,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
           const x = arcEX + (i + 1) * FUT_PX;
           return (
             <g key={lvl}>
-              <text x={x} y={MY - 16} textAnchor="middle"
-                    fontSize={LEVEL_LABEL_FS_FUTURE} fill="#1A2340" opacity="0.38"
-                    fontFamily={LEVEL_LABEL_FONT} fontWeight="600">{lvl}</text>
               <image
                 href={`/badge-${lvl.toLowerCase()}.png`}
                 x={x - BADGE_SIZE / 2} y={BADGE_Y}
