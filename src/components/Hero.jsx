@@ -936,6 +936,13 @@ export function AudioDemoCard({
   const chatIntroPlayedRef = React.useRef(false);
   const [chatIntroLine, setChatIntroLine] = React.useState(null); // { text, narratorId }
 
+  // Chat conversation history
+  const [chatHistory, setChatHistory] = React.useState([]); // [{ id, role:'lea'|'user', text, narratorId?, loading? }]
+  const chatHistoryRef = React.useRef([]); // stable ref for async effects
+  const chatCommittedRef = React.useRef(0); // how many utterances already in history
+  const [chatLeaLoading, setChatLeaLoading] = React.useState(false);
+  const chatWasRecordingRef = React.useRef(false);
+
   // Word discovery
   const [wordData, setWordData] = React.useState(null);
   const [wordLoading, setWordLoading] = React.useState(false);
