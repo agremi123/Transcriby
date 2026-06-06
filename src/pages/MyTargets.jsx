@@ -280,7 +280,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
     closeTimer.current = setTimeout(() => setHoveredDot(null), 120);
   };
 
-  const BADGE_SIZE = 210;
   const BADGE_Y    = MY + 18;
 
   return (
