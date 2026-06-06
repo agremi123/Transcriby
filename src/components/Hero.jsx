@@ -2577,7 +2577,19 @@ export function AudioDemoCard({
                   />
                 </div>
               )}
-              {writeCorrecting && (
+              {writeCorrecting && activeTab === 'writing' && (
+                <div className="absolute bottom-3 left-4 flex items-center gap-2 pointer-events-none">
+                  <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0">
+                    <img
+                      src={narratorReaction?.id === 'jules' ? '/assets/jules.png' : '/assets/lea.png'}
+                      alt={narratorReaction?.id === 'jules' ? 'Jules' : 'Léa'}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                  <CorrectionLoading />
+                </div>
+              )}
+              {writeCorrecting && activeTab !== 'writing' && (
                 <div className="absolute bottom-2 right-3 pointer-events-none">
                   <CorrectionLoading />
                 </div>
