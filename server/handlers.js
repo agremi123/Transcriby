@@ -737,8 +737,6 @@ async function triggerReplenish() {
 }
 
 export async function handleReplenish() {
-  // Disabled — activate once source quality is confirmed
-  return { statusCode: 200, body: { ok: true, disabled: true } };
   const { ANTHROPIC_API_KEY } = getEnv();
   if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: { ok: true } };
   const supabase = getSupabase();
