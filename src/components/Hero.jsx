@@ -2796,15 +2796,27 @@ export function AudioDemoCard({
                         />
                       }>
                         <div className="flex items-baseline gap-2 flex-wrap">
-                          {/* Original sentence — underline mistakes if correction exists */}
+                          {/* Original sentence — highlight during playback, underline mistakes at rest */}
                           <span className="font-display text-[16px] text-navy leading-snug">
-                            {msg.correction
-                              ? wordDiff(msg.text, msg.correction).map((w, i) =>
-                                  w.struck
-                                    ? <span key={i} className="underline decoration-wine/50 underline-offset-2">{w.word} </span>
-                                    : <React.Fragment key={i}>{w.word} </React.Fragment>
-                                )
-                              : msg.text}
+                            {chatPlayingId === msg.id && msg.words?.length > 0
+                              ? msg.words.map((w, i) => {
+                                  const next = msg.words[i + 1];
+                                  const active = chatPlayingTime !== null &&
+                                    chatPlayingTime >= w.start &&
+                                    chatPlayingTime < (next?.start ?? (w.end != null ? w.end + 0.1 : 9999));
+                                  return (
+                                    <span key={i} className={active ? 'text-wine font-semibold transition-colors' : 'transition-colors'}>
+                                      {w.word}{' '}
+                                    </span>
+                                  );
+                                })
+                              : msg.correction
+                                ? wordDiff(msg.text, msg.correction).map((w, i) =>
+                                    w.struck
+                                      ? <span key={i} className="underline decoration-wine/50 underline-offset-2">{w.word} </span>
+                                      : <React.Fragment key={i}>{w.word} </React.Fragment>
+                                  )
+                                : msg.text}
                           </span>
                           {msg.correction && (
                             <button
