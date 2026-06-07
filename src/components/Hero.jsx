@@ -2777,7 +2777,7 @@ export function AudioDemoCard({
                             onClick={() => setChatCorrectionPopup({ msgId: msg.id, original: msg.text, corrected: msg.correction })}
                             className="shrink-0 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
                           >
-                            Correct my sentence
+                            Correct it
                           </button>
                         )}
                       </div>
