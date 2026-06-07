@@ -2798,7 +2798,7 @@ export function AudioDemoCard({
                       {/* Inline correction panel */}
                       {chatCorrectionPopup?.msgId === msg.id && (
                         <TranscriptSentenceRow gutter={<TranscriptAudioSlot mode="empty" />}>
-                        <div className="bg-paper border border-line/50 rounded-xl px-3 py-2.5 flex items-center gap-2.5 shadow-sm">
+                        <div className="inline-flex items-center gap-2.5 bg-paper border border-line/50 rounded-xl px-3 py-2.5 shadow-sm self-start">
                           <button
                             type="button"
                             onClick={() => playNarratorLine({ id: 'lea', text: msg.correction })}
