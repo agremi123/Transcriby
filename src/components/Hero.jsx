@@ -2809,6 +2809,7 @@ export function AudioDemoCard({
                           </button>
                           <p className="font-display text-[15px] italic text-navy/80 leading-snug">{msg.correction}</p>
                         </div>
+                        </TranscriptSentenceRow>
                       )}
                     </div>
                   )
