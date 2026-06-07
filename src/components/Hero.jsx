@@ -2770,8 +2770,17 @@ export function AudioDemoCard({
                   ) : (
                     <div key={msg.id} className="flex flex-col gap-1.5">
                       <TranscriptSentenceRow gutter={<TranscriptAudioSlot mode="empty" />}>
-                        <div className="flex items-baseline gap-2">
-                          <span className="font-display text-[16px] text-navy leading-snug">{msg.text}</span>
+                        <div className="flex items-baseline gap-2 flex-wrap">
+                          {/* Original sentence — underline mistakes if correction exists */}
+                          <span className="font-display text-[16px] text-navy leading-snug">
+                            {msg.correction
+                              ? wordDiff(msg.text, msg.correction).map((w, i) =>
+                                  w.struck
+                                    ? <SpellcheckUnderline key={i} seed={w.word} className="text-navy">{w.word} </SpellcheckUnderline>
+                                    : <React.Fragment key={i}>{w.word} </React.Fragment>
+                                )
+                              : msg.text}
+                          </span>
                           {msg.correction && (
                             <button
                               type="button"
@@ -2786,24 +2795,18 @@ export function AudioDemoCard({
                           )}
                         </div>
                       </TranscriptSentenceRow>
+                      {/* Inline correction panel */}
                       {chatCorrectionPopup?.msgId === msg.id && (
-                        <div className="ml-9 bg-paper border border-line/50 rounded-xl px-4 py-3 flex flex-col gap-2.5 shadow-sm">
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => playNarratorLine({ id: 'lea', text: msg.correction })}
-                              className="relative w-6 h-6 rounded-full overflow-hidden ring-1 ring-wine/25 shrink-0 hover:ring-wine/50 transition-all hover:scale-105"
-                              aria-label="Écouter la correction"
-                            >
-                              <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
-                            </button>
-                            <p className="font-display text-[11px] italic text-navy/40">Léa corrige</p>
-                          </div>
-                          <CorrectionBlock
-                            original={msg.text}
-                            corrected={msg.correction}
-                            className="font-display text-[14px] leading-snug text-navy"
-                          />
+                        <div className="ml-9 bg-paper border border-line/50 rounded-xl px-4 py-3 flex items-start gap-3 shadow-sm">
+                          <button
+                            type="button"
+                            onClick={() => playNarratorLine({ id: 'lea', text: msg.correction })}
+                            className="relative w-7 h-7 rounded-full overflow-hidden ring-1 ring-wine/25 shrink-0 hover:ring-wine/50 transition-all hover:scale-105 mt-0.5"
+                            aria-label="Écouter la correction"
+                          >
+                            <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
+                          </button>
+                          <p className="font-display text-[15px] italic text-navy/80 leading-snug">{msg.correction}</p>
                         </div>
                       )}
                     </div>
