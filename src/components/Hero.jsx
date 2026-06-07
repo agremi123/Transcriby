@@ -4731,44 +4731,6 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
         </>
       )}
 
-      {/* Chat Correction Popover — anchored near the "See mistakes" button */}
-      {chatCorrectionPopup && (() => {
-        const r = chatCorrectionPopup.rect;
-        // Position above the button, clamped to card width
-        const cardW = 300;
-        const left = Math.min(Math.max(r.left, 8), window.innerWidth - cardW - 8);
-        const top = r.top - 8; // will be pushed up via transform
-        return (
-          <>
-            {/* click-away backdrop */}
-            <div className="fixed inset-0 z-40" onClick={() => setChatCorrectionPopup(null)} />
-            <div
-              className="fixed z-50 bg-paper border border-line/60 rounded-xl shadow-[0_8px_32px_rgba(26,35,64,0.18)] p-4 flex flex-col gap-3"
-              style={{ left, top, width: cardW, transform: 'translateY(-100%)' }}
-              onClick={e => e.stopPropagation()}
-            >
-              {/* small arrow pointing down */}
-              <div className="absolute bottom-[-6px] left-5 w-3 h-3 bg-paper border-r border-b border-line/60 rotate-45" />
-              <div className="flex items-center gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => playNarratorLine({ id: 'lea', text: chatCorrectionPopup.corrected })}
-                  className="relative w-7 h-7 rounded-full overflow-hidden ring-1 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
-                  aria-label="Léa prononce la correction"
-                >
-                  <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
-                </button>
-                <p className="font-display text-[12px] italic text-navy/45">Léa corrige</p>
-              </div>
-              <CorrectionBlock
-                original={chatCorrectionPopup.original}
-                corrected={chatCorrectionPopup.corrected}
-                className="font-display text-[15px] leading-snug text-navy"
-              />
-            </div>
-          </>
-        );
-      })()}
     </div>
   );
 }
