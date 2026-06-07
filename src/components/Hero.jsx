@@ -944,6 +944,7 @@ export function AudioDemoCard({
   const chatWasRecordingRef = React.useRef(false);
   const [chatCorrectionPopup, setChatCorrectionPopup] = React.useState(null); // { msgId, corrected }
   const [chatPlayingId, setChatPlayingId] = React.useState(null);
+  const [chatPlayingTime, setChatPlayingTime] = React.useState(null);
   const chatAudioRef = React.useRef(null);
 
   // Word discovery
