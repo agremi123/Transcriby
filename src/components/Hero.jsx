@@ -2771,7 +2771,26 @@ export function AudioDemoCard({
                     </div>
                   ) : (
                     <div key={msg.id} className="flex flex-col gap-1.5">
-                      <TranscriptSentenceRow gutter={<TranscriptAudioSlot mode="empty" />}>
+                      <TranscriptSentenceRow gutter={
+                        <TranscriptAudioSlot
+                          mode={msg.audioUrl ? 'play' : 'empty'}
+                          isPlaying={chatPlayingId === msg.id}
+                          onPlay={() => {
+                            if (chatPlayingId === msg.id) {
+                              chatAudioRef.current?.pause();
+                              chatAudioRef.current = null;
+                              setChatPlayingId(null);
+                            } else {
+                              if (chatAudioRef.current) { chatAudioRef.current.pause(); chatAudioRef.current = null; }
+                              const audio = new Audio(msg.audioUrl);
+                              chatAudioRef.current = audio;
+                              setChatPlayingId(msg.id);
+                              audio.play();
+                              audio.onended = () => { chatAudioRef.current = null; setChatPlayingId(null); };
+                            }
+                          }}
+                        />
+                      }>
                         <div className="flex items-baseline gap-2 flex-wrap">
                           {/* Original sentence — underline mistakes if correction exists */}
                           <span className="font-display text-[16px] text-navy leading-snug">
