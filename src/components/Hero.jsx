@@ -2781,13 +2781,16 @@ export function AudioDemoCard({
                               chatAudioRef.current?.pause();
                               chatAudioRef.current = null;
                               setChatPlayingId(null);
+                              setChatPlayingTime(null);
                             } else {
                               if (chatAudioRef.current) { chatAudioRef.current.pause(); chatAudioRef.current = null; }
                               const audio = new Audio(msg.audioUrl);
                               chatAudioRef.current = audio;
                               setChatPlayingId(msg.id);
+                              setChatPlayingTime(0);
+                              audio.ontimeupdate = () => setChatPlayingTime(audio.currentTime);
                               audio.play();
-                              audio.onended = () => { chatAudioRef.current = null; setChatPlayingId(null); };
+                              audio.onended = () => { chatAudioRef.current = null; setChatPlayingId(null); setChatPlayingTime(null); };
                             }
                           }}
                         />
