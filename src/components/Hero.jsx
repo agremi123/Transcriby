@@ -2768,26 +2768,45 @@ export function AudioDemoCard({
                       )}
                     </div>
                   ) : (
-                    <TranscriptSentenceRow key={msg.id} gutter={<TranscriptAudioSlot mode="empty" />}>
-                      <div className="flex items-baseline gap-2">
-                        <span className="font-display text-[16px] text-navy leading-snug">{msg.text}</span>
-                        {msg.correction && (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              const rect = e.currentTarget.getBoundingClientRect();
-                              setChatCorrectionPopup(
+                    <div key={msg.id} className="flex flex-col gap-1.5">
+                      <TranscriptSentenceRow gutter={<TranscriptAudioSlot mode="empty" />}>
+                        <div className="flex items-baseline gap-2">
+                          <span className="font-display text-[16px] text-navy leading-snug">{msg.text}</span>
+                          {msg.correction && (
+                            <button
+                              type="button"
+                              onClick={() => setChatCorrectionPopup(
                                 chatCorrectionPopup?.msgId === msg.id ? null :
-                                { msgId: msg.id, original: msg.text, corrected: msg.correction, rect }
-                              );
-                            }}
-                            className="shrink-0 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
-                          >
-                            See mistakes
-                          </button>
-                        )}
-                      </div>
-                    </TranscriptSentenceRow>
+                                { msgId: msg.id, original: msg.text, corrected: msg.correction }
+                              )}
+                              className="shrink-0 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
+                            >
+                              See mistakes
+                            </button>
+                          )}
+                        </div>
+                      </TranscriptSentenceRow>
+                      {chatCorrectionPopup?.msgId === msg.id && (
+                        <div className="ml-9 bg-paper border border-line/50 rounded-xl px-4 py-3 flex flex-col gap-2.5 shadow-sm">
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => playNarratorLine({ id: 'lea', text: msg.correction })}
+                              className="relative w-6 h-6 rounded-full overflow-hidden ring-1 ring-wine/25 shrink-0 hover:ring-wine/50 transition-all hover:scale-105"
+                              aria-label="Écouter la correction"
+                            >
+                              <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
+                            </button>
+                            <p className="font-display text-[11px] italic text-navy/40">Léa corrige</p>
+                          </div>
+                          <CorrectionBlock
+                            original={msg.text}
+                            corrected={msg.correction}
+                            className="font-display text-[14px] leading-snug text-navy"
+                          />
+                        </div>
+                      )}
+                    </div>
                   )
                 ))}
                 {/* Live utterance while recording */}
