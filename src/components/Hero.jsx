@@ -1090,7 +1090,7 @@ export function AudioDemoCard({
 
     const updated = [
       ...chatHistoryRef.current,
-      { id: userId, role: 'user', text: userText, audioUrl: newUtts[0]?.audioUrl || null },
+      { id: userId, role: 'user', text: userText, audioUrl: newUtts[0]?.audioUrl || null, words: newUtts[0]?.words || [] },
       { id: leaId, role: 'lea', loading: true, narratorId: 'lea' },
     ];
     chatHistoryRef.current = updated;
