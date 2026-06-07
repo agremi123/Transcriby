@@ -2788,9 +2788,15 @@ export function AudioDemoCard({
                                 chatCorrectionPopup?.msgId === msg.id ? null :
                                 { msgId: msg.id, original: msg.text, corrected: msg.correction }
                               )}
-                              className="shrink-0 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
+                              className="shrink-0 inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
                             >
                               See mistakes
+                              <svg
+                                width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden
+                                className={`transition-transform duration-200 ${chatCorrectionPopup?.msgId === msg.id ? 'rotate-180' : ''}`}
+                              >
+                                <path d="M1 2.5l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
                             </button>
                           )}
                         </div>
