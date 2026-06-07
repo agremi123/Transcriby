@@ -2798,14 +2798,16 @@ export function AudioDemoCard({
                       {/* Inline correction panel */}
                       {chatCorrectionPopup?.msgId === msg.id && (
                         <TranscriptSentenceRow gutter={<TranscriptAudioSlot mode="empty" />}>
-                        <div className="bg-paper border border-line/50 rounded-xl px-4 py-3 flex items-start gap-3 shadow-sm">
+                        <div className="bg-paper border border-line/50 rounded-xl px-3 py-2.5 flex items-center gap-2.5 shadow-sm">
                           <button
                             type="button"
                             onClick={() => playNarratorLine({ id: 'lea', text: msg.correction })}
-                            className="relative w-7 h-7 rounded-full overflow-hidden ring-1 ring-wine/25 shrink-0 hover:ring-wine/50 transition-all hover:scale-105 mt-0.5"
+                            className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-wine/15 hover:bg-wine/25 shrink-0 transition-colors"
                             aria-label="Écouter la correction"
                           >
-                            <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
+                            <svg width="7" height="9" viewBox="0 0 7 9" fill="none" aria-hidden>
+                              <path d="M1 1l5 3.5L1 8V1z" fill="#8B1E2D" opacity="0.8"/>
+                            </svg>
                           </button>
                           <p className="font-display text-[15px] italic text-navy/80 leading-snug">{msg.correction}</p>
                         </div>
