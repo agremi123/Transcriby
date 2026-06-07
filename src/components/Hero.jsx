@@ -2810,11 +2810,12 @@ export function AudioDemoCard({
                             {chatPlayingId === msg.id && msg.words?.length > 0
                               ? msg.words.map((w, i) => {
                                   const next = msg.words[i + 1];
-                                  const active = chatPlayingTime !== null &&
-                                    chatPlayingTime >= w.start &&
-                                    chatPlayingTime < (next?.start ?? (w.end != null ? w.end + 0.1 : 9999));
+                                  const offset = msg.wordOffset || 0;
+                                  const wStart = w.start - offset;
+                                  const wEnd = next ? (next.start - offset) : ((w.end ?? w.start) - offset + 0.1);
+                                  const active = chatPlayingTime !== null && chatPlayingTime >= wStart && chatPlayingTime < wEnd;
                                   return (
-                                    <span key={i} className={active ? 'text-wine font-semibold transition-colors' : 'transition-colors'}>
+                                    <span key={i} className={active ? 'text-wine font-semibold' : ''}>
                                       {w.word}{' '}
                                     </span>
                                   );
