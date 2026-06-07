@@ -2776,7 +2776,7 @@ export function AudioDemoCard({
                             {msg.correction
                               ? wordDiff(msg.text, msg.correction).map((w, i) =>
                                   w.struck
-                                    ? <SpellcheckUnderline key={i} seed={w.word} className="text-navy">{w.word} </SpellcheckUnderline>
+                                    ? <span key={i} className="underline decoration-wine/50 underline-offset-2">{w.word} </span>
                                     : <React.Fragment key={i}>{w.word} </React.Fragment>
                                 )
                               : msg.text}
