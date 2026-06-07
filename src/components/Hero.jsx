@@ -2788,9 +2788,18 @@ export function AudioDemoCard({
                               chatAudioRef.current = audio;
                               setChatPlayingId(msg.id);
                               setChatPlayingTime(0);
-                              audio.ontimeupdate = () => setChatPlayingTime(audio.currentTime);
+                              // rAF loop for smooth word highlighting
+                              let rafId;
+                              const tick = () => {
+                                if (!audio.paused && !audio.ended) {
+                                  setChatPlayingTime(audio.currentTime);
+                                  rafId = requestAnimationFrame(tick);
+                                }
+                              };
+                              audio.onplay = () => { rafId = requestAnimationFrame(tick); };
+                              audio.onended = () => { cancelAnimationFrame(rafId); chatAudioRef.current = null; setChatPlayingId(null); setChatPlayingTime(null); };
+                              audio.onpause = () => cancelAnimationFrame(rafId);
                               audio.play();
-                              audio.onended = () => { chatAudioRef.current = null; setChatPlayingId(null); setChatPlayingTime(null); };
                             }
                           }}
                         />
