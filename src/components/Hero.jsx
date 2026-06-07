@@ -2774,7 +2774,13 @@ export function AudioDemoCard({
                         {msg.correction && (
                           <button
                             type="button"
-                            onClick={() => setChatCorrectionPopup({ msgId: msg.id, original: msg.text, corrected: msg.correction })}
+                            onClick={(e) => {
+                              const rect = e.currentTarget.getBoundingClientRect();
+                              setChatCorrectionPopup(
+                                chatCorrectionPopup?.msgId === msg.id ? null :
+                                { msgId: msg.id, original: msg.text, corrected: msg.correction, rect }
+                              );
+                            }}
                             className="shrink-0 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
                           >
                             See mistakes
