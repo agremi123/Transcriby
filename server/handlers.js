@@ -543,18 +543,67 @@ Raw JSON only:
   };
 }
 
-// ── Generate a full listening bundle ────────────────────────────────────────
-async function generateListeningBundle(apiKey, level = 'B1', topic = '') {
-  const generated = await claudeJSON({
-    apiKey, maxTokens: 900,
-    system: 'French radio journalist for RFI Journal en Français Facile. Write a 250-300 word B1-B2 French bulletin on a cultural/social/environmental topic. Raw JSON: {"title":"...","transcript":"..."}',
-    user: `Level: ${level}. Topic: ${topic || 'culture française'}`,
+// ── RFI Journal en Français Facile podcast RSS ───────────────────────────────
+const RFI_JFF_RSS = 'https://podcast.rfi.fr/journal-en-francais-facile.rss';
+
+async function fetchRfiJffEpisode() {
+  const res = await fetch(RFI_JFF_RSS, {
+    headers: { 'User-Agent': 'Mozilla/5.0' },
+    signal: AbortSignal.timeout(8000),
   });
-  const title = generated.title || 'Journal en Français Facile';
-  let transcript = generated.transcript || '';
-  if (!transcript || transcript.length < 40) throw new Error('No transcript');
+  if (!res.ok) throw new Error('RFI RSS fetch failed');
+  const xml = await res.text();
+
+  // Parse items including enclosure (audio) and description
+  const items = [];
+  const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+  let m;
+  while ((m = itemRegex.exec(xml)) !== null) {
+    const block = m[1];
+    const get = (tag) => {
+      const r = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i');
+      const found = block.match(r);
+      return found ? extractCdata(found[1]) : '';
+    };
+    const enclosureMatch = block.match(/<enclosure[^>]+url="([^"]+)"/i);
+    const audioUrl = enclosureMatch ? enclosureMatch[1] : null;
+    const title = get('title');
+    const description = stripHtml(get('description') || get('summary') || '');
+    const pubDate = get('pubDate') || '';
+    const link = get('link') || '';
+    if (title && audioUrl) items.push({ title, audioUrl, description, pubDate, link });
+  }
+
+  if (items.length === 0) throw new Error('No RFI episodes found');
+  // Pick a random recent episode
+  const episode = items[Math.floor(Math.random() * Math.min(items.length, 10))];
+  return episode;
+}
+
+// ── Generate a full listening bundle ────────────────────────────────────────
+async function generateListeningBundle(apiKey, level = 'B1') {
+  // Fetch real RFI JFF episode with actual audio
+  const episode = await fetchRfiJffEpisode();
+
+  // Use the description as transcript base; Claude cleans and extracts it
+  const rawText = episode.description || '';
+  let transcript = rawText;
+
+  // If description is too short, ask Claude to write a summary based on the title
+  if (rawText.length < 100) {
+    const generated = await claudeJSON({
+      apiKey, maxTokens: 600,
+      system: 'Tu es journaliste RFI. Écris un résumé de 150-200 mots en français facile (niveau B1) basé sur ce titre d\'actualité. Réponds uniquement avec le texte du résumé, sans titre ni introduction.',
+      user: episode.title,
+    });
+    transcript = typeof generated === 'string' ? generated : (generated.transcript || generated.text || rawText);
+    if (typeof transcript !== 'string' || transcript.length < 40) transcript = rawText;
+  }
+
+  // Trim to max 400 words
   const words = transcript.split(/\s+/);
   if (words.length > 400) transcript = words.slice(0, 400).join(' ') + '…';
+  if (!transcript || transcript.length < 40) throw new Error('No transcript');
 
   const [qParsed, vParsed, gParsed, cParsed] = await Promise.all([
     claudeJSON({ apiKey, maxTokens: 800, system: `French teacher. 4 multiple-choice comprehension questions for ${level} learner. Also infer vocab theme. Raw JSON: {"vocabTheme":"...","questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"}]}`, user: transcript }),
@@ -564,10 +613,11 @@ async function generateListeningBundle(apiKey, level = 'B1', topic = '') {
   ]);
 
   return {
-    title,
+    title: episode.title,
     transcript,
+    audioUrl: episode.audioUrl,  // real MP3 URL from RFI
     source: 'RFI — Journal en Français Facile',
-    date: new Date().toUTCString(),
+    date: episode.pubDate || new Date().toUTCString(),
     vocabTheme: qParsed.vocabTheme || '',
     questions: qParsed.questions || [],
     vocab: vParsed.vocab || [],
