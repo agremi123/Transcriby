@@ -662,8 +662,8 @@ async function fetchInnerFrenchEpisode() {
 const CLIP_END_SECONDS = 180; // show only first 3 minutes of the podcast
 
 async function generateListeningBundle(apiKey, level = 'B1') {
-  // Fetch real RFI JFF episode with actual audio, chapter-matched transcript, and clipEnd
-  const episode = await fetchRfiJffEpisode();
+  // Fetch real InnerFrench episode with actual audio + member transcript
+  const episode = await fetchInnerFrenchEpisode();
 
   let transcript = episode.transcript || '';
   const clipEnd = episode.clipEnd || CLIP_END_SECONDS;
