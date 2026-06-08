@@ -24,6 +24,16 @@ export function Logo({ className = '' }) {
       </svg>
       <span className="font-display text-[26px] leading-none text-navy">Parisly</span>
       <span className="hidden sm:block text-[11px] font-mono tracking-[0.08em] text-navy/70 leading-none border-l border-navy/20 pl-3 ml-1 self-end mb-[5px]">all the French you need</span>
+      <span className="hidden lg:flex items-center gap-1.5 border-l border-navy/20 pl-3 ml-1 self-end mb-[4px]">
+        <img
+          src="/assets/remi-avatar.png"
+          alt="Kru Rémi"
+          className="w-5 h-5 rounded-full object-cover object-top shrink-0"
+        />
+        <span className="text-[10px] font-mono tracking-[0.04em] text-navy/50 leading-none whitespace-nowrap">
+          by <span className="text-navy/70 font-semibold">Kru Rémi</span> · certified French teacher
+        </span>
+      </span>
     </Link>
   );
 }
