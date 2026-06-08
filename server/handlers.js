@@ -601,34 +601,48 @@ async function fetchPodcastEpisode() {
 }
 
 // ── Deepgram transcription ────────────────────────────────────────────────────
-const CLIP_END_SECONDS = 180; // 3 minutes
-const AUDIO_DOWNLOAD_BYTES = 8_000_000; // ~5 min at 128kbps — enough to get 3 min
+const CLIP_DURATION = 180;          // 3 minutes shown to user
+const AUDIO_DOWNLOAD_BYTES = 12_000_000; // ~8 min at 192kbps / ~12 min at 128kbps
 
 async function transcribeWithDeepgram(audioBuffer, deepgramKey) {
   const res = await fetch(
     'https://api.deepgram.com/v1/listen?model=nova-2&language=fr&punctuate=true&smart_format=true',
     {
       method: 'POST',
-      headers: {
-        'Authorization': `Token ${deepgramKey}`,
-        'Content-Type': 'audio/mpeg',
-      },
+      headers: { 'Authorization': `Token ${deepgramKey}`, 'Content-Type': 'audio/mpeg' },
       body: audioBuffer,
-      signal: AbortSignal.timeout(30000),
+      signal: AbortSignal.timeout(25000),
     }
   );
-  if (!res.ok) throw new Error(`Deepgram error ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`Deepgram error ${res.status}`);
   const data = await res.json();
   const alt = data?.results?.channels?.[0]?.alternatives?.[0];
   if (!alt?.words?.length) throw new Error('Deepgram returned no words');
+  console.log(`[deepgram] ${alt.words.length} words transcribed`);
+  return alt.words; // [{word, punctuated_word, start, end}]
+}
 
-  // Keep only words spoken within the first CLIP_END_SECONDS
-  const wordsInClip = alt.words.filter(w => w.start <= CLIP_END_SECONDS);
-  const transcript = wordsInClip.map(w => w.punctuated_word || w.word).join(' ');
-  const wordTimings = wordsInClip.map(w => ({ word: w.punctuated_word || w.word, start: w.start, end: w.end }));
+// Ask Claude to pick the best ~3-minute window from the full transcript
+async function pickBestSegment(apiKey, words) {
+  // Build a compact timestamped transcript for Claude
+  // Sample every 5th word to keep the prompt short
+  const samples = words.filter((_, i) => i % 5 === 0).map(w => `[${w.start.toFixed(0)}s] ${w.punctuated_word || w.word}`).join(' ');
+  const totalDuration = words[words.length - 1]?.end || 0;
 
-  console.log(`[deepgram] ${wordsInClip.length} words in first ${CLIP_END_SECONDS}s`);
-  return { transcript, wordTimings };
+  const result = await claudeJSON({
+    apiKey, maxTokens: 80,
+    system: `You are selecting the best ${CLIP_DURATION}-second excerpt from a French podcast for language learners. Pick a window that is interesting, coherent, and self-contained (not mid-sentence at start/end). The audio is ${Math.round(totalDuration)}s long. Return ONLY raw JSON: {"startSec":N}`,
+    user: `Timestamped transcript samples:\n${samples}`,
+  });
+
+  const rawStart = Math.round(result.startSec ?? 0);
+  // Clamp: ensure the clip fits within the audio and starts after any intro
+  const minStart = Math.min(30, Math.floor(totalDuration * 0.05)); // skip short intros
+  const maxStart = Math.max(0, totalDuration - CLIP_DURATION - 10);
+  const startSec = Math.min(Math.max(rawStart, minStart), maxStart);
+  const endSec = startSec + CLIP_DURATION;
+  console.log(`[listening] Best segment: ${startSec}s – ${endSec}s`);
+  return { startSec, endSec };
 }
 
 // ── Generate a full listening bundle ────────────────────────────────────────
@@ -638,33 +652,54 @@ async function generateListeningBundle(apiKey, level = 'B1') {
   // 1. Pick a random podcast episode
   const episode = await fetchPodcastEpisode();
 
-  // 2. Download first ~5 min of audio (enough to transcribe 3 min)
+  // 2. Download first ~8 min of audio
   const audioRes = await fetch(episode.audioUrl, {
     headers: { 'User-Agent': 'Mozilla/5.0', 'Range': `bytes=0-${AUDIO_DOWNLOAD_BYTES - 1}` },
     signal: AbortSignal.timeout(20000),
   });
   if (!audioRes.ok) throw new Error(`Audio download failed: ${audioRes.status}`);
   const audioBuffer = Buffer.from(await audioRes.arrayBuffer());
-  console.log(`[listening] Downloaded ${audioBuffer.length} bytes of audio`);
+  console.log(`[listening] Downloaded ${audioBuffer.length} bytes`);
 
-  // 3. Transcribe with Deepgram — get words in first 3 minutes
-  const { transcript, wordTimings } = await transcribeWithDeepgram(audioBuffer, DEEPGRAM_API_KEY);
-  if (!transcript || transcript.length < 40) throw new Error('Transcript too short');
+  // 3. Transcribe full download with Deepgram
+  const allWords = await transcribeWithDeepgram(audioBuffer, DEEPGRAM_API_KEY);
+  if (allWords.length < 20) throw new Error('Transcript too short');
 
-  // 4. Generate exercises from the transcript (parallel Claude calls)
-  const [qParsed, vParsed, gParsed, cParsed] = await Promise.all([
-    claudeJSON({ apiKey, maxTokens: 800, system: `French teacher. 4 multiple-choice comprehension questions for ${level} learner. Also infer vocab theme. Raw JSON: {"vocabTheme":"...","questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"}]}`, user: transcript }),
-    claudeJSON({ apiKey, maxTokens: 700, system: `French teacher. 5 vocabulary fill-in-the-blank from transcript for ${level} learner. Raw JSON: {"vocab":[{"word":"...","definition":"English","sentence":"...___..."}]}`, user: transcript }),
-    claudeJSON({ apiKey, maxTokens: 700, system: `French grammar teacher. 3 grammar structures from transcript for ${level} learner. Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"..."}]}`, user: transcript }),
-    claudeJSON({ apiKey, maxTokens: 600, system: 'French teacher. 4 conjugation fill-in-the-blank using verbs from transcript. Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}', user: transcript }),
+  // 4. Claude picks the most interesting 3-min window (runs in parallel with exercises)
+  const segmentPromise = pickBestSegment(apiKey, allWords);
+
+  // Build a preview transcript (first 3 min) for generating exercises while segment is picked
+  const previewWords = allWords.filter(w => w.start <= CLIP_DURATION);
+  const previewTranscript = previewWords.map(w => w.punctuated_word || w.word).join(' ');
+
+  // 5. Generate exercises from preview transcript + pick segment (parallel)
+  const [{ startSec, endSec }, qParsed, vParsed, gParsed, cParsed] = await Promise.all([
+    segmentPromise,
+    claudeJSON({ apiKey, maxTokens: 800, system: `French teacher. 4 multiple-choice comprehension questions for ${level} learner. Also infer vocab theme. Raw JSON: {"vocabTheme":"...","questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"}]}`, user: previewTranscript }),
+    claudeJSON({ apiKey, maxTokens: 700, system: `French teacher. 5 vocabulary fill-in-the-blank from transcript for ${level} learner. Raw JSON: {"vocab":[{"word":"...","definition":"English","sentence":"...___..."}]}`, user: previewTranscript }),
+    claudeJSON({ apiKey, maxTokens: 700, system: `French grammar teacher. 3 grammar structures from transcript for ${level} learner. Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"..."}]}`, user: previewTranscript }),
+    claudeJSON({ apiKey, maxTokens: 600, system: 'French teacher. 4 conjugation fill-in-the-blank using verbs from transcript. Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}', user: previewTranscript }),
   ]);
+
+  // 6. Extract words and transcript for the chosen segment
+  const segmentWords = allWords.filter(w => w.start >= startSec && w.end <= endSec);
+  const transcript = segmentWords.map(w => w.punctuated_word || w.word).join(' ');
+  // Word timings relative to segment start (so t=0 aligns with clipStart in player)
+  const wordTimings = segmentWords.map(w => ({
+    word: w.punctuated_word || w.word,
+    start: parseFloat((w.start - startSec).toFixed(3)),
+    end: parseFloat((w.end - startSec).toFixed(3)),
+  }));
+
+  if (!transcript || transcript.length < 40) throw new Error('Segment transcript too short');
 
   return {
     title: episode.title,
     transcript,
-    wordTimings,                          // word-level timestamps from Deepgram
-    audioUrl: episode.audioUrl,           // real podcast MP3 URL
-    clipEnd: CLIP_END_SECONDS,
+    wordTimings,
+    audioUrl: episode.audioUrl,
+    clipStart: startSec,
+    clipEnd: endSec,
     source: episode.source,
     date: episode.pubDate || new Date().toUTCString(),
     vocabTheme: qParsed.vocabTheme || '',
