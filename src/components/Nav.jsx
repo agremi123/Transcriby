@@ -80,6 +80,17 @@ export default function Nav() {
         <div />
         <div className="flex items-center gap-2.5 sm:gap-3 mr-16">
           <NavReachNextLevel />
+          <button
+            type="button"
+            onClick={devLogout}
+            className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono tracking-wide text-navy/40 hover:text-wine border border-navy/15 hover:border-wine/40 rounded-full px-3 py-1.5 transition-colors"
+            title="Dev: clear profile & logout"
+          >
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden>
+              <path d="M5 2H2a1 1 0 00-1 1v6a1 1 0 001 1h3M8 9l3-3-3-3M11 6H5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            dev logout
+          </button>
         </div>
       </Container>
     </motion.nav>
