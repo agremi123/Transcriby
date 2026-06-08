@@ -108,7 +108,7 @@ export function Features() {
     {
       icon: 'mic',
       title: 'Real-time correction',
-      desc: 'Nativa corrects your grammar and pronunciation as you speak, instantly.',
+      desc: 'Parisly corrects your grammar and pronunciation as you speak, instantly.',
     },
     {
       icon: 'sparkle',

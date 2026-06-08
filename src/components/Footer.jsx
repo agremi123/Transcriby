@@ -106,7 +106,7 @@ export function Footer() {
         </div>
 
         <div className="flex items-center justify-between flex-wrap gap-4 mt-10 text-[12.5px] text-navy/55">
-          <span>© 2026 Nativa SAS — Made with ❦ in Paris</span>
+          <span>© 2026 Parisly SAS — Made with ❦ in Paris</span>
           <span className="font-mono">
             v 2.0 · status:{' '}
             <span className="text-navy/80">all systems operational</span>

@@ -16,7 +16,7 @@ export const CASUAL_FRENCH_KEYTERMS = [
   "c'est", "y'a", "qu'il", "d'accord", "s'te plaît", "p'tit", "m'appelle",
   "l'ai", "n'ai", "n'est",
   'ouf', 'bof', 'chelou', 'genre', 'carrément', 'vachement', 'franchement',
-  'mouais', 'nickel', 'parisien', 'parisienne', 'Paris', 'Nativa',
+  'mouais', 'nickel', 'parisien', 'parisienne', 'Paris', 'Parisly',
   'salut', 'bonjour', 'coucou', 'mec', 'pote', 'barre', 'nana', 'meuf',
   'truc', 'machin', 'boulot', 'taf', 'baguette', 'café', 'terrasse',
   'manuel', 'textbook', 'niveau', 'français', 'francais',

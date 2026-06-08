@@ -86,7 +86,7 @@ export default function Pricing() {
               name="Free"
               price="€0"
               sub=""
-              desc="Start your journey with Nativa at no cost."
+              desc="Start your journey with Parisly at no cost."
               cta="Get started"
               features={[
                 '10 minutes / day',
