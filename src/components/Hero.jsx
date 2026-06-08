@@ -4259,11 +4259,13 @@ const CEFR_BADGE = {
   C2: { bg: '#4a1942', label: 'C2' },
 };
 
-function ListeningPanel({ loading, title, audioUrl, transcript, wordTimings = null, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', contentLevel = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
+function ListeningPanel({ loading, title, audioUrl, clipEnd = 180, transcript, wordTimings = null, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', contentLevel = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
   const [playing, setPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
   const audioRef = React.useRef(null);
+  // Effective duration is capped at clipEnd
+  const effectiveDuration = duration ? Math.min(duration, clipEnd) : clipEnd;
   const [pageIndex, setPageIndex] = React.useState(0);
   const [translateActive, setTranslateActive] = React.useState(false);
   const [revealedBatchCount, setRevealedBatchCount] = React.useState(0);
