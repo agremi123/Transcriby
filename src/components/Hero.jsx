@@ -5387,6 +5387,7 @@ export default function Hero() {
               speakingTopicLabel={speakingTopicLabel}
               speakingOpeningLine={speakingOpeningLine}
             />
+            </div>
           </div>
         </div>
       </Container>
