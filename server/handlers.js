@@ -926,7 +926,8 @@ export async function handleReplenish() {
     tasks.push(generateListeningBundle(ANTHROPIC_API_KEY).then(async b => {
       return supabase.from('listening_episodes').insert([{
         level: 'B1', title: b.title, audio_url: b.audioUrl,
-        clip_end: b.clipEnd ?? CLIP_END_SECONDS,
+        clip_start: b.clipStart ?? 0,
+        clip_end: b.clipEnd ?? CLIP_DURATION,
         transcript: b.transcript,
         word_timings: b.wordTimings || null,
         source_name: b.source, pub_date: b.date, vocab_theme: b.vocabTheme,
