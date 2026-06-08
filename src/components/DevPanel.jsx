@@ -113,7 +113,7 @@ export default function DevPanel() {
       </div>
 
       {open && (
-        <div className="absolute bottom-10 left-0 w-[360px] max-h-[520px] flex flex-col rounded-xl shadow-2xl border border-navy/15 bg-ivory/98 backdrop-blur-sm overflow-hidden">
+        <div className="absolute bottom-10 right-0 w-[360px] max-h-[520px] flex flex-col rounded-xl shadow-2xl border border-navy/15 bg-ivory/98 backdrop-blur-sm overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-3 py-2 border-b border-navy/10 shrink-0">
             <span className="text-[10px] tracking-widest uppercase text-navy/60">Token usage</span>
