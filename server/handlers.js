@@ -972,7 +972,7 @@ export async function handleListening(body) {
     // Save to DB (fire-and-forget)
     if (supabase) {
       supabase.from('listening_episodes').insert([{
-        level, title: bundle.title, audio_url: null,
+        level, title: bundle.title, audio_url: audioUrl,
         transcript: bundle.transcript, source_name: bundle.source,
         pub_date: bundle.date, vocab_theme: bundle.vocabTheme,
         questions: bundle.questions, vocab: bundle.vocab,
