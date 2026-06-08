@@ -554,7 +554,7 @@ async function fetchRfiJffEpisode() {
   if (!res.ok) throw new Error('RFI RSS fetch failed');
   const xml = await res.text();
 
-  // Parse items including enclosure (audio) and description
+  // Parse items including enclosure (audio) and link to episode page
   const items = [];
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
   let m;
@@ -568,16 +568,40 @@ async function fetchRfiJffEpisode() {
     const enclosureMatch = block.match(/<enclosure[^>]+url="([^"]+)"/i);
     const audioUrl = enclosureMatch ? enclosureMatch[1].replace(/&amp;/g, '&') : null;
     const title = get('title');
-    const description = stripHtml(get('itunes:summary') || get('description') || get('summary') || '').trim();
     const pubDate = get('pubDate') || '';
-    const link = get('link') || '';
-    if (title && audioUrl) items.push({ title, audioUrl, description, pubDate, link });
+    const link = extractCdata(get('link')).trim().replace(/&amp;/g, '&');
+    if (title && audioUrl) items.push({ title, audioUrl, pubDate, link });
   }
 
   if (items.length === 0) throw new Error('No RFI episodes found');
   // Pick a random recent episode
   const episode = items[Math.floor(Math.random() * Math.min(items.length, 10))];
-  return episode;
+
+  // Fetch the episode page to get the real transcript paragraphs
+  let transcript = '';
+  if (episode.link) {
+    try {
+      const pageRes = await fetch(episode.link, {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+        signal: AbortSignal.timeout(8000),
+      });
+      if (pageRes.ok) {
+        const html = await pageRes.text();
+        // Extract French prose paragraphs — skip CSS, captions, timestamps
+        const allP = [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)];
+        const frenchParas = allP
+          .map(p => p[1].replace(/<[^>]+>/g, '').replace(/&[a-z#0-9]+;/g, (e) => {
+            const map = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&nbsp;': ' ', '&#039;': "'", '&apos;': "'" , '&quot;': '"', '&eacute;': 'é', '&egrave;': 'è', '&ecirc;': 'ê', '&agrave;': 'à', '&ccedil;': 'ç', '&ocirc;': 'ô', '&ucirc;': 'û', '&ugrave;': 'ù', '&iuml;': 'ï', '&acirc;': 'â', '&icirc;': 'î' };
+            return map[e] || '';
+          }).trim())
+          .filter(t => t.length > 40 && /[a-zA-ZàâéèêîôùûçÀÂÉÈÊÎÔÙÛÇ]{3}/.test(t) && !t.includes('background:') && !t.includes('font-size') && !t.includes('window.') && !/^\d+:\d+$/.test(t))
+          .slice(0, 30); // cap at ~30 paragraphs
+        transcript = frenchParas.join(' ').trim();
+      }
+    } catch (e) { /* page fetch failed — fall through */ }
+  }
+
+  return { ...episode, transcript };
 }
 
 // ── Generate a full listening bundle ────────────────────────────────────────
