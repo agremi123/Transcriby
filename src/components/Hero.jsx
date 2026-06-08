@@ -4420,7 +4420,7 @@ function ListeningPanel({ loading, title, audioUrl, clipEnd = 180, transcript, w
                   <div className="h-full bg-wine rounded-full transition-[width] duration-100" style={{ width: `${pct}%` }} />
                   {audioUrl && <div className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-wine border-2 border-white shadow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" style={{ left: `calc(${pct}% - 5px)` }} />}
                 </div>
-                <span className="text-[10px] font-mono text-navy/35 tabular-nums w-7 shrink-0 text-right">{duration ? fmtTime(duration) : '--:--'}</span>
+                <span className="text-[10px] font-mono text-navy/35 tabular-nums w-7 shrink-0 text-right">{fmtTime(effectiveDuration)}</span>
               </div>
             </div>
           </div>
