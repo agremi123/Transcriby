@@ -4311,7 +4311,7 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
     if (!audioRef.current || !effectiveDuration) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    audioRef.current.currentTime = pct * effectiveDuration;
+    audioRef.current.currentTime = pct * effectiveDuration + clipStart;
   };
 
   // Syllable weights for every word — used as fallback when no Deepgram timings
