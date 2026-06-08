@@ -4877,7 +4877,8 @@ export default function Hero() {
   const [listeningWordTimings, setListeningWordTimings] = React.useState(null);
 
   React.useEffect(() => {
-    if (practiceType === 'listening' && practiceTopic && !listeningActive) {
+    if (practiceType === 'listening' && practiceTopic && loadedListeningTopicRef.current !== practiceTopic) {
+      loadedListeningTopicRef.current = practiceTopic;
       setListeningActive(true);
       setListeningLoading(true);
       fetch('/api/listening', {
