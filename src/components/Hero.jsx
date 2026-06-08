@@ -4400,7 +4400,11 @@ function ListeningPanel({ loading, title, audioUrl, clipEnd = 180, transcript, w
           {/* Audio bar */}
           <div className="shrink-0 mb-2">
             {audioUrl && <audio ref={audioRef} src={audioUrl} preload="metadata"
-              onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
+              onTimeUpdate={() => {
+                const t = audioRef.current?.currentTime || 0;
+                if (t >= clipEnd) { audioRef.current.pause(); audioRef.current.currentTime = clipEnd; setPlaying(false); }
+                setCurrentTime(t);
+              }}
               onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
               onEnded={() => setPlaying(false)} />}
             <div className="flex items-center gap-2.5 px-3 py-2 bg-navy/5 border border-navy/10 rounded-lg">
