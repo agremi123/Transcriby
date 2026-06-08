@@ -79,7 +79,7 @@ export default function DevPanel() {
   const cacheLog = data?.cacheLog || [];
 
   return (
-    <div className="fixed bottom-3 left-3 z-[9999] font-mono text-[11px]">
+    <div className="fixed bottom-3 right-3 z-[9999] font-mono text-[11px]">
       {/* Toggle button + logout */}
       <div className="flex items-center gap-1.5">
         <button
