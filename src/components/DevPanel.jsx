@@ -80,18 +80,37 @@ export default function DevPanel() {
 
   return (
     <div className="fixed bottom-3 left-3 z-[9999] font-mono text-[11px]">
-      {/* Toggle button */}
-      <button
-        type="button"
-        onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg shadow-lg border border-navy/20 bg-ivory/95 text-navy/70 hover:text-navy transition-colors backdrop-blur-sm"
-        title="Dev: token usage"
-      >
-        <span className="text-[9px] tracking-widest uppercase">Dev</span>
-        {data && (
-          <span className="text-wine font-semibold">{fmtCost(data.totCost)}</span>
-        )}
-      </button>
+      {/* Toggle button + logout */}
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={() => setOpen(o => !o)}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg shadow-lg border border-navy/20 bg-ivory/95 text-navy/70 hover:text-navy transition-colors backdrop-blur-sm"
+          title="Dev: token usage"
+        >
+          <span className="text-[9px] tracking-widest uppercase">Dev</span>
+          {data && (
+            <span className="text-wine font-semibold">{fmtCost(data.totCost)}</span>
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={async () => {
+            localStorage.removeItem('nativa-learner-profile');
+            localStorage.removeItem('nativa-learner-gender');
+            localStorage.removeItem('nativa-parisian-percent');
+            try { const { supabase } = await import('../lib/supabaseClient'); await supabase.auth.signOut(); } catch {}
+            window.location.reload();
+          }}
+          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg shadow-lg border border-navy/20 bg-ivory/95 text-navy/50 hover:text-wine hover:border-wine/30 transition-colors backdrop-blur-sm"
+          title="Dev: clear profile & logout"
+        >
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden>
+            <path d="M5 2H2a1 1 0 00-1 1v6a1 1 0 001 1h3M8 9l3-3-3-3M11 6H5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span className="text-[9px] tracking-widest uppercase">logout</span>
+        </button>
+      </div>
 
       {open && (
         <div className="absolute bottom-10 left-0 w-[360px] max-h-[520px] flex flex-col rounded-xl shadow-2xl border border-navy/15 bg-ivory/98 backdrop-blur-sm overflow-hidden">
