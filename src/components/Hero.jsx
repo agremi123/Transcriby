@@ -5355,15 +5355,6 @@ export default function Hero() {
 
           <div className="flex justify-end self-center pr-16">
             <div className="relative">
-              {/* Kru Rémi credit — above top-left corner of speech card */}
-              <div className="absolute -top-16 left-0 flex items-center gap-3 z-10">
-                <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer" className="shrink-0">
-                  <img src="/assets/remi-avatar.png" alt="Kru Rémi" className="w-14 h-14 rounded-full object-cover object-top ring-1 ring-navy/10 hover:ring-wine/50 transition-all" />
-                </a>
-                <span className="font-display text-[13px] italic text-navy/70 leading-none whitespace-nowrap">
-                  by <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer" className="text-navy not-italic font-semibold hover:text-wine transition-colors">Kru Rémi</a> · certified French teacher
-                </span>
-              </div>
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
               initialTopic={practiceType === 'reading' ? null : practiceTopic}
