@@ -866,7 +866,7 @@ export async function handleReplenish() {
     tasks.push(generateListeningBundle(ANTHROPIC_API_KEY).then(async b => {
       // Use real RFI podcast MP3 URL — no TTS
       return supabase.from('listening_episodes').insert([{
-        level: 'B1', title: b.title, audio_url: b.audioUrl, transcript: b.transcript,
+        level: 'B1', title: b.title, audio_url: b.audioUrl, clip_end: b.clipEnd ?? CLIP_END_SECONDS, transcript: b.transcript,
         source_name: b.source, pub_date: b.date, vocab_theme: b.vocabTheme,
         questions: b.questions, vocab: b.vocab, grammar: b.grammar, conjugation: b.conjugation,
       }]);
