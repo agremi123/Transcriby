@@ -544,7 +544,7 @@ Raw JSON only:
 }
 
 // ── RFI Journal en Français Facile podcast RSS ───────────────────────────────
-const RFI_JFF_RSS = 'https://podcast.rfi.fr/journal-en-francais-facile.rss';
+const RFI_JFF_RSS = 'https://apis.fle.rfi.fr/products/get_product/fle_getpodcast_by_nid_author_rfi?token_application=applepodcast_fle&program.entrepriseId=WBMZ39-FLE-FR-20220627';
 
 async function fetchRfiJffEpisode() {
   const res = await fetch(RFI_JFF_RSS, {
