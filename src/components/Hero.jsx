@@ -4327,9 +4327,9 @@ function ListeningPanel({ loading, title, audioUrl, clipEnd = 180, transcript, w
     if (!audioRef.current) return;
     if (wordTimings && wordTimings[globalWordIdx]) {
       audioRef.current.currentTime = wordTimings[globalWordIdx].start;
-    } else if (duration && totalWeight) {
+    } else if (effectiveDuration && totalWeight) {
       const wBefore = allWordWeights.slice(0, globalWordIdx).reduce((s, w) => s + w, 0);
-      audioRef.current.currentTime = (wBefore / totalWeight) * duration;
+      audioRef.current.currentTime = (wBefore / totalWeight) * effectiveDuration;
     }
   };
 
@@ -4342,9 +4342,9 @@ function ListeningPanel({ loading, title, audioUrl, clipEnd = 180, transcript, w
         setPageIndex((p) => p + 1);
       }
     } else {
-      if (!duration || !totalWeight) return;
+      if (!effectiveDuration || !totalWeight) return;
       const pageWeightEnd = allWordWeights.slice(0, pageOffset + WORDS_PER_PAGE).reduce((s, w) => s + w, 0);
-      const pageEnd = (pageWeightEnd / totalWeight) * duration;
+      const pageEnd = (pageWeightEnd / totalWeight) * effectiveDuration;
       if (currentTime >= pageEnd && pageIndex < totalPages - 1) {
         setPageIndex((p) => p + 1);
       }
