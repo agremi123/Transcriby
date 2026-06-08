@@ -1228,7 +1228,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       let wordTimings = null; // [{start, end}] in seconds — set when Deepgram succeeds
 
       // Step 3-pre-A: InnerFrench member transcript via cookie (fastest, no API cost)
-      if (!transcript && found?.source?.id === 'innerfrench' && env.INNERFRENCH_COOKIE) {
+      if (!transcript && found?.source?.id === 'innerfrench' && innerfrenchCookie) {
         try {
           const slugMatch = (episode.link || '').match(/\/e\/(e\d+-.+?)\/?$/i);
           const transcriptSlug = slugMatch ? slugMatch[1].replace(/^e(\d+)/, '$1') : null;
