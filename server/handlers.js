@@ -543,8 +543,8 @@ Raw JSON only:
   };
 }
 
-// ── RFI Journal en Français Facile podcast RSS ───────────────────────────────
-const RFI_JFF_RSS = 'https://apis.fle.rfi.fr/products/get_product/fle_getpodcast_by_nid_author_rfi?token_application=applepodcast_fle&program.entrepriseId=WBMZ39-FLE-FR-20220627';
+// ── InnerFrench podcast ───────────────────────────────────────────────────────
+const INNERFRENCH_RSS = 'https://podcast.innerfrench.com/feed.xml';
 
 function decodeHtmlEntities(str) {
   return str.replace(/&[a-z#0-9]+;/gi, (e) => {
@@ -553,15 +553,17 @@ function decodeHtmlEntities(str) {
   });
 }
 
-async function fetchRfiJffEpisode() {
-  const res = await fetch(RFI_JFF_RSS, {
+async function fetchInnerFrenchEpisode() {
+  const { INNERFRENCH_COOKIE } = getEnv();
+
+  // 1. Fetch RSS to get episodes with real MP3 URLs
+  const res = await fetch(INNERFRENCH_RSS, {
     headers: { 'User-Agent': 'Mozilla/5.0' },
     signal: AbortSignal.timeout(8000),
   });
-  if (!res.ok) throw new Error('RFI RSS fetch failed');
+  if (!res.ok) throw new Error('InnerFrench RSS fetch failed');
   const xml = await res.text();
 
-  // Parse items including enclosure (audio) and link to episode page
   const items = [];
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
   let m;
@@ -576,93 +578,84 @@ async function fetchRfiJffEpisode() {
     const audioUrl = enclosureMatch ? enclosureMatch[1].replace(/&amp;/g, '&') : null;
     const title = get('title');
     const pubDate = get('pubDate') || '';
-    const link = extractCdata(get('link')).trim().replace(/&amp;/g, '&');
-    if (title && audioUrl) items.push({ title, audioUrl, pubDate, link });
+    const link = (extractCdata(get('link')) || '').trim().replace(/&amp;/g, '&');
+    const description = stripHtml(get('description') || get('summary') || '');
+    if (title && audioUrl) items.push({ title, audioUrl, pubDate, link, description });
   }
 
-  if (items.length === 0) throw new Error('No RFI episodes found');
-  // Pick a random recent episode
-  const episode = items[Math.floor(Math.random() * Math.min(items.length, 10))];
+  if (items.length === 0) throw new Error('No InnerFrench episodes found');
+  const episode = items[Math.floor(Math.random() * Math.min(items.length, 15))];
 
-  // Fetch the episode page to extract chapters + transcript
+  // 2. Extract episode slug like "e196" from the podcast link
+  const slugMatch = (episode.link || '').match(/\/(e\d+)/i);
+  const episodeSlug = slugMatch ? slugMatch[1].toLowerCase() : null;
+
+  // 3. Fetch transcript from innerfrench.com using the member session cookie
   let transcript = '';
-  let clipEnd = CLIP_END_SECONDS;
-
-  if (episode.link) {
+  if (INNERFRENCH_COOKIE && episodeSlug) {
     try {
-      const pageRes = await fetch(episode.link, {
-        headers: { 'User-Agent': 'Mozilla/5.0' },
-        signal: AbortSignal.timeout(8000),
+      const transcriptUrl = `https://innerfrench.com/${episodeSlug}`;
+      const pageRes = await fetch(transcriptUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Cookie': INNERFRENCH_COOKIE,
+          'Accept': 'text/html,application/xhtml+xml',
+          'Accept-Language': 'fr-FR,fr;q=0.9',
+        },
+        signal: AbortSignal.timeout(10000),
       });
       if (pageRes.ok) {
         const html = await pageRes.text();
 
-        // ── 1. Parse chapter markers (paragraphs starting with MM:SS timestamp)
-        // These are in the chapter nav: "01:26 Ukraine : Macron..."
-        const chapters = [];
-        const allP = [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)];
-        const cleanParas = allP.map(p => decodeHtmlEntities(p[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()));
+        // Find the main post content area (WordPress)
+        const contentAreaMatch = html.match(/class="[^"]*(?:entry-content|post-content|article-content|the-content)[^"]*"[^>]*>([\s\S]*?)(?=<(?:div|section|footer)[^>]*class="[^"]*(?:related|sidebar|footer|nav|comment))/i);
+        const contentHtml = contentAreaMatch ? contentAreaMatch[1] : html;
 
-        for (const text of cleanParas) {
-          const tsMatch = text.match(/^(\d{1,2}):(\d{2})\s+(.+)$/);
-          if (tsMatch) {
-            const secs = parseInt(tsMatch[1]) * 60 + parseInt(tsMatch[2]);
-            chapters.push({ secs, title: tsMatch[3].trim() });
+        // Extract paragraphs
+        const pRe = /<p[^>]*>([\s\S]*?)<\/p>/gi;
+        const paragraphs = [];
+        let pm;
+        while ((pm = pRe.exec(contentHtml)) !== null) {
+          const text = decodeHtmlEntities(pm[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+          // Keep only substantial French-looking text, skip UI strings
+          if (
+            text.length > 30 &&
+            /[a-zàâéèêîôùûç]{3,}/i.test(text) &&
+            !text.includes('window.') &&
+            !text.includes('function(') &&
+            !text.includes('var ') &&
+            !/^(Share|Tweet|Pin|Email|Print|Download|Subscribe|Follow|Like|Comment)/i.test(text)
+          ) {
+            paragraphs.push(text);
           }
         }
 
-        // ── Extract first significant keyword from a chapter title for stop-detection
-        const extractKeyword = (title) => {
-          const skipWords = new Set(['le','la','les','l','un','une','des','du','de','en','au','aux','et','ou','à','a','par','sur','dans','pour','avec','sans','ce','cet','cette','ses','son','sa','leur','leurs']);
-          const words = title.toLowerCase().replace(/['']/g,"'").split(/[\s:,–—-]+/);
-          for (const word of words) {
-            const w = word.replace(/^(l'|d'|j'|n'|s'|m'|c')/, '').replace(/[^a-zàâéèêîôùûç]/g,'');
-            if (w.length > 3 && !skipWords.has(w)) return w;
-          }
-          return words.find(w => w.length > 2) || '';
-        };
-
-        // ── 2. Pick the first "real" chapter (skip very short intros under 60s)
-        let chosenChapter = null;
-        if (chapters.length >= 2) {
-          const firstReal = chapters.find(c => c.secs >= 60 && c.secs <= 240) || chapters[0];
-          const idx = chapters.indexOf(firstReal);
-          const nextChapter = chapters[idx + 1];
-          chosenChapter = { start: firstReal.secs, end: nextChapter ? nextChapter.secs : firstReal.secs + 240, stopKeyword: nextChapter ? extractKeyword(nextChapter.title) : null };
-          clipEnd = chosenChapter.end;
-        }
-
-        // ── 3. Find where actual transcript starts ("Bonjour…")
-        const bonjourIdx = cleanParas.findIndex(t => /^Bonjour\b/i.test(t));
-        const transcriptStart = bonjourIdx >= 0 ? bonjourIdx : 0;
-
-        // Only take paragraphs from "Bonjour" onward; filter out CSS / nav / previous-episode teasers
-        const transcriptParas = cleanParas.slice(transcriptStart).filter(t => {
-          if (t.length < 5) return false;
-          if (/^\d{1,2}:\d{2}/.test(t)) return false;
-          if (t.includes('background:') || t.includes('font-size') || t.includes('window.')) return false;
-          if (/^Journal en français facile\s+\d{2}\/\d{2}\/\d{4}/.test(t)) return false; // previous-episode teaser
-          return true;
-        });
-
-        // ── 4. Keep intro + first chapter's paragraphs only
-        if (chosenChapter?.stopKeyword) {
-          const stopKw = chosenChapter.stopKeyword;
-          const kept = [];
-          for (const para of transcriptParas) {
-            // Stop when next chapter's key word appears near the start of a paragraph (its opener)
-            if (kept.length > 4 && para.toLowerCase().slice(0, 100).includes(stopKw)) break;
-            kept.push(para);
-          }
-          transcript = kept.join('\n\n').trim();
-        } else {
-          transcript = transcriptParas.slice(0, 20).join('\n\n').trim();
+        // InnerFrench speaks ~100 words/min — take first ~300 words for the 3-min clip
+        const allText = paragraphs.join('\n\n');
+        const words = allText.split(/\s+/);
+        if (words.length > 10) {
+          transcript = words.slice(0, 320).join(' ');
+          if (words.length > 320) transcript += '…';
         }
       }
-    } catch (e) { /* page fetch failed */ }
+    } catch (e) {
+      console.warn('[innerfrench] transcript fetch failed:', e.message);
+    }
   }
 
-  return { ...episode, transcript, clipEnd };
+  // Fallback to RSS description if transcript fetch failed
+  if (!transcript || transcript.length < 80) {
+    transcript = episode.description || '';
+  }
+
+  return {
+    title: episode.title,
+    audioUrl: episode.audioUrl,
+    pubDate: episode.pubDate,
+    link: episode.link,
+    transcript,
+    clipEnd: CLIP_END_SECONDS,
+  };
 }
 
 // ── Generate a full listening bundle ────────────────────────────────────────
