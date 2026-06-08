@@ -1098,8 +1098,11 @@ export async function handleListening(body) {
     if (supabase) {
       supabase.from('listening_episodes').insert([{
         level, title: bundle.title, audio_url: bundle.audioUrl,
-        clip_end: bundle.clipEnd ?? CLIP_END_SECONDS,
-        transcript: bundle.transcript, source_name: bundle.source,
+        clip_start: bundle.clipStart ?? 0,
+        clip_end: bundle.clipEnd ?? CLIP_DURATION,
+        transcript: bundle.transcript,
+        word_timings: bundle.wordTimings || null,
+        source_name: bundle.source,
         pub_date: bundle.date, vocab_theme: bundle.vocabTheme,
         questions: bundle.questions, vocab: bundle.vocab,
         grammar: bundle.grammar, conjugation: bundle.conjugation,
