@@ -5180,6 +5180,7 @@ export default function Hero() {
                 loading={listeningLoading}
                 title={listeningTitle}
                 audioUrl={listeningAudioUrl}
+                clipEnd={listeningClipEnd}
                 transcript={listeningTranscript}
                 source={listeningSource}
                 date={listeningDate}
