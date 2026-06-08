@@ -543,164 +543,105 @@ Raw JSON only:
   };
 }
 
-// ── InnerFrench podcast ───────────────────────────────────────────────────────
-const INNERFRENCH_RSS = 'https://podcast.innerfrench.com/feed.xml';
+// ── Podcast sources ───────────────────────────────────────────────────────────
+const PODCAST_SOURCES = [
+  { name: 'InnerFrench',                   rss: 'https://podcast.innerfrench.com/feed.xml' },
+  { name: 'RFI — Journal en Français Facile', rss: 'https://apis.fle.rfi.fr/products/get_product/fle_getpodcast_by_nid_author_rfi?token_application=applepodcast_fle&program.entrepriseId=WBMZ39-FLE-FR-20220627' },
+];
 
-function decodeHtmlEntities(str) {
-  return str.replace(/&[a-z#0-9]+;/gi, (e) => {
-    const map = { '&amp;':'&','&lt;':'<','&gt;':'>','&nbsp;':' ','&#039;':"'",'&apos;':"'",'&quot;':'"','&eacute;':'é','&egrave;':'è','&ecirc;':'ê','&agrave;':'à','&ccedil;':'ç','&ocirc;':'ô','&ucirc;':'û','&ugrave;':'ù','&iuml;':'ï','&acirc;':'â','&icirc;':'î','&laquo;':'«','&raquo;':'»','&rsquo;':"'",'&ndash;':'–','&mdash;':'—' };
-    return map[e] || '';
-  });
-}
-
-async function fetchInnerFrenchEpisode() {
-  const { INNERFRENCH_COOKIE } = getEnv();
-
-  // 1. Fetch RSS to get episodes with real MP3 URLs
-  const res = await fetch(INNERFRENCH_RSS, {
-    headers: { 'User-Agent': 'Mozilla/5.0' },
-    signal: AbortSignal.timeout(8000),
-  });
-  if (!res.ok) throw new Error('InnerFrench RSS fetch failed');
-  const xml = await res.text();
-
-  const items = [];
-  const itemRegex = /<item>([\s\S]*?)<\/item>/g;
-  let m;
-  while ((m = itemRegex.exec(xml)) !== null) {
-    const block = m[1];
-    const get = (tag) => {
-      const r = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i');
-      const found = block.match(r);
-      return found ? extractCdata(found[1]) : '';
-    };
-    const enclosureMatch = block.match(/<enclosure[^>]+url="([^"]+)"/i);
-    const audioUrl = enclosureMatch ? enclosureMatch[1].replace(/&amp;/g, '&') : null;
-    const title = get('title');
-    const pubDate = get('pubDate') || '';
-    const link = (extractCdata(get('link')) || '').trim().replace(/&amp;/g, '&');
-    const description = stripHtml(get('description') || get('summary') || '');
-    if (title && audioUrl) items.push({ title, audioUrl, pubDate, link, description });
-  }
-
-  if (items.length === 0) throw new Error('No InnerFrench episodes found');
-  const episode = items[Math.floor(Math.random() * Math.min(items.length, 15))];
-
-  // 2. Build transcript URL from RSS link:
-  //    RSS:        podcast.innerfrench.com/e/e196-en-france-le-nucleaire-a-tout-prix/
-  //    Transcript: innerfrench.com/196-en-france-le-nucleaire-a-tout-prix/
-  //    (different domain, strip leading 'e' from episode slug)
-  const slugMatch = (episode.link || '').match(/\/e\/(e\d+-.+?)\/?$/i);
-  const transcriptSlug = slugMatch ? slugMatch[1].replace(/^e(\d+)/, '$1') : null;
-
-  // 3. Fetch transcript from innerfrench.com using the member session cookie
-  let transcript = '';
-  if (INNERFRENCH_COOKIE && transcriptSlug) {
+async function fetchPodcastEpisode() {
+  // Shuffle sources so we rotate across episodes
+  const sources = PODCAST_SOURCES.slice().sort(() => Math.random() - 0.5);
+  for (const src of sources) {
     try {
-      const transcriptUrl = `https://innerfrench.com/${transcriptSlug}/`;
-      const pageRes = await fetch(transcriptUrl, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Cookie': INNERFRENCH_COOKIE,
-          'Accept': 'text/html,application/xhtml+xml',
-          'Accept-Language': 'fr-FR,fr;q=0.9',
-        },
-        signal: AbortSignal.timeout(10000),
+      const res = await fetch(src.rss, {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+        signal: AbortSignal.timeout(8000),
       });
-      if (pageRes.ok) {
-        const html = await pageRes.text();
+      if (!res.ok) continue;
+      const xml = await res.text();
 
-        // InnerFrench uses Sonaar player with timestamped paragraphs:
-        // <p><strong><a ... time:'00:01:28' ...>[00:01:28]</a> – Hugo</strong></p>
-        // <p>Actual spoken text here.</p>
-        //
-        // Parse all <p> tags, track current timestamp, stop at 3 minutes.
-        // InnerFrench transcript structure:
-        // <p><strong><a href="javascript:sonaar_ts_shortcode({time:'00:00:03',...})">[00:00:03]</a> – Hugo</strong></p>
-        // <p>Actual spoken text.</p>
-        // Only collect text paragraphs AFTER the first timestamp, up to 3 min 10 sec.
-        const pRe = /<p[^>]*>([\s\S]*?)<\/p>/gi;
-        const lines = [];
-        let pm;
-        let currentSecs = -1; // -1 = haven't seen first timestamp yet
+      const items = [];
+      const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+      let m;
+      while ((m = itemRegex.exec(xml)) !== null) {
+        const block = m[1];
+        const get = (tag) => {
+          const r = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i');
+          const found = block.match(r);
+          return found ? extractCdata(found[1]) : '';
+        };
+        const enclosureMatch = block.match(/<enclosure[^>]+url="([^"]+)"/i);
+        const audioUrl = enclosureMatch ? enclosureMatch[1].replace(/&amp;/g, '&') : null;
+        const title = get('title');
+        const pubDate = get('pubDate') || '';
+        if (title && audioUrl) items.push({ title, audioUrl, pubDate, source: src.name });
+      }
 
-        while ((pm = pRe.exec(html)) !== null) {
-          const inner = pm[1];
-
-          // Detect timestamp: time:'00:01:28'
-          const tsMatch = inner.match(/time:'(\d{2}):(\d{2}):(\d{2})'/);
-          if (tsMatch) {
-            const secs = parseInt(tsMatch[1]) * 3600 + parseInt(tsMatch[2]) * 60 + parseInt(tsMatch[3]);
-            currentSecs = secs;
-            if (currentSecs > 190) break; // past 3:10 — stop
-            continue; // this is the speaker label line, skip
-          }
-
-          // Only collect after first timestamp is found
-          if (currentSecs < 0 || currentSecs > 190) continue;
-
-          const text = decodeHtmlEntities(inner.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
-          if (
-            text.length > 15 &&
-            /[a-zàâéèêîôùûç]{3,}/i.test(text) &&
-            !text.includes('window.') &&
-            !text.includes('function(') &&
-            !text.includes('var ') &&
-            !/^(You just need|If you like|You can translate|Retrouvez|Share|Tweet|I accept|Difficulté|Already sub)/i.test(text)
-          ) {
-            lines.push(text);
-          }
-        }
-
-        if (lines.length > 3) {
-          transcript = lines.join('\n\n').trim();
-        }
+      if (items.length > 0) {
+        const episode = items[Math.floor(Math.random() * Math.min(items.length, 15))];
+        console.log(`[listening] Using ${src.name}: "${episode.title}"`);
+        return episode;
       }
     } catch (e) {
-      console.warn('[innerfrench] transcript fetch failed:', e.message);
+      console.warn(`[listening] ${src.name} RSS failed:`, e.message);
     }
   }
+  throw new Error('All podcast sources failed');
+}
 
-  // Fallback to RSS description if transcript fetch failed
-  if (!transcript || transcript.length < 80) {
-    transcript = episode.description || '';
-  }
+// ── Deepgram transcription ────────────────────────────────────────────────────
+const CLIP_END_SECONDS = 180; // 3 minutes
+const AUDIO_DOWNLOAD_BYTES = 8_000_000; // ~5 min at 128kbps — enough to get 3 min
 
-  return {
-    title: episode.title,
-    audioUrl: episode.audioUrl,
-    pubDate: episode.pubDate,
-    link: episode.link,
-    transcript,
-    clipEnd: CLIP_END_SECONDS,
-  };
+async function transcribeWithDeepgram(audioBuffer, deepgramKey) {
+  const res = await fetch(
+    'https://api.deepgram.com/v1/listen?model=nova-2&language=fr&punctuate=true&smart_format=true',
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${deepgramKey}`,
+        'Content-Type': 'audio/mpeg',
+      },
+      body: audioBuffer,
+      signal: AbortSignal.timeout(30000),
+    }
+  );
+  if (!res.ok) throw new Error(`Deepgram error ${res.status}: ${await res.text()}`);
+  const data = await res.json();
+  const alt = data?.results?.channels?.[0]?.alternatives?.[0];
+  if (!alt?.words?.length) throw new Error('Deepgram returned no words');
+
+  // Keep only words spoken within the first CLIP_END_SECONDS
+  const wordsInClip = alt.words.filter(w => w.start <= CLIP_END_SECONDS);
+  const transcript = wordsInClip.map(w => w.punctuated_word || w.word).join(' ');
+  const wordTimings = wordsInClip.map(w => ({ word: w.punctuated_word || w.word, start: w.start, end: w.end }));
+
+  console.log(`[deepgram] ${wordsInClip.length} words in first ${CLIP_END_SECONDS}s`);
+  return { transcript, wordTimings };
 }
 
 // ── Generate a full listening bundle ────────────────────────────────────────
-const CLIP_END_SECONDS = 180; // show only first 3 minutes of the podcast
-
 async function generateListeningBundle(apiKey, level = 'B1') {
-  // Fetch real InnerFrench episode with actual audio + member transcript
-  const episode = await fetchInnerFrenchEpisode();
+  const { DEEPGRAM_API_KEY } = getEnv();
 
-  let transcript = episode.transcript || '';
-  const clipEnd = episode.clipEnd || CLIP_END_SECONDS;
+  // 1. Pick a random podcast episode
+  const episode = await fetchPodcastEpisode();
 
-  // If transcript is too short (page scrape failed), ask Claude to write from the title
-  if (transcript.length < 100) {
-    const generated = await claudeJSON({
-      apiKey, maxTokens: 700,
-      system: `Tu es journaliste RFI. D'après ce titre d'actualité, écris la transcription de la première partie d'un journal radio en français facile (niveau ${level}), environ 200-250 mots. Commence directement par "Bonjour" comme à la radio. Réponds uniquement JSON: {"transcript":"..."}`,
-      user: episode.title,
-    });
-    transcript = generated.transcript || '';
-  }
+  // 2. Download first ~5 min of audio (enough to transcribe 3 min)
+  const audioRes = await fetch(episode.audioUrl, {
+    headers: { 'User-Agent': 'Mozilla/5.0', 'Range': `bytes=0-${AUDIO_DOWNLOAD_BYTES - 1}` },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!audioRes.ok) throw new Error(`Audio download failed: ${audioRes.status}`);
+  const audioBuffer = Buffer.from(await audioRes.arrayBuffer());
+  console.log(`[listening] Downloaded ${audioBuffer.length} bytes of audio`);
 
-  // Trim if somehow too long
-  const words = transcript.split(/\s+/);
-  if (words.length > 450) transcript = words.slice(0, 450).join(' ') + '…';
-  if (!transcript || transcript.length < 40) throw new Error('No transcript');
+  // 3. Transcribe with Deepgram — get words in first 3 minutes
+  const { transcript, wordTimings } = await transcribeWithDeepgram(audioBuffer, DEEPGRAM_API_KEY);
+  if (!transcript || transcript.length < 40) throw new Error('Transcript too short');
 
+  // 4. Generate exercises from the transcript (parallel Claude calls)
   const [qParsed, vParsed, gParsed, cParsed] = await Promise.all([
     claudeJSON({ apiKey, maxTokens: 800, system: `French teacher. 4 multiple-choice comprehension questions for ${level} learner. Also infer vocab theme. Raw JSON: {"vocabTheme":"...","questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"}]}`, user: transcript }),
     claudeJSON({ apiKey, maxTokens: 700, system: `French teacher. 5 vocabulary fill-in-the-blank from transcript for ${level} learner. Raw JSON: {"vocab":[{"word":"...","definition":"English","sentence":"...___..."}]}`, user: transcript }),
@@ -711,9 +652,10 @@ async function generateListeningBundle(apiKey, level = 'B1') {
   return {
     title: episode.title,
     transcript,
-    audioUrl: episode.audioUrl,   // real MP3 URL from InnerFrench
-    clipEnd,                      // first 3 minutes
-    source: 'InnerFrench',
+    wordTimings,                          // word-level timestamps from Deepgram
+    audioUrl: episode.audioUrl,           // real podcast MP3 URL
+    clipEnd: CLIP_END_SECONDS,
+    source: episode.source,
     date: episode.pubDate || new Date().toUTCString(),
     vocabTheme: qParsed.vocabTheme || '',
     questions: qParsed.questions || [],
