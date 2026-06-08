@@ -5424,6 +5424,15 @@ export default function Hero() {
               >
                 Let's learn together!
               </button>
+              <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-2 mt-1 group"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img src="/assets/remi-avatar.png" alt="Kru Rémi" className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all" />
+                <span className="font-display text-[12px] italic text-navy/60 leading-none">
+                  by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span> · certified French teacher
+                </span>
+              </a>
             </div>
           </motion.div>
         </motion.div>
