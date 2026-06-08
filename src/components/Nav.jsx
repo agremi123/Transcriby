@@ -44,6 +44,17 @@ function NavReachNextLevel() {
 }
 
 
+async function devLogout() {
+  localStorage.removeItem('nativa-learner-profile');
+  localStorage.removeItem('nativa-learner-gender');
+  localStorage.removeItem('nativa-parisian-percent');
+  try {
+    const { supabase } = await import('../lib/supabaseClient');
+    await supabase.auth.signOut();
+  } catch {}
+  window.location.reload();
+}
+
 export default function Nav() {
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = React.useState(false);
