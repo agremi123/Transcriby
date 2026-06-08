@@ -5357,7 +5357,9 @@ export default function Hero() {
             <div className="relative">
               {/* Kru Rémi credit — above top-left corner of speech card */}
               <div className="absolute -top-16 left-0 flex items-center gap-3 pointer-events-none">
-                <img src="/assets/remi-avatar.png" alt="Kru Rémi" className="w-14 h-14 rounded-full object-cover object-top shrink-0 ring-1 ring-navy/10" />
+                <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer" className="pointer-events-auto shrink-0">
+                  <img src="/assets/remi-avatar.png" alt="Kru Rémi" className="w-14 h-14 rounded-full object-cover object-top ring-1 ring-navy/10 hover:ring-wine/50 transition-all" />
+                </a>
                 <span className="font-display text-[13px] italic text-navy/45 leading-none whitespace-nowrap pointer-events-auto">
                   by <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer" className="text-navy/65 not-italic font-semibold hover:text-wine transition-colors">Kru Rémi</a> · certified French teacher
                 </span>
