@@ -660,10 +660,11 @@ async function fetchRfiJffEpisode() {
 const CLIP_END_SECONDS = 180; // show only first 3 minutes of the podcast
 
 async function generateListeningBundle(apiKey, level = 'B1') {
-  // Fetch real RFI JFF episode with actual audio and scraped transcript
+  // Fetch real RFI JFF episode with actual audio, chapter-matched transcript, and clipEnd
   const episode = await fetchRfiJffEpisode();
 
   let transcript = episode.transcript || '';
+  const clipEnd = episode.clipEnd || CLIP_END_SECONDS;
 
   // If transcript is too short (page scrape failed), ask Claude to write from the title
   if (transcript.length < 100) {
@@ -675,9 +676,9 @@ async function generateListeningBundle(apiKey, level = 'B1') {
     transcript = generated.transcript || '';
   }
 
-  // Trim to first 3 minutes worth of content (~350 words ≈ 3 min at ~120 wpm)
+  // Trim if somehow too long
   const words = transcript.split(/\s+/);
-  if (words.length > 350) transcript = words.slice(0, 350).join(' ') + '…';
+  if (words.length > 450) transcript = words.slice(0, 450).join(' ') + '…';
   if (!transcript || transcript.length < 40) throw new Error('No transcript');
 
   const [qParsed, vParsed, gParsed, cParsed] = await Promise.all([
