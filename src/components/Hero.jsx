@@ -4819,9 +4819,17 @@ export default function Hero() {
   const [readingConjugation, setReadingConjugation] = React.useState([]);
   const [readingLoading, setReadingLoading] = React.useState(false);
 
+  // Track which topic is currently loaded per exercise type.
+  // Exercises persist through Chat tab switches; only reload when a *new* topic arrives.
+  const loadedReadingTopicRef = React.useRef(null);
+  const loadedListeningTopicRef = React.useRef(null);
+  const loadedSpeakingTopicRef = React.useRef(null);
+  const loadedWritingTopicRef = React.useRef(null);
+
   // Detect reading mode from URL once — store in state so it survives clearPracticeParam
   React.useEffect(() => {
-    if (practiceType === 'reading' && practiceTopic && !readingActive) {
+    if (practiceType === 'reading' && practiceTopic && loadedReadingTopicRef.current !== practiceTopic) {
+      loadedReadingTopicRef.current = practiceTopic;
       setReadingActive(true);
       setReadingTopic(practiceTopic);
       setReadingLoading(true);
