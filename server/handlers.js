@@ -1075,7 +1075,8 @@ export async function handleListening(body) {
           body: {
             title: row.title,
             audioUrl: row.audio_url || null,
-            clipEnd: row.clip_end ?? CLIP_END_SECONDS,
+            clipStart: row.clip_start ?? 0,
+            clipEnd: row.clip_end ?? CLIP_DURATION,
             transcript: row.transcript,
             wordTimings: row.word_timings || null,
             source: row.source_name,
