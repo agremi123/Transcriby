@@ -4363,18 +4363,18 @@ function ListeningPanel({ loading, title, audioUrl, transcript, wordTimings = nu
   // comprehension / vocabulary / grammar are in the AudioDemoCard speech box.
 
   return (
-    <div className="flex flex-col pr-4" style={{ height: 400 }}>
+    <div className="flex flex-col pr-4" style={{ height: 520 }}>
       {loading ? (
-        <div className="flex flex-col gap-3 pt-2">
-          <div className="h-6 bg-navy/8 rounded w-2/3 animate-pulse" />
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-navy/5 border border-navy/10 rounded-lg">
-            <div className="w-5 h-5 rounded-full bg-wine/20 animate-pulse shrink-0" />
+        <div className="flex flex-col gap-4 pt-2">
+          <div className="h-8 bg-navy/8 rounded w-3/4 animate-pulse" />
+          <div className="flex items-center gap-2.5 px-3 py-2 bg-navy/5 border border-navy/10 rounded-lg">
+            <div className="w-7 h-7 rounded-full bg-wine/20 animate-pulse shrink-0" />
             <div className="flex-1 h-1 bg-navy/10 rounded-full animate-pulse" />
-            <div className="w-6 h-2.5 bg-navy/10 rounded animate-pulse" />
+            <div className="w-7 h-3 bg-navy/10 rounded animate-pulse" />
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3.5 h-3.5 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
-            <span className="text-[12px] text-navy/40 font-display italic">Chargement de l'épisode…</span>
+          <div className="flex items-center gap-2 mt-2">
+            <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
+            <span className="text-[13px] text-navy/40 font-display italic">Chargement de l'épisode…</span>
           </div>
         </div>
       ) : (
