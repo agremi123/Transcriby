@@ -22,7 +22,13 @@ function NavReachNextLevel() {
 
   return (
     <div className="relative hidden sm:inline-flex items-center mt-1">
-      <div className="absolute right-full" style={{ marginTop: 65, marginRight: -20 }}>
+      <div className="absolute right-full flex items-center gap-3" style={{ marginTop: 65, marginRight: -20 }}>
+        <div className="flex items-center gap-1.5 pointer-events-none">
+          <img src="/assets/remi-avatar.png" alt="Kru Rémi" className="w-5 h-5 rounded-full object-cover object-top shrink-0" />
+          <span className="text-[10px] font-mono tracking-[0.04em] text-navy/40 leading-none whitespace-nowrap">
+            by <span className="text-navy/60 font-semibold">Kru Rémi</span> · certified French teacher
+          </span>
+        </div>
         <ParisianProfileSquare compact className="pointer-events-none" />
       </div>
       <ParisianExperienceHint />
