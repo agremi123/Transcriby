@@ -4327,10 +4327,10 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
   const seekToWord = (globalWordIdx) => {
     if (!audioRef.current) return;
     if (wordTimings && wordTimings[globalWordIdx]) {
-      audioRef.current.currentTime = wordTimings[globalWordIdx].start;
+      audioRef.current.currentTime = wordTimings[globalWordIdx].start + clipStart;
     } else if (effectiveDuration && totalWeight) {
       const wBefore = allWordWeights.slice(0, globalWordIdx).reduce((s, w) => s + w, 0);
-      audioRef.current.currentTime = (wBefore / totalWeight) * effectiveDuration;
+      audioRef.current.currentTime = (wBefore / totalWeight) * effectiveDuration + clipStart;
     }
   };
 
