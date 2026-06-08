@@ -4359,7 +4359,7 @@ function ListeningPanel({ loading, title, audioUrl, clipEnd = 180, transcript, w
   };
   const byline = [source, fmtDate(date)].filter(Boolean).join(' — ');
   const fmtTime = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
-  const pct = duration ? (currentTime / duration) * 100 : 0;
+  const pct = effectiveDuration ? (Math.min(currentTime, effectiveDuration) / effectiveDuration) * 100 : 0;
 
   // Only transcript tab lives in the listening panel now;
   // comprehension / vocabulary / grammar are in the AudioDemoCard speech box.
