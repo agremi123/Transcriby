@@ -4891,6 +4891,7 @@ export default function Hero() {
         .then((data) => {
           setListeningTitle(data.title || '');
           setListeningAudioUrl(data.audioUrl || null);
+          setListeningClipEnd(data.clipEnd ?? 180);
           setListeningTranscript(data.transcript || '');
           setListeningSource(data.source || null);
           setListeningDate(data.date || null);
