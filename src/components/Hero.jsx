@@ -5353,8 +5353,8 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="flex justify-end self-center pr-16">
-            <div className="relative">
+          <div className="flex justify-end self-center pr-16" style={{ height: 500, minHeight: 500, flexShrink: 0 }}>
+            <div className="relative" style={{ height: 500, minHeight: 500 }}>
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
               initialTopic={practiceType === 'reading' ? null : practiceTopic}
