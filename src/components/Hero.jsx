@@ -5357,14 +5357,14 @@ export default function Hero() {
               initialLearnLevel={learnLevel}
               onLearnModeHandled={clearLearnParams}
               onPracticeTopicHandled={practiceType === 'reading' ? undefined : clearPracticeParam}
-              readingVocab={listeningActive ? listeningVocab : readingVocab}
+              readingVocab={heroActiveTab === 'listening' ? listeningVocab : readingVocab}
               listeningQuestions={listeningQuestions}
               listeningVocab={listeningVocab}
               listeningGrammar={listeningGrammar}
-              exerciseQuestions={listeningActive ? listeningQuestions : readingQuestions}
-              exerciseVocab={listeningActive ? listeningVocab : readingVocab}
-              exerciseGrammar={listeningActive ? listeningGrammar : readingGrammar}
-              exerciseConjugation={listeningActive ? listeningConjugation : readingConjugation}
+              exerciseQuestions={heroActiveTab === 'listening' ? listeningQuestions : readingQuestions}
+              exerciseVocab={heroActiveTab === 'listening' ? listeningVocab : readingVocab}
+              exerciseGrammar={heroActiveTab === 'listening' ? listeningGrammar : readingGrammar}
+              exerciseConjugation={heroActiveTab === 'listening' ? listeningConjugation : readingConjugation}
               activeTab={heroActiveTab}
               onTabChange={setHeroActiveTab}
               exerciseSubTabProp={exerciseSubTab}
