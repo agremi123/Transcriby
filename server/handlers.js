@@ -456,12 +456,26 @@ async function claudeJSON({ apiKey, system, user, maxTokens = 800 }) {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: maxTokens, system, messages: [{ role: 'user', content: user }] }),
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: maxTokens,
+      system,
+      messages: [
+        { role: 'user', content: user },
+        { role: 'assistant', content: '{' },
+      ],
+    }),
   });
   const data = await res.json();
-  let raw = data.content?.[0]?.text?.trim() || '{}';
+  // Prepend the '{' we used as prefill so the full JSON is parseable
+  let raw = '{' + (data.content?.[0]?.text?.trim() || '');
   raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-  try { return JSON.parse(raw); } catch { return {}; }
+  try { return JSON.parse(raw); } catch {
+    // Fallback: extract first complete JSON object from anywhere in the response
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (match) { try { return JSON.parse(match[0]); } catch {} }
+    return {};
+  }
 }
 
 // ── Generate a full reading bundle (article + 4 exercise types) ─────────────
