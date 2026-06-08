@@ -612,35 +612,38 @@ async function fetchInnerFrenchEpisode() {
         // <p>Actual spoken text here.</p>
         //
         // Parse all <p> tags, track current timestamp, stop at 3 minutes.
+        // InnerFrench transcript structure:
+        // <p><strong><a href="javascript:sonaar_ts_shortcode({time:'00:00:03',...})">[00:00:03]</a> – Hugo</strong></p>
+        // <p>Actual spoken text.</p>
+        // Only collect text paragraphs AFTER the first timestamp, up to 3 min 10 sec.
         const pRe = /<p[^>]*>([\s\S]*?)<\/p>/gi;
         const lines = [];
         let pm;
-        let currentSecs = 0;
+        let currentSecs = -1; // -1 = haven't seen first timestamp yet
 
         while ((pm = pRe.exec(html)) !== null) {
           const inner = pm[1];
 
-          // Check for timestamp anchor: time:'00:01:28'
+          // Detect timestamp: time:'00:01:28'
           const tsMatch = inner.match(/time:'(\d{2}):(\d{2}):(\d{2})'/);
           if (tsMatch) {
             const secs = parseInt(tsMatch[1]) * 3600 + parseInt(tsMatch[2]) * 60 + parseInt(tsMatch[3]);
             currentSecs = secs;
-            // Stop collecting once we're past 3 minutes (keep up to 3:10 to avoid cutting mid-sentence)
-            if (currentSecs > 190) break;
-            continue; // speaker label line, no spoken text
+            if (currentSecs > 190) break; // past 3:10 — stop
+            continue; // this is the speaker label line, skip
           }
 
-          // Skip if we're past 3 min
-          if (currentSecs > 190) break;
+          // Only collect after first timestamp is found
+          if (currentSecs < 0 || currentSecs > 190) continue;
 
-          // Plain text paragraph — the spoken line
           const text = decodeHtmlEntities(inner.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
           if (
             text.length > 15 &&
             /[a-zàâéèêîôùûç]{3,}/i.test(text) &&
             !text.includes('window.') &&
             !text.includes('function(') &&
-            !/^(You just need|If you like|You can translate|Retrouvez|Share|Tweet|I accept|Difficulté)/i.test(text)
+            !text.includes('var ') &&
+            !/^(You just need|If you like|You can translate|Retrouvez|Share|Tweet|I accept|Difficulté|Already sub)/i.test(text)
           ) {
             lines.push(text);
           }
