@@ -611,39 +611,47 @@ async function fetchRfiJffEpisode() {
           }
         }
 
-        // ── 2. Pick the first "real" chapter (skip short intros under 60s)
-        // Use the chapter that starts earliest but ≥ 60s, and clip at the NEXT chapter
-        // Typically: chapter[0] = ~01:26, chapter[1] = ~04:14 → clip at 04:14
+        // ── Extract first significant keyword from a chapter title for stop-detection
+        const extractKeyword = (title) => {
+          const skipWords = new Set(['le','la','les','l','un','une','des','du','de','en','au','aux','et','ou','à','a','par','sur','dans','pour','avec','sans','ce','cet','cette','ses','son','sa','leur','leurs']);
+          const words = title.toLowerCase().replace(/['']/g,"'").split(/[\s:,–—-]+/);
+          for (const word of words) {
+            const w = word.replace(/^(l'|d'|j'|n'|s'|m'|c')/, '').replace(/[^a-zàâéèêîôùûç]/g,'');
+            if (w.length > 3 && !skipWords.has(w)) return w;
+          }
+          return words.find(w => w.length > 2) || '';
+        };
+
+        // ── 2. Pick the first "real" chapter (skip very short intros under 60s)
         let chosenChapter = null;
         if (chapters.length >= 2) {
-          // Find first chapter starting between 60s and 180s
           const firstReal = chapters.find(c => c.secs >= 60 && c.secs <= 240) || chapters[0];
           const idx = chapters.indexOf(firstReal);
           const nextChapter = chapters[idx + 1];
-          chosenChapter = { start: firstReal.secs, end: nextChapter ? nextChapter.secs : firstReal.secs + 240, keyword: firstReal.title.split(':')[0].trim().toLowerCase() };
+          chosenChapter = { start: firstReal.secs, end: nextChapter ? nextChapter.secs : firstReal.secs + 240, stopKeyword: nextChapter ? extractKeyword(nextChapter.title) : null };
           clipEnd = chosenChapter.end;
         }
 
-        // ── 3. Find where actual transcript starts ("Bonjour à toutes et à tous...")
+        // ── 3. Find where actual transcript starts ("Bonjour…")
         const bonjourIdx = cleanParas.findIndex(t => /^Bonjour\b/i.test(t));
-        const transcriptStart = bonjourIdx >= 0 ? bonjourIdx : cleanParas.length;
+        const transcriptStart = bonjourIdx >= 0 ? bonjourIdx : 0;
 
-        // Only take paragraphs from "Bonjour" onward; skip photo captions / chapter nav / CSS above
+        // Only take paragraphs from "Bonjour" onward; filter out CSS / nav / previous-episode teasers
         const transcriptParas = cleanParas.slice(transcriptStart).filter(t => {
           if (t.length < 20) return false;
           if (/^\d{1,2}:\d{2}/.test(t)) return false;
           if (t.includes('background:') || t.includes('font-size') || t.includes('window.')) return false;
+          if (/^Journal en français facile\s+\d{2}\/\d{2}\/\d{4}/.test(t)) return false; // previous-episode teaser
           return true;
         });
 
-        // ── 4. Keep only intro + first chapter paragraphs
-        if (chosenChapter && chapters.length >= 2) {
-          const nextIdx = chapters.indexOf(chapters.find(c => c.secs === chosenChapter.end));
-          const stopKeyword = nextIdx >= 0 ? chapters[nextIdx]?.title?.split(':')[0]?.trim()?.toLowerCase() : null;
+        // ── 4. Keep intro + first chapter's paragraphs only
+        if (chosenChapter?.stopKeyword) {
+          const stopKw = chosenChapter.stopKeyword;
           const kept = [];
           for (const para of transcriptParas) {
-            // Stop when we enter the NEXT chapter's deep-dive: keyword in first 80 chars, past intro
-            if (stopKeyword && kept.length > 4 && para.toLowerCase().slice(0, 80).includes(stopKeyword)) break;
+            // Stop when next chapter's key word appears near the start of a paragraph (its opener)
+            if (kept.length > 4 && para.toLowerCase().slice(0, 100).includes(stopKw)) break;
             kept.push(para);
           }
           transcript = kept.join('\n\n').trim();
