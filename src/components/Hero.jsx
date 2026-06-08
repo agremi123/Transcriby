@@ -4895,6 +4895,7 @@ export default function Hero() {
   const [listeningVocabTheme, setListeningVocabTheme] = React.useState('');
   const [listeningContentLevel, setListeningContentLevel] = React.useState('');
   const [listeningWordTimings, setListeningWordTimings] = React.useState(null);
+  const [listeningClipStart, setListeningClipStart] = React.useState(0);
   const [listeningClipEnd, setListeningClipEnd] = React.useState(180);
 
   React.useEffect(() => {
