@@ -641,7 +641,9 @@ async function fetchRfiJffEpisode() {
           const stopKeyword = nextIdx >= 0 ? chapters[nextIdx]?.title?.split(':')[0]?.trim()?.toLowerCase() : null;
           const kept = [];
           for (const para of transcriptParas) {
-            if (stopKeyword && kept.length > 4 && para.toLowerCase().includes(stopKeyword)) break;
+            // Only stop once we're past the intro/headlines (min 8 paras) AND in the next chapter's deep-dive
+            // Use a tighter match: stop keyword must appear in first 80 chars (chapter opener), not just a brief mention
+            if (stopKeyword && kept.length > 8 && para.toLowerCase().slice(0, 80).includes(stopKeyword)) break;
             kept.push(para);
           }
           transcript = kept.join('\n\n').trim();
