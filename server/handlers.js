@@ -638,7 +638,7 @@ async function fetchRfiJffEpisode() {
 
         // Only take paragraphs from "Bonjour" onward; filter out CSS / nav / previous-episode teasers
         const transcriptParas = cleanParas.slice(transcriptStart).filter(t => {
-          if (t.length < 20) return false;
+          if (t.length < 5) return false;
           if (/^\d{1,2}:\d{2}/.test(t)) return false;
           if (t.includes('background:') || t.includes('font-size') || t.includes('window.')) return false;
           if (/^Journal en français facile\s+\d{2}\/\d{2}\/\d{4}/.test(t)) return false; // previous-episode teaser
