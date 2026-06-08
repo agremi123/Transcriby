@@ -692,7 +692,7 @@ async function generateListeningBundle(apiKey, level = 'B1') {
     title: episode.title,
     transcript,
     audioUrl: episode.audioUrl,   // real MP3 URL from RFI
-    clipEnd: CLIP_END_SECONDS,    // player stops at 3:00
+    clipEnd,                      // player stops at end of first chapter
     source: 'RFI — Journal en Français Facile',
     date: episode.pubDate || new Date().toUTCString(),
     vocabTheme: qParsed.vocabTheme || '',
