@@ -5117,35 +5117,19 @@ export default function Hero() {
     }, { replace: true });
   }, [heroActiveTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Reset all exercise state when user clicks Chat tab
+  // When switching back to Chat: keep all exercise state so students can return mid-exercise.
+  // Only reset the trigger tracker + URL params so tabs can re-trigger if the student
+  // hasn't visited them yet. The loaded-topic refs prevent unnecessary API re-calls
+  // when the same default topic is re-set by the trigger.
   const prevHeroTabRef = React.useRef(heroActiveTab);
   React.useEffect(() => {
     const prev = prevHeroTabRef.current;
     prevHeroTabRef.current = heroActiveTab;
     const wasExercise = ['reading', 'listening', 'speaking', 'writing'].includes(prev);
     if (heroActiveTab !== 'transcript' || !wasExercise) return;
-    // Reset reading
-    setReadingActive(false); setReadingLoading(false); setReadingTopic('');
-    setReadingPassage(''); setReadingTitle(''); setReadingSource(null);
-    setReadingAuthor(null); setReadingDate(null);
-    setReadingVocab([]); setReadingQuestions([]); setReadingGrammar([]); setReadingConjugation([]);
-    // Reset listening
-    setListeningActive(false); setListeningLoading(false); setListeningTitle('');
-    setListeningAudioUrl(null); setListeningTranscript(''); setListeningSource(null);
-    setListeningDate(null); setListeningVocab([]); setListeningQuestions([]);
-    setListeningGrammar([]); setListeningConjugation([]); setListeningVocabTheme('');
-    setListeningContentLevel(''); setListeningWordTimings(null);
-    // Reset speaking
-    setSpeakingActive(false); setSpeakingLoading(false); setSpeakingNarrator('lea');
-    setSpeakingOpeningLine(''); setSpeakingOpeningTranslation(''); setSpeakingTopicLabel('');
-    // Reset writing
-    setWritingActive(false); setWritingLoading(false); setWritingPrompt('');
-    setWritingTips({ vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] });
-    setWritingWordTarget(80);
-    // Reset exercise sub-tab and allow re-triggering
-    setExerciseSubTab('comprehension');
+    // Allow re-triggering unvisited exercise tabs (topic refs prevent actual reload)
     tabTriggeredRef.current = new Set();
-    // Clear URL params
+    // Clear URL params for cleanliness (exercises are preserved via state, not URL)
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
       next.delete('practice');
