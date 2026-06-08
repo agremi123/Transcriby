@@ -5163,7 +5163,7 @@ export default function Hero() {
 
       <Container className="relative">
         <div className="grid lg:grid-cols-[1fr_1.5fr] gap-8 items-stretch h-[calc(100vh-96px)]">
-          <div className="relative flex flex-col justify-center overflow-visible">
+          <div className="relative flex flex-col justify-center overflow-hidden">
             {heroActiveTab === 'reading' && readingActive && (
               <ReadingArticlePanel
                 loading={readingLoading}
