@@ -693,9 +693,9 @@ async function generateListeningBundle(apiKey, level = 'B1') {
   return {
     title: episode.title,
     transcript,
-    audioUrl: episode.audioUrl,   // real MP3 URL from RFI
-    clipEnd,                      // player stops at end of first chapter
-    source: 'RFI — Journal en Français Facile',
+    audioUrl: episode.audioUrl,   // real MP3 URL from InnerFrench
+    clipEnd,                      // first 3 minutes
+    source: 'InnerFrench',
     date: episode.pubDate || new Date().toUTCString(),
     vocabTheme: qParsed.vocabTheme || '',
     questions: qParsed.questions || [],
