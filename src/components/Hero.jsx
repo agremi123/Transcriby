@@ -4307,10 +4307,10 @@ function ListeningPanel({ loading, title, audioUrl, clipEnd = 180, transcript, w
   };
 
   const seek = (e) => {
-    if (!audioRef.current || !duration) return;
+    if (!audioRef.current || !effectiveDuration) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    audioRef.current.currentTime = pct * duration;
+    audioRef.current.currentTime = pct * effectiveDuration;
   };
 
   // Syllable weights for every word — used as fallback when no Deepgram timings
