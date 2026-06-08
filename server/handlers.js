@@ -545,24 +545,32 @@ Raw JSON only:
 
 // ── Podcast sources ───────────────────────────────────────────────────────────
 const PODCAST_SOURCES = [
-  { name: 'InnerFrench',                   rss: 'https://podcast.innerfrench.com/feed.xml' },
-  { name: 'RFI — Journal en Français Facile', rss: 'https://apis.fle.rfi.fr/products/get_product/fle_getpodcast_by_nid_author_rfi?token_application=applepodcast_fle&program.entrepriseId=WBMZ39-FLE-FR-20220627' },
+  // Dedicated French-learning podcasts
+  { name: 'InnerFrench',                      rss: 'https://podcast.innerfrench.com/feed.xml' },
+  { name: 'Français Authentique',              rss: 'https://www.francaisauthentique.com/feed/podcast/' },
+  { name: 'RFI — Journal en Français Facile',  rss: 'https://www.rfi.fr/fr/podcasts/journal-en-francais-facile/feed/' },
+  // Authentic French content
+  { name: 'France Culture — Avec philosophie', rss: 'https://radiofrance-podcast.net/podcast09/rss_56107.xml' },
+  { name: 'France Culture — Le cours de l\'histoire', rss: 'https://radiofrance-podcast.net/podcast09/rss_11549.xml' },
+  { name: 'France Inter — Le grand entretien', rss: 'https://radiofrance-podcast.net/podcast09/rss_13963.xml' },
+  { name: 'Choses à Savoir',                   rss: 'https://podcast.ausha.co/choses-a-savoir/rss.xml' },
+  { name: 'Les Chemins de la philosophie',     rss: 'https://radiofrance-podcast.net/podcast09/rss_14400.xml' },
 ];
 
 async function fetchPodcastEpisode() {
-  // Shuffle sources so we rotate across episodes
+  // Shuffle so we rotate across sources
   const sources = PODCAST_SOURCES.slice().sort(() => Math.random() - 0.5);
   for (const src of sources) {
     try {
       const res = await fetch(src.rss, {
-        headers: { 'User-Agent': 'Mozilla/5.0' },
-        signal: AbortSignal.timeout(8000),
+        headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/rss+xml,application/xml,text/xml,*/*' },
+        signal: AbortSignal.timeout(7000),
       });
-      if (!res.ok) continue;
+      if (!res.ok) { console.log(`[listening] ${src.name} HTTP ${res.status}`); continue; }
       const xml = await res.text();
 
       const items = [];
-      const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+      const itemRegex = /<item[\s>]([\s\S]*?)<\/item>/g;
       let m;
       while ((m = itemRegex.exec(xml)) !== null) {
         const block = m[1];
@@ -571,7 +579,8 @@ async function fetchPodcastEpisode() {
           const found = block.match(r);
           return found ? extractCdata(found[1]) : '';
         };
-        const enclosureMatch = block.match(/<enclosure[^>]+url="([^"]+)"/i);
+        const enclosureMatch = block.match(/<enclosure[^>]+url="([^"]+\.mp3[^"]*)"/i)
+                            || block.match(/<enclosure[^>]+url="([^"]+)"/i);
         const audioUrl = enclosureMatch ? enclosureMatch[1].replace(/&amp;/g, '&') : null;
         const title = get('title');
         const pubDate = get('pubDate') || '';
@@ -579,12 +588,13 @@ async function fetchPodcastEpisode() {
       }
 
       if (items.length > 0) {
-        const episode = items[Math.floor(Math.random() * Math.min(items.length, 15))];
+        const episode = items[Math.floor(Math.random() * Math.min(items.length, 10))];
         console.log(`[listening] Using ${src.name}: "${episode.title}"`);
         return episode;
       }
+      console.log(`[listening] ${src.name}: 0 usable items`);
     } catch (e) {
-      console.warn(`[listening] ${src.name} RSS failed:`, e.message);
+      console.warn(`[listening] ${src.name} failed:`, e.message);
     }
   }
   throw new Error('All podcast sources failed');
