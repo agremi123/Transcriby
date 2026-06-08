@@ -5358,8 +5358,8 @@ export default function Hero() {
               {/* Kru Rémi credit — above top-left corner of speech card */}
               <div className="absolute -top-9 left-0 flex items-center gap-2 pointer-events-none">
                 <img src="/assets/remi-avatar.png" alt="Kru Rémi" className="w-6 h-6 rounded-full object-cover object-top shrink-0 ring-1 ring-navy/10" />
-                <span className="font-display text-[13px] italic text-navy/45 leading-none whitespace-nowrap">
-                  by <span className="text-navy/65 not-italic font-semibold">Kru Rémi</span> · certified French teacher
+                <span className="font-display text-[13px] italic text-navy/45 leading-none whitespace-nowrap pointer-events-auto">
+                  by <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer" className="text-navy/65 not-italic font-semibold hover:text-wine transition-colors">Kru Rémi</a> · certified French teacher
                 </span>
               </div>
             <AudioDemoCard
