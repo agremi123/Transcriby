@@ -4947,7 +4947,8 @@ export default function Hero() {
   const [writingWordTarget, setWritingWordTarget] = React.useState(80);
 
   React.useEffect(() => {
-    if (practiceType === 'writing' && practiceTopic && !writingActive) {
+    if (practiceType === 'writing' && practiceTopic && loadedWritingTopicRef.current !== practiceTopic) {
+      loadedWritingTopicRef.current = practiceTopic;
       setWritingActive(true);
       setWritingLoading(true);
       fetch('/api/writing-prompt', {
