@@ -1007,11 +1007,12 @@ export async function handleListening(body) {
         .limit(20);
       if (cached && cached.length > 0) {
         const row = cached[Math.floor(Math.random() * cached.length)];
-          return {
+        return {
           statusCode: 200,
           body: {
             title: row.title,
             audioUrl: row.audio_url || null,
+            clipEnd: row.clip_end ?? CLIP_END_SECONDS,
             transcript: row.transcript,
             source: row.source_name,
             date: row.pub_date,
@@ -1032,6 +1033,7 @@ export async function handleListening(body) {
     if (supabase) {
       supabase.from('listening_episodes').insert([{
         level, title: bundle.title, audio_url: bundle.audioUrl,
+        clip_end: bundle.clipEnd ?? CLIP_END_SECONDS,
         transcript: bundle.transcript, source_name: bundle.source,
         pub_date: bundle.date, vocab_theme: bundle.vocabTheme,
         questions: bundle.questions, vocab: bundle.vocab,
