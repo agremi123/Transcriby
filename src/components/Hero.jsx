@@ -4918,7 +4918,8 @@ export default function Hero() {
   const [speakingTopicLabel, setSpeakingTopicLabel] = React.useState('');
 
   React.useEffect(() => {
-    if (practiceType === 'speaking' && practiceTopic && !speakingActive) {
+    if (practiceType === 'speaking' && practiceTopic && loadedSpeakingTopicRef.current !== practiceTopic) {
+      loadedSpeakingTopicRef.current = practiceTopic;
       setSpeakingActive(true);
       setSpeakingLoading(true);
       fetch('/api/speaking', {
