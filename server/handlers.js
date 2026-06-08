@@ -586,15 +586,18 @@ async function fetchInnerFrenchEpisode() {
   if (items.length === 0) throw new Error('No InnerFrench episodes found');
   const episode = items[Math.floor(Math.random() * Math.min(items.length, 15))];
 
-  // 2. Extract episode slug like "e196" from the podcast link
-  const slugMatch = (episode.link || '').match(/\/(e\d+)/i);
-  const episodeSlug = slugMatch ? slugMatch[1].toLowerCase() : null;
+  // 2. Build transcript URL from RSS link:
+  //    RSS:        podcast.innerfrench.com/e/e196-en-france-le-nucleaire-a-tout-prix/
+  //    Transcript: innerfrench.com/196-en-france-le-nucleaire-a-tout-prix/
+  //    (different domain, strip leading 'e' from episode slug)
+  const slugMatch = (episode.link || '').match(/\/e\/(e\d+-.+?)\/?$/i);
+  const transcriptSlug = slugMatch ? slugMatch[1].replace(/^e(\d+)/, '$1') : null;
 
   // 3. Fetch transcript from innerfrench.com using the member session cookie
   let transcript = '';
-  if (INNERFRENCH_COOKIE && episodeSlug) {
+  if (INNERFRENCH_COOKIE && transcriptSlug) {
     try {
-      const transcriptUrl = `https://innerfrench.com/${episodeSlug}`;
+      const transcriptUrl = `https://innerfrench.com/${transcriptSlug}/`;
       const pageRes = await fetch(transcriptUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
