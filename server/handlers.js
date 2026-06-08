@@ -624,31 +624,30 @@ async function fetchRfiJffEpisode() {
           clipEnd = chosenChapter.end;
         }
 
-        // ── 3. Extract transcript paragraphs
-        const transcriptParas = cleanParas.filter(t => {
-          if (t.length < 40) return false;
-          if (/^\d{1,2}:\d{2}/.test(t)) return false; // skip chapter nav
+        // ── 3. Find where actual transcript starts ("Bonjour à toutes et à tous...")
+        const bonjourIdx = cleanParas.findIndex(t => /^Bonjour\b/i.test(t));
+        const transcriptStart = bonjourIdx >= 0 ? bonjourIdx : cleanParas.length;
+
+        // Only take paragraphs from "Bonjour" onward; skip photo captions / chapter nav / CSS above
+        const transcriptParas = cleanParas.slice(transcriptStart).filter(t => {
+          if (t.length < 20) return false;
+          if (/^\d{1,2}:\d{2}/.test(t)) return false;
           if (t.includes('background:') || t.includes('font-size') || t.includes('window.')) return false;
-          if (/^Écouter/.test(t)) return false;
-          if (!/[a-zA-ZàâéèêîôùûçÀÂÉÈÊÎÔÙÛÇ]{3}/.test(t)) return false;
           return true;
         });
 
         // ── 4. Keep only intro + first chapter paragraphs
-        // Strategy: stop including paragraphs once we hit the SECOND chapter's keyword
         if (chosenChapter && chapters.length >= 2) {
           const nextIdx = chapters.indexOf(chapters.find(c => c.secs === chosenChapter.end));
           const stopKeyword = nextIdx >= 0 ? chapters[nextIdx]?.title?.split(':')[0]?.trim()?.toLowerCase() : null;
           const kept = [];
           for (const para of transcriptParas) {
-            // Only stop once we're past the intro/headlines (min 8 paras) AND in the next chapter's deep-dive
-            // Use a tighter match: stop keyword must appear in first 80 chars (chapter opener), not just a brief mention
-            if (stopKeyword && kept.length > 8 && para.toLowerCase().slice(0, 80).includes(stopKeyword)) break;
+            // Stop when we enter the NEXT chapter's deep-dive: keyword in first 80 chars, past intro
+            if (stopKeyword && kept.length > 4 && para.toLowerCase().slice(0, 80).includes(stopKeyword)) break;
             kept.push(para);
           }
           transcript = kept.join('\n\n').trim();
         } else {
-          // No chapter structure — take first ~20 paragraphs
           transcript = transcriptParas.slice(0, 20).join('\n\n').trim();
         }
       }
