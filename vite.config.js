@@ -1227,8 +1227,56 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       let transcript = episode.generatedTranscript || '';
       let wordTimings = null; // [{start, end}] in seconds — set when Deepgram succeeds
 
-      // Step 3-pre: if we have real podcast audio (not generated), try Deepgram for word-accurate timestamps
-      if (!episode.generatedTranscript && clipAudioBuf) {
+      // Step 3-pre-A: InnerFrench member transcript via cookie (fastest, no API cost)
+      if (!transcript && found?.source?.id === 'innerfrench' && env.INNERFRENCH_COOKIE) {
+        try {
+          const slugMatch = (episode.link || '').match(/\/e\/(e\d+-.+?)\/?$/i);
+          const transcriptSlug = slugMatch ? slugMatch[1].replace(/^e(\d+)/, '$1') : null;
+          if (transcriptSlug) {
+            const transcriptUrl = `https://innerfrench.com/${transcriptSlug}/`;
+            console.log('[listening] Fetching InnerFrench transcript:', transcriptUrl);
+            const pageRes = await fetch(transcriptUrl, {
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Cookie': env.INNERFRENCH_COOKIE,
+              },
+              signal: AbortSignal.timeout(10000),
+            });
+            if (pageRes.ok) {
+              const html = await pageRes.text();
+              const pRe = /<p[^>]*>([\s\S]*?)<\/p>/gi;
+              const lines = [];
+              let pm2, curSecs = -1;
+              while ((pm2 = pRe.exec(html)) !== null) {
+                const inner = pm2[1];
+                const tsMatch = inner.match(/time:'(\d{2}):(\d{2}):(\d{2})'/);
+                if (tsMatch) {
+                  curSecs = parseInt(tsMatch[1])*3600 + parseInt(tsMatch[2])*60 + parseInt(tsMatch[3]);
+                  if (curSecs > 190) break;
+                  continue;
+                }
+                if (curSecs < 0 || curSecs > 190) continue;
+                const text = inner.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ')
+                  .replace(/&#8217;/g,"'").replace(/&#8211;/g,'–').replace(/&amp;/g,'&').trim();
+                if (text.length > 15 && /[a-zàâéèêîôùûç]{3,}/i.test(text) &&
+                  !text.includes('window.') && !text.includes('function(') &&
+                  !/^(You just|If you|You can|Retrouvez|Share|Tweet)/i.test(text)) {
+                  lines.push(text);
+                }
+              }
+              if (lines.length > 3) {
+                transcript = lines.join('\n\n').trim();
+                console.log(`[listening] InnerFrench member transcript: ${lines.length} lines`);
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('[listening] InnerFrench transcript fetch failed:', e.message);
+        }
+      }
+
+      // Step 3-pre-B: Deepgram word-accurate timestamps (if no transcript yet)
+      if (!transcript && !episode.generatedTranscript && clipAudioBuf) {
         console.log('[listening] Running Deepgram transcription for word timestamps…');
         const dgResult = await deepgramTranscribe(clipAudioBuf, deepgramKey);
         if (dgResult && dgResult.wordTimings.length > 10) {
