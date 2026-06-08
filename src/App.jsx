@@ -41,6 +41,10 @@ function GoogleAuthHandler() {
   const handledRef = React.useRef(false);
 
   React.useEffect(() => {
+    // Strip the leftover # from Supabase's implicit auth redirect
+    if (window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
     if (handledRef.current) return;
     import('./lib/supabaseClient').then(({ supabase }) => {
       supabase.auth.getSession().then(({ data: { session } }) => {
