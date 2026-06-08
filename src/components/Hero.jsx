@@ -2279,6 +2279,16 @@ export function AudioDemoCard({
         : 'relative w-full max-w-[640px] bg-paper hairline flex flex-col overflow-hidden rounded-2xl'}
       style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)', height: 500 }}
     >
+      {/* Developed by label — top-left corner of card */}
+      {!fullscreen && (
+        <div className="absolute -top-6 left-0 flex items-center gap-1.5 pointer-events-none">
+          <img src="/assets/remi-avatar.png" alt="Kru Rémi" className="w-4 h-4 rounded-full object-cover object-top shrink-0" />
+          <span className="text-[10px] font-mono tracking-[0.04em] text-navy/40 leading-none whitespace-nowrap">
+            by <span className="text-navy/55 font-semibold">Kru Rémi</span> · certified French teacher
+          </span>
+        </div>
+      )}
+
       {/* Close button in fullscreen */}
       {fullscreen && (
         <button type="button" onClick={onClose}
@@ -5326,7 +5336,7 @@ export default function Hero() {
 
             <Reveal delay={0.35}>
               <p className="mt-6 max-w-[500px] text-[15px] leading-[1.6] text-navy/70">
-                Nativa listens as you speak and correct your French in real time,
+                Parisly listens as you speak and correct your French in real time,
                 helping you express yourself with fluency and confidence.
               </p>
             </Reveal>
