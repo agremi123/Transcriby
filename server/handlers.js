@@ -565,8 +565,8 @@ async function fetchRfiJffEpisode() {
       const found = block.match(r);
       return found ? extractCdata(found[1]) : '';
     };
-    const enclosureMatch = block.match(/<enclosure[^>]+url="([^"&]+)/i);
-    const audioUrl = enclosureMatch ? enclosureMatch[1] : null;
+    const enclosureMatch = block.match(/<enclosure[^>]+url="([^"]+)"/i);
+    const audioUrl = enclosureMatch ? enclosureMatch[1].replace(/&amp;/g, '&') : null;
     const title = get('title');
     const description = stripHtml(get('itunes:summary') || get('description') || get('summary') || '').trim();
     const pubDate = get('pubDate') || '';
