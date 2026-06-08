@@ -4404,9 +4404,12 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
               onTimeUpdate={() => {
                 const t = audioRef.current?.currentTime || 0;
                 if (t >= clipEnd) { audioRef.current.pause(); audioRef.current.currentTime = clipEnd; setPlaying(false); }
-                setCurrentTime(t);
+                setCurrentTime(t - clipStart);
               }}
-              onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
+              onLoadedMetadata={() => {
+                setDuration(audioRef.current?.duration || 0);
+                if (clipStart > 0) audioRef.current.currentTime = clipStart;
+              }}
               onEnded={() => setPlaying(false)} />}
             <div className="flex items-center gap-2.5 px-3 py-2 bg-navy/5 border border-navy/10 rounded-lg">
               <button type="button" onClick={togglePlay} disabled={!audioUrl}
