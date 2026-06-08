@@ -963,7 +963,7 @@ export async function handleWord() {
 }
 
 export async function handleListening(body) {
-  const { ANTHROPIC_API_KEY, ELEVENLABS_API_KEY } = getEnv();
+  const { ANTHROPIC_API_KEY } = getEnv();
   const level = body?.learnerLevel || 'B1';
   const topic = body?.topic || '';
 
