@@ -607,35 +607,47 @@ async function fetchInnerFrenchEpisode() {
       if (pageRes.ok) {
         const html = await pageRes.text();
 
-        // Find the main post content area (WordPress)
-        const contentAreaMatch = html.match(/class="[^"]*(?:entry-content|post-content|article-content|the-content)[^"]*"[^>]*>([\s\S]*?)(?=<(?:div|section|footer)[^>]*class="[^"]*(?:related|sidebar|footer|nav|comment))/i);
-        const contentHtml = contentAreaMatch ? contentAreaMatch[1] : html;
-
-        // Extract paragraphs
+        // InnerFrench uses Sonaar player with timestamped paragraphs:
+        // <p><strong><a ... time:'00:01:28' ...>[00:01:28]</a> – Hugo</strong></p>
+        // <p>Actual spoken text here.</p>
+        //
+        // Parse all <p> tags, track current timestamp, stop at 3 minutes.
         const pRe = /<p[^>]*>([\s\S]*?)<\/p>/gi;
-        const paragraphs = [];
+        const lines = [];
         let pm;
-        while ((pm = pRe.exec(contentHtml)) !== null) {
-          const text = decodeHtmlEntities(pm[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
-          // Keep only substantial French-looking text, skip UI strings
+        let currentSecs = 0;
+
+        while ((pm = pRe.exec(html)) !== null) {
+          const inner = pm[1];
+
+          // Check for timestamp anchor: time:'00:01:28'
+          const tsMatch = inner.match(/time:'(\d{2}):(\d{2}):(\d{2})'/);
+          if (tsMatch) {
+            const secs = parseInt(tsMatch[1]) * 3600 + parseInt(tsMatch[2]) * 60 + parseInt(tsMatch[3]);
+            currentSecs = secs;
+            // Stop collecting once we're past 3 minutes (keep up to 3:10 to avoid cutting mid-sentence)
+            if (currentSecs > 190) break;
+            continue; // speaker label line, no spoken text
+          }
+
+          // Skip if we're past 3 min
+          if (currentSecs > 190) break;
+
+          // Plain text paragraph — the spoken line
+          const text = decodeHtmlEntities(inner.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
           if (
-            text.length > 30 &&
+            text.length > 15 &&
             /[a-zàâéèêîôùûç]{3,}/i.test(text) &&
             !text.includes('window.') &&
             !text.includes('function(') &&
-            !text.includes('var ') &&
-            !/^(Share|Tweet|Pin|Email|Print|Download|Subscribe|Follow|Like|Comment)/i.test(text)
+            !/^(You just need|If you like|You can translate|Retrouvez|Share|Tweet|I accept|Difficulté)/i.test(text)
           ) {
-            paragraphs.push(text);
+            lines.push(text);
           }
         }
 
-        // InnerFrench speaks ~100 words/min — take first ~300 words for the 3-min clip
-        const allText = paragraphs.join('\n\n');
-        const words = allText.split(/\s+/);
-        if (words.length > 10) {
-          transcript = words.slice(0, 320).join(' ');
-          if (words.length > 320) transcript += '…';
+        if (lines.length > 3) {
+          transcript = lines.join('\n\n').trim();
         }
       }
     } catch (e) {
