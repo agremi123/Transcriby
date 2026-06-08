@@ -4429,18 +4429,28 @@ function ListeningPanel({ loading, title, audioUrl, clipEnd = 180, transcript, w
           {/* Transcript — fills remaining space */}
           <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
             <div className="flex-1">
-              <AudioSyncedTranscript
-                text={currentPageText}
-                currentTime={currentTime}
-                duration={duration}
-                pageOffset={pageOffset}
-                allWordWeights={allWordWeights}
-                wordTimings={wordTimings}
-                onWordClick={seekToWord}
-                className="font-display text-[17px] leading-[1.65] text-navy/80"
-              />
+              {wordTimings ? (
+                // Word-synced mode (future: Deepgram timings)
+                <AudioSyncedTranscript
+                  text={currentPageText}
+                  currentTime={currentTime}
+                  duration={effectiveDuration}
+                  pageOffset={pageOffset}
+                  allWordWeights={allWordWeights}
+                  wordTimings={wordTimings}
+                  onWordClick={seekToWord}
+                  className="font-display text-[17px] leading-[1.65] text-navy/80"
+                />
+              ) : (
+                // Static text mode for real podcast audio (no word timings available)
+                <div className="font-display text-[16px] leading-[1.7] text-navy/80 space-y-3">
+                  {transcript.split(/\n\n+/).filter(Boolean).map((para, i) => (
+                    <p key={i}>{para.trim()}</p>
+                  ))}
+                </div>
+              )}
             </div>
-            {totalPages > 1 && (
+            {wordTimings && totalPages > 1 && (
               <div className="flex justify-end items-center gap-1 shrink-0 pt-1">
                 <button type="button" onClick={() => setPageIndex((p) => Math.max(0, p - 1))} disabled={pageIndex === 0}
                   className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
