@@ -840,24 +840,9 @@ export async function handleReplenish() {
   }
   for (let i = listenCount; i < MIN_STOCK; i++) {
     tasks.push(generateListeningBundle(ANTHROPIC_API_KEY).then(async b => {
-      // Generate Léa's TTS audio for the episode
-      let audioUrl = null;
-      const { ELEVENLABS_API_KEY } = getEnv();
-      if (ELEVENLABS_API_KEY) {
-        try {
-          const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICES.lea}`, {
-            method: 'POST',
-            headers: { 'xi-api-key': ELEVENLABS_API_KEY, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: b.transcript.slice(0, 2500), model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.55, similarity_boost: 0.75 } }),
-          });
-          if (elRes.ok) {
-            const buf = Buffer.from(await elRes.arrayBuffer());
-            audioUrl = `data:audio/mpeg;base64,${buf.toString('base64')}`;
-          }
-        } catch (e) { console.error('[replenish] ElevenLabs error:', e.message); }
-      }
+      // Use real RFI podcast MP3 URL — no TTS
       return supabase.from('listening_episodes').insert([{
-        level: 'B1', title: b.title, audio_url: audioUrl, transcript: b.transcript,
+        level: 'B1', title: b.title, audio_url: b.audioUrl, transcript: b.transcript,
         source_name: b.source, pub_date: b.date, vocab_theme: b.vocabTheme,
         questions: b.questions, vocab: b.vocab, grammar: b.grammar, conjugation: b.conjugation,
       }]);
