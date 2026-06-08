@@ -605,28 +605,27 @@ async function fetchRfiJffEpisode() {
 }
 
 // ── Generate a full listening bundle ────────────────────────────────────────
+const CLIP_END_SECONDS = 180; // show only first 3 minutes of the podcast
+
 async function generateListeningBundle(apiKey, level = 'B1') {
-  // Fetch real RFI JFF episode with actual audio
+  // Fetch real RFI JFF episode with actual audio and scraped transcript
   const episode = await fetchRfiJffEpisode();
 
-  // Use the description as transcript base; Claude cleans and extracts it
-  const rawText = episode.description || '';
-  let transcript = rawText;
+  let transcript = episode.transcript || '';
 
-  // If description is too short, ask Claude to write a summary based on the title
-  if (rawText.length < 100) {
+  // If transcript is too short (page scrape failed), ask Claude to write from the title
+  if (transcript.length < 100) {
     const generated = await claudeJSON({
-      apiKey, maxTokens: 600,
-      system: 'Tu es journaliste RFI. Écris un résumé de 150-200 mots en français facile (niveau B1) basé sur ce titre d\'actualité. Réponds uniquement avec le texte du résumé, sans titre ni introduction.',
+      apiKey, maxTokens: 700,
+      system: `Tu es journaliste RFI. D'après ce titre d'actualité, écris la transcription de la première partie d'un journal radio en français facile (niveau ${level}), environ 200-250 mots. Commence directement par "Bonjour" comme à la radio. Réponds uniquement JSON: {"transcript":"..."}`,
       user: episode.title,
     });
-    transcript = typeof generated === 'string' ? generated : (generated.transcript || generated.text || rawText);
-    if (typeof transcript !== 'string' || transcript.length < 40) transcript = rawText;
+    transcript = generated.transcript || '';
   }
 
-  // Trim to max 400 words
+  // Trim to first 3 minutes worth of content (~350 words ≈ 3 min at ~120 wpm)
   const words = transcript.split(/\s+/);
-  if (words.length > 400) transcript = words.slice(0, 400).join(' ') + '…';
+  if (words.length > 350) transcript = words.slice(0, 350).join(' ') + '…';
   if (!transcript || transcript.length < 40) throw new Error('No transcript');
 
   const [qParsed, vParsed, gParsed, cParsed] = await Promise.all([
@@ -639,7 +638,8 @@ async function generateListeningBundle(apiKey, level = 'B1') {
   return {
     title: episode.title,
     transcript,
-    audioUrl: episode.audioUrl,  // real MP3 URL from RFI
+    audioUrl: episode.audioUrl,   // real MP3 URL from RFI
+    clipEnd: CLIP_END_SECONDS,    // player stops at 3:00
     source: 'RFI — Journal en Français Facile',
     date: episode.pubDate || new Date().toUTCString(),
     vocabTheme: qParsed.vocabTheme || '',
