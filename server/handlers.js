@@ -546,6 +546,13 @@ Raw JSON only:
 // ── RFI Journal en Français Facile podcast RSS ───────────────────────────────
 const RFI_JFF_RSS = 'https://apis.fle.rfi.fr/products/get_product/fle_getpodcast_by_nid_author_rfi?token_application=applepodcast_fle&program.entrepriseId=WBMZ39-FLE-FR-20220627';
 
+function decodeHtmlEntities(str) {
+  return str.replace(/&[a-z#0-9]+;/gi, (e) => {
+    const map = { '&amp;':'&','&lt;':'<','&gt;':'>','&nbsp;':' ','&#039;':"'",'&apos;':"'",'&quot;':'"','&eacute;':'é','&egrave;':'è','&ecirc;':'ê','&agrave;':'à','&ccedil;':'ç','&ocirc;':'ô','&ucirc;':'û','&ugrave;':'ù','&iuml;':'ï','&acirc;':'â','&icirc;':'î','&laquo;':'«','&raquo;':'»','&rsquo;':"'",'&ndash;':'–','&mdash;':'—' };
+    return map[e] || '';
+  });
+}
+
 async function fetchRfiJffEpisode() {
   const res = await fetch(RFI_JFF_RSS, {
     headers: { 'User-Agent': 'Mozilla/5.0' },
@@ -577,8 +584,10 @@ async function fetchRfiJffEpisode() {
   // Pick a random recent episode
   const episode = items[Math.floor(Math.random() * Math.min(items.length, 10))];
 
-  // Fetch the episode page to get the real transcript paragraphs
+  // Fetch the episode page to extract chapters + transcript
   let transcript = '';
+  let clipEnd = CLIP_END_SECONDS;
+
   if (episode.link) {
     try {
       const pageRes = await fetch(episode.link, {
@@ -587,21 +596,64 @@ async function fetchRfiJffEpisode() {
       });
       if (pageRes.ok) {
         const html = await pageRes.text();
-        // Extract French prose paragraphs — skip CSS, captions, timestamps
+
+        // ── 1. Parse chapter markers (paragraphs starting with MM:SS timestamp)
+        // These are in the chapter nav: "01:26 Ukraine : Macron..."
+        const chapters = [];
         const allP = [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)];
-        const frenchParas = allP
-          .map(p => p[1].replace(/<[^>]+>/g, '').replace(/&[a-z#0-9]+;/g, (e) => {
-            const map = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&nbsp;': ' ', '&#039;': "'", '&apos;': "'" , '&quot;': '"', '&eacute;': 'é', '&egrave;': 'è', '&ecirc;': 'ê', '&agrave;': 'à', '&ccedil;': 'ç', '&ocirc;': 'ô', '&ucirc;': 'û', '&ugrave;': 'ù', '&iuml;': 'ï', '&acirc;': 'â', '&icirc;': 'î' };
-            return map[e] || '';
-          }).trim())
-          .filter(t => t.length > 40 && /[a-zA-ZàâéèêîôùûçÀÂÉÈÊÎÔÙÛÇ]{3}/.test(t) && !t.includes('background:') && !t.includes('font-size') && !t.includes('window.') && !/^\d+:\d+$/.test(t))
-          .slice(0, 30); // cap at ~30 paragraphs
-        transcript = frenchParas.join(' ').trim();
+        const cleanParas = allP.map(p => decodeHtmlEntities(p[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()));
+
+        for (const text of cleanParas) {
+          const tsMatch = text.match(/^(\d{1,2}):(\d{2})\s+(.+)$/);
+          if (tsMatch) {
+            const secs = parseInt(tsMatch[1]) * 60 + parseInt(tsMatch[2]);
+            chapters.push({ secs, title: tsMatch[3].trim() });
+          }
+        }
+
+        // ── 2. Pick the first "real" chapter (skip short intros under 60s)
+        // Use the chapter that starts earliest but ≥ 60s, and clip at the NEXT chapter
+        // Typically: chapter[0] = ~01:26, chapter[1] = ~04:14 → clip at 04:14
+        let chosenChapter = null;
+        if (chapters.length >= 2) {
+          // Find first chapter starting between 60s and 180s
+          const firstReal = chapters.find(c => c.secs >= 60 && c.secs <= 240) || chapters[0];
+          const idx = chapters.indexOf(firstReal);
+          const nextChapter = chapters[idx + 1];
+          chosenChapter = { start: firstReal.secs, end: nextChapter ? nextChapter.secs : firstReal.secs + 240, keyword: firstReal.title.split(':')[0].trim().toLowerCase() };
+          clipEnd = chosenChapter.end;
+        }
+
+        // ── 3. Extract transcript paragraphs
+        const transcriptParas = cleanParas.filter(t => {
+          if (t.length < 40) return false;
+          if (/^\d{1,2}:\d{2}/.test(t)) return false; // skip chapter nav
+          if (t.includes('background:') || t.includes('font-size') || t.includes('window.')) return false;
+          if (/^Écouter/.test(t)) return false;
+          if (!/[a-zA-ZàâéèêîôùûçÀÂÉÈÊÎÔÙÛÇ]{3}/.test(t)) return false;
+          return true;
+        });
+
+        // ── 4. Keep only intro + first chapter paragraphs
+        // Strategy: stop including paragraphs once we hit the SECOND chapter's keyword
+        if (chosenChapter && chapters.length >= 2) {
+          const nextIdx = chapters.indexOf(chapters.find(c => c.secs === chosenChapter.end));
+          const stopKeyword = nextIdx >= 0 ? chapters[nextIdx]?.title?.split(':')[0]?.trim()?.toLowerCase() : null;
+          const kept = [];
+          for (const para of transcriptParas) {
+            if (stopKeyword && kept.length > 4 && para.toLowerCase().includes(stopKeyword)) break;
+            kept.push(para);
+          }
+          transcript = kept.join('\n\n').trim();
+        } else {
+          // No chapter structure — take first ~20 paragraphs
+          transcript = transcriptParas.slice(0, 20).join('\n\n').trim();
+        }
       }
-    } catch (e) { /* page fetch failed — fall through */ }
+    } catch (e) { /* page fetch failed */ }
   }
 
-  return { ...episode, transcript };
+  return { ...episode, transcript, clipEnd };
 }
 
 // ── Generate a full listening bundle ────────────────────────────────────────
