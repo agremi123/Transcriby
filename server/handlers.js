@@ -1004,26 +1004,10 @@ export async function handleListening(body) {
     // 2. Stock empty — generate on-demand
     const bundle = await generateListeningBundle(ANTHROPIC_API_KEY, level, topic);
 
-    // TTS audio via ElevenLabs
-    let audioUrl = null;
-    if (ELEVENLABS_API_KEY) {
-      try {
-        const elRes = await fetch('https://api.elevenlabs.io/v1/text-to-speech/ebRwkdEFVZIx2A6YucFh', {
-          method: 'POST',
-          headers: { 'xi-api-key': ELEVENLABS_API_KEY, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: bundle.transcript.slice(0, 2500), model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.55, similarity_boost: 0.75 } }),
-        });
-        if (elRes.ok) {
-          const buf = Buffer.from(await elRes.arrayBuffer());
-          audioUrl = `data:audio/mpeg;base64,${buf.toString('base64')}`;
-        }
-      } catch (e) { console.error('[listening] ElevenLabs error:', e.message); }
-    }
-
     // Save to DB (fire-and-forget)
     if (supabase) {
       supabase.from('listening_episodes').insert([{
-        level, title: bundle.title, audio_url: audioUrl,
+        level, title: bundle.title, audio_url: bundle.audioUrl,
         transcript: bundle.transcript, source_name: bundle.source,
         pub_date: bundle.date, vocab_theme: bundle.vocabTheme,
         questions: bundle.questions, vocab: bundle.vocab,
@@ -1033,7 +1017,7 @@ export async function handleListening(body) {
 
     return {
       statusCode: 200,
-      body: { ...bundle, audioUrl },
+      body: bundle,
     };
   } catch (err) {
     console.error('[listening] error:', err.message);
