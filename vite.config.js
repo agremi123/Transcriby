@@ -792,8 +792,10 @@ function readingMiddleware(apiKey, openrouterKey) {
       if (rawText.length < 200) rawText = (chosen.content || chosen.description || '');
       rawText = rawText.slice(0, 6000);
 
-      // Extract a long verbatim passage — enough for 2 reading pages (~400-600 words)
-      const extractData = await openrouterCall('reading/extract', openrouterKey, {
+      // Extract a long verbatim passage — enough for 2 reading pages (~400-600 words).
+      // Uses fast Claude Haiku (DeepSeek was ~10-15s/call and made reading feel endless).
+      const extractData = await claudeCall('reading/extract', apiKey, {
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 900,
         system: 'Extract the most coherent and readable passage from this real French article. Copy sentences verbatim — do NOT rephrase, summarise or add anything. The passage must be at least 15 sentences long (aim for 400-600 words). Organise it into natural paragraphs separated by a blank line (\\n\\n): one short intro paragraph, then 2-3 body paragraphs. Return only the extracted French text with paragraph breaks.',
         messages: [{ role: 'user', content: `Title: ${chosen.title}\n\n${rawText}` }],
