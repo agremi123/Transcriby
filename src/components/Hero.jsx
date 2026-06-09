@@ -4960,6 +4960,188 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
   );
 }
 
+// ── Guided writing review thread (Writing tab) ───────────────────────────────
+function WriteBubble({ narratorId, children, onReplay, text }) {
+  const portrait = narratorId === 'jules' ? '/assets/jules.png' : '/assets/lea.png';
+  const alt = narratorId === 'jules' ? 'Jules' : 'Léa';
+  return (
+    <div className="flex items-start gap-2.5">
+      <button type="button" onClick={() => text && onReplay?.(text, narratorId)}
+        className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105 mt-0.5"
+        aria-label="Replay">
+        <img src={portrait} alt={alt} className="w-full h-full object-cover object-top" />
+      </button>
+      <div className="font-display text-[15px] italic text-navy/80 leading-snug max-w-[88%] pt-1">{children}</div>
+    </div>
+  );
+}
+
+function TypingDots() {
+  return (
+    <div className="flex items-center gap-1.5 h-8 pl-1">
+      {[0, 150, 300].map(d => (
+        <span key={d} className="w-2 h-2 bg-navy/25 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />
+      ))}
+    </div>
+  );
+}
+
+function WritingPracticeExercise({ exercise, narratorId, onScoreDelta, context }) {
+  const [ans, setAns] = React.useState('');
+  const [picked, setPicked] = React.useState(null);
+  const [done, setDone] = React.useState(false);
+  if (!exercise || !exercise.type) return null;
+  const norm = (s) => (s || '').trim().toLowerCase().replace(/[.!?]$/, '');
+
+  if (exercise.type === 'mcq') {
+    return (
+      <div className="border border-wine/20 bg-wine/[0.04] rounded px-3 py-2.5 space-y-2">
+        <p className="text-[9px] font-mono uppercase tracking-widest text-wine/55">Exercice</p>
+        <p className="font-display text-[14px] text-navy"><TranslatableText text={exercise.question || ''} narratorId={narratorId} context={context} /></p>
+        <div className="flex flex-col gap-1.5">
+          {(exercise.options || []).map((opt, i) => {
+            const correct = norm(opt) === norm(exercise.answer);
+            const isPicked = picked === i;
+            const cls = !done ? 'border-navy/15 hover:border-wine/40'
+              : correct ? 'border-green-600 bg-green-600/10'
+              : isPicked ? 'border-wine bg-wine/10' : 'border-navy/10 opacity-60';
+            return (
+              <button key={i} type="button" disabled={done}
+                onClick={() => { setPicked(i); setDone(true); onScoreDelta?.(correct ? 2 : -1); }}
+                className={`text-left text-[13px] font-display px-2.5 py-1.5 rounded border transition-colors ${cls}`}>
+                {opt}{done && correct ? ' ✓' : ''}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // fill-blank or rephrase → text input
+  const target = exercise.type === 'rephrase' ? exercise.answer : exercise.answer;
+  const promptText = exercise.type === 'rephrase' ? exercise.instruction : exercise.sentence;
+  const correct = done && norm(ans) === norm(target);
+  return (
+    <div className="border border-wine/20 bg-wine/[0.04] rounded px-3 py-2.5 space-y-2">
+      <p className="text-[9px] font-mono uppercase tracking-widest text-wine/55">Exercice</p>
+      <p className="font-display text-[14px] text-navy"><TranslatableText text={promptText || ''} narratorId={narratorId} context={context} /></p>
+      {exercise.type === 'rephrase' && exercise.example && (
+        <p className="text-[12px] italic text-navy/55">« {exercise.example} »</p>
+      )}
+      <div className="flex items-center gap-2">
+        <input value={ans} onChange={(e) => setAns(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter' && ans.trim()) { setDone(true); onScoreDelta?.(norm(ans) === norm(target) ? 2 : -1); } }}
+          disabled={done && correct}
+          placeholder="Ta réponse…"
+          className="flex-1 min-w-0 text-[13px] font-display px-2.5 py-1.5 rounded border border-navy/15 bg-ivory/80 outline-none focus:border-wine/40" />
+        {!correct && (
+          <button type="button" onClick={() => { if (ans.trim()) { setDone(true); onScoreDelta?.(norm(ans) === norm(target) ? 2 : -1); } }}
+            className="shrink-0 text-[11px] font-mono uppercase tracking-wider px-3 py-1.5 rounded bg-wine text-ivory hover:bg-wine2 transition-colors">OK</button>
+        )}
+      </div>
+      {done && (
+        <p className={`text-[12px] font-display ${correct ? 'text-green-600' : 'text-wine'}`}>
+          {correct ? '✓ Bravo !' : `✗ → ${target}`}
+          {exercise.hint && !correct ? ` · ${exercise.hint}` : ''}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function WritingReviewThread({ review, question, onQuestionChange, onCorriger, onSubmitQuestion, onNewChallenge, onReplay, onScoreDelta, challengeContext }) {
+  const { stage, narratorId = 'lea', reaction, original, corrected, explanation, userQuestion, exercise } = review;
+  const endRef = React.useRef(null);
+  React.useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [stage]);
+  const reached = (s) => {
+    const order = ['idle', 'judging', 'judged', 'correcting', 'corrected', 'explaining', 'explained'];
+    return order.indexOf(stage) >= order.indexOf(s);
+  };
+
+  return (
+    <div className="flex-1 px-4 pt-3 pb-4 overflow-y-auto scroll-premium flex flex-col gap-4">
+      {/* Reaction / judgement */}
+      {stage === 'judging' ? (
+        <WriteBubble narratorId={narratorId}><TypingDots /></WriteBubble>
+      ) : reaction ? (
+        <WriteBubble narratorId={narratorId} text={reaction} onReplay={onReplay}>
+          <TranslatableText text={reaction} narratorId={narratorId} context={challengeContext} />
+        </WriteBubble>
+      ) : null}
+
+      {/* Corriger button */}
+      {stage === 'judged' && (
+        <button type="button" onClick={onCorriger}
+          className="self-start text-[12px] font-mono uppercase tracking-wider px-4 py-1.5 rounded-full bg-wine text-ivory hover:bg-wine2 transition-colors">
+          Corriger
+        </button>
+      )}
+
+      {/* Correction */}
+      {stage === 'correcting' && <WriteBubble narratorId={narratorId}><TypingDots /></WriteBubble>}
+      {reached('corrected') && corrected && (
+        <div className="space-y-1">
+          <p className="text-[9px] font-mono uppercase tracking-widest text-wine/55 pl-0.5">Version améliorée</p>
+          <CorrectionBlock original={original} corrected={corrected} className="font-display text-[16px] leading-relaxed text-navy select-text" />
+        </div>
+      )}
+
+      {/* Ask which word/expression */}
+      {reached('corrected') && (
+        <WriteBubble narratorId={narratorId} text="Quel mot ou quelle expression tu n'as pas compris ?" onReplay={onReplay}>
+          Quel mot ou quelle expression tu n'as pas compris&nbsp;?
+        </WriteBubble>
+      )}
+
+      {/* User's typed question (once asked) */}
+      {userQuestion && (
+        <div className="self-end max-w-[80%] bg-navy/[0.06] rounded-2xl rounded-br-sm px-3 py-1.5">
+          <span className="font-display text-[14px] text-navy/80">{userQuestion}</span>
+        </div>
+      )}
+
+      {/* Input + new challenge (only before explaining) */}
+      {stage === 'corrected' && (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <input value={question} onChange={(e) => onQuestionChange(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && question.trim()) onSubmitQuestion(); }}
+              placeholder="Un mot, une expression…"
+              className="flex-1 min-w-0 text-[14px] font-display px-3 py-2 rounded-lg border border-navy/15 bg-ivory/80 outline-none focus:border-wine/40" />
+            <button type="button" onClick={onSubmitQuestion} disabled={!question.trim()}
+              className="shrink-0 text-[12px] font-mono uppercase tracking-wider px-3 py-2 rounded-lg bg-wine text-ivory hover:bg-wine2 disabled:opacity-40 transition-colors">Demander</button>
+          </div>
+          <button type="button" onClick={onNewChallenge}
+            className="self-start text-[11px] font-mono uppercase tracking-wider text-navy/45 hover:text-wine transition-colors">
+            ↻ Nouveau défi
+          </button>
+        </div>
+      )}
+
+      {/* Explanation + exercise */}
+      {stage === 'explaining' && <WriteBubble narratorId={narratorId}><TypingDots /></WriteBubble>}
+      {stage === 'explained' && (
+        <>
+          {explanation && (
+            <WriteBubble narratorId={narratorId} text={explanation} onReplay={onReplay}>
+              <TranslatableText text={explanation} narratorId={narratorId} context={challengeContext} />
+            </WriteBubble>
+          )}
+          {exercise && (
+            <WritingPracticeExercise exercise={exercise} narratorId={narratorId} onScoreDelta={onScoreDelta} context={challengeContext} />
+          )}
+          <button type="button" onClick={onNewChallenge}
+            className="self-start text-[11px] font-mono uppercase tracking-wider text-navy/45 hover:text-wine transition-colors mt-1">
+            ↻ Nouveau défi
+          </button>
+        </>
+      )}
+      <div ref={endRef} />
+    </div>
+  );
+}
+
 const TIPS_SECTIONS = [
   { key: 'vocab',       label: 'Vocabulaire',  icon: '📖', pill: true  },
   { key: 'expressions', label: 'Expressions',  icon: '💬', pill: true  },
