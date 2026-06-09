@@ -876,6 +876,43 @@ export async function handleSpeakingPrompt(body) {
   }
 }
 
+export async function handleWordChallenge(body) {
+  const { ANTHROPIC_API_KEY } = getEnv();
+  const { utterance = '', word = '', meaning = '', narratorId = 'lea', attemptNumber = 1 } = body || {};
+  const empty = { feedback: '', isCorrect: false };
+  if (!ANTHROPIC_API_KEY || !utterance.trim() || !word) return { statusCode: 200, body: empty };
+
+  const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+  const gender = narratorId === 'lea' ? 'une Parisienne' : 'un Parisien';
+  const isFinal = attemptNumber >= 3;
+
+  try {
+    const result = await claudeJSON({
+      apiKey: ANTHROPIC_API_KEY,
+      system: `Tu es ${name}, ${gender} natif(ve). Un étudiant pratique le mot argotique/parisien "${word}" (= ${meaning}).
+Il vient de faire la tentative n°${attemptNumber}/3.
+Évalue sa phrase : a-t-il utilisé "${word}" correctement et naturellement ?
+${isFinal ? `C'est la dernière tentative. Donne aussi 2 exemples de vraies phrases parisiennes utilisant "${word}", puis propose un sujet de conversation aléatoire et sympa pour continuer.` : `Dis-lui brièvement si c'est bien ou pas, et encourage-le à réessayer avec une nouvelle phrase.`}
+Réponds toujours en français, ton naturel et chaleureux.
+JSON: {"isCorrect":true/false,"feedback":"...(1-2 phrases)","corrected":"phrase corrigée si mauvaise, sinon null","examples":["ex1","ex2"] ou null,"nextTopic":"sujet ou null"}`,
+      user: `Phrase de l'étudiant : "${utterance}"`,
+      maxTokens: 350,
+    });
+    return {
+      statusCode: 200,
+      body: {
+        isCorrect: !!result.isCorrect,
+        feedback: result.feedback || '',
+        corrected: result.corrected || null,
+        examples: isFinal ? (result.examples || []) : null,
+        nextTopic: isFinal ? (result.nextTopic || null) : null,
+      },
+    };
+  } catch {
+    return { statusCode: 200, body: empty };
+  }
+}
+
 export async function handleSpeakingReaction(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const { utterance = '', narratorId = 'lea', topic = '', openingLine = '' } = body || {};
