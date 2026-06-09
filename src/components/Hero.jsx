@@ -4446,7 +4446,7 @@ function ReadingArticlePanel({
                   <button
                     type="button"
                     onClick={handleTranslateClick}
-                    className={`${NAV_CTA_CLASS} ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
+                    className={`inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory px-4 py-2 text-[13px] font-medium font-display transition-colors duration-200 whitespace-nowrap ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
                     aria-label="Translate hard words"
                     aria-pressed={translateActive}
                   >
