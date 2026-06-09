@@ -805,8 +805,8 @@ function readingMiddleware(apiKey, openrouterKey) {
         if (body.length < 200) body = (c.content || c.description || '');
         return { c, body };
       }));
-      const substantial = fetched.filter(f => f.body.length >= MIN_BODY);
-      const picked = substantial[0] || fetched.slice().sort((a, b) => b.body.length - a.body.length)[0];
+      const fullOnes = fetched.filter(f => f.body.length >= MIN_BODY);
+      const picked = fullOnes[0] || fetched.slice().sort((a, b) => b.body.length - a.body.length)[0];
       const chosen = picked.c;
       let rawText = (picked.body || '').slice(0, 6000);
 
