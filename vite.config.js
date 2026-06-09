@@ -1589,7 +1589,7 @@ Return ONLY raw JSON (no markdown):
       });
       let raw = d.content?.[0]?.text?.trim() || '{}';
       raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-      const parsed = JSON.parse(raw);
+      const parsed = deepStripNonFrench(JSON.parse(raw));
       const tips = parsed.tips || {};
       res.end(JSON.stringify({
         prompt: parsed.prompt || '',
