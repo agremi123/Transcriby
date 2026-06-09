@@ -2413,7 +2413,7 @@ export function AudioDemoCard({
   }, [activeTab, isRecording, reset]);
 
   const speakActionControls = inputMode === 'speak' ? (
-    <div className="flex items-center gap-6 shrink-0">
+    <div className="flex items-center gap-3 shrink-0">
       {utterances.length > 0 && (
         hasRecordedAudio && !isLive ? (
           <button type="button" onClick={resetTranscript}
