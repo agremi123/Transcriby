@@ -1230,7 +1230,10 @@ export function AudioDemoCard({
           }
         })
         .catch(() => {
-          chatHistoryRef.current = chatHistoryRef.current.filter(m => m.id !== leaId);
+          // Show a retry line rather than silently removing the bubble
+          chatHistoryRef.current = chatHistoryRef.current.map(m =>
+            m.id === leaId ? { ...m, loading: false, text: `Oups, petit souci technique… Réessaie d'utiliser « ${challenge.word} » !` } : m
+          );
           setChatHistory([...chatHistoryRef.current]);
         })
         .finally(() => setChatLeaLoading(false));
