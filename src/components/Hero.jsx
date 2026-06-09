@@ -4586,7 +4586,7 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
 
 const NARRATOR_PORTRAITS = { lea: '/assets/lea.png', jules: '/assets/jules.png' };
 
-function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '' }) {
+function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null }) {
   const name = narratorId === 'lea' ? 'Léa' : 'Jules';
 
   const [speaking, setSpeaking] = React.useState(false);
