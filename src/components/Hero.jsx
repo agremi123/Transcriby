@@ -3776,10 +3776,10 @@ export function AudioDemoCard({
           <div className="ml-7 flex overflow-x-auto border-t border-line/50">
             {[
               { id: 'transcript', label: 'Chat' },
-              { id: 'listening',  label: 'Listening challenge' },
-              { id: 'reading',    label: 'Reading challenge' },
-              { id: 'speaking',   label: 'Speaking challenge' },
-              { id: 'writing',    label: 'Writing challenge' },
+              { id: 'listening',  label: 'Défi listening' },
+              { id: 'reading',    label: 'Défi reading' },
+              { id: 'speaking',   label: 'Défi speaking' },
+              { id: 'writing',    label: 'Défi writing' },
             ].map((t) => (
               <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
                 className={`text-[9.5px] tracking-wide uppercase px-1.5 py-3 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
