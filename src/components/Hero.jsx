@@ -3978,18 +3978,33 @@ function VocabExercise({ vocab, onGoodAnswer }) {
 const HINT_COST = 5; // Parisianism points per extra hint
 
 function DailyParisianPointsIndicator({ points }) {
+  const prevRef = React.useRef(points);
+  const increased = points > prevRef.current;
+  React.useEffect(() => { prevRef.current = points; }, [points]);
+
   return (
     <div className="flex items-center gap-2 shrink-0 min-h-[42px]" aria-live="polite">
       <motion.div
-        key={points}
-        initial={{ scale: 1 }}
-        animate={{ scale: [1, 1.06, 1] }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="w-14 h-14 shrink-0 rounded-full border border-wine/30 bg-wine/10 flex items-center justify-center"
+        // Pulse + green flash the whole disc when points go up
+        animate={increased
+          ? { scale: [1, 1.18, 1], boxShadow: ['0 0 0 0 rgba(22,163,74,0)', '0 0 0 6px rgba(22,163,74,0.25)', '0 0 0 0 rgba(22,163,74,0)'] }
+          : { scale: 1 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="relative w-14 h-14 shrink-0 rounded-full border border-wine/30 bg-wine/10 flex items-center justify-center overflow-hidden"
       >
-        <span className="font-stat text-[18px] tabular-nums leading-none text-wine">
-          {points}
-        </span>
+        {/* Flip-board: old number slides up & out, new number drops in from below */}
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.span
+            key={points}
+            initial={{ y: '-110%', opacity: 0 }}
+            animate={{ y: '0%', opacity: 1 }}
+            exit={{ y: '110%', opacity: 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute font-stat text-[18px] tabular-nums leading-none text-wine"
+          >
+            {points}
+          </motion.span>
+        </AnimatePresence>
       </motion.div>
       <span className="text-[9px] font-mono tracking-[0.08em] uppercase text-navy/45 leading-tight w-[3.25rem]">
         My Parisian Points
