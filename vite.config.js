@@ -1465,6 +1465,55 @@ function speakingPromptMiddleware(apiKey) {
   };
 }
 
+function writingReviewMiddleware(apiKey) {
+  return async (req, res, next) => {
+    if (req.url !== '/api/writing-review' || req.method !== 'POST') { next(); return; }
+    let body = {};
+    try { body = JSON.parse(await readBody(req)); } catch {}
+    res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+    const { step = 'feedback', narratorId = 'lea', level = 'B1' } = body;
+    const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+    const gender = narratorId === 'lea' ? 'une Parisienne' : 'un Parisien';
+    if (!apiKey) { res.end(JSON.stringify({})); return; }
+
+    const parseJson = (d) => {
+      let raw = d.content?.[0]?.text?.trim() || '{}';
+      raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      try { return JSON.parse(raw); } catch { const m = raw.match(/\{[\s\S]*\}/); return m ? JSON.parse(m[0]) : {}; }
+    };
+
+    try {
+      if (step === 'feedback') {
+        const { text = '', prompt = '', tips = {}, wordTarget = 80 } = body;
+        if (!text.trim()) { res.end(JSON.stringify({ reaction: '' })); return; }
+        const tipList = ['vocab', 'expressions', 'grammar', 'conjugation', 'connecteurs']
+          .map(k => (tips?.[k]?.length ? `${k}: ${tips[k].join(', ')}` : null)).filter(Boolean).join(' | ');
+        const d = await claudeCall('writing-review/feedback', apiKey, {
+          model: 'claude-haiku-4-5-20251001', max_tokens: 280,
+          system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte par rapport au défi : longueur atteinte, vocabulaire / expressions / grammaire / connecteurs suggérés utilisés ? Sois chaleureux(se), précis(e), encourageant(e). 2-3 phrases en français.\nJSON: {"reaction":"..."}`,
+          messages: [{ role: 'user', content: `Texte de l'étudiant :\n"${text}"` }],
+        });
+        const parsed = parseJson(d);
+        res.end(JSON.stringify({ reaction: parsed.reaction || '' }));
+        return;
+      }
+      if (step === 'explain') {
+        const { question = '', original = '', corrected = '' } = body;
+        if (!question.trim()) { res.end(JSON.stringify({ explanation: '', exercise: null })); return; }
+        const d = await claudeCall('writing-review/explain', apiKey, {
+          model: 'claude-haiku-4-5-20251001', max_tokens: 500,
+          system: `Tu es ${name}, ${gender} qui aide un étudiant ${level}.\nL'étudiant n'a pas compris "${question}" dans la correction.\nTexte original: "${original}"\nVersion corrigée: "${corrected}"\nÉtape 1 : explique simplement en français "${question}" (2-3 phrases).\nÉtape 2 : crée UN exercice court pour le pratiquer, type le plus adapté.\nTypes:\n- {"type":"fill-blank","sentence":"... ___ ...","answer":"...","hint":"indice"}\n- {"type":"mcq","question":"...","options":["a","b","c"],"answer":"option exacte"}\n- {"type":"rephrase","instruction":"...","example":"phrase","answer":"reformulation"}\nJSON: {"explanation":"...","exercise":{...}}`,
+          messages: [{ role: 'user', content: `Élément : "${question}"` }],
+        });
+        const parsed = parseJson(d);
+        res.end(JSON.stringify({ explanation: parsed.explanation || '', exercise: parsed.exercise || null }));
+        return;
+      }
+      res.end(JSON.stringify({}));
+    } catch { res.end(JSON.stringify({})); }
+  };
+}
+
 function writingPromptMiddleware(apiKey, openrouterKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/writing-prompt' || req.method !== 'POST') { next(); return; }
