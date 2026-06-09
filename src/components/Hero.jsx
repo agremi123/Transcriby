@@ -4147,9 +4147,11 @@ function DailyParisianPointsIndicator({ points, hideLabel = false }) {
           </motion.span>
         </AnimatePresence>
       </motion.div>
-      <span className="text-[9px] font-mono tracking-[0.08em] uppercase text-navy/45 leading-tight w-[3.25rem]">
-        My Parisian Points
-      </span>
+      {!hideLabel && (
+        <span className="text-[9px] font-mono tracking-[0.08em] uppercase text-navy/45 leading-tight w-[3.25rem]">
+          My Parisian Points
+        </span>
+      )}
     </div>
   );
 }
