@@ -4352,7 +4352,14 @@ function ReadingArticlePanel({
     setTranslateActive(true);
   };
 
-  const byline = [author, date, source].filter(Boolean).join(' — ');
+  const fmtArticleDate = (d) => {
+    if (!d) return '';
+    const parsed = new Date(d);
+    if (isNaN(parsed.getTime())) return '';
+    return parsed.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+  // Just the newspaper name + a clean date — no author, no raw timestamp.
+  const byline = [source, fmtArticleDate(date)].filter(Boolean).join(' — ');
 
   return (
     <div className="flex flex-col" style={{ height: 520 }}>
