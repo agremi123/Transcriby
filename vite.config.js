@@ -1572,6 +1572,7 @@ function writingPromptMiddleware(apiKey, openrouterKey) {
       const d = await openrouterCall('writing/prompt', openrouterKey, {
         max_tokens: 500,
         system: `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss.
+CRITICAL: Write EVERYTHING in French only. Use ONLY the Latin alphabet with French accents. NEVER include Chinese, Japanese, Korean, Cyrillic, Arabic or any other non-Latin characters — not a single one.
 Return ONLY raw JSON (no markdown):
 {
   "prompt": "The writing task in French (1-2 vivid sentences)",
