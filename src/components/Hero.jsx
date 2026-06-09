@@ -4244,13 +4244,17 @@ function VocabWordHighlight({ word, definition }) {
     <>
       <span
         ref={anchorRef}
-        className="relative inline cursor-help"
+        role="button"
+        tabIndex={0}
+        className="relative inline cursor-pointer"
         onMouseEnter={showTooltip}
         onMouseLeave={hideTooltip}
         onFocus={showTooltip}
         onBlur={hideTooltip}
+        onClick={(e) => { e.stopPropagation(); toggleTooltip(); }}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleTooltip(); } }}
       >
-        <mark className="bg-wine/10 text-navy/80 rounded-sm px-0.5">
+        <mark className="bg-wine/15 text-navy/80 rounded-sm px-0.5 underline decoration-dotted decoration-wine/40 underline-offset-2">
           {word}
         </mark>
       </span>
