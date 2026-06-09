@@ -1070,7 +1070,7 @@ export function AudioDemoCard({
     const introMsg = { id: 'intro', role: 'lea', text, narratorId: 'lea' };
     chatHistoryRef.current = [introMsg];
     setChatHistory([introMsg]);
-    playNarratorLine({ id: 'lea', text });
+    // Don't auto-play — user clicks the play button on the bubble to start
   }, [activeTab, utterances, partialTranscript, settledText]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Chat tab: on recording stop, commit utterances as user bubble then get Léa's reply
