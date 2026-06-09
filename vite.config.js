@@ -1074,7 +1074,7 @@ async function fetchPodcastEpisode(learnerLevel = '') {
       const items = [];
       for (const m of [...text.matchAll(/<item[\s>]([\s\S]*?)<\/item>/g)].slice(0, 15)) {
         const b = m[1];
-        const title = (b.match(/<title><!\[CDATA\[([\s\S]*?)\]\]>/) || b.match(/<title>([^<]{3,})<\/title>/))?.[1]?.trim() || '';
+        const title = rssDecodeEntities((b.match(/<title><!\[CDATA\[([\s\S]*?)\]\]>/) || b.match(/<title>([^<]{3,})<\/title>/))?.[1]?.trim() || '');
         const audioUrl = (b.match(/enclosure[^>]+url="([^"]+\.mp3[^"]*)"/) || b.match(/enclosure[^>]+url="([^"]+)"/))?.[ 1] || '';
         const link = b.match(/<link>(https?:[^<]+)<\/link>/)?.[1]?.trim() || '';
         const pubDate = b.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1]?.trim() || '';
