@@ -1178,8 +1178,12 @@ export function AudioDemoCard({
             );
           }
 
-          // Build Léa's feedback message
-          let fullFeedback = feedback || '';
+          // Build Léa's feedback message — never vanish silently: fall back to a
+          // generic line if the API returned empty feedback.
+          let fullFeedback = feedback
+            || (isCorrect
+              ? `Bien joué, tu as utilisé « ${challenge.word} » ! Essaie encore une phrase.`
+              : `Hmm, essaie encore d'utiliser « ${challenge.word} » dans une phrase !`);
 
           // On final attempt: append 2 example sentences
           if (isFinal && examples?.length) {
@@ -1187,16 +1191,11 @@ export function AudioDemoCard({
             fullFeedback += `\n\nVoici deux phrases avec « ${challenge.word} » :\n${exBlock}`;
           }
 
-          if (fullFeedback) {
-            chatHistoryRef.current = chatHistoryRef.current.map(m =>
-              m.id === leaId ? { ...m, loading: false, text: fullFeedback } : m
-            );
-            setChatHistory([...chatHistoryRef.current]);
-            playNarratorLine({ id: challenge.narratorId, text: fullFeedback });
-          } else {
-            chatHistoryRef.current = chatHistoryRef.current.filter(m => m.id !== leaId);
-            setChatHistory([...chatHistoryRef.current]);
-          }
+          chatHistoryRef.current = chatHistoryRef.current.map(m =>
+            m.id === leaId ? { ...m, loading: false, text: fullFeedback } : m
+          );
+          setChatHistory([...chatHistoryRef.current]);
+          playNarratorLine({ id: challenge.narratorId, text: fullFeedback });
 
           // On final attempt: end challenge, restart conversation on new topic
           if (isFinal) {
