@@ -834,6 +834,11 @@ export function AudioDemoCard({
   speakingNarratorId = 'lea',
   speakingTopicLabel = '',
   speakingOpeningLine = '',
+  writingNarratorId = 'lea',
+  writingPrompt = '',
+  writingTips = {},
+  writingWordTarget = 80,
+  onNewWritingChallenge = null,
 }) {
   const { effectiveLevel, gainExperience, gainDailyParisianPoints } = useLearnerProfile();
   const {
