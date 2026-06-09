@@ -921,6 +921,47 @@ JSON: {"isCorrect":true/false,"feedback":"...(1-2 phrases)","corrected":"phrase 
   }
 }
 
+export async function handleWritingReview(body) {
+  const { ANTHROPIC_API_KEY } = getEnv();
+  const { step = 'feedback', narratorId = 'lea', level = 'B1' } = body || {};
+  const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+  const gender = narratorId === 'lea' ? 'une Parisienne' : 'un Parisien';
+  if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: {} };
+
+  try {
+    if (step === 'feedback') {
+      const { text = '', prompt = '', tips = {}, wordTarget = 80 } = body || {};
+      if (!text.trim()) return { statusCode: 200, body: { reaction: '' } };
+      const tipList = ['vocab', 'expressions', 'grammar', 'conjugation', 'connecteurs']
+        .map(k => (tips?.[k]?.length ? `${k}: ${tips[k].join(', ')}` : null))
+        .filter(Boolean).join(' | ');
+      const result = await claudeJSON({
+        apiKey: ANTHROPIC_API_KEY,
+        maxTokens: 280,
+        system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte de l'étudiant par rapport au défi : a-t-il atteint la longueur, utilisé le vocabulaire / les expressions / la grammaire / les connecteurs suggérés ? Sois chaleureux(se), précis(e) et encourageant(e). 2-3 phrases en français.\nJSON: {"reaction":"..."}`,
+        user: `Texte de l'étudiant :\n"${text}"`,
+      });
+      return { statusCode: 200, body: { reaction: result.reaction || '' } };
+    }
+
+    if (step === 'explain') {
+      const { question = '', original = '', corrected = '' } = body || {};
+      if (!question.trim()) return { statusCode: 200, body: { explanation: '', exercise: null } };
+      const result = await claudeJSON({
+        apiKey: ANTHROPIC_API_KEY,
+        maxTokens: 500,
+        system: `Tu es ${name}, ${gender} qui aide un étudiant ${level}.\nL'étudiant n'a pas compris "${question}" dans la correction de son texte.\nTexte original: "${original}"\nVersion corrigée: "${corrected}"\nÉtape 1 : explique simplement en français ce que veut dire "${question}" (2-3 phrases).\nÉtape 2 : crée UN exercice court pour pratiquer cet élément. Choisis le type le plus adapté.\nTypes possibles:\n- {"type":"fill-blank","sentence":"... ___ ...","answer":"...","hint":"indice court"}\n- {"type":"mcq","question":"...","options":["a","b","c"],"answer":"option correcte exacte"}\n- {"type":"rephrase","instruction":"...","example":"phrase à reformuler","answer":"reformulation correcte"}\nJSON: {"explanation":"...","exercise":{...}}`,
+        user: `Élément à expliquer : "${question}"`,
+      });
+      return { statusCode: 200, body: { explanation: result.explanation || '', exercise: result.exercise || null } };
+    }
+
+    return { statusCode: 200, body: {} };
+  } catch {
+    return { statusCode: 200, body: {} };
+  }
+}
+
 export async function handleSpeakingReaction(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const { utterance = '', narratorId = 'lea', topic = '', openingLine = '' } = body || {};
