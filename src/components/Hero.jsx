@@ -2293,12 +2293,12 @@ export function AudioDemoCard({
     playNarratorLine({ id: correctionReaderId, text: sentenceCongrats.text });
   }, [sentenceCongrats, correctionReaderId, playNarratorLine]);
 
-  const correctNow = async () => {
+  const correctNow = async (overrideReaderId = null) => {
     const text = inputMode === 'write'
       ? writeText.trim()
       : getLatestSpeakText();
     if (!text) return;
-    const readerId = narratorReaction?.id ?? correctionReaderId ?? pickNarratorReaction(effectiveLevel).id;
+    const readerId = overrideReaderId ?? narratorReaction?.id ?? correctionReaderId ?? pickNarratorReaction(effectiveLevel).id;
     setCorrectionReaderId(readerId);
     setNarrator(readerId);
     setNarratorReaction(null);
