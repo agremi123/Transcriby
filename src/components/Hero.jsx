@@ -4388,21 +4388,18 @@ function ReadingArticlePanel({
               </p>
             ) : null}
 
-            <div className="flex items-center justify-between gap-2 relative">
-              <DailyParisianPointsIndicator points={dailyParisianPoints} />
-
-              {/* Rounded arrow sweeping from the points → the Translate button */}
+            <div className="flex items-center justify-end gap-3 relative">
+              {/* Hint + arrow pointing at the Translate button */}
               {vocab.length > 0 && !translateActive && (
                 <motion.div
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: [0.45, 1, 0.45] }}
+                  animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-                  className="flex-1 flex flex-col items-end justify-center gap-0 min-w-0 pr-1 pointer-events-none"
+                  className="flex items-center gap-1.5 min-w-0 pointer-events-none"
                 >
-                  <span className="font-display text-[11px] italic text-wine/70 whitespace-nowrap mr-6">use them to translate</span>
-                  <svg width="92" height="22" viewBox="0 0 92 22" fill="none" aria-hidden className="shrink-0 -mt-0.5">
-                    <path d="M4 6 C 28 2, 60 4, 84 16" stroke="#8B1E2D" strokeWidth="1.6" strokeLinecap="round" opacity="0.6" />
-                    <path d="M84 16 l-11 -1.5 M84 16 l-4 10" stroke="#8B1E2D" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
+                  <span className="font-display text-[12px] italic text-wine/70 whitespace-nowrap">Use my Parisian points to translate</span>
+                  <svg width="26" height="12" viewBox="0 0 26 12" fill="none" aria-hidden className="shrink-0">
+                    <path d="M1 6 H22 M17 1.5 L22 6 L17 10.5" stroke="#8B1E2D" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.65" />
                   </svg>
                 </motion.div>
               )}
