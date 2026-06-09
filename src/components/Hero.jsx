@@ -5077,6 +5077,8 @@ export default function Hero() {
   const [speakingOpeningLine, setSpeakingOpeningLine] = React.useState('');
   const [speakingOpeningTranslation, setSpeakingOpeningTranslation] = React.useState('');
   const [speakingTopicLabel, setSpeakingTopicLabel] = React.useState('');
+  const [speakingTargetGrammar, setSpeakingTargetGrammar] = React.useState(null);
+  const [speakingTargetVocab, setSpeakingTargetVocab] = React.useState(null);
 
   React.useEffect(() => {
     if (practiceType === 'speaking' && practiceTopic && loadedSpeakingTopicRef.current !== practiceTopic) {
