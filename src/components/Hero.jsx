@@ -4411,26 +4411,27 @@ function ReadingArticlePanel({
               </p>
             ) : null}
 
-            <div className="flex items-center justify-between gap-3 relative">
-              <DailyParisianPointsIndicator points={dailyParisianPoints} />
+            <div className="flex items-center justify-between gap-2 relative">
+              <DailyParisianPointsIndicator points={dailyParisianPoints} hideLabel />
+
+              {/* Hint + arrow, in between the points circle and the button */}
+              {vocab.length > 0 && !translateActive && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                  className="flex items-center gap-1.5 min-w-0 pointer-events-none"
+                >
+                  <span className="font-display text-[12px] italic text-wine/70 whitespace-nowrap">Use my Parisian points to translate</span>
+                  <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden className="shrink-0">
+                    <path d="M1 6 H20 M15.5 1.5 L20 6 L15.5 10.5" stroke="#8B1E2D" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.65" />
+                  </svg>
+                </motion.div>
+              )}
 
             <div className="flex items-center gap-3 shrink-0">
               {vocab.length > 0 && (
                 <div className="flex flex-col items-end gap-1">
-                  {/* Hint + arrow pointing down at the Translate button */}
-                  {!translateActive && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-                      className="flex items-center gap-1.5 pointer-events-none pr-2"
-                    >
-                      <span className="font-display text-[12px] italic text-wine/70 whitespace-nowrap">Use my Parisian points to translate</span>
-                      <svg width="12" height="16" viewBox="0 0 12 16" fill="none" aria-hidden className="shrink-0">
-                        <path d="M6 1 V11 M1.5 6.5 L6 11 L10.5 6.5" stroke="#8B1E2D" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.65" />
-                      </svg>
-                    </motion.div>
-                  )}
                   <button
                     type="button"
                     onClick={handleTranslateClick}
