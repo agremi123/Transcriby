@@ -4698,17 +4698,52 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
           </div>
 
           <div className="flex-1 flex flex-col justify-end gap-3 pb-4">
-            <div className="border border-line/40 bg-paper/60 px-4 py-3 space-y-2">
-              <p className="text-[10px] tracking-widest uppercase text-navy/35 font-mono">Tips</p>
-              <ul className="space-y-1">
-                {['Parle naturellement, sans trop réfléchir', 'Utilise des expressions idiomatiques parisiennes', 'N\'hésite pas à demander des clarifications'].map((tip, i) => (
-                  <li key={i} className="flex items-start gap-2 text-[13px] text-navy/60 font-display">
-                    <span className="text-wine/40 shrink-0 mt-0.5">—</span>
-                    <span>{tip}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* Your challenge — grammar + vocab targets the opening question elicits */}
+            {(targetGrammar || (targetVocab && targetVocab.length > 0)) ? (
+              <div className="border border-wine/25 bg-wine/[0.04] px-4 py-3 space-y-3" style={{ borderRadius: 4 }}>
+                <p className="text-[10px] tracking-widest uppercase text-wine/60 font-mono">Ton défi</p>
+
+                {targetGrammar && (targetGrammar.point || targetGrammar.hint) && (
+                  <div className="flex items-start gap-2">
+                    <span className="text-[9px] font-mono uppercase tracking-wider text-wine/50 shrink-0 mt-1 w-[58px]">Grammaire</span>
+                    <div className="min-w-0">
+                      <span className="font-display text-[15px] text-navy font-medium">{targetGrammar.point}</span>
+                      {targetGrammar.hint && <p className="text-[12px] text-navy/55 leading-snug">{targetGrammar.hint}</p>}
+                    </div>
+                  </div>
+                )}
+
+                {targetVocab && targetVocab.length > 0 && (
+                  <div className="flex items-start gap-2">
+                    <span className="text-[9px] font-mono uppercase tracking-wider text-wine/50 shrink-0 mt-1 w-[58px]">Vocab</span>
+                    <div className="flex flex-wrap gap-1.5 min-w-0">
+                      {targetVocab.map((v, i) => (
+                        <span key={i} className="inline-flex items-baseline gap-1 px-2 py-0.5 rounded-full bg-wine/10 border border-wine/15">
+                          <span className="font-display text-[13px] text-wine font-medium">{v.word}</span>
+                          {v.meaning && <span className="text-[10px] text-navy/45">· {v.meaning}</span>}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <p className="text-[11px] text-navy/45 italic pt-0.5 leading-snug">
+                  Réponds à {name} en utilisant ces éléments.
+                </p>
+              </div>
+            ) : (
+              <div className="border border-line/40 bg-paper/60 px-4 py-3 space-y-2">
+                <p className="text-[10px] tracking-widest uppercase text-navy/35 font-mono">Tips</p>
+                <ul className="space-y-1">
+                  {['Parle naturellement, sans trop réfléchir', 'Utilise des expressions idiomatiques parisiennes', 'N\'hésite pas à demander des clarifications'].map((tip, i) => (
+                    <li key={i} className="flex items-start gap-2 text-[13px] text-navy/60 font-display">
+                      <span className="text-wine/40 shrink-0 mt-0.5">—</span>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </>
       )}
