@@ -801,22 +801,22 @@ function readingMiddleware(apiKey, openrouterKey) {
       const passage = (extractData.content?.[0]?.text || '').trim();
       if (!passage || passage.length < 100) throw new Error('No passage extracted');
 
-      // Step 4: comprehension questions
-      const qData = await openrouterCall('reading/questions', openrouterKey, {
-        max_tokens: 700,
-        system: `Create exactly 4 comprehension questions based on the French passage: 2 fill-in-the-blank and 2 multiple choice. Return ONLY raw JSON, no markdown: {"questions":[{"type":"fill","sentence":"sentence with ___ blank","answer":"word","hint":"base form"},{"type":"fill","sentence":"another with ___","answer":"word","hint":"base"},{"type":"mcq","question":"Question?","options":["A","B","C","D"],"answer":"A"},{"type":"mcq","question":"Question2?","options":["A","B","C","D"],"answer":"B"}]}`,
-        messages: [{ role: 'user', content: passage }],
-      });
+      // Steps 4 & 5: comprehension questions + vocabulary IN PARALLEL
+      const [qData, vData] = await Promise.all([
+        openrouterCall('reading/questions', openrouterKey, {
+          max_tokens: 700,
+          system: `Create exactly 4 comprehension questions based on the French passage: 2 fill-in-the-blank and 2 multiple choice. Return ONLY raw JSON, no markdown: {"questions":[{"type":"fill","sentence":"sentence with ___ blank","answer":"word","hint":"base form"},{"type":"fill","sentence":"another with ___","answer":"word","hint":"base"},{"type":"mcq","question":"Question?","options":["A","B","C","D"],"answer":"A"},{"type":"mcq","question":"Question2?","options":["A","B","C","D"],"answer":"B"}]}`,
+          messages: [{ role: 'user', content: passage }],
+        }),
+        openrouterCall('reading/vocab', openrouterKey, {
+          max_tokens: 700,
+          system: `From the given French passage, pick exactly 5 difficult or interesting vocabulary words. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"...","sentence":"...___..."}]}`,
+          messages: [{ role: 'user', content: passage }],
+        }),
+      ]);
       let qRaw = (qData.content?.[0]?.text || '{}').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
       let questions = [];
       try { ({ questions = [] } = JSON.parse(qRaw)); } catch {}
-
-      // Step 5: vocabulary exercise
-      const vData = await openrouterCall('reading/vocab', openrouterKey, {
-        max_tokens: 700,
-        system: `From the given French passage, pick exactly 5 difficult or interesting vocabulary words. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"...","sentence":"...___..."}]}`,
-        messages: [{ role: 'user', content: passage }],
-      });
       let vRaw = (vData.content?.[0]?.text || '{}').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
       let vocab = [];
       try { ({ vocab = [] } = JSON.parse(vRaw)); } catch {}
