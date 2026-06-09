@@ -5112,12 +5112,14 @@ export default function Hero() {
   const [writingPrompt, setWritingPrompt] = React.useState('');
   const [writingTips, setWritingTips] = React.useState({ vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] });
   const [writingWordTarget, setWritingWordTarget] = React.useState(80);
+  const [writingNarrator, setWritingNarrator] = React.useState('lea');
 
   React.useEffect(() => {
     if (practiceType === 'writing' && practiceTopic && loadedWritingTopicRef.current !== practiceTopic) {
       loadedWritingTopicRef.current = practiceTopic;
       setWritingActive(true);
       setWritingLoading(true);
+      setWritingNarrator(Math.random() < 0.5 ? 'lea' : 'jules');
       fetch('/api/writing-prompt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
