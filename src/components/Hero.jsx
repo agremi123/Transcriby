@@ -761,7 +761,7 @@ function ComprehensionItem({ q, qi, firePointsDelta, narratorId = 'lea' }) {
 
       {/* Explanation pop-up — appears after answering, in English */}
       <AnimatePresence>
-        {answered != null && q.explanation && (
+        {answered && q.explanation && (
           <motion.div
             initial={{ opacity: 0, y: -4, height: 0 }}
             animate={{ opacity: 1, y: 0, height: 'auto' }}
