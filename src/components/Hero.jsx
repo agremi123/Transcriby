@@ -2982,6 +2982,13 @@ export function AudioDemoCard({
                     </span>
                   </TranscriptSentenceRow>
                 )}
+                {/* Discovering a Parisian word — inline below existing chat */}
+                {parisianWordChallengeLoading && (
+                  <div className="flex items-center gap-2 text-[12px] text-navy/40 font-display italic pl-1">
+                    <div className="w-3 h-3 rounded-full border-2 border-wine/20 border-t-wine animate-spin" />
+                    Discovering a Parisian word…
+                  </div>
+                )}
               </div>
             ) : hasContent ? (
               <>
