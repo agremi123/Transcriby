@@ -2430,7 +2430,7 @@ export function AudioDemoCard({
         <PointsBurst points={dailyParisianPoints} className="mr-1">
           <div className="relative flex items-center justify-center w-11 h-11 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
             <div className="flex flex-col items-center gap-0">
-              <span className="font-display text-[15px] font-bold text-wine leading-none tabular-nums">
+              <span className="font-display text-[17px] font-bold text-wine leading-none tabular-nums">
                 {dailyParisianPoints}
               </span>
               <span className="text-[7px] font-mono tracking-wider uppercase text-wine/60 leading-tight">pts</span>
@@ -3934,7 +3934,7 @@ export function AudioDemoCard({
             <PointsBurst points={dailyParisianPoints} className="mr-1">
               <div className="relative flex items-center justify-center w-11 h-11 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
                 <div className="flex flex-col items-center gap-0">
-                  <span className="font-display text-[15px] font-bold text-wine leading-none tabular-nums">
+                  <span className="font-display text-[17px] font-bold text-wine leading-none tabular-nums">
                     {dailyParisianPoints}
                   </span>
                   <span className="text-[7px] font-mono tracking-wider uppercase text-wine/60 leading-tight">pts</span>
