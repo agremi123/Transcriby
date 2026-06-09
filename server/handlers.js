@@ -394,6 +394,19 @@ function extractCdata(str) {
   return m ? m[1].trim() : str.replace(/<[^>]+>/g, '').trim();
 }
 
+// Decode HTML entities (e.g. &#xE8; → è, &#233; → é, &amp; → &) so RSS titles
+// don't show raw character codes.
+function decodeEntities(str) {
+  if (!str) return str;
+  return str
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => { try { return String.fromCodePoint(parseInt(h, 16)); } catch { return _; } })
+    .replace(/&#(\d+);/g, (_, d) => { try { return String.fromCodePoint(parseInt(d, 10)); } catch { return _; } })
+    .replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&nbsp;/g, ' ')
+    .replace(/&laquo;/g, '«').replace(/&raquo;/g, '»')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+}
+
 function stripHtml(str) {
   return str.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }
