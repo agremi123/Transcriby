@@ -2429,7 +2429,7 @@ export function AudioDemoCard({
         {/* Parisian Points display */}
         <PointsBurst points={dailyParisianPoints} className="mr-1">
           <div className="relative flex items-center justify-center w-11 h-11 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
-            <div className="flex flex-col items-center gap-0 -mt-1">
+            <div className="flex flex-col items-center gap-[3px] -mt-1.5">
               <span className="font-display text-[19px] font-bold text-wine leading-none tabular-nums">
                 {dailyParisianPoints}
               </span>
@@ -3933,7 +3933,7 @@ export function AudioDemoCard({
             {/* Parisian Points */}
             <PointsBurst points={dailyParisianPoints} className="mr-1">
               <div className="relative flex items-center justify-center w-11 h-11 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
-                <div className="flex flex-col items-center gap-0 -mt-1">
+                <div className="flex flex-col items-center gap-[3px] -mt-1.5">
                   <span className="font-display text-[19px] font-bold text-wine leading-none tabular-nums">
                     {dailyParisianPoints}
                   </span>
