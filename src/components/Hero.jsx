@@ -718,25 +718,40 @@ function wait(ms) {
 }
 
 function ComprehensionItem({ q, qi, firePointsDelta, narratorId = 'lea' }) {
-  const [answered, setAnswered] = React.useState(null);
-  const isCorrect = answered != null && answered === q.answer;
+  const [answeredIdx, setAnsweredIdx] = React.useState(null);
+  const options = q.options || [];
+  // Robustly resolve the correct option index: the model may return the exact
+  // option text, or just a letter (A/B/C/D), or text with minor differences.
+  const correctIdx = React.useMemo(() => {
+    const raw = String(q.answer ?? '').trim();
+    if (/^[A-Da-d]$/.test(raw)) {
+      const li = raw.toLowerCase().charCodeAt(0) - 97;
+      if (li >= 0 && li < options.length) return li;
+    }
+    const norm = (s) => String(s ?? '').trim().toLowerCase().replace(/[.!?]+$/, '');
+    const exact = options.findIndex((o) => norm(o) === norm(raw));
+    return exact; // -1 if none
+  }, [q.answer, options]);
+
+  const answered = answeredIdx != null;
+  const isCorrect = answered && answeredIdx === correctIdx;
   return (
     <div className="space-y-1.5">
       <p className="font-display text-[13px] text-navy leading-snug">
         <TranslatableText text={q.question} narratorId={narratorId} />
       </p>
       <div className="space-y-1">
-        {(q.options || []).map((opt, oi) => {
-          const chosen = answered === opt;
-          const correct = opt === q.answer;
+        {options.map((opt, oi) => {
+          const chosen = answeredIdx === oi;
+          const correct = oi === correctIdx;
           const cls = answered
             ? correct ? 'bg-green-50 border-green-400 text-green-700'
               : chosen ? 'bg-red-50 border-red-400 text-wine'
               : 'border-line/30 text-navy/35'
             : 'border-line/50 text-navy/70 hover:border-wine/40 hover:bg-wine/5 cursor-pointer';
           return (
-            <button key={oi} type="button" disabled={!!answered}
-              onClick={() => { if (!answered) { setAnswered(opt); firePointsDelta(opt === q.answer ? 3 : -1); } }}
+            <button key={oi} type="button" disabled={answered}
+              onClick={() => { if (!answered) { setAnsweredIdx(oi); firePointsDelta(oi === correctIdx ? 3 : -1); } }}
               className={`w-full text-left px-2.5 py-1.5 border text-[12px] font-display transition-colors ${cls}`}>
               <TranslatableText text={opt} narratorId={narratorId} />
             </button>
