@@ -591,7 +591,7 @@ async function fetchPodcastEpisode() {
         const enclosureMatch = block.match(/<enclosure[^>]+url="([^"]+\.mp3[^"]*)"/i)
                             || block.match(/<enclosure[^>]+url="([^"]+)"/i);
         const audioUrl = enclosureMatch ? enclosureMatch[1].replace(/&amp;/g, '&') : null;
-        const title = get('title');
+        const title = decodeEntities(get('title'));
         const pubDate = get('pubDate') || '';
         if (title && audioUrl) items.push({ title, audioUrl, pubDate, source: src.name });
       }
