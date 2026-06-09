@@ -2285,6 +2285,16 @@ export function AudioDemoCard({
   const transcriptHeight = 'flex-1 min-h-0';
   const isExerciseTab = activeTab === 'reading' || activeTab === 'listening';
 
+  // Clear leftover speech transcription when switching the card's tab, so a tab
+  // like Speaking starts empty instead of showing remnants of the Chat session.
+  const prevCardTabRef = React.useRef(activeTab);
+  React.useEffect(() => {
+    if (prevCardTabRef.current !== activeTab) {
+      prevCardTabRef.current = activeTab;
+      if (!isRecording) reset();
+    }
+  }, [activeTab, isRecording, reset]);
+
   const speakActionControls = inputMode === 'speak' ? (
     <div className="flex items-center gap-6 shrink-0">
       {utterances.length > 0 && (
