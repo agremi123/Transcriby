@@ -4403,42 +4403,24 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
           </div>
 
 
-          {/* Transcript — fills remaining space */}
-          <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
-            <div className="flex-1">
-              {wordTimings ? (
-                // Word-synced mode (future: Deepgram timings)
-                <AudioSyncedTranscript
-                  text={currentPageText}
-                  currentTime={currentTime}
-                  duration={effectiveDuration}
-                  pageOffset={pageOffset}
-                  allWordWeights={allWordWeights}
-                  wordTimings={wordTimings}
-                  onWordClick={seekToWord}
-                  className="font-display text-[17px] leading-[1.65] text-navy/80"
-                />
-              ) : (
-                // Static text mode for real podcast audio (no word timings available)
-                <div className="font-display text-[16px] leading-[1.7] text-navy/80 space-y-3">
-                  {transcript.split(/\n\n+/).filter(Boolean).map((para, i) => (
-                    <p key={i}>{para.trim()}</p>
-                  ))}
-                </div>
-              )}
-            </div>
-            {wordTimings && totalPages > 1 && (
-              <div className="flex justify-end items-center gap-1 shrink-0 pt-1">
-                <button type="button" onClick={() => setPageIndex((p) => Math.max(0, p - 1))} disabled={pageIndex === 0}
-                  className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.5 2L3.5 6l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </button>
-                <span className="text-[10px] font-mono text-navy/40 tabular-nums">{pageIndex + 1}/{totalPages}</span>
-                <button type="button" onClick={() => setPageIndex((p) => Math.min(totalPages - 1, p + 1))} disabled={pageIndex === totalPages - 1}
-                  className="w-6 h-6 flex items-center justify-center rounded text-navy/40 hover:text-navy disabled:opacity-20 transition-colors">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </button>
-              </div>
+          {/* Transcript — fills remaining space, scrolls */}
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            {wordTimings ? (
+              // Word-synced mode: all words visible, highlighted word auto-scrolls into view
+              <AudioSyncedTranscript
+                text={normalizedTranscript}
+                currentTime={currentTime}
+                duration={effectiveDuration}
+                allWordWeights={allWordWeights}
+                wordTimings={wordTimings}
+                onWordClick={seekToWord}
+                className="font-display text-[17px] leading-[1.65] text-navy/80"
+              />
+            ) : (
+              // Static text mode — normalize newlines so sentences flow as prose
+              <p className="font-display text-[16px] leading-[1.7] text-navy/80">
+                {normalizedTranscript}
+              </p>
             )}
           </div>
 
