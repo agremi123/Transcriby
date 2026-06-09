@@ -3781,8 +3781,9 @@ export function AudioDemoCard({
               { id: 'speaking',   label: 'Défi speaking' },
               { id: 'writing',    label: 'Défi writing' },
             ].map((t) => (
+              // Compact the tabs when the speak controls are wide (Reset shown)
               <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
-                className={`text-[11px] tracking-wide uppercase px-3 py-3 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
+                className={`${inputMode === 'speak' && utterances.length > 0 ? 'text-[9.5px] px-1.5' : 'text-[11px] px-3'} tracking-wide uppercase py-3 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
                 {t.label}
               </button>
             ))}
