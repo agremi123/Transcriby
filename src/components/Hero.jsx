@@ -4369,37 +4369,37 @@ function ReadingArticlePanel({
               </p>
             ) : null}
 
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between gap-2 relative">
               <DailyParisianPointsIndicator points={dailyParisianPoints} />
 
+              {/* Rounded arrow sweeping from the points → the Translate button */}
+              {vocab.length > 0 && !translateActive && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0.45, 1, 0.45] }}
+                  transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                  className="flex-1 flex items-end justify-center gap-1.5 min-w-0 px-1 pointer-events-none -mb-0.5"
+                >
+                  <span className="font-display text-[11px] italic text-wine/70 whitespace-nowrap mb-1">use them to translate</span>
+                  <svg width="84" height="34" viewBox="0 0 84 34" fill="none" aria-hidden className="shrink-0">
+                    <path d="M4 26 C 24 33, 52 31, 76 11" stroke="#8B1E2D" strokeWidth="1.6" strokeLinecap="round" opacity="0.6" />
+                    <path d="M76 11 l-10 -0.5 M76 11 l-2.5 9.5" stroke="#8B1E2D" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
+                  </svg>
+                </motion.div>
+              )}
+
             <div className="flex items-center gap-3 shrink-0">
-              {/* Hint button inline with arrows */}
               {vocab.length > 0 && (
                 <div className="flex flex-col items-end gap-1.5">
-                  <div className="relative flex flex-col items-end">
-                    {!translateActive && (
-                      <motion.div
-                        initial={{ opacity: 0, x: 6 }}
-                        animate={{ opacity: [0, 1, 1, 0], x: [6, 0, 0, -4] }}
-                        transition={{ duration: 1.8, repeat: Infinity, repeatDelay: 1.2, ease: 'easeInOut' }}
-                        className="absolute right-full mr-2 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none"
-                      >
-                        <span className="font-display text-[11px] italic text-wine/70 whitespace-nowrap">use them to translate</span>
-                        <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden>
-                          <path d="M1 5h11M8 1l4 4-4 4" stroke="#8B1E2D" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
-                        </svg>
-                      </motion.div>
-                    )}
-                    <button
-                      type="button"
-                      onClick={handleTranslateClick}
-                      className={`${NAV_CTA_CLASS} ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
-                      aria-label="Translate hard words"
-                      aria-pressed={translateActive}
-                    >
-                      Translate hard words
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={handleTranslateClick}
+                    className={`${NAV_CTA_CLASS} ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
+                    aria-label="Translate hard words"
+                    aria-pressed={translateActive}
+                  >
+                    Translate hard words
+                  </button>
                   {translateActive && hasMoreHints && revealedBatchCount > 0 && (
                     <button
                       type="button"
