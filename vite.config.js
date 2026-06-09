@@ -1388,6 +1388,34 @@ function speakingPromptMiddleware(apiKey) {
     try { body = JSON.parse(await readBody(req)); } catch {}
     res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
 
+    // Word challenge eval mode
+    if (isCombined && body.type === 'word-challenge') {
+      const { utterance = '', word = '', meaning = '', narratorId = 'lea', attemptNumber = 1 } = body;
+      if (!apiKey || !utterance.trim() || !word) { res.end(JSON.stringify({ feedback: '', isCorrect: false })); return; }
+      const isFinal = attemptNumber >= 3;
+      try {
+        const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+        const gender = narratorId === 'lea' ? 'une Parisienne' : 'un Parisien';
+        const d = await claudeCall('speaking/word-challenge', apiKey, {
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 350,
+          system: `Tu es ${name}, ${gender} natif(ve). Un étudiant pratique le mot argotique/parisien "${word}" (= ${meaning}).\nIl vient de faire la tentative n°${attemptNumber}/3.\nÉvalue sa phrase : a-t-il utilisé "${word}" correctement et naturellement ?\n${isFinal ? `C'est la dernière tentative. Donne aussi 2 exemples de vraies phrases parisiennes utilisant "${word}", puis propose un sujet de conversation aléatoire et sympa pour continuer.` : `Dis-lui brièvement si c'est bien ou pas, et encourage-le à réessayer avec une nouvelle phrase.`}\nRéponds toujours en français, ton naturel et chaleureux.\nJSON: {"isCorrect":true/false,"feedback":"...(1-2 phrases)","corrected":"phrase corrigée si mauvaise, sinon null","examples":["ex1","ex2"] ou null,"nextTopic":"sujet ou null"}`,
+          messages: [{ role: 'user', content: `Phrase de l'étudiant : "${utterance}"` }],
+        });
+        let raw = d.content?.[0]?.text?.trim() || '{}';
+        raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        const parsed = JSON.parse(raw);
+        res.end(JSON.stringify({
+          isCorrect: !!parsed.isCorrect,
+          feedback: parsed.feedback || '',
+          corrected: parsed.corrected || null,
+          examples: isFinal ? (parsed.examples || []) : null,
+          nextTopic: isFinal ? (parsed.nextTopic || null) : null,
+        }));
+      } catch { res.end(JSON.stringify({ feedback: '', isCorrect: false })); }
+      return;
+    }
+
     // Reaction mode (chat reply)
     if (isCombined && body.type === 'reaction') {
       const { utterance = '', narratorId = 'lea', topic = '', openingLine = '' } = body;
