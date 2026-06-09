@@ -1537,6 +1537,29 @@ function writingReviewMiddleware(apiKey) {
   };
 }
 
+// Strip any non-Latin script (CJK, Japanese kana, Korean, Cyrillic, Arabic, etc.)
+// that some models occasionally leak into French output. Keeps Latin letters,
+// French accents, digits and common punctuation.
+function stripNonFrench(str) {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(/[Ͱ-ϿЀ-ӿ֐-׿؀-ۿ　-〿぀-ゟ゠-ヿ㄀-ㄯ㄰-㆏가-힯一-鿿豈-﫿＀-￯]/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([,.;:!?])/g, '$1')
+    .trim();
+}
+
+function deepStripNonFrench(v) {
+  if (typeof v === 'string') return stripNonFrench(v);
+  if (Array.isArray(v)) return v.map(deepStripNonFrench).filter(x => x !== '');
+  if (v && typeof v === 'object') {
+    const o = {};
+    for (const k of Object.keys(v)) o[k] = deepStripNonFrench(v[k]);
+    return o;
+  }
+  return v;
+}
+
 function writingPromptMiddleware(apiKey, openrouterKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/writing-prompt' || req.method !== 'POST') { next(); return; }
