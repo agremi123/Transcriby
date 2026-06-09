@@ -674,6 +674,16 @@ function rssExtractCdata(str) {
 function rssStripHtml(str) {
   return str.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }
+function rssDecodeEntities(str) {
+  if (!str) return str;
+  return str
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => { try { return String.fromCodePoint(parseInt(h, 16)); } catch { return _; } })
+    .replace(/&#(\d+);/g, (_, d) => { try { return String.fromCodePoint(parseInt(d, 10)); } catch { return _; } })
+    .replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&nbsp;/g, ' ')
+    .replace(/&laquo;/g, '«').replace(/&raquo;/g, '»')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+}
 async function fetchArticleBody(url) {
   try {
     const ctrl = new AbortController();
