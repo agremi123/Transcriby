@@ -1090,11 +1090,13 @@ export function AudioDemoCard({
     const leaId = `lea-${Date.now()}`;
     const userId = `user-${Date.now()}`;
     const lastLeaText = [...chatHistoryRef.current].reverse().find(m => m.role === 'lea' && !m.loading)?.text || '';
+    // Reply comes from the active challenge narrator (Léa or Jules), else Léa
+    const replyNarrator = parisianWordChallengeRef.current?.narratorId || 'lea';
 
     const updated = [
       ...chatHistoryRef.current,
       { id: userId, role: 'user', text: userText, audioUrl: newUtts[0]?.audioUrl || null, words: newUtts[0]?.words || [], wordOffset: newUtts[0]?.startTime || 0 },
-      { id: leaId, role: 'lea', loading: true, narratorId: 'lea' },
+      { id: leaId, role: 'lea', loading: true, narratorId: replyNarrator },
     ];
     chatHistoryRef.current = updated;
     setChatHistory(updated);
