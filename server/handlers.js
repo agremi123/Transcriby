@@ -1016,8 +1016,9 @@ export async function handleWord() {
           word: cached.word,
           meaning: cached.meaning,
           example: cached.example,
-          exampleTranslation: cached.exampleTranslation,
-          audioUrl: cached.audioUrl,
+          // DB columns are lowercase; fall back to camelCase for safety
+          exampleTranslation: cached.exampletranslation ?? cached.exampleTranslation ?? '',
+          audioUrl: cached.audiourl ?? cached.audioUrl ?? null,
         },
       };
     }
