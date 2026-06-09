@@ -993,7 +993,7 @@ export function AudioDemoCard({
   React.useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [utterances, settledText, partialTranscript, repeatAttemptText, repeatFeedback, isRecording, repeatUtteranceBase]);
+  }, [utterances, settledText, partialTranscript, repeatAttemptText, repeatFeedback, isRecording, repeatUtteranceBase, chatHistory, parisianWordChallengeLoading]);
 
   React.useEffect(() => {
     if (!partialTranscript) { setStableWordCount(0); prevPartialRef.current = ''; return; }
