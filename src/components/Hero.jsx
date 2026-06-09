@@ -4122,34 +4122,86 @@ const HINT_COST = 1; // Parisianism points per extra batch of translations
 function DailyParisianPointsIndicator({ points, hideLabel = false }) {
   const prevRef = React.useRef(points);
   const increased = points > prevRef.current;
-  React.useEffect(() => { prevRef.current = points; }, [points]);
+  const decreased = points < prevRef.current;
+  const [burst, setBurst] = React.useState({ key: 0, up: true });
+  React.useEffect(() => {
+    if (points !== prevRef.current) setBurst((b) => ({ key: b.key + 1, up: points > prevRef.current }));
+    prevRef.current = points;
+  }, [points]);
 
   const circleSize = hideLabel ? 'w-11 h-11' : 'w-14 h-14';
   const numSize = hideLabel ? 'text-[15px]' : 'text-[18px]';
+  const accent = increased ? '#16a34a' : decreased ? '#8B1E2D' : '#8B1E2D';
+  const accentRgb = increased ? '22,163,74' : '139,30,45';
+
   return (
     <div className="flex items-center gap-2 shrink-0" aria-live="polite">
-      <motion.div
-        // Pulse + green flash the whole disc when points go up
-        animate={increased
-          ? { scale: [1, 1.18, 1], boxShadow: ['0 0 0 0 rgba(22,163,74,0)', '0 0 0 6px rgba(22,163,74,0.25)', '0 0 0 0 rgba(22,163,74,0)'] }
-          : { scale: 1 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className={`relative ${circleSize} shrink-0 rounded-full border border-wine/30 bg-wine/10 flex items-center justify-center overflow-hidden`}
-      >
-        {/* Flip-board: old number slides up & out, new number drops in from below */}
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.span
-            key={points}
-            initial={{ y: '-110%', opacity: 0 }}
-            animate={{ y: '0%', opacity: 1 }}
-            exit={{ y: '110%', opacity: 0 }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            className={`absolute font-stat ${numSize} tabular-nums leading-none text-wine`}
-          >
-            {points}
-          </motion.span>
+      <div className="relative shrink-0">
+        {/* Burst rings + sparks radiating out on any change */}
+        <AnimatePresence>
+          {burst.key > 0 && (
+            <React.Fragment key={burst.key}>
+              <motion.span
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{ border: `2px solid rgba(${accentRgb},0.9)` }}
+                initial={{ scale: 0.8, opacity: 0.9 }}
+                animate={{ scale: 2.3, opacity: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.7, ease: 'easeOut' }}
+              />
+              <motion.span
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{ border: `1.5px solid rgba(${accentRgb},0.6)` }}
+                initial={{ scale: 0.8, opacity: 0.7 }}
+                animate={{ scale: 3.1, opacity: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.85, ease: 'easeOut', delay: 0.08 }}
+              />
+              {burst.up && [0, 60, 120, 180, 240, 300].map((deg) => (
+                <motion.span
+                  key={deg}
+                  className="absolute left-1/2 top-1/2 w-1 h-1 rounded-full pointer-events-none"
+                  style={{ backgroundColor: accent }}
+                  initial={{ x: '-50%', y: '-50%', opacity: 1, scale: 1 }}
+                  animate={{
+                    x: `calc(-50% + ${Math.cos((deg * Math.PI) / 180) * 26}px)`,
+                    y: `calc(-50% + ${Math.sin((deg * Math.PI) / 180) * 26}px)`,
+                    opacity: 0, scale: 0.4,
+                  }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                />
+              ))}
+            </React.Fragment>
+          )}
         </AnimatePresence>
-      </motion.div>
+
+        <motion.div
+          key={`disc-${burst.key}`}
+          animate={increased
+            ? { scale: [1, 1.45, 0.9, 1.1, 1], rotate: [0, -8, 8, 0],
+                boxShadow: ['0 0 0 0 rgba(22,163,74,0)', '0 0 22px 4px rgba(22,163,74,0.55)', '0 0 0 0 rgba(22,163,74,0)'],
+                backgroundColor: ['rgba(139,30,45,0.10)', 'rgba(22,163,74,0.22)', 'rgba(139,30,45,0.10)'] }
+            : decreased
+              ? { x: [0, -5, 5, -4, 4, 0], boxShadow: ['0 0 0 0 rgba(139,30,45,0)', '0 0 16px 3px rgba(139,30,45,0.5)', '0 0 0 0 rgba(139,30,45,0)'] }
+              : { scale: 1 }}
+          transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+          className={`relative ${circleSize} rounded-full border border-wine/30 bg-wine/10 flex items-center justify-center overflow-hidden`}
+        >
+          {/* Flip-board: old number slides up & out, new drops in, flashing the accent colour */}
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={points}
+              initial={{ y: '-120%', opacity: 0, scale: 1.4 }}
+              animate={{ y: '0%', opacity: 1, scale: 1, color: [accent, accent, '#8B1E2D'] }}
+              exit={{ y: '120%', opacity: 0 }}
+              transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1], color: { duration: 0.9 } }}
+              className={`absolute font-stat ${numSize} font-bold tabular-nums leading-none`}
+            >
+              {points}
+            </motion.span>
+          </AnimatePresence>
+        </motion.div>
+      </div>
       {!hideLabel && (
         <span className="text-[9px] font-mono tracking-[0.08em] uppercase text-navy/45 leading-tight w-[3.25rem]">
           My Parisian Points
