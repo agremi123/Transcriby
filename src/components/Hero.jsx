@@ -4420,11 +4420,11 @@ function ReadingArticlePanel({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-                  className="flex items-center gap-1.5 min-w-0 pointer-events-none"
+                  className="flex items-center gap-1 min-w-0 px-0.5 pointer-events-none leading-[1.15]"
                 >
-                  <span className="font-display text-[12px] italic text-wine/70 whitespace-nowrap">Use my Parisian points to translate</span>
-                  <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden className="shrink-0">
-                    <path d="M1 6 H20 M15.5 1.5 L20 6 L15.5 10.5" stroke="#8B1E2D" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.65" />
+                  <span className="font-display text-[10.5px] italic text-wine/70">Use my Parisian points to translate</span>
+                  <svg width="18" height="10" viewBox="0 0 18 10" fill="none" aria-hidden className="shrink-0">
+                    <path d="M1 5 H15 M11 1.5 L15 5 L11 8.5" stroke="#8B1E2D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.65" />
                   </svg>
                 </motion.div>
               )}
