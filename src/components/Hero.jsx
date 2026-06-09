@@ -2331,7 +2331,16 @@ export function AudioDemoCard({
               if (!data?.word) return;
               const narratorId = Math.random() < 0.5 ? 'lea' : 'jules';
               const intro = `Voici ton mot parisien du jour : « ${data.word} ». Ça veut dire "${data.meaning}". Par exemple : "${data.example}". Essaie maintenant de l'utiliser dans une phrase !`;
-              setParisianWordChallenge({ word: data.word, meaning: data.meaning, example: data.example, exampleTranslation: data.exampleTranslation, narratorId });
+              const challenge = { word: data.word, meaning: data.meaning, example: data.example, exampleTranslation: data.exampleTranslation, narratorId };
+              setParisianWordChallenge(challenge);
+              parisianWordChallengeRef.current = challenge;
+              setParisianChallengeAttempt(0);
+              parisianChallengeAttemptRef.current = 0;
+              // Add Léa's intro to chat history
+              const introId = `lea-intro-${Date.now()}`;
+              const withIntro = [...chatHistoryRef.current, { id: introId, role: 'lea', text: intro, narratorId }];
+              chatHistoryRef.current = withIntro;
+              setChatHistory(withIntro);
               playNarratorLine({ id: narratorId, text: intro });
             } catch {}
             setParisianWordChallengeLoading(false);
