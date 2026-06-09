@@ -4240,21 +4240,35 @@ function DailyParisianPointsIndicator({ points, hideLabel = false }) {
               ? { x: [0, -5, 5, -4, 4, 0], boxShadow: ['0 0 0 0 rgba(139,30,45,0)', '0 0 16px 3px rgba(139,30,45,0.5)', '0 0 0 0 rgba(139,30,45,0)'] }
               : { scale: 1 }}
           transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
-          className={`relative ${circleSize} rounded-full border border-wine/30 bg-wine/10 flex items-center justify-center overflow-hidden`}
+          className={`relative ${circleSize} rounded-full border border-wine/30 bg-wine/10 flex flex-col items-center justify-center ${hideLabel ? '' : 'overflow-hidden'}`}
         >
-          {/* Flip-board: old number slides up & out, new drops in, flashing the accent colour */}
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span
-              key={points}
-              initial={{ y: '-120%', opacity: 0, scale: 1.4 }}
-              animate={{ y: '0%', opacity: 1, scale: 1, color: [accent, accent, '#8B1E2D'] }}
-              exit={{ y: '120%', opacity: 0 }}
-              transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1], color: { duration: 0.9 } }}
-              className={`absolute font-stat ${numSize} font-bold tabular-nums leading-none`}
-            >
-              {points}
-            </motion.span>
-          </AnimatePresence>
+          {hideLabel ? (
+            <>
+              <motion.span key={points}
+                initial={{ scale: 1.4, color: accent }}
+                animate={{ scale: 1, color: ['#16a34a', '#16a34a', '#8B1E2D'] }}
+                transition={{ duration: 0.5 }}
+                className={`font-stat ${numSize} font-bold tabular-nums leading-none text-wine`}
+              >
+                {points}
+              </motion.span>
+              <span className="text-[7px] font-mono tracking-wide uppercase text-wine/55 leading-none mt-0.5">points</span>
+            </>
+          ) : (
+            /* Flip-board: old number slides up & out, new drops in, flashing the accent colour */
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.span
+                key={points}
+                initial={{ y: '-120%', opacity: 0, scale: 1.4 }}
+                animate={{ y: '0%', opacity: 1, scale: 1, color: [accent, accent, '#8B1E2D'] }}
+                exit={{ y: '120%', opacity: 0 }}
+                transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1], color: { duration: 0.9 } }}
+                className={`absolute font-stat ${numSize} font-bold tabular-nums leading-none`}
+              >
+                {points}
+              </motion.span>
+            </AnimatePresence>
+          )}
         </motion.div>
       </div>
       {!hideLabel && (
