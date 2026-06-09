@@ -2973,6 +2973,7 @@ export function AudioDemoCard({
                     <div className="flex items-baseline gap-2 flex-wrap">
                       <span className="font-display text-[17px] font-bold text-wine italic">« {parisianWordChallenge.word} »</span>
                       <span className="text-[12px] text-navy/50">{parisianWordChallenge.meaning}</span>
+                      <span className="ml-auto text-[10px] font-mono text-wine/50">{parisianChallengeAttempt}/3</span>
                     </div>
                     <p className="text-[12px] text-navy/55 italic mt-0.5 leading-snug">« {parisianWordChallenge.example} »</p>
                   </div>
