@@ -805,12 +805,14 @@ function readingMiddleware(apiKey, openrouterKey) {
 
       // Steps 4 & 5: comprehension questions + vocabulary IN PARALLEL
       const [qData, vData] = await Promise.all([
-        openrouterCall('reading/questions', openrouterKey, {
+        claudeCall('reading/questions', apiKey, {
+          model: 'claude-haiku-4-5-20251001',
           max_tokens: 700,
           system: `Create exactly 4 comprehension questions based on the French passage: 2 fill-in-the-blank and 2 multiple choice. Return ONLY raw JSON, no markdown: {"questions":[{"type":"fill","sentence":"sentence with ___ blank","answer":"word","hint":"base form"},{"type":"fill","sentence":"another with ___","answer":"word","hint":"base"},{"type":"mcq","question":"Question?","options":["A","B","C","D"],"answer":"A"},{"type":"mcq","question":"Question2?","options":["A","B","C","D"],"answer":"B"}]}`,
           messages: [{ role: 'user', content: passage }],
         }),
-        openrouterCall('reading/vocab', openrouterKey, {
+        claudeCall('reading/vocab', apiKey, {
+          model: 'claude-haiku-4-5-20251001',
           max_tokens: 700,
           system: `From the given French passage, pick exactly 5 difficult or interesting vocabulary words. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"...","sentence":"...___..."}]}`,
           messages: [{ role: 'user', content: passage }],
