@@ -4209,15 +4209,19 @@ function VocabWordHighlight({ word, definition }) {
   };
 
   const hideTooltip = () => setHovered(false);
+  const toggleTooltip = () => { if (hovered) { setHovered(false); } else { updatePosition(); setHovered(true); } };
 
   React.useEffect(() => {
     if (!hovered) return undefined;
     const onScroll = () => updatePosition();
+    const onDocClick = (e) => { if (anchorRef.current && !anchorRef.current.contains(e.target)) setHovered(false); };
     window.addEventListener('scroll', onScroll, true);
     window.addEventListener('resize', onScroll);
+    document.addEventListener('mousedown', onDocClick, true);
     return () => {
       window.removeEventListener('scroll', onScroll, true);
       window.removeEventListener('resize', onScroll);
+      document.removeEventListener('mousedown', onDocClick, true);
     };
   }, [hovered, updatePosition]);
 
