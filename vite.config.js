@@ -718,12 +718,12 @@ function parseRssItems(xml, feedName) {
       const found = block.match(r);
       return found ? rssExtractCdata(found[1]) : '';
     };
-    const title       = get('title');
-    const description = rssStripHtml(get('description') || get('summary'));
-    const content     = rssStripHtml(get('content:encoded') || get('content'));
+    const title       = rssDecodeEntities(get('title'));
+    const description = rssDecodeEntities(rssStripHtml(get('description') || get('summary')));
+    const content     = rssDecodeEntities(rssStripHtml(get('content:encoded') || get('content')));
     const link        = get('link') || block.match(/<link>([\s\S]*?)<\/link>/i)?.[1]?.trim() || '';
     const pubDate     = get('pubDate') || get('dc:date') || '';
-    const author      = get('dc:creator') || get('author') || '';
+    const author      = rssDecodeEntities(get('dc:creator') || get('author') || '');
     if (title || description) items.push({ title, description, content, link, pubDate, author, feedName });
   }
   return items;
