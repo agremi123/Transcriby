@@ -509,8 +509,8 @@ async function generateReadingBundle(apiKey) {
   // Run questions + exercises in parallel
   const [qParsed, exParsed] = await Promise.all([
     claudeJSON({
-      apiKey, maxTokens: 800,
-      system: 'Create exactly 4 multiple-choice comprehension questions about the French passage. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"}]}',
+      apiKey, maxTokens: 1600,
+      system: 'Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}',
       user: passage,
     }),
     claudeJSON({
