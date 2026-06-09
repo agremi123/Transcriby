@@ -1072,21 +1072,21 @@ export async function handleWord() {
       }
     }
 
+    // NOTE: parisian_words columns are all lowercase in Postgres
     const entry = {
       id: Date.now(),
       word: parsed.word,
       meaning: parsed.meaning,
       example: parsed.example,
-      exampleTranslation: parsed.exampleTranslation,
-      voiceId: ELEVENLABS_VOICES.lea,
-      audioUrl,
-      createdAt: new Date().toISOString(),
+      exampletranslation: parsed.exampleTranslation || '',
+      voiceid: ELEVENLABS_VOICES.lea,
+      audiourl: audioUrl,
+      createdat: new Date().toISOString(),
     };
 
     if (supabase) {
-      try {
-        await supabase.from('parisian_words').insert([entry]);
-      } catch {}
+      const { error } = await supabase.from('parisian_words').insert([entry]);
+      if (error) console.error('[word] parisian_words insert failed:', error.message);
     }
 
     return { statusCode: 200, body: { ...parsed, audioUrl } };
