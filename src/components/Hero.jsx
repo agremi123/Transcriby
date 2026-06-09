@@ -4324,23 +4324,6 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
     }
   };
 
-  // Auto-advance page when playhead passes the last word of the current page
-  React.useEffect(() => {
-    const lastWordOnPage = pageOffset + WORDS_PER_PAGE - 1;
-    if (wordTimings) {
-      const lastTiming = wordTimings[Math.min(lastWordOnPage, wordTimings.length - 1)];
-      if (lastTiming && currentTime >= lastTiming.end && pageIndex < totalPages - 1) {
-        setPageIndex((p) => p + 1);
-      }
-    } else {
-      if (!effectiveDuration || !totalWeight) return;
-      const pageWeightEnd = allWordWeights.slice(0, pageOffset + WORDS_PER_PAGE).reduce((s, w) => s + w, 0);
-      const pageEnd = (pageWeightEnd / totalWeight) * effectiveDuration;
-      if (currentTime >= pageEnd && pageIndex < totalPages - 1) {
-        setPageIndex((p) => p + 1);
-      }
-    }
-  }, [currentTime, duration, totalWeight, allWordWeights, wordTimings, pageOffset, pageIndex, totalPages]);
 
   const fmtDate = (d) => {
     if (!d) return '';
