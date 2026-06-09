@@ -727,12 +727,16 @@ async function generateWritingBundle(apiKey, level = 'B1', topic = '') {
 }
 
 // ── Generate a speaking prompt bundle ───────────────────────────────────────
-async function generateSpeakingBundle(apiKey, topic = '') {
+async function generateSpeakingBundle(apiKey, topic = '', level = 'B1') {
   const narrators = ['lea', 'jules'];
   const narratorId = narrators[Math.floor(Math.random() * narrators.length)];
   const data = await claudeJSON({
-    apiKey, maxTokens: 400,
-    system: 'You are a Parisian French conversation partner. Create a natural conversation opener in French. Raw JSON: {"openingLine":"Bonjour ! ...","openingLineTranslation":"Hello! ...","topicLabel":"Topic name"}',
+    apiKey, maxTokens: 600,
+    system: `You are a Parisian French speaking coach designing a practice challenge for a ${level} learner. For the topic, design:
+1. ONE grammar structure to practice (e.g. passé composé, subjonctif, pronoms relatifs, comparatifs, futur proche).
+2. THREE useful French vocabulary words/expressions to use.
+3. A warm, natural opening QUESTION in French that naturally pushes the learner to use that grammar and those words in their spoken answer.
+Raw JSON only: {"openingLine":"...","openingLineTranslation":"English","topicLabel":"short FR label","grammarPoint":"FR name of structure","grammarHint":"short English hint how to use it","vocab":[{"word":"FR word/expr","meaning":"English"}]}`,
     user: `Topic: ${topic || 'la vie parisienne'}`,
   });
   return {
@@ -741,6 +745,10 @@ async function generateSpeakingBundle(apiKey, topic = '') {
     opening_line: data.openingLine || 'Bonjour ! Comment ça va ?',
     opening_line_translation: data.openingLineTranslation || 'Hello! How are you?',
     topic_label: data.topicLabel || topic || 'Conversation',
+    target_grammar: (data.grammarPoint || data.grammarHint)
+      ? { point: data.grammarPoint || '', hint: data.grammarHint || '' }
+      : null,
+    target_vocab: Array.isArray(data.vocab) ? data.vocab.slice(0, 4) : null,
   };
 }
 
