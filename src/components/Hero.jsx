@@ -4195,16 +4195,15 @@ function frSyllables(word) {
   return syl + (hasPause ? 1.2 : 0);
 }
 
-function AudioSyncedTranscript({ text, currentTime, duration, pageOffset, allWordWeights, wordTimings, onWordClick, className }) {
+function AudioSyncedTranscript({ text, currentTime, duration, allWordWeights, wordTimings, onWordClick, className }) {
   const words = React.useMemo(() => text.split(/\s+/).filter(Boolean), [text]);
+  const activeRef = React.useRef(null);
 
   const currentWordIdx = React.useMemo(() => {
     // --- Real Deepgram timestamps path ---
     if (wordTimings && wordTimings.length > 0) {
-      // Find which word on this page contains currentTime
       for (let i = 0; i < words.length; i++) {
-        const g = pageOffset + i;
-        const t = wordTimings[g];
+        const t = wordTimings[i];
         if (!t) continue;
         if (currentTime >= t.start && currentTime < t.end + 0.05) return i;
       }
@@ -4216,28 +4215,29 @@ function AudioSyncedTranscript({ text, currentTime, duration, pageOffset, allWor
     const totalWeight = allWordWeights.reduce((s, w) => s + w, 0);
     if (!totalWeight) return -1;
 
-    const pageWeightStart = allWordWeights.slice(0, pageOffset).reduce((s, w) => s + w, 0);
-    const pageWeightEnd   = allWordWeights.slice(0, pageOffset + words.length).reduce((s, w) => s + w, 0);
-    const tStart = (pageWeightStart / totalWeight) * duration;
-    const tEnd   = (pageWeightEnd   / totalWeight) * duration;
-
-    if (currentTime < tStart || currentTime >= tEnd) return -1;
-
-    let elapsed = tStart;
+    let elapsed = 0;
     for (let i = 0; i < words.length; i++) {
-      const wDur = (allWordWeights[pageOffset + i] / totalWeight) * duration;
+      const wDur = (allWordWeights[i] / totalWeight) * duration;
       if (currentTime < elapsed + wDur) return i;
       elapsed += wDur;
     }
     return words.length - 1;
-  }, [currentTime, duration, words, pageOffset, allWordWeights, wordTimings]);
+  }, [currentTime, duration, words, allWordWeights, wordTimings]);
+
+  // Auto-scroll highlighted word into view
+  React.useEffect(() => {
+    if (activeRef.current) {
+      activeRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [currentWordIdx]);
 
   return (
     <p className={className}>
       {words.map((word, i) => (
         <React.Fragment key={i}>
           <span
-            onClick={() => onWordClick?.(pageOffset + i)}
+            ref={i === currentWordIdx ? activeRef : null}
+            onClick={() => onWordClick?.(i)}
             className={`cursor-pointer rounded transition-colors duration-75 ${
               i === currentWordIdx
                 ? 'bg-wine/20 text-wine'
