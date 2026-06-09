@@ -2832,24 +2832,17 @@ export function AudioDemoCard({
             </div>
           ) : !isExerciseTab && activeTab !== 'practice' ? (
           <div className={`${transcriptHeight} flex flex-col min-h-0 overflow-hidden`}>
-          {/* Parisian word card — pinned above chat, messages scroll below */}
-          {(parisianWordChallengeLoading || parisianWordChallenge) && activeTab === 'transcript' && (
+          {/* Parisian word card — pinned above chat once loaded, messages scroll below */}
+          {parisianWordChallenge && activeTab === 'transcript' && (
             <div className="shrink-0 px-3.5 pt-2 pb-1">
-              {parisianWordChallengeLoading ? (
-                <div className="flex items-center gap-2 text-[12px] text-navy/40 font-display italic">
-                  <div className="w-3 h-3 rounded-full border-2 border-wine/20 border-t-wine animate-spin" />
-                  Discovering a Parisian word…
+              <div className="px-3 py-2 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="font-display text-[17px] font-bold text-wine italic">« {parisianWordChallenge.word} »</span>
+                  <span className="text-[12px] text-navy/50">{parisianWordChallenge.meaning}</span>
+                  <span className="ml-auto text-[10px] font-mono text-wine/50">{parisianChallengeAttempt}/3</span>
                 </div>
-              ) : (
-                <div className="px-3 py-2 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className="font-display text-[17px] font-bold text-wine italic">« {parisianWordChallenge.word} »</span>
-                    <span className="text-[12px] text-navy/50">{parisianWordChallenge.meaning}</span>
-                    <span className="ml-auto text-[10px] font-mono text-wine/50">{parisianChallengeAttempt}/3</span>
-                  </div>
-                  <p className="text-[12px] text-navy/55 italic mt-0.5 leading-snug">« {parisianWordChallenge.example} »</p>
-                </div>
-              )}
+                <p className="text-[12px] text-navy/55 italic mt-0.5 leading-snug">« {parisianWordChallenge.example} »</p>
+              </div>
             </div>
           )}
           <div ref={scrollRef} className="scroll-premium flex-1 min-h-0 max-h-full px-3.5 pt-3 pb-6 overflow-y-auto overscroll-contain">
