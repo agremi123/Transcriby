@@ -4796,16 +4796,18 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
     if (playingWord === clean) return;
     setPlayingWord(clean);
     try {
-      const cached = audioCacheRef.current[clean];
-      if (cached) { new Audio(cached).play(); return; }
-      const r = await fetch('/api/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: clean, narrator: narratorId }),
-      });
-      const { audioUrl } = await r.json();
-      if (audioUrl) { audioCacheRef.current[clean] = audioUrl; new Audio(audioUrl).play(); }
-    } catch { /* silent */ } finally {
+      let url = audioCacheRef.current[clean];
+      if (!url) {
+        // ElevenLabs Parisian voice (Léa/Jules), cached across levels
+        const buf = await fetchNarratorAudio(clean, narratorId);
+        url = URL.createObjectURL(new Blob([buf], { type: 'audio/mpeg' }));
+        audioCacheRef.current[clean] = url;
+      }
+      const audio = new Audio(url);
+      audio.onended = () => setPlayingWord(null);
+      audio.onerror = () => setPlayingWord(null);
+      await audio.play();
+    } catch {
       setPlayingWord(null);
     }
   }, [narratorId, playingWord]);
