@@ -2431,11 +2431,16 @@ export function AudioDemoCard({
               parisianWordChallengeRef.current = challenge;
               setParisianChallengeAttempt(0);
               parisianChallengeAttemptRef.current = 0;
-              // Add Léa's intro to chat history
+              // Append the word card + Léa's intro inline, below existing chat
+              const cardId = `word-card-${Date.now()}`;
               const introId = `lea-intro-${Date.now()}`;
-              const withIntro = [...chatHistoryRef.current, { id: introId, role: 'lea', text: intro, narratorId }];
-              chatHistoryRef.current = withIntro;
-              setChatHistory(withIntro);
+              const withCard = [
+                ...chatHistoryRef.current,
+                { id: cardId, role: 'word-card', word: data.word, meaning: data.meaning, example: data.example },
+                { id: introId, role: 'lea', text: intro, narratorId },
+              ];
+              chatHistoryRef.current = withCard;
+              setChatHistory(withCard);
               playNarratorLine({ id: narratorId, text: intro });
             } catch {}
             setParisianWordChallengeLoading(false);
