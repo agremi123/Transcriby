@@ -5575,6 +5575,26 @@ export default function Hero() {
     }
   }, [practiceTopic, practiceType]);
 
+  // Fresh speaking défi on the same theme: new question + new target words/grammar.
+  const loadNewSpeakingChallenge = React.useCallback(() => {
+    setSpeakingLoading(true);
+    fetch('/api/speaking', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: practiceTopic || speakingTopicLabel || 'la vie parisienne' }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        setSpeakingNarrator(data.narratorId || 'lea');
+        setSpeakingOpeningLine(data.openingLine || '');
+        setSpeakingOpeningTranslation(data.openingLineTranslation || '');
+        setSpeakingTopicLabel(data.topicLabel || practiceTopic);
+        setSpeakingTargetGrammar(data.targetGrammar || null);
+        setSpeakingTargetVocab(data.targetVocab || null);
+        setSpeakingLoading(false);
+      })
+      .catch(() => setSpeakingLoading(false));
+  }, [practiceTopic, speakingTopicLabel]);
+
   // Writing challenge state
   const [writingActive, setWritingActive] = React.useState(false);
   const [writingLoading, setWritingLoading] = React.useState(false);
