@@ -4184,8 +4184,8 @@ function DailyParisianPointsIndicator({ points, hideLabel = false }) {
     prevRef.current = points;
   }, [points]);
 
-  const circleSize = hideLabel ? 'w-11 h-11' : 'w-14 h-14';
-  const numSize = hideLabel ? 'text-[15px]' : 'text-[18px]';
+  const circleSize = hideLabel ? 'w-12 h-12' : 'w-14 h-14';
+  const numSize = hideLabel ? 'text-[17px]' : 'text-[18px]';
   const accent = increased ? '#16a34a' : decreased ? '#8B1E2D' : '#8B1E2D';
   const accentRgb = increased ? '22,163,74' : '139,30,45';
 
