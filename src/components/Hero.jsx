@@ -1100,6 +1100,98 @@ export function AudioDemoCard({
     setChatHistory(updated);
     setChatLeaLoading(true);
 
+    // ── Parisian word challenge mode ──────────────────────────────────────────
+    const challenge = parisianWordChallengeRef.current;
+    if (challenge) {
+      const attempt = parisianChallengeAttemptRef.current + 1;
+      parisianChallengeAttemptRef.current = attempt;
+      setParisianChallengeAttempt(attempt);
+      const isFinal = attempt >= 3;
+
+      fetch('/api/speaking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'word-challenge',
+          utterance: userText,
+          word: challenge.word,
+          meaning: challenge.meaning,
+          narratorId: challenge.narratorId,
+          attemptNumber: attempt,
+        }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          const { feedback, isCorrect, corrected, examples, nextTopic } = data;
+
+          // Attach grammar correction to user bubble if wrong
+          if (!isCorrect && corrected && corrected.trim() !== userText.trim()) {
+            chatHistoryRef.current = chatHistoryRef.current.map(m =>
+              m.id === userId ? { ...m, correction: corrected.trim() } : m
+            );
+          }
+
+          // Build Léa's feedback message
+          let fullFeedback = feedback || '';
+
+          // On final attempt: append 2 example sentences
+          if (isFinal && examples?.length) {
+            const exBlock = examples.map(ex => `• ${ex}`).join('\n');
+            fullFeedback += `\n\nVoici deux phrases avec « ${challenge.word} » :\n${exBlock}`;
+          }
+
+          if (fullFeedback) {
+            chatHistoryRef.current = chatHistoryRef.current.map(m =>
+              m.id === leaId ? { ...m, loading: false, text: fullFeedback } : m
+            );
+            setChatHistory([...chatHistoryRef.current]);
+            playNarratorLine({ id: challenge.narratorId, text: fullFeedback });
+          } else {
+            chatHistoryRef.current = chatHistoryRef.current.filter(m => m.id !== leaId);
+            setChatHistory([...chatHistoryRef.current]);
+          }
+
+          // On final attempt: end challenge, restart conversation on new topic
+          if (isFinal) {
+            setParisianWordChallenge(null);
+            parisianWordChallengeRef.current = null;
+            setParisianChallengeAttempt(0);
+            parisianChallengeAttemptRef.current = 0;
+
+            if (nextTopic) {
+              const restartDelay = (fullFeedback.length / 12) * 1000 + 1500; // wait for TTS
+              setTimeout(() => {
+                fetch('/api/speaking', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ topic: nextTopic }),
+                })
+                  .then(r => r.json())
+                  .then(openerData => {
+                    if (!openerData.openingLine) return;
+                    const opId = `lea-restart-${Date.now()}`;
+                    const withRestart = [
+                      ...chatHistoryRef.current,
+                      { id: opId, role: 'lea', text: openerData.openingLine, narratorId: openerData.narratorId || challenge.narratorId },
+                    ];
+                    chatHistoryRef.current = withRestart;
+                    setChatHistory(withRestart);
+                    playNarratorLine({ id: openerData.narratorId || challenge.narratorId, text: openerData.openingLine });
+                  })
+                  .catch(() => {});
+              }, restartDelay);
+            }
+          }
+        })
+        .catch(() => {
+          chatHistoryRef.current = chatHistoryRef.current.filter(m => m.id !== leaId);
+          setChatHistory([...chatHistoryRef.current]);
+        })
+        .finally(() => setChatLeaLoading(false));
+      return; // skip normal flow
+    }
+
+    // ── Normal chat reaction ──────────────────────────────────────────────────
     // Fetch Léa's reply + correction in parallel
     fetch('/api/speaking', {
       method: 'POST',
