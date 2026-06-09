@@ -1038,6 +1038,14 @@ export async function handleWord() {
     const parsed = JSON.parse(raw);
     if (!parsed.word) throw new Error('No word generated');
 
+    // Strip any non-French characters (CJK etc.) that Haiku sometimes injects
+    const stripGarble = (s) => (s || '').replace(/[^ -ɏ\s«»'"''""!?.,;:()\-–—]/g, '').replace(/\s+/g, ' ').trim();
+    parsed.word = stripGarble(parsed.word);
+    parsed.meaning = stripGarble(parsed.meaning);
+    parsed.example = stripGarble(parsed.example);
+    parsed.exampleTranslation = stripGarble(parsed.exampleTranslation);
+    if (!parsed.word) throw new Error('Word was empty after sanitization');
+
     let audioUrl = null;
     if (ELEVENLABS_API_KEY && parsed.example) {
       const { slug, voiceId } = resolveNarrator('lea');
