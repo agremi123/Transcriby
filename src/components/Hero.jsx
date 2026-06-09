@@ -2291,7 +2291,10 @@ export function AudioDemoCard({
   React.useEffect(() => {
     if (prevCardTabRef.current !== activeTab) {
       prevCardTabRef.current = activeTab;
-      if (!isRecording) reset();
+      if (!isRecording) {
+        reset();
+        chatCommittedRef.current = 0; // keep chat utterance tracking in sync
+      }
     }
   }, [activeTab, isRecording, reset]);
 
