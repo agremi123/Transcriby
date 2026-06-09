@@ -1413,7 +1413,7 @@ function speakingPromptMiddleware(apiKey) {
           examples: isFinal ? (parsed.examples || []) : null,
           nextTopic: isFinal ? (parsed.nextTopic || null) : null,
         }));
-      } catch { res.end(JSON.stringify({ feedback: '', isCorrect: false })); }
+      } catch (e) { console.error('[dev/word-challenge] FAILED:', e?.message, e?.stack?.split('\n')[1]); res.end(JSON.stringify({ feedback: '', isCorrect: false })); }
       return;
     }
 
