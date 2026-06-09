@@ -792,15 +792,23 @@ function readingMiddleware(apiKey, openrouterKey) {
         const hay = `${i.title} ${i.description || ''}`.toLowerCase();
         return { i, score: kw.reduce((s, w) => s + (hay.includes(w) ? 1 : 0), 0) };
       });
-      const maxScore = Math.max(0, ...scored.map(s => s.score));
-      const best = scored.filter(s => s.score === maxScore).map(s => s.i);
-      const chosen = best[Math.floor(Math.random() * best.length)];
+      // Order by topic relevance (best score first), random tie-break.
+      const ordered = scored.slice().sort((a, b) => b.score - a.score || Math.random() - 0.5).map(s => s.i);
 
-      // Step 3: fetch full article page, fall back to RSS content
-      let rawText = '';
-      if (chosen.link) { try { rawText = await fetchArticleBody(chosen.link); } catch { rawText = ''; } }
-      if (rawText.length < 200) rawText = (chosen.content || chosen.description || '');
-      rawText = rawText.slice(0, 6000);
+      // Step 3: fetch the top candidates' bodies IN PARALLEL and pick a FULL one
+      // (>= 1500 chars) so we never serve a half-baked / stub article.
+      const MIN_BODY = 1500;
+      const cands = ordered.slice(0, 5);
+      const fetched = await Promise.all(cands.map(async (c) => {
+        let body = '';
+        if (c.link) { try { body = await fetchArticleBody(c.link); } catch { body = ''; } }
+        if (body.length < 200) body = (c.content || c.description || '');
+        return { c, body };
+      }));
+      const substantial = fetched.filter(f => f.body.length >= MIN_BODY);
+      const picked = substantial[0] || fetched.slice().sort((a, b) => b.body.length - a.body.length)[0];
+      const chosen = picked.c;
+      let rawText = (picked.body || '').slice(0, 6000);
 
       // Extract a long verbatim passage — enough for 2 reading pages (~400-600 words).
       // Uses fast Claude Haiku (DeepSeek was ~10-15s/call and made reading feel endless).
