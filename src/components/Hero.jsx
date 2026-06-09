@@ -4388,14 +4388,16 @@ function ReadingArticlePanel({
               </p>
             ) : null}
 
-            <div className="flex items-center justify-end gap-3 relative">
+            <div className="flex items-center justify-between gap-3 relative">
+              <DailyParisianPointsIndicator points={dailyParisianPoints} />
+
               {/* Hint + arrow pointing at the Translate button */}
               {vocab.length > 0 && !translateActive && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-                  className="flex items-center gap-1.5 min-w-0 pointer-events-none"
+                  className="flex items-center gap-1.5 min-w-0 pointer-events-none mr-1"
                 >
                   <span className="font-display text-[12px] italic text-wine/70 whitespace-nowrap">Use my Parisian points to translate</span>
                   <svg width="26" height="12" viewBox="0 0 26 12" fill="none" aria-hidden className="shrink-0">
