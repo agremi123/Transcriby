@@ -2981,23 +2981,6 @@ export function AudioDemoCard({
                     </div>
                   )
                 ))}
-                {/* Parisian word — appears inline below the last chat message */}
-                {parisianWordChallengeLoading && (
-                  <div className="flex items-center gap-2 text-[12px] text-navy/40 font-display italic pl-1">
-                    <div className="w-3 h-3 rounded-full border-2 border-wine/20 border-t-wine animate-spin" />
-                    Discovering a Parisian word…
-                  </div>
-                )}
-                {parisianWordChallenge && (
-                  <div className="px-3 py-2 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
-                    <div className="flex items-baseline gap-2 flex-wrap">
-                      <span className="font-display text-[17px] font-bold text-wine italic">« {parisianWordChallenge.word} »</span>
-                      <span className="text-[12px] text-navy/50">{parisianWordChallenge.meaning}</span>
-                      <span className="ml-auto text-[10px] font-mono text-wine/50">{parisianChallengeAttempt}/3</span>
-                    </div>
-                    <p className="text-[12px] text-navy/55 italic mt-0.5 leading-snug">« {parisianWordChallenge.example} »</p>
-                  </div>
-                )}
                 {/* Live utterance while recording */}
                 {isRecording && (settledText || partialTranscript) && (
                   <TranscriptSentenceRow gutter={<TranscriptAudioSlot mode="loading" />}>
