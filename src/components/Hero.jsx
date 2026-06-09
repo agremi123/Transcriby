@@ -4119,6 +4119,59 @@ function VocabExercise({ vocab, onGoodAnswer }) {
 
 const HINT_COST = 1; // Parisianism points per extra batch of translations
 
+// Reusable striking burst: wrap any round points chip. On a points change the
+// wrapped element bounces/glows and rings + sparks radiate outward.
+function PointsBurst({ points, className = '', children }) {
+  const prevRef = React.useRef(points);
+  const increased = points > prevRef.current;
+  const decreased = points < prevRef.current;
+  const [burst, setBurst] = React.useState({ key: 0, up: true });
+  React.useEffect(() => {
+    if (points !== prevRef.current) setBurst((b) => ({ key: b.key + 1, up: points > prevRef.current }));
+    prevRef.current = points;
+  }, [points]);
+  const accent = increased ? '#16a34a' : '#8B1E2D';
+  const accentRgb = increased ? '22,163,74' : '139,30,45';
+
+  return (
+    <div className={`relative ${className}`}>
+      <AnimatePresence>
+        {burst.key > 0 && (
+          <React.Fragment key={burst.key}>
+            <motion.span className="absolute inset-0 rounded-full pointer-events-none"
+              style={{ border: `2px solid rgba(${accentRgb},0.9)` }}
+              initial={{ scale: 0.8, opacity: 0.9 }} animate={{ scale: 2.3, opacity: 0 }} exit={{ opacity: 0 }}
+              transition={{ duration: 0.7, ease: 'easeOut' }} />
+            <motion.span className="absolute inset-0 rounded-full pointer-events-none"
+              style={{ border: `1.5px solid rgba(${accentRgb},0.6)` }}
+              initial={{ scale: 0.8, opacity: 0.7 }} animate={{ scale: 3.1, opacity: 0 }} exit={{ opacity: 0 }}
+              transition={{ duration: 0.85, ease: 'easeOut', delay: 0.08 }} />
+            {burst.up && [0, 60, 120, 180, 240, 300].map((deg) => (
+              <motion.span key={deg} className="absolute left-1/2 top-1/2 w-1 h-1 rounded-full pointer-events-none"
+                style={{ backgroundColor: accent }}
+                initial={{ x: '-50%', y: '-50%', opacity: 1, scale: 1 }}
+                animate={{ x: `calc(-50% + ${Math.cos((deg * Math.PI) / 180) * 26}px)`, y: `calc(-50% + ${Math.sin((deg * Math.PI) / 180) * 26}px)`, opacity: 0, scale: 0.4 }}
+                transition={{ duration: 0.6, ease: 'easeOut' }} />
+            ))}
+          </React.Fragment>
+        )}
+      </AnimatePresence>
+      <motion.div
+        key={`burst-${burst.key}`}
+        animate={increased
+          ? { scale: [1, 1.45, 0.9, 1.1, 1], rotate: [0, -8, 8, 0], boxShadow: ['0 0 0 0 rgba(22,163,74,0)', '0 0 22px 4px rgba(22,163,74,0.55)', '0 0 0 0 rgba(22,163,74,0)'] }
+          : decreased
+            ? { x: [0, -5, 5, -4, 4, 0], boxShadow: ['0 0 0 0 rgba(139,30,45,0)', '0 0 16px 3px rgba(139,30,45,0.5)', '0 0 0 0 rgba(139,30,45,0)'] }
+            : { scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+        className="rounded-full"
+      >
+        {children}
+      </motion.div>
+    </div>
+  );
+}
+
 function DailyParisianPointsIndicator({ points, hideLabel = false }) {
   const prevRef = React.useRef(points);
   const increased = points > prevRef.current;
