@@ -4845,6 +4845,7 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
 
 /** Splits French text into clickable words that fetch translations + pronunciation on demand. */
 function TranslatableText({ text, className = '', context = '', narratorId = 'lea' }) {
+  text = typeof text === 'string' ? text : (text == null ? '' : String(text));
   const cacheRef = React.useRef({});
   const audioCacheRef = React.useRef({});
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
