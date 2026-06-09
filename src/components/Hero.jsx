@@ -2110,10 +2110,80 @@ export function AudioDemoCard({
     setWriteCorrection(null);
     setManualCorrection(null);
     setPreviewCorrection(null);
+    setWriteEditing(false);
+
+    // On the Writing tab → run the guided review flow (judge against the challenge).
+    if (activeTab === 'writing') {
+      startWritingReview(trimmed);
+      return;
+    }
+    // Elsewhere (chat write box) → keep the simple preview correction.
     setNarratorReaction(pickNarratorReaction(effectiveLevel));
     fetchPreviewCorrection(writeText);
-    setWriteEditing(false);
   };
+
+  // ── Guided writing review (Writing tab) ────────────────────────────────────
+  const startWritingReview = React.useCallback(async (text) => {
+    const narratorId = writingNarratorId || 'lea';
+    setWriteReviewQuestion('');
+    setWriteReview({ stage: 'judging', narratorId, original: text });
+    try {
+      const r = await fetch('/api/writing-review', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ step: 'feedback', text, prompt: writingPrompt, tips: writingTips, wordTarget: writingWordTarget, narratorId, level: effectiveLevel || 'B1' }),
+      });
+      const data = await r.json();
+      const reaction = data.reaction || 'Pas mal ! Voyons comment on peut améliorer ça.';
+      setWriteReview({ stage: 'judged', narratorId, original: text, reaction });
+      playNarratorLine({ id: narratorId, text: reaction });
+    } catch {
+      setWriteReview({ stage: 'judged', narratorId, original: text, reaction: 'Bien joué ! Regardons la correction.' });
+    }
+  }, [writingNarratorId, writingPrompt, writingTips, writingWordTarget, effectiveLevel, playNarratorLine]);
+
+  const runWritingCorrection = React.useCallback(async () => {
+    setWriteReview((rv) => ({ ...rv, stage: 'correcting' }));
+    const original = writeReview.original || writeText.trim();
+    try {
+      const r = await fetch('/api/correct', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: original, register: 'Parisien', learnerLevel: effectiveLevel }),
+      });
+      const data = await r.json();
+      const corrected = data.corrected?.trim() || original;
+      setWriteReview((rv) => ({ ...rv, stage: 'corrected', corrected, translation: data.translation?.trim() || null }));
+    } catch {
+      setWriteReview((rv) => ({ ...rv, stage: 'corrected', corrected: original }));
+    }
+  }, [writeReview.original, writeText, effectiveLevel]);
+
+  const submitWritingQuestion = React.useCallback(async () => {
+    const q = writeReviewQuestion.trim();
+    if (!q) return;
+    const narratorId = writeReview.narratorId || 'lea';
+    setWriteReview((rv) => ({ ...rv, stage: 'explaining', userQuestion: q }));
+    try {
+      const r = await fetch('/api/writing-review', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ step: 'explain', question: q, original: writeReview.original, corrected: writeReview.corrected, narratorId, level: effectiveLevel || 'B1' }),
+      });
+      const data = await r.json();
+      setWriteReview((rv) => ({ ...rv, stage: 'explained', explanation: data.explanation || '', exercise: data.exercise || null }));
+      if (data.explanation) playNarratorLine({ id: narratorId, text: data.explanation });
+    } catch {
+      setWriteReview((rv) => ({ ...rv, stage: 'explained', explanation: '', exercise: null }));
+    }
+  }, [writeReviewQuestion, writeReview.narratorId, writeReview.original, writeReview.corrected, effectiveLevel, playNarratorLine]);
+
+  const resetWritingReview = React.useCallback(() => {
+    setWriteReview({ stage: 'idle' });
+    setWriteReviewQuestion('');
+    setWriteText('');
+    setWriteSubmittedText(null);
+    setWriteEditing(true);
+    onNewWritingChallenge?.();
+    setTimeout(() => writeTextareaRef.current?.focus(), 50);
+  }, [onNewWritingChallenge]);
 
   const replayCorrectionAudio = React.useCallback(() => {
     if (!manualCorrectionNarration || !correctionReaderId) return;
