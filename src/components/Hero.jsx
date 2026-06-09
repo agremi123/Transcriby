@@ -3320,8 +3320,8 @@ export function AudioDemoCard({
                   <p className="mt-2 font-display text-[13px] italic text-wine/70">Not quite — try again.</p>
                 )}
 
-                {/* Make it Parisien — inline below last utterance */}
-                {inputMode === 'speak' && !manualCorrection && !sentenceCongrats && !isLive && !narratorReaction && utterances.length > 0 && (
+                {/* Make it Parisien — inline below last utterance (not on Défi speaking: correction is automatic there) */}
+                {inputMode === 'speak' && activeTab !== 'speaking' && !manualCorrection && !sentenceCongrats && !isLive && !narratorReaction && utterances.length > 0 && (
                   <div className="mt-3">
                     <button
                       type="button"
