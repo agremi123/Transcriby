@@ -719,6 +719,7 @@ function wait(ms) {
 
 function ComprehensionItem({ q, qi, firePointsDelta, narratorId = 'lea' }) {
   const [answered, setAnswered] = React.useState(null);
+  const isCorrect = answered != null && answered === q.answer;
   return (
     <div className="space-y-1.5">
       <p className="font-display text-[13px] text-navy leading-snug">
@@ -743,6 +744,24 @@ function ComprehensionItem({ q, qi, firePointsDelta, narratorId = 'lea' }) {
           );
         })}
       </div>
+
+      {/* Explanation pop-up — appears after answering, in English */}
+      <AnimatePresence>
+        {answered != null && q.explanation && (
+          <motion.div
+            initial={{ opacity: 0, y: -4, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, y: -4, height: 0 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className={`overflow-hidden rounded-md border px-2.5 py-2 ${isCorrect ? 'border-green-300 bg-green-50/60' : 'border-wine/30 bg-wine/[0.05]'}`}
+          >
+            <p className={`text-[10px] font-mono uppercase tracking-widest mb-0.5 ${isCorrect ? 'text-green-700/70' : 'text-wine/70'}`}>
+              {isCorrect ? '✓ Correct' : '✗ Not quite'}
+            </p>
+            <p className="text-[12px] leading-snug text-navy/75">{q.explanation}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
