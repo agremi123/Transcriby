@@ -5366,6 +5366,8 @@ export default function Hero() {
                 openingLine={speakingOpeningLine}
                 openingLineTranslation={speakingOpeningTranslation}
                 topicLabel={speakingTopicLabel}
+                targetGrammar={speakingTargetGrammar}
+                targetVocab={speakingTargetVocab}
               />
             )}
             {heroActiveTab === 'writing' && writingActive && (
