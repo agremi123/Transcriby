@@ -497,19 +497,22 @@ async function generateReadingBundle(apiKey) {
   const allItems = feedResults.flat().filter(i => i.title && (i.description || i.content));
   if (allItems.length === 0) throw new Error('No RSS items');
 
-  // Pick a random recent article — skips the slow ~6k-token Claude "pick" call.
-  // Prefer items with a substantial description so the extract has enough to work with.
-  const substantial = allItems.filter(i => (i.description || i.content || '').length > 120);
-  const pool = substantial.length ? substantial : allItems;
-  const chosen = pool[Math.floor(Math.random() * pool.length)];
-
-  let rawText = '';
-  if (chosen.link) {
-    try { rawText = await fetchArticleBody(chosen.link); } catch { rawText = ''; }
-  }
-  if (rawText.length < 200) rawText = chosen.content || chosen.description || '';
+  // Shuffle candidates, fetch the top few article bodies IN PARALLEL, and pick a
+  // FULL one (>= 1500 chars) so we never serve a half-baked / stub article.
+  const withDesc = allItems.filter(i => (i.description || i.content || '').length > 120);
+  const pool = (withDesc.length ? withDesc : allItems).slice().sort(() => Math.random() - 0.5);
+  const MIN_BODY = 1500;
+  const fetched = await Promise.all(pool.slice(0, 5).map(async (c) => {
+    let body = '';
+    if (c.link) { try { body = await fetchArticleBody(c.link); } catch { body = ''; } }
+    if (body.length < 200) body = c.content || c.description || '';
+    return { c, body };
+  }));
+  const fullOnes = fetched.filter(f => f.body.length >= MIN_BODY);
+  const picked = fullOnes[0] || fetched.slice().sort((a, b) => b.body.length - a.body.length)[0];
+  const chosen = picked.c;
   // Strip CJK characters that can appear in scraped page sidebars/ads
-  rawText = rawText.replace(/[　-鿿가-힯豈-﫿]/g, '').slice(0, 6000);
+  let rawText = (picked.body || '').replace(/[　-鿿가-힯豈-﫿]/g, '').slice(0, 6000);
 
   const extractData = await claudeJSON({
     apiKey, maxTokens: 1000,
