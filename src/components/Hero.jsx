@@ -4378,12 +4378,12 @@ function ReadingArticlePanel({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: [0.45, 1, 0.45] }}
                   transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-                  className="flex-1 flex items-end justify-center gap-1.5 min-w-0 px-1 pointer-events-none -mb-0.5"
+                  className="flex-1 flex flex-col items-end justify-center gap-0 min-w-0 pr-1 pointer-events-none"
                 >
-                  <span className="font-display text-[11px] italic text-wine/70 whitespace-nowrap mb-1">use them to translate</span>
-                  <svg width="84" height="34" viewBox="0 0 84 34" fill="none" aria-hidden className="shrink-0">
-                    <path d="M4 26 C 24 33, 52 31, 76 11" stroke="#8B1E2D" strokeWidth="1.6" strokeLinecap="round" opacity="0.6" />
-                    <path d="M76 11 l-10 -0.5 M76 11 l-2.5 9.5" stroke="#8B1E2D" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
+                  <span className="font-display text-[11px] italic text-wine/70 whitespace-nowrap mr-6">use them to translate</span>
+                  <svg width="92" height="22" viewBox="0 0 92 22" fill="none" aria-hidden className="shrink-0 -mt-0.5">
+                    <path d="M4 6 C 28 2, 60 4, 84 16" stroke="#8B1E2D" strokeWidth="1.6" strokeLinecap="round" opacity="0.6" />
+                    <path d="M84 16 l-11 -1.5 M84 16 l-4 10" stroke="#8B1E2D" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
                   </svg>
                 </motion.div>
               )}
