@@ -422,12 +422,12 @@ function parseRssItems(xml) {
       const found = block.match(r);
       return found ? extractCdata(found[1]) : '';
     };
-    const title       = get('title');
-    const description = stripHtml(get('description') || get('summary'));
-    const content     = stripHtml(get('content:encoded') || get('content'));
+    const title       = decodeEntities(get('title'));
+    const description = decodeEntities(stripHtml(get('description') || get('summary')));
+    const content     = decodeEntities(stripHtml(get('content:encoded') || get('content')));
     const link        = get('link') || block.match(/<link>([\s\S]*?)<\/link>/i)?.[1]?.trim() || '';
     const pubDate     = get('pubDate') || get('dc:date') || '';
-    const author      = get('dc:creator') || get('author') || '';
+    const author      = decodeEntities(get('dc:creator') || get('author') || '');
     if (title || description) items.push({ title, description, content, link, pubDate, author });
   }
   return items;
