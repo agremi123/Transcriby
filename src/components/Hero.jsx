@@ -5545,6 +5545,10 @@ export default function Hero() {
               speakingNarratorId={speakingNarrator}
               speakingTopicLabel={speakingTopicLabel}
               speakingOpeningLine={speakingOpeningLine}
+              writingNarratorId={writingNarrator}
+              writingPrompt={writingPrompt}
+              writingTips={writingTips}
+              writingWordTarget={writingWordTarget}
             />
             </div>
           </div>
