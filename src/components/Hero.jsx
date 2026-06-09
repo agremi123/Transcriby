@@ -1126,6 +1126,9 @@ export function AudioDemoCard({
         .then(data => {
           const { feedback, isCorrect, corrected, examples, nextTopic } = data;
 
+          // Reward a correct use of the word with points (triggers the flip animation)
+          if (isCorrect) firePointsDelta(3);
+
           // Attach grammar correction to user bubble if wrong
           if (!isCorrect && corrected && corrected.trim() !== userText.trim()) {
             chatHistoryRef.current = chatHistoryRef.current.map(m =>
