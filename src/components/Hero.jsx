@@ -2811,7 +2811,19 @@ export function AudioDemoCard({
             </motion.div>
           ) : !isExerciseTab && activeTab !== 'practice' && inputMode === 'write' ? (
             <div className={`${transcriptHeight} flex flex-col relative`}>
-              {showChatDiff ? (
+              {activeTab === 'writing' && writeReview.stage !== 'idle' ? (
+                <WritingReviewThread
+                  review={writeReview}
+                  question={writeReviewQuestion}
+                  onQuestionChange={setWriteReviewQuestion}
+                  onCorriger={runWritingCorrection}
+                  onSubmitQuestion={submitWritingQuestion}
+                  onNewChallenge={resetWritingReview}
+                  onReplay={(text, id) => playNarratorLine({ id, text })}
+                  onScoreDelta={firePointsDelta}
+                  challengeContext={writingPrompt}
+                />
+              ) : showChatDiff ? (
                 <div
                   className="flex-1 px-4 pt-4 pb-4 overflow-y-auto scroll-premium cursor-text"
                   onClick={() => { setWriteEditing(true); setTimeout(() => writeTextareaRef.current?.focus(), 0); }}
