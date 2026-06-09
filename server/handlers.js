@@ -744,7 +744,7 @@ async function generateSpeakingBundle(apiKey, topic = '') {
   };
 }
 
-const MIN_STOCK = 5;
+const MIN_STOCK = 1;
 
 // ── Supabase helper ──────────────────────────────────────────────────────────
 function getSupabase() {
