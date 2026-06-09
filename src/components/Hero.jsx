@@ -4124,15 +4124,17 @@ function DailyParisianPointsIndicator({ points, hideLabel = false }) {
   const increased = points > prevRef.current;
   React.useEffect(() => { prevRef.current = points; }, [points]);
 
+  const circleSize = hideLabel ? 'w-11 h-11' : 'w-14 h-14';
+  const numSize = hideLabel ? 'text-[15px]' : 'text-[18px]';
   return (
-    <div className="flex items-center gap-2 shrink-0 min-h-[42px]" aria-live="polite">
+    <div className="flex items-center gap-2 shrink-0" aria-live="polite">
       <motion.div
         // Pulse + green flash the whole disc when points go up
         animate={increased
           ? { scale: [1, 1.18, 1], boxShadow: ['0 0 0 0 rgba(22,163,74,0)', '0 0 0 6px rgba(22,163,74,0.25)', '0 0 0 0 rgba(22,163,74,0)'] }
           : { scale: 1 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-14 h-14 shrink-0 rounded-full border border-wine/30 bg-wine/10 flex items-center justify-center overflow-hidden"
+        className={`relative ${circleSize} shrink-0 rounded-full border border-wine/30 bg-wine/10 flex items-center justify-center overflow-hidden`}
       >
         {/* Flip-board: old number slides up & out, new number drops in from below */}
         <AnimatePresence mode="popLayout" initial={false}>
@@ -4142,7 +4144,7 @@ function DailyParisianPointsIndicator({ points, hideLabel = false }) {
             animate={{ y: '0%', opacity: 1 }}
             exit={{ y: '110%', opacity: 0 }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute font-stat text-[18px] tabular-nums leading-none text-wine"
+            className={`absolute font-stat ${numSize} tabular-nums leading-none text-wine`}
           >
             {points}
           </motion.span>
