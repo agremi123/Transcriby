@@ -730,9 +730,8 @@ function ComprehensionItem({ q, qi, firePointsDelta, narratorId = 'lea' }) {
           const chosen = answered === opt;
           const correct = opt === q.answer;
           const cls = answered
-            ? chosen && correct ? 'bg-green-50 border-green-400 text-green-700'
+            ? correct ? 'bg-green-50 border-green-400 text-green-700'
               : chosen ? 'bg-red-50 border-red-400 text-wine'
-              : correct ? 'bg-green-50/40 border-green-200 text-green-600'
               : 'border-line/30 text-navy/35'
             : 'border-line/50 text-navy/70 hover:border-wine/40 hover:bg-wine/5 cursor-pointer';
           return (
