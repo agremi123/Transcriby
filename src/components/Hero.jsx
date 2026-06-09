@@ -2837,7 +2837,18 @@ export function AudioDemoCard({
               /* ── Chat conversation thread ── */
               <div className="flex flex-col gap-4">
                 {chatHistory.map(msg => (
-                  msg.role === 'lea' ? (
+                  msg.role === 'word-card' ? (
+                    <div key={msg.id} className="px-3 py-2 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
+                      <div className="flex items-baseline gap-2 flex-wrap">
+                        <span className="font-display text-[17px] font-bold text-wine italic">« {msg.word} »</span>
+                        <span className="text-[12px] text-navy/50">{msg.meaning}</span>
+                        {parisianWordChallenge?.word === msg.word && (
+                          <span className="ml-auto text-[10px] font-mono text-wine/50">{parisianChallengeAttempt}/3</span>
+                        )}
+                      </div>
+                      <p className="text-[12px] text-navy/55 italic mt-0.5 leading-snug">« {msg.example} »</p>
+                    </div>
+                  ) : msg.role === 'lea' ? (
                     <div key={msg.id} className="flex items-start gap-2.5">
                       <button
                         type="button"
