@@ -3782,7 +3782,7 @@ export function AudioDemoCard({
               { id: 'writing',    label: 'Défi writing' },
             ].map((t) => (
               <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
-                className={`text-[9.5px] tracking-wide uppercase px-1.5 py-3 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
+                className={`text-[11px] tracking-wide uppercase px-3 py-3 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
                 {t.label}
               </button>
             ))}
