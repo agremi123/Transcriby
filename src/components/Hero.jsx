@@ -4273,18 +4273,10 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
 
   React.useEffect(() => { setTranslateActive(false); setRevealedBatchCount(0); setPageIndex(0); }, [transcript]);
 
-  // Split transcript into fixed word-count pages
-  const pages = React.useMemo(() => {
-    if (!transcript) return [''];
-    const words = transcript.split(/\s+/);
-    const result = [];
-    for (let i = 0; i < words.length; i += WORDS_PER_PAGE) {
-      result.push(words.slice(i, i + WORDS_PER_PAGE).join(' '));
-    }
-    return result.length ? result : [''];
-  }, [transcript]);
-  const totalPages = pages.length;
-  const currentPageText = pages[pageIndex] || '';
+  // Normalize transcript (Deepgram flat string, or old scraped text with newlines)
+  const normalizedTranscript = React.useMemo(() =>
+    (transcript || '').replace(/\s*\n+\s*/g, ' ').trim()
+  , [transcript]);
 
   const hintBatches = React.useMemo(() => {
     const b = [];
