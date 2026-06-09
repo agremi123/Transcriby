@@ -5408,6 +5408,23 @@ export default function Hero() {
     }
   }, [practiceTopic, practiceType, effectiveLevel]);
 
+  const loadNewWritingChallenge = React.useCallback(() => {
+    setWritingLoading(true);
+    setWritingNarrator(Math.random() < 0.5 ? 'lea' : 'jules');
+    fetch('/api/writing-prompt', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: practiceTopic || '', learnerLevel: effectiveLevel || 'B1' }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        setWritingPrompt(data.prompt || '');
+        setWritingTips(data.tips || { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] });
+        setWritingWordTarget(data.wordTarget || 80);
+        setWritingLoading(false);
+      })
+      .catch(() => setWritingLoading(false));
+  }, [practiceTopic, effectiveLevel]);
+
   const [introNarrator, setIntroNarrator] = React.useState(null);
   const [introPlaying, setIntroPlaying] = React.useState(null); // null | 'lea' | 'jules'
   const [introPlaybackTime, setIntroPlaybackTime] = React.useState(null);
