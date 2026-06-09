@@ -738,6 +738,7 @@ function ComprehensionItem({ q, qi, firePointsDelta, narratorId = 'lea' }) {
   return (
     <div className="space-y-1.5">
       <p className="font-display text-[13px] text-navy leading-snug">
+        <span className="font-semibold text-wine/80 mr-1 tabular-nums">{qi + 1})</span>
         <TranslatableText text={q.question} narratorId={narratorId} />
       </p>
       <div className="space-y-1">
