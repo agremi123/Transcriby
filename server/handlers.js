@@ -484,20 +484,16 @@ async function generateReadingBundle(apiKey) {
   const allItems = feedResults.flat().filter(i => i.title && (i.description || i.content));
   if (allItems.length === 0) throw new Error('No RSS items');
 
-  const itemSummaries = allItems.slice(0, 60).map((item, i) =>
-    `[${i}] ${item.feedName} — ${item.title}\n${(item.description || '').slice(0, 200)}`
-  ).join('\n\n');
-
-  const { index } = await claudeJSON({
-    apiKey, maxTokens: 20,
-    system: 'Pick any interesting article. Reply ONLY with raw JSON: {"index": <integer>}',
-    user: itemSummaries,
-  });
-  const idx = Math.min(Math.max(parseInt(index, 10) || 0, 0), allItems.length - 1);
-  const chosen = allItems[idx];
+  // Pick a random recent article — skips the slow ~6k-token Claude "pick" call.
+  // Prefer items with a substantial description so the extract has enough to work with.
+  const substantial = allItems.filter(i => (i.description || i.content || '').length > 120);
+  const pool = substantial.length ? substantial : allItems;
+  const chosen = pool[Math.floor(Math.random() * pool.length)];
 
   let rawText = '';
-  if (chosen.link) rawText = await fetchArticleBody(chosen.link);
+  if (chosen.link) {
+    try { rawText = await fetchArticleBody(chosen.link); } catch { rawText = ''; }
+  }
   if (rawText.length < 200) rawText = chosen.content || chosen.description || '';
   // Strip CJK characters that can appear in scraped page sidebars/ads
   rawText = rawText.replace(/[　-鿿가-힯豈-﫿]/g, '').slice(0, 6000);
