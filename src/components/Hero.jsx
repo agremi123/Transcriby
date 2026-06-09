@@ -4116,7 +4116,7 @@ function VocabExercise({ vocab, onGoodAnswer }) {
 }
 
 
-const HINT_COST = 5; // Parisianism points per extra hint
+const HINT_COST = 1; // Parisianism points per extra batch of translations
 
 function DailyParisianPointsIndicator({ points, hideLabel = false }) {
   const prevRef = React.useRef(points);
