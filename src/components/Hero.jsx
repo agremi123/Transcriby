@@ -930,7 +930,10 @@ export function AudioDemoCard({
 
   // Parisian word chat challenge (Discover → Chat tab flow)
   const [parisianWordChallenge, setParisianWordChallenge] = React.useState(null);
+  const parisianWordChallengeRef = React.useRef(null); // stable ref for async effect
   const [parisianWordChallengeLoading, setParisianWordChallengeLoading] = React.useState(false);
+  const [parisianChallengeAttempt, setParisianChallengeAttempt] = React.useState(0);
+  const parisianChallengeAttemptRef = React.useRef(0);
 
   // Chat tab intro (Léa introduces herself and asks a question)
   const chatIntroPlayedRef = React.useRef(false);
