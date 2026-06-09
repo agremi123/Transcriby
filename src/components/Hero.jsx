@@ -4308,20 +4308,18 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
 
   // Syllable weights for every word — used as fallback when no Deepgram timings
   const allWordWeights = React.useMemo(() => {
-    if (!transcript) return [];
-    return transcript.split(/\s+/).filter(Boolean).map(frSyllables);
-  }, [transcript]);
+    if (!normalizedTranscript) return [];
+    return normalizedTranscript.split(/\s+/).filter(Boolean).map(frSyllables);
+  }, [normalizedTranscript]);
   const totalWeight = React.useMemo(() => allWordWeights.reduce((s, w) => s + w, 0), [allWordWeights]);
 
-  const pageOffset = pageIndex * WORDS_PER_PAGE;
-
   // Click a word → seek audio to its exact (Deepgram) or estimated (syllable-weighted) position
-  const seekToWord = (globalWordIdx) => {
+  const seekToWord = (wordIdx) => {
     if (!audioRef.current) return;
-    if (wordTimings && wordTimings[globalWordIdx]) {
-      audioRef.current.currentTime = wordTimings[globalWordIdx].start + clipStart;
+    if (wordTimings && wordTimings[wordIdx]) {
+      audioRef.current.currentTime = wordTimings[wordIdx].start + clipStart;
     } else if (effectiveDuration && totalWeight) {
-      const wBefore = allWordWeights.slice(0, globalWordIdx).reduce((s, w) => s + w, 0);
+      const wBefore = allWordWeights.slice(0, wordIdx).reduce((s, w) => s + w, 0);
       audioRef.current.currentTime = (wBefore / totalWeight) * effectiveDuration + clipStart;
     }
   };
