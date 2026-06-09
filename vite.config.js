@@ -589,8 +589,8 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
           word: cached.word,
           meaning: cached.meaning,
           example: cached.example,
-          exampleTranslation: cached.exampleTranslation,
-          audioUrl: cached.audioUrl,
+          exampleTranslation: cached.exampletranslation ?? cached.exampleTranslation ?? '',
+          audioUrl: cached.audiourl ?? cached.audioUrl ?? null,
         };
         res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(parsed));
