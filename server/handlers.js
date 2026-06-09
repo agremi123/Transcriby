@@ -868,7 +868,7 @@ export async function handleSpeakingPrompt(body) {
       const row = rows[0];
       supabase.from('speaking_prompts').update({ served: true }).eq('id', row.id).then(() => {});
       triggerReplenish();
-      return { statusCode: 200, body: { narratorId: row.narrator_id, openingLine: row.opening_line, openingLineTranslation: row.opening_line_translation, topicLabel: row.topic_label } };
+      return { statusCode: 200, body: { narratorId: row.narrator_id, openingLine: row.opening_line, openingLineTranslation: row.opening_line_translation, topicLabel: row.topic_label, targetGrammar: row.target_grammar || null, targetVocab: row.target_vocab || null } };
     }
   }
 
@@ -878,7 +878,7 @@ export async function handleSpeakingPrompt(body) {
     if (supabase) {
       supabase.from('speaking_prompts').insert([{ ...bundle, served: true }]).then(() => {});
     }
-    return { statusCode: 200, body: { narratorId: bundle.narrator_id, openingLine: bundle.opening_line, openingLineTranslation: bundle.opening_line_translation, topicLabel: bundle.topic_label } };
+    return { statusCode: 200, body: { narratorId: bundle.narrator_id, openingLine: bundle.opening_line, openingLineTranslation: bundle.opening_line_translation, topicLabel: bundle.topic_label, targetGrammar: bundle.target_grammar, targetVocab: bundle.target_vocab } };
   } catch {
     return { statusCode: 200, body: empty };
   }
