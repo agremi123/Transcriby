@@ -1164,7 +1164,10 @@ export function AudioDemoCard({
     }
     if (activeTab !== 'transcript') {
       setParisianWordChallenge(null);
+      parisianWordChallengeRef.current = null;
       setParisianWordChallengeLoading(false);
+      setParisianChallengeAttempt(0);
+      parisianChallengeAttemptRef.current = 0;
     }
   }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
