@@ -1599,6 +1599,7 @@ export default defineConfig(() => {
           server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY, env.INNERFRENCH_COOKIE));
           server.middlewares.use(speakingPromptMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
+          server.middlewares.use(writingReviewMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(translateWordMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(elevenLabsTtsMiddleware(env.ELEVENLABS_API_KEY));
@@ -1617,6 +1618,7 @@ export default defineConfig(() => {
           server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY, env.INNERFRENCH_COOKIE));
           server.middlewares.use(speakingPromptMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
+          server.middlewares.use(writingReviewMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(translateWordMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(elevenLabsTtsMiddleware(env.ELEVENLABS_API_KEY));
