@@ -1446,14 +1446,21 @@ function speakingPromptMiddleware(apiKey) {
       const name = narratorId === 'lea' ? 'Léa' : 'Jules';
       const d = await claudeCall('speaking/opener', apiKey, {
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 200,
-        system: `You are ${name}, a native Parisian French speaker. Generate a warm, natural conversation opener in French (2-3 sentences, B1-B2 level) to start a conversation about the given topic with a French learner. Make it engaging and culturally Parisian. Return ONLY raw JSON: {"openingLine":"...","openingLineTranslation":"English translation of openingLine","topicLabel":"short label for the topic in French (3-5 words)"}`,
+        max_tokens: 600,
+        system: `You are ${name}, a Parisian French speaking coach designing a practice challenge for a B1-B2 learner about the given topic. Design: 1) ONE grammar structure to practice (e.g. passé composé, subjonctif, pronoms relatifs, comparatifs). 2) THREE useful French words/expressions to use. 3) A warm, natural opening QUESTION in French that pushes the learner to use that grammar and those words in their spoken answer. Return ONLY raw JSON: {"openingLine":"...","openingLineTranslation":"English","topicLabel":"short FR label","grammarPoint":"FR name","grammarHint":"short English hint","vocab":[{"word":"FR","meaning":"English"}]}`,
         messages: [{ role: 'user', content: `Topic: ${topic}` }],
       });
       let raw = d.content?.[0]?.text?.trim() || '{}';
       raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       const parsed = JSON.parse(raw);
-      res.end(JSON.stringify({ narratorId, openingLine: parsed.openingLine || '', openingLineTranslation: parsed.openingLineTranslation || '', topicLabel: parsed.topicLabel || topic }));
+      res.end(JSON.stringify({
+        narratorId,
+        openingLine: parsed.openingLine || '',
+        openingLineTranslation: parsed.openingLineTranslation || '',
+        topicLabel: parsed.topicLabel || topic,
+        targetGrammar: (parsed.grammarPoint || parsed.grammarHint) ? { point: parsed.grammarPoint || '', hint: parsed.grammarHint || '' } : null,
+        targetVocab: Array.isArray(parsed.vocab) ? parsed.vocab.slice(0, 4) : null,
+      }));
     } catch { res.end(JSON.stringify({ narratorId: 'lea', openingLine: '', topicLabel: topic })); }
   };
 }
