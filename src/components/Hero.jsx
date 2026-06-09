@@ -2433,7 +2433,7 @@ export function AudioDemoCard({
               <span className="font-display text-[17px] font-bold text-wine leading-none tabular-nums">
                 {dailyParisianPoints}
               </span>
-              <span className="text-[7px] font-mono tracking-wider uppercase text-wine/60 leading-tight">pts</span>
+              <span className="text-[6.5px] font-mono tracking-wide uppercase text-wine/60 leading-tight">points</span>
             </div>
             {pointsDelta && (
               <span
@@ -3937,7 +3937,7 @@ export function AudioDemoCard({
                   <span className="font-display text-[17px] font-bold text-wine leading-none tabular-nums">
                     {dailyParisianPoints}
                   </span>
-                  <span className="text-[7px] font-mono tracking-wider uppercase text-wine/60 leading-tight">pts</span>
+                  <span className="text-[6.5px] font-mono tracking-wide uppercase text-wine/60 leading-tight">points</span>
                 </div>
                 {pointsDelta && (
                   <span key={pointsDelta.id} className="absolute -top-4 left-1/2 -translate-x-1/2 font-display font-bold text-[13px] whitespace-nowrap pointer-events-none"
