@@ -5096,6 +5096,8 @@ export default function Hero() {
           setSpeakingOpeningLine(data.openingLine || '');
           setSpeakingOpeningTranslation(data.openingLineTranslation || '');
           setSpeakingTopicLabel(data.topicLabel || practiceTopic);
+          setSpeakingTargetGrammar(data.targetGrammar || null);
+          setSpeakingTargetVocab(data.targetVocab || null);
           setSpeakingLoading(false);
         })
         .catch(() => setSpeakingLoading(false));
