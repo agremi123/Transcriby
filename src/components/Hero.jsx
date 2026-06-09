@@ -4267,11 +4267,10 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
   // Effective duration is the clip window length
   const clipLength = clipEnd - clipStart;
   const effectiveDuration = clipLength > 0 ? clipLength : (duration ? Math.min(duration, clipEnd) : clipEnd);
-  const [pageIndex, setPageIndex] = React.useState(0);
   const [translateActive, setTranslateActive] = React.useState(false);
   const [revealedBatchCount, setRevealedBatchCount] = React.useState(0);
 
-  React.useEffect(() => { setTranslateActive(false); setRevealedBatchCount(0); setPageIndex(0); }, [transcript]);
+  React.useEffect(() => { setTranslateActive(false); setRevealedBatchCount(0); }, [transcript]);
 
   // Normalize transcript (Deepgram flat string, or old scraped text with newlines)
   const normalizedTranscript = React.useMemo(() =>
