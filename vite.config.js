@@ -814,7 +814,7 @@ function readingMiddleware(apiKey, openrouterKey) {
         claudeCall('reading/vocab', apiKey, {
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 700,
-          system: `From the given French passage, pick exactly 5 difficult or interesting vocabulary words. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"...","sentence":"...___..."}]}`,
+          system: `From the given French passage, pick exactly 5 difficult or interesting vocabulary words. For each: "definition" MUST be the English translation/meaning (in English, not French), and write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"French word","definition":"English meaning","sentence":"...___..."}]}`,
           messages: [{ role: 'user', content: passage }],
         }),
       ]);
