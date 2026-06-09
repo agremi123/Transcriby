@@ -634,15 +634,16 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
       }
 
       // 5. Save to database
+      // parisian_words columns are all lowercase in Postgres
       const entry = {
         id: Date.now(),
         word: parsed.word,
         meaning: parsed.meaning,
         example: parsed.example,
-        exampleTranslation: parsed.exampleTranslation,
-        voiceId: ELEVENLABS_VOICES.stella,
-        audioUrl,
-        createdAt: new Date().toISOString(),
+        exampletranslation: parsed.exampleTranslation || '',
+        voiceid: ELEVENLABS_VOICES.stella,
+        audiourl: audioUrl,
+        createdat: new Date().toISOString(),
       };
       saveEntry(entry);
 
