@@ -807,8 +807,8 @@ function readingMiddleware(apiKey, openrouterKey) {
       const [qData, vData] = await Promise.all([
         claudeCall('reading/questions', apiKey, {
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 700,
-          system: `Create exactly 4 comprehension questions based on the French passage: 2 fill-in-the-blank and 2 multiple choice. Return ONLY raw JSON, no markdown: {"questions":[{"type":"fill","sentence":"sentence with ___ blank","answer":"word","hint":"base form"},{"type":"fill","sentence":"another with ___","answer":"word","hint":"base"},{"type":"mcq","question":"Question?","options":["A","B","C","D"],"answer":"A"},{"type":"mcq","question":"Question2?","options":["A","B","C","D"],"answer":"B"}]}`,
+          max_tokens: 1600,
+          system: `Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. Each has 4 options and one correct answer. For each, add "explanation": one or two clear ENGLISH sentences explaining why the correct answer is right and why the other options are wrong. Return ONLY raw JSON, no markdown: {"questions":[{"question":"Question en français ?","options":["A","B","C","D"],"answer":"A","explanation":"In English: A is correct because…; the others are wrong because…"}]}`,
           messages: [{ role: 'user', content: passage }],
         }),
         claudeCall('reading/vocab', apiKey, {
