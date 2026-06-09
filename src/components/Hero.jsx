@@ -890,6 +890,9 @@ export function AudioDemoCard({
   const [writeCorrecting, setWriteCorrecting] = React.useState(false);
   const [writeEditing, setWriteEditing] = React.useState(true);
   const [writeSubmittedText, setWriteSubmittedText] = React.useState(null);
+  // Guided writing review flow: idle → judging → judged → correcting → corrected → explaining → explained
+  const [writeReview, setWriteReview] = React.useState({ stage: 'idle' });
+  const [writeReviewQuestion, setWriteReviewQuestion] = React.useState('');
   const writeTextareaRef = React.useRef(null);
   const writeBoxRef = React.useRef(null);
   const [speakCorrection, setSpeakCorrection] = React.useState(null);
