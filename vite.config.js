@@ -771,23 +771,24 @@ function readingMiddleware(apiKey, openrouterKey) {
       const allItems = feedResults.flat().filter(i => i.title && (i.description || i.content));
       if (allItems.length === 0) throw new Error('No RSS items fetched');
 
-      // Step 2: ask AI to pick the best matching article (returns index only)
-      const summaries = allItems.slice(0, 60).map((item, i) =>
-        `[${i}] ${item.feedName} — ${item.title}\n${(item.description || '').slice(0, 180)}`
-      ).join('\n\n');
-
-      const pickData = await openrouterCall('reading/pick', openrouterKey, {
-        max_tokens: 10,
-        system: 'Reply with ONLY the integer index of the article most relevant to the topic. No other text.',
-        messages: [{ role: 'user', content: `Topic: ${topic}\n\n${summaries}` }],
+      // Step 2: pick a relevant article LOCALLY (no slow ~6k-token AI call).
+      // Score by how many topic keywords appear in title/description, then pick
+      // randomly among the best-scoring (or any substantial item if no match).
+      const stop = new Set(['le','la','les','un','une','des','de','du','et','en','à','au','aux','pour','sur','dans','the','a','of']);
+      const kw = String(topic).toLowerCase().split(/[^a-zà-ÿ]+/).filter(w => w.length > 2 && !stop.has(w));
+      const substantial = allItems.filter(i => (i.description || i.content || '').length > 120);
+      const pool = substantial.length ? substantial : allItems;
+      const scored = pool.map(i => {
+        const hay = `${i.title} ${i.description || ''}`.toLowerCase();
+        return { i, score: kw.reduce((s, w) => s + (hay.includes(w) ? 1 : 0), 0) };
       });
-      const rawIdx = (pickData.content?.[0]?.text || '0').trim();
-      const idx = Math.min(Math.max(parseInt(rawIdx, 10) || 0, 0), allItems.length - 1);
-      const chosen = allItems[idx];
+      const maxScore = Math.max(0, ...scored.map(s => s.score));
+      const best = scored.filter(s => s.score === maxScore).map(s => s.i);
+      const chosen = best[Math.floor(Math.random() * best.length)];
 
       // Step 3: fetch full article page, fall back to RSS content
       let rawText = '';
-      if (chosen.link) rawText = await fetchArticleBody(chosen.link);
+      if (chosen.link) { try { rawText = await fetchArticleBody(chosen.link); } catch { rawText = ''; } }
       if (rawText.length < 200) rawText = (chosen.content || chosen.description || '');
       rawText = rawText.slice(0, 6000);
 
