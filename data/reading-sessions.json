@@ -1,5 +1,111 @@
 [
   {
+    "id": 1781091936807,
+    "topic": "La vie parisienne",
+    "title": "MOT pour Mots : le grand festival littéraire organisé par « le Nouvel Obs », « le Monde » et « Télérama » revient",
+    "passage": "Parrainé par Riad Sattouf, ce festival, qui propose une quarantaine d'événements gratuits, est de retour à La Villette, les 6 et 7 juin, pour sa cinquième édition. On pourra y croiser, entre autres, Paul Gasnier, Judith Godrèche, Philippe Jaenada, Ovidie, Daniel Pennac, Emilie Tronche, Eric Vuillard, Rebeka Warrior…\n\nPour la cinquième fois, les rédactions du « Nouvel Obs », du « Monde » et de « Télérama » proposent une évasion littéraire dans le cadre du festival MOT pour Mots, les samedi 6 et dimanche 7 juin à La Villette (Paris-19 e ). Cette année, ce joyeux week-end qui met à l'honneur la bande dessinée, le roman, le polar ou la poésie a pour parrain l'auteur et réalisateur Riad Sattouf, compagnon de longue date du « Nouvel Obs », où il a créé les aventures d'Esther. On le retrouvera en dialogue avec Théo Grosjean, le premier auteur qu'il édite aux Livres du Futur, mais aussi lors d'un concert dessiné avec la pianiste Vanessa Wagner. Au total, plus d'une quarantaine d'événements gratuits sont prévus : rencontres, tables rondes, lectures, masterclass et autres festivités. Parmi la cinquantaine d'auteurs invités, on pourra voir notamment Judith Godrèche, Daniel Pennac, Anna Mouglalis, Paul Gasnier, Rebeka Warrior, Cécile Coulon, Chantal Thomas, Emilie Tronche, Laura Vazquez, Eric Vuillard…\n\n11h30-12h30 : Promesses de BD, rencontre avec trois nouvelles plumes du 9 e art Avec Juliette Brocal, Camille Broutin et Baptiste Delengaigne 11h30-12h30 : Dominique Blanc lit « Un petit roman », de Lars Norén (éd. La Place) Avec Ovidie, Judith Godrèche et Séphora Pondi 13h30-14h30 : Les mots de passe de Daniel Pennac Avec Séphora Pondi, Agathe Charnet et Sarah Orokieta 13h30-14h30 : Des mots aux mets et vice-versa Avec Ryōko Sekiguchi, Adélie Vernhes et Jules Niang Avec Kaouther Adimi, Manal Salamé et Samira Negrouche 16h30-17h30 : Bleus, blancs, rouges (et noir) 16h30-17h30 : Trois histoires de premiers romans Avec Daniel Bourrion, Gabrielle de Tournemire et Ramsès Kefi 18h-19h : Conférence théâtrale « La Nuance, mode d'emploi » 18h-19h : Battle dessinée : Benjamin Bécue vs David Puls 18h-19h : Comprendre à défaut de pardonner 13h30-14h30 : Rencontre avec Jean-Christophe Deveney 13h30-14h30 : Dialogue avec Charlotte Casiraghi et Chantal Thomas Avec Charlotte Casiraghi et Chantal Thomas 13h30-14h30 : Françoise Gillard lit « la Maison vide », de Laurent Mauvig",
+    "source": "L'Obs",
+    "author": "BibliObs",
+    "date": "Thu, 04 Jun 2026 10:10:04 +0200",
+    "link": "https://www.nouvelobs.com/culture/20260603.OBS115483/mot-pour-mots-le-grand-festival-litteraire-organise-par-le-nouvel-obs-le-monde-et-telerama-revient.html",
+    "questions": [
+      {
+        "question": "Quel est le nom du festival littéraire qui se déroule à La Villette les 6 et 7 juin ?",
+        "options": [
+          "Festival MOT pour Mots",
+          "Festival Riad Sattouf",
+          "Festival de La Villette",
+          "Festival des Auteurs Parisiens"
+        ],
+        "answer": "Festival MOT pour Mots",
+        "explanation": "The text explicitly states 'le festival MOT pour Mots' takes place on June 6-7 at La Villette. The other options are either incorrect names or refer to other elements mentioned in the passage but are not the actual festival name."
+      },
+      {
+        "question": "Qui parraine le festival cette année ?",
+        "options": [
+          "Judith Godrèche",
+          "Riad Sattouf",
+          "Daniel Pennac",
+          "Théo Grosjean"
+        ],
+        "answer": "Riad Sattouf",
+        "explanation": "The passage states 'ce joyeux week-end...a pour parrain l'auteur et réalisateur Riad Sattouf.' While the other names are authors invited to the festival, only Riad Sattouf is identified as the festival's godfather/sponsor."
+      },
+      {
+        "question": "Combien d'événements gratuits sont proposés lors du festival ?",
+        "options": [
+          "Environ 30 événements",
+          "Environ 40 événements",
+          "Environ 50 événements",
+          "Environ 60 événements"
+        ],
+        "answer": "Environ 40 événements",
+        "explanation": "The text clearly states 'plus d'une quarantaine d'événements gratuits sont prévus,' which means more than about 40 events. The other numbers are either too low or too high."
+      },
+      {
+        "question": "Quel type de spectacle Riad Sattouf fera-t-il avec Vanessa Wagner ?",
+        "options": [
+          "Une table ronde",
+          "Un dialogue",
+          "Un concert dessiné",
+          "Une masterclass"
+        ],
+        "answer": "Un concert dessiné",
+        "explanation": "The passage states 'On le retrouvera en dialogue avec Théo Grosjean...mais aussi lors d'un concert dessiné avec la pianiste Vanessa Wagner.' The other options are types of events mentioned but not specifically associated with Riad Sattouf and Vanessa Wagner."
+      },
+      {
+        "question": "Quelles sont les trois publications qui organisent ce festival ?",
+        "options": [
+          "Le Monde, Télérama et Libération",
+          "Nouvel Obs, Le Monde et Libération",
+          "Nouvel Obs, Le Monde et Télérama",
+          "Nouvel Obs, Télérama et Libération"
+        ],
+        "answer": "Nouvel Obs, Le Monde et Télérama",
+        "explanation": "The text explicitly states 'les rédactions du « Nouvel Obs », du « Monde » et de « Télérama » proposent une évasion littéraire.' The other options include Libération, which is not mentioned as one of the organizing publications."
+      },
+      {
+        "question": "Quel est le pseudonyme de la série créée par Riad Sattouf au Nouvel Obs ?",
+        "options": [
+          "Les aventures de Théo",
+          "Les aventures d'Esther",
+          "Les aventures de La Villette",
+          "Les aventures du 9e art"
+        ],
+        "answer": "Les aventures d'Esther",
+        "explanation": "The passage states that Riad Sattouf 'a créé les aventures d'Esther' at Nouvel Obs. The other options are either fictional titles not mentioned in the text or refer to other elements in the passage."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "parrainé",
+        "definition": "sponsored or backed by",
+        "sentence": "Ce festival ___ par un auteur célèbre attire beaucoup de visiteurs."
+      },
+      {
+        "word": "évasion",
+        "definition": "escape or getaway",
+        "sentence": "Les lecteurs cherchent une ___ littéraire dans les livres de science-fiction."
+      },
+      {
+        "word": "joyeux",
+        "definition": "joyful or cheerful",
+        "sentence": "C'est un ___ week-end rempli de rencontres et d'événements culturels."
+      },
+      {
+        "word": "masterclass",
+        "definition": "an advanced training session or workshop",
+        "sentence": "Les participants peuvent assister à une ___ animée par un auteur renommé."
+      },
+      {
+        "word": "cinquantaine",
+        "definition": "about fifty or approximately fifty",
+        "sentence": "Une ___ d'auteurs différents participeront au festival cette année."
+      }
+    ],
+    "createdAt": "2026-06-10T11:45:36.807Z"
+  },
+  {
     "id": 1781091727781,
     "topic": "La vie parisienne",
     "title": "Préparer sa retraite : le PER est-il un bon placement ?",
