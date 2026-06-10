@@ -2576,8 +2576,8 @@ export function AudioDemoCard({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={fullscreen
         ? 'fixed inset-6 z-50 bg-paper flex overflow-hidden rounded-2xl'
-        : 'relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl'}
-      style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)', width: 640, minWidth: 640, maxWidth: 640, height: 500, minHeight: 500, maxHeight: 500, flexShrink: 0 }}
+        : 'relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0'}
+      style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)', height: 500, minHeight: 500, maxHeight: 500 }}
     >
       {/* Close button in fullscreen */}
       {fullscreen && (
