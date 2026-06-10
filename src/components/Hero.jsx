@@ -1186,10 +1186,19 @@ export function AudioDemoCard({
 
           // Build Léa's feedback message — never vanish silently: fall back to a
           // generic line if the API returned empty feedback.
+          const retryLines = isCorrect
+            ? [
+                `Bien joué, tu as utilisé « ${challenge.word} » ! Allez, tente une autre phrase !`,
+                `Nickel, « ${challenge.word} » est bien placé ! Vas-y, refais-m'en une !`,
+                `Parfait ! Encore une phrase avec « ${challenge.word} », pour voir ?`,
+              ]
+            : [
+                `Hmm, essaie encore d'utiliser « ${challenge.word} » dans une phrase !`,
+                `Pas tout à fait… Retente une phrase avec « ${challenge.word} » !`,
+                `Presque ! Vas-y, refais-moi une phrase avec « ${challenge.word} ».`,
+              ];
           let fullFeedback = feedback
-            || (isCorrect
-              ? `Bien joué, tu as utilisé « ${challenge.word} » ! Essaie encore une phrase.`
-              : `Hmm, essaie encore d'utiliser « ${challenge.word} » dans une phrase !`);
+            || retryLines[Math.floor(Math.random() * retryLines.length)];
 
           // On final attempt: append 2 example sentences
           if (isFinal && examples?.length) {
