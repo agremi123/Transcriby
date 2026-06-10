@@ -865,7 +865,7 @@ function readingMiddleware(apiKey, openrouterKey) {
       const extractData = await claudeCall('reading/extract', apiKey, {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 900,
-        system: 'Extract the most coherent and readable passage from this real French article. Copy sentences verbatim — do NOT rephrase, summarise or add anything. The passage must be at least 15 sentences long (aim for 400-600 words). Organise it into natural paragraphs separated by a blank line (\\n\\n): one short intro paragraph, then 2-3 body paragraphs. Return only the extracted French text with paragraph breaks.',
+        system: 'Extract the most coherent and readable passage from this real French article. Copy sentences verbatim — do NOT rephrase, summarise or add anything. The passage must be at least 15 sentences long (aim for 400-600 words). Organise it into natural paragraphs separated by a blank line (\\n\\n): one short intro paragraph, then 2-3 body paragraphs. Return only the extracted French text with paragraph breaks. If the article is shorter than that, simply extract everything available — NEVER apologize, comment, or add headers/separators; output ONLY French article text.',
         messages: [{ role: 'user', content: `Title: ${chosen.title}\n\n${rawText}` }],
       });
       // Clean the extraction: drop markdown headers, "---" separators, and any
