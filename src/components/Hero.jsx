@@ -2577,8 +2577,10 @@ export function AudioDemoCard({
               const res = await fetch('/api/word', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
               const data = await res.json();
               if (!data?.word) return;
-              const narratorId = Math.random() < 0.5 ? 'lea' : 'jules';
-              const intro = `Voici ton mot parisien du jour : « ${data.word} ». Ça veut dire "${data.meaning}". Par exemple : "${data.example}". Essaie maintenant de l'utiliser dans une phrase !`;
+              // Narrator + explanation come from the DB so the pre-generated
+              // audio in the narrator-audio bucket matches exactly (no TTS wait)
+              const narratorId = data.narratorId || (Math.random() < 0.5 ? 'lea' : 'jules');
+              const intro = data.explanation || `Voici ton mot parisien du jour : « ${data.word} ». Ça veut dire "${data.meaning}". Par exemple : "${data.example}". Essaie maintenant de l'utiliser dans une phrase !`;
               const challenge = { word: data.word, meaning: data.meaning, example: data.example, exampleTranslation: data.exampleTranslation, narratorId };
               setParisianWordChallenge(challenge);
               parisianWordChallengeRef.current = challenge;
