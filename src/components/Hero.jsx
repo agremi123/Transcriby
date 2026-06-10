@@ -3004,7 +3004,13 @@ export function AudioDemoCard({
                         )}
                       </button>
                       <p className="font-display text-[16px] italic text-navy/70 leading-snug pt-1">
-                        {chatIntroLine?.text ?? 'Bonjour ! Ask me anything in French — I\'ll help you improve. 🗼'}
+                        {wordPlaying && chatIntroLine?.text && parisianSpeakingText === chatIntroLine.text.trim() && parisianTimings.length > 0
+                          ? parisianTimings.map((w, i) => (
+                              <span key={i} style={wordHighlightInlineStyle(isTimedWordActive(parisianTimings, i, parisianPlaybackTime))}>
+                                {w.word}{' '}
+                              </span>
+                            ))
+                          : (chatIntroLine?.text ?? 'Bonjour ! Ask me anything in French — I\'ll help you improve. 🗼')}
                       </p>
                     </div>
                   )}
