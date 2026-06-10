@@ -12,7 +12,7 @@ import {
   Star,
 } from './atoms';
 import { fetchNarratorAudio, connectNarratorSource, resolveClientNarrator } from '../lib/narratorAudio';
-import { buildWordTimings, playDecodedBuffer } from '../lib/speechHighlight';
+import { buildWordTimings, playDecodedBuffer, isTimedWordActive, wordHighlightInlineStyle } from '../lib/speechHighlight';
 import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from '../lib/siteAudio';
 import { HighlightedSpeech } from '../lib/HighlightedSpeech';
 import { NarratorHoverText } from '../lib/NarratorHoverText';
