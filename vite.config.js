@@ -608,8 +608,28 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
       } catch {}
     }
 
+    // Pre-warm the narrator's explanation audio in the narrator-audio bucket
+    // so "Discover a Parisian word" plays it with zero loading time.
+    const narratorId = narratorForWord(parsed.word);
+    const explanation = buildWordIntro(parsed);
+    if (elevenLabsKey) {
+      try {
+        const { slug, voiceId } = resolveNarrator(narratorId);
+        const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+          method: 'POST',
+          headers: { 'xi-api-key': elevenLabsKey, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
+          body: JSON.stringify({
+            text: explanation,
+            model_id: 'eleven_multilingual_v2',
+            voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
+          }),
+        });
+        if (elRes.ok) await saveNarratorAudio(slug, voiceId, explanation, Buffer.from(await elRes.arrayBuffer()));
+      } catch {}
+    }
+
     // parisian_words columns are all lowercase in Postgres
-    await saveEntry({
+    const entry = {
       id: Date.now(),
       word: parsed.word,
       meaning: parsed.meaning,
@@ -618,8 +638,13 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
       voiceid: ELEVENLABS_VOICES.lea,
       audiourl: audioUrl,
       createdat: new Date().toISOString(),
-    });
-    return { ...parsed, audioUrl };
+      explanation,
+      narratorid: narratorId,
+    };
+    try {
+      await saveEntry(entry);
+    } catch {}
+    return { ...parsed, audioUrl, explanation, narratorId };
   }
 
   return async (req, res, next) => {
