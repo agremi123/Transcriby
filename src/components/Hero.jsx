@@ -5235,7 +5235,8 @@ function WritingPracticeExercise({ exercise, narratorId, onScoreDelta, context }
   const [picked, setPicked] = React.useState(null);
   const [done, setDone] = React.useState(false);
   if (!exercise || !exercise.type) return null;
-  const norm = (s) => (s || '').trim().toLowerCase().replace(/[.!?]$/, '');
+  // The AI sometimes returns answer as a number or array — coerce to string
+  const norm = (s) => String(Array.isArray(s) ? s[0] ?? '' : s ?? '').trim().toLowerCase().replace(/[.!?]$/, '');
 
   if (exercise.type === 'mcq') {
     return (
