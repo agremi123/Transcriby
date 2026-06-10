@@ -1,5 +1,111 @@
 [
   {
+    "id": 1781091727781,
+    "topic": "La vie parisienne",
+    "title": "Préparer sa retraite : le PER est-il un bon placement ?",
+    "passage": "Avec pour objectif d'accroître ses revenus après la vie professionnelle, le plan d'épargne retraite permet d'abaisser, chaque année, sa facture fiscale.\n\nBeaucoup de communications autour du plan d'épargne retraite (PER) vantent les avantages fiscaux qui y sont attachés. De fait, chaque année, le cumul des versements effectués sur ce plan est déductible du revenu imposable, dans la limite d'un plafond. Concernant les versements effectués en 2026, l'avantage fiscal ne pourra pas, pour les salariés, excéder 10 % des revenus professionnels (nets de cotisations sociales) de 2025, avec un plafond de déduction maximale de 37 680 euros. Pour un travailleur non salarié, le plafond est de 88 911 euros. Si ces montants sont dépassés, la solution est de reporter l'excédent au cours des trois années suivantes… et même des cinq années suivantes à partir de l'an prochain. Une disposition intéressante, d'autant plus que les plafonds du conjoint (marié ou pacsé) sont utilisables si lui-même ne s'en sert pas.\n\nChangement notable, cette année : les versements effectués après les 70 ans du titulaire ne peuvent plus donner lieu à une défiscalisation. Mais attention ! D'une part, cet argent reste indisponible jusqu'à ce que vous preniez votre retraite, sauf dans certains cas de retrait anticipé.",
+    "source": "L'Obs",
+    "author": "Françoise Paoletti-Benaziez",
+    "date": "Sun, 07 Jun 2026 07:45:12 +0200",
+    "link": "https://www.nouvelobs.com/economie/20260607.OBS115575/preparer-sa-retraite-le-per-est-il-un-bon-placement.html",
+    "questions": [
+      {
+        "question": "Quel est l'objectif principal du plan d'épargne retraite (PER) mentionné dans le passage ?",
+        "options": [
+          "Accroître ses revenus après la vie professionnelle et abaisser sa facture fiscale",
+          "Investir en bourse pour obtenir des rendements élevés",
+          "Remplacer complètement les cotisations sociales",
+          "Augmenter le salaire net durant la vie active"
+        ],
+        "answer": "A",
+        "explanation": "The passage explicitly states that the PER allows one to 'accroître ses revenus après la vie professionnelle' (increase income after working life) and 'abaisser, chaque année, sa facture fiscale' (lower one's tax bill each year). The other options are not mentioned in the text."
+      },
+      {
+        "question": "Quel est le plafond de déduction fiscale pour les versements de 2026 pour un salarié ?",
+        "options": [
+          "37 680 euros",
+          "88 911 euros",
+          "10 % des revenus sans limite maximale",
+          "75 360 euros"
+        ],
+        "answer": "A",
+        "explanation": "The passage clearly states that for salaried employees ('salariés'), the maximum deduction limit for 2026 contributions is 37,680 euros. The 88,911 euros figure is specifically for self-employed workers ('travailleur non salarié'), not employees."
+      },
+      {
+        "question": "Que peut-on faire de l'excédent de versements au-delà du plafond autorisé ?",
+        "options": [
+          "Le reporter au cours des trois années suivantes, ou cinq années à partir de l'année prochaine",
+          "Le retirer immédiatement sans pénalité",
+          "Le perdre définitivement",
+          "L'utiliser pour réduire les dettes sociales"
+        ],
+        "answer": "A",
+        "explanation": "The text states that 'la solution est de reporter l'excédent au cours des trois années suivantes… et même des cinq années suivantes à partir de l'an prochain.' The other options are not supported by the passage."
+      },
+      {
+        "question": "À partir de quel âge les versements ne donnent-ils plus lieu à une défiscalisation ?",
+        "options": [
+          "Après 70 ans",
+          "Après 65 ans",
+          "Après 75 ans",
+          "Après 60 ans"
+        ],
+        "answer": "A",
+        "explanation": "The passage explicitly states 'cette année : les versements effectués après les 70 ans du titulaire ne peuvent plus donner lieu à une défiscalisation.' This is a new change mentioned in the text."
+      },
+      {
+        "question": "Le plafond du conjoint peut-il être utilisé dans le PER ?",
+        "options": [
+          "Oui, si le conjoint ne l'utilise pas lui-même",
+          "Non, jamais",
+          "Oui, mais seulement pour les salariés",
+          "Oui, mais seulement jusqu'à 50 % du plafond"
+        ],
+        "answer": "A",
+        "explanation": "The text states 'les plafonds du conjoint (marié ou pacsé) sont utilisables si lui-même ne s'en sert pas.' This indicates that the spouse's allowance can be used if the spouse does not use it themselves."
+      },
+      {
+        "question": "Jusqu'à quand l'argent versé sur le PER reste-t-il généralement indisponible ?",
+        "options": [
+          "Jusqu'à ce que vous preniez votre retraite, sauf dans certains cas de retrait anticipé",
+          "Jusqu'à l'âge de 60 ans",
+          "Jusqu'à 5 ans après le versement",
+          "Indéfiniment"
+        ],
+        "answer": "A",
+        "explanation": "The passage states 'cet argent reste indisponible jusqu'à ce que vous preniez votre retraite, sauf dans certains cas de retrait anticipé.' This clearly indicates the money is locked until retirement, with limited exceptions for early withdrawal."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "accroître",
+        "definition": "to increase, to grow",
+        "sentence": "Avec pour objectif d'___ ses revenus après la vie professionnelle, le plan d'épargne retraite permet d'abaisser sa facture fiscale."
+      },
+      {
+        "word": "abaisser",
+        "definition": "to lower, to reduce",
+        "sentence": "Le plan d'épargne retraite permet d'___ chaque année sa facture fiscale."
+      },
+      {
+        "word": "déductible",
+        "definition": "deductible, able to be subtracted",
+        "sentence": "Le cumul des versements effectués sur ce plan est ___ du revenu imposable."
+      },
+      {
+        "word": "plafond",
+        "definition": "ceiling, maximum limit",
+        "sentence": "Pour les salariés, l'avantage fiscal ne pourra pas excéder 10 % des revenus, avec un ___ de déduction maximale de 37 680 euros."
+      },
+      {
+        "word": "défiscalisation",
+        "definition": "tax exemption, tax reduction benefit",
+        "sentence": "Les versements effectués après les 70 ans du titulaire ne peuvent plus donner lieu à une ___."
+      }
+    ],
+    "createdAt": "2026-06-10T11:42:07.781Z"
+  },
+  {
     "id": 1781091537488,
     "topic": "La vie parisienne",
     "title": "CGT et CFDT réclament la transparence des salaires, Rachida Dati évite Emmanuel Grégoire… Retrouvez les indiscrétions du « Nouvel Obs »",
