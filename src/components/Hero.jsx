@@ -2773,8 +2773,9 @@ export function AudioDemoCard({
                                   playParisianWord(null, n.id);
                                 }
                               }}
-                              className={`relative w-14 h-14 rounded-full overflow-hidden transition-all duration-200 ${narrator === n.id && wordPlaying ? 'ring-2 ring-wine shadow-md scale-110' : narrator === n.id ? 'ring-2 ring-wine/50 shadow-sm scale-105' : 'ring-1 ring-line/40 opacity-55 hover:opacity-90 hover:scale-105'}`}>
+                              className={`group relative w-14 h-14 rounded-full overflow-hidden transition-all duration-200 ${narrator === n.id && wordPlaying ? 'ring-2 ring-wine shadow-md scale-110' : narrator === n.id ? 'ring-2 ring-wine/50 shadow-sm scale-105' : 'ring-1 ring-line/40 opacity-55 hover:opacity-90 hover:scale-105'}`}>
                               <img src={n.src} alt={n.label} className="w-full h-full object-cover object-top" />
+                              {!(wordPlaying && narrator === n.id) && <PortraitHoverPlay />}
                               {wordPlaying && narrator === n.id && (
                                 <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
                               )}
