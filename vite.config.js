@@ -578,12 +578,10 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
         }
       }
 
-      // 2. Decide: 70% cached, 30% new generation (gets cheaper as you use it!)
-      const useCached = cachedWords.length > 0 && Math.random() < 0.7;
+      // 2. Stock-first: always serve instantly from DB, restock in background
       let parsed;
 
-      if (useCached) {
-        // Pick random cached word
+      if (cachedWords.length > 0) {
         const cached = cachedWords[Math.floor(Math.random() * cachedWords.length)];
         parsed = {
           word: cached.word,
@@ -594,10 +592,12 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
         };
         res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(parsed));
+        // Background top-up so the stock keeps growing — never blocks the response
+        generateAndSaveWord(cachedWords.map(w => w.word)).catch(() => {});
         return;
       }
 
-      // 3. Generate new word with DeepSeek
+      // 3. Empty stock: generate synchronously with DeepSeek
       const claudeData = await openrouterCall('word/generate', openrouterKey, {
         max_tokens: 250,
         system: 'You are a French language teacher specializing in authentic Parisian French. Pick a vivid, interesting French word or expression — something a Parisian would actually say, not too basic, not too rare. Provide: the word/expression, its short English meaning, one natural example sentence in French, and an English translation of that sentence. Respond with raw JSON only, no markdown: {"word":"...","meaning":"...","example":"...","exampleTranslation":"..."}',
@@ -1648,7 +1648,7 @@ export default defineConfig(() => {
           server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(writingReviewMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(translateWordMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
-          server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY));
+          server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(elevenLabsTtsMiddleware(env.ELEVENLABS_API_KEY));
         },
         configurePreviewServer(server) {
@@ -1667,7 +1667,7 @@ export default defineConfig(() => {
           server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(writingReviewMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(translateWordMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
-          server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY));
+          server.middlewares.use(wordMiddleware(env.ANTHROPIC_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(elevenLabsTtsMiddleware(env.ELEVENLABS_API_KEY));
         },
       },
