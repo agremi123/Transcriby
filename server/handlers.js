@@ -146,6 +146,7 @@ export async function handleElevenLabsTts(body) {
 
   const cached = await getCachedNarratorAudio(slug, voiceId, text);
   if (cached) {
+    logNarratorLine(slug, text, cached.audioUrl);
     return {
       statusCode: 200,
       headers: {
