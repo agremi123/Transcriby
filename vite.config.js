@@ -561,9 +561,14 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
       return;
     }
     try {
-      const { error } = await supabase
+      let { error } = await supabase
         .from('parisian_words')
         .insert([entry]);
+      // Migration 008 not run yet → retry without the new columns
+      if (error && /explanation|narratorid/i.test(error.message || '')) {
+        const { explanation, narratorid, ...legacy } = entry;
+        ({ error } = await supabase.from('parisian_words').insert([legacy]));
+      }
       if (error) console.error('[word] Supabase insert error:', error);
     } catch (err) {
       console.error('[word] Failed to save entry to Supabase:', err);
