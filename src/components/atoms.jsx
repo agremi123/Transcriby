@@ -86,7 +86,7 @@ export function ParisianExperienceHint({ className = '', showBadge = false }) {
         duration: 0.5,
         x: { repeat: Infinity, duration: 1.8, ease: 'easeInOut', delay: 1.1 },
       }}
-      className={`absolute left-full ml-2.5 inset-y-0 flex items-center gap-2 pointer-events-none ${className}`.trim()}
+      className={`absolute left-full ml-2.5 inset-y-0 hidden sm:flex items-center gap-2 pointer-events-none ${className}`.trim()}
       aria-hidden
     >
       <svg width="7" height="9" viewBox="0 0 10 8" fill="none" className="shrink-0 rotate-[90deg]">
