@@ -1677,6 +1677,19 @@ Return ONLY raw JSON (no markdown):
       raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       const parsed = deepStripNonFrench(JSON.parse(raw));
       const tips = parsed.tips || {};
+
+      // Save every generated writing prompt to Supabase (fire-and-forget)
+      const sb = getSupabaseAdmin();
+      if (sb && parsed.prompt) {
+        sb.from('writing_prompts').insert([{
+          topic,
+          prompt: parsed.prompt,
+          word_target: parsed.wordTarget || 80,
+          tips,
+          level: learnerLevel,
+        }]).then(({ error }) => { if (error) console.error('[writing] Supabase insert error:', error.message); });
+      }
+
       res.end(JSON.stringify({
         prompt: parsed.prompt || '',
         tips: {
