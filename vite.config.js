@@ -528,6 +528,19 @@ function interviewFeedbackMiddleware() {
   };
 }
 
+// The narrator's spoken explanation for a Parisian word (deterministic so its
+// TTS audio can be pre-generated and cached in the narrator-audio bucket).
+function buildWordIntro(w) {
+  return `Voici ton mot parisien du jour : « ${w.word} ». Ça veut dire "${w.meaning}". Par exemple : "${w.example}". Essaie maintenant de l'utiliser dans une phrase !`;
+}
+
+// Deterministic narrator per word so the pre-warmed audio always matches.
+function narratorForWord(word) {
+  let h = 0;
+  for (const c of String(word)) h = (h * 31 + c.codePointAt(0)) | 0;
+  return Math.abs(h) % 2 === 0 ? 'lea' : 'jules';
+}
+
 function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, openrouterKey) {
   const AUDIO_DIR = resolve(process.cwd(), 'public', 'word-audio');
   let supabase = null;
