@@ -905,6 +905,16 @@ function readingMiddleware(apiKey, openrouterKey) {
       const { title, feedName: source, author, pubDate: date, link } = chosen;
       saveSession({ id: Date.now(), topic, title, passage, source, author, date, link, questions, vocab, createdAt: new Date().toISOString() });
 
+      // Save every generated article to Supabase (fire-and-forget)
+      const sb = getSupabaseAdmin();
+      if (sb) {
+        sb.from('reading_articles')
+          .insert([{ title, passage, source, author, date, link, questions, vocab }])
+          .then(({ error }) => { if (error) console.error('[reading] Supabase insert error:', error.message); });
+      } else {
+        console.warn('[reading] Supabase not configured, article not saved to DB');
+      }
+
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ title, passage, source, author, date, link, questions, vocab }));
     } catch (err) {
