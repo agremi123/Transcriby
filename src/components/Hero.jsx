@@ -3074,10 +3074,11 @@ export function AudioDemoCard({
                       <button
                         type="button"
                         onClick={() => !msg.loading && msg.text && playNarratorLine({ id: msg.narratorId || 'lea', text: msg.text })}
-                        className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105 mt-0.5"
+                        className="group relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105 mt-0.5"
                         aria-label="Replay"
                       >
                         <img src={(msg.narratorId === 'jules') ? '/assets/jules.png' : '/assets/lea.png'} alt={(msg.narratorId === 'jules') ? 'Jules' : 'Léa'} className="w-full h-full object-cover object-top" />
+                        <PortraitHoverPlay />
                         {wordPlaying && parisianSpeakingText === msg.text && (
                           <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
                         )}
