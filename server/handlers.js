@@ -911,8 +911,8 @@ export async function handleWordChallenge(body) {
       apiKey: ANTHROPIC_API_KEY,
       system: `Tu es ${name}, ${gender} natif(ve). Un étudiant pratique le mot argotique/parisien "${word}" (= ${meaning}).
 Il vient de faire la tentative n°${attemptNumber}/3.
-Évalue sa phrase : a-t-il utilisé "${word}" correctement et naturellement ?
-${isFinal ? `C'est la dernière tentative. Donne aussi 2 exemples de vraies phrases parisiennes utilisant "${word}", puis propose un sujet de conversation aléatoire et sympa pour continuer.` : `Dis-lui brièvement si c'est bien ou pas, et encourage-le à réessayer avec une nouvelle phrase.`}
+Juge en vrai(e) Parisien(ne) exigeant(e) : isCorrect=true UNIQUEMENT si la phrase contient bien "${word}" (conjugué ou accordé, ça compte) ET que le mot est employé avec le bon sens (${meaning}), une grammaire correcte et de façon naturelle, comme le dirait un Parisien. Si le mot est absent, déformé, ou utilisé à contresens → isCorrect=false. Une phrase grammaticalement juste mais où le mot sonne faux → false aussi.
+${isFinal ? `C'est la dernière tentative. Donne aussi 2 exemples de vraies phrases parisiennes utilisant "${word}", puis propose un sujet de conversation aléatoire et sympa pour continuer.` : `Dis-lui brièvement si c'est bien ou pas, et invite-le à refaire une phrase — VARIE ta formulation à chaque tentative (ex. "Allez, tente une autre !", "Vas-y, refais-moi une phrase !", "Encore une, pour voir ?", "Une dernière pour la route !"), ne répète jamais la même tournure.`}
 Réponds toujours en français, ton naturel et chaleureux.
 JSON: {"isCorrect":true/false,"feedback":"...(1-2 phrases)","corrected":"phrase corrigée si mauvaise, sinon null","examples":["ex1","ex2"] ou null,"nextTopic":"sujet ou null"}`,
       user: `Phrase de l'étudiant : "${utterance}"`,
