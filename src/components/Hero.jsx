@@ -1119,6 +1119,118 @@ export function AudioDemoCard({
     // Don't auto-play — user clicks the play button on the bubble to start
   }, [activeTab, utterances, partialTranscript, settledText]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Submit one Parisian-word-challenge attempt — shared by speak (recording stop)
+  // and write mode, so toggling to write continues the same exercise.
+  const submitParisianChallengeAttempt = (userText, userId, leaId) => {
+    const challenge = parisianWordChallengeRef.current;
+    if (!challenge) return false;
+    const attempt = parisianChallengeAttemptRef.current + 1;
+    parisianChallengeAttemptRef.current = attempt;
+    setParisianChallengeAttempt(attempt);
+    const isFinal = attempt >= 3;
+
+    fetch('/api/speaking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'word-challenge',
+        utterance: userText,
+        word: challenge.word,
+        meaning: challenge.meaning,
+        narratorId: challenge.narratorId,
+        attemptNumber: attempt,
+      }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        const { feedback, isCorrect, corrected, examples, nextTopic } = data;
+
+        // Reward a correct use of the word with points (triggers the flip animation)
+        if (isCorrect) firePointsDelta(3);
+
+        // Attach grammar correction to user bubble if wrong; mark it clean
+        // otherwise so the "Correct my sentence" button shows a green tick.
+        if (!isCorrect && corrected && corrected.trim() !== userText.trim()) {
+          chatHistoryRef.current = chatHistoryRef.current.map(m =>
+            m.id === userId ? { ...m, correction: corrected.trim() } : m
+          );
+        } else {
+          chatHistoryRef.current = chatHistoryRef.current.map(m =>
+            m.id === userId ? { ...m, correctionOk: true } : m
+          );
+        }
+
+        // Build Léa's feedback message — never vanish silently: fall back to a
+        // generic line if the API returned empty feedback.
+        const retryLines = isCorrect
+          ? [
+              `Bien joué, tu as utilisé « ${challenge.word} » ! Allez, tente une autre phrase !`,
+              `Nickel, « ${challenge.word} » est bien placé ! Vas-y, refais-m'en une !`,
+              `Parfait ! Encore une phrase avec « ${challenge.word} », pour voir ?`,
+            ]
+          : [
+              `Hmm, essaie encore d'utiliser « ${challenge.word} » dans une phrase !`,
+              `Pas tout à fait… Retente une phrase avec « ${challenge.word} » !`,
+              `Presque ! Vas-y, refais-moi une phrase avec « ${challenge.word} ».`,
+            ];
+        let fullFeedback = feedback
+          || retryLines[Math.floor(Math.random() * retryLines.length)];
+
+        // On final attempt: append 2 example sentences
+        if (isFinal && examples?.length) {
+          const exBlock = examples.map(ex => `• ${ex}`).join('\n');
+          fullFeedback += `\n\nVoici deux phrases avec « ${challenge.word} » :\n${exBlock}`;
+        }
+
+        chatHistoryRef.current = chatHistoryRef.current.map(m =>
+          m.id === leaId ? { ...m, loading: false, text: fullFeedback } : m
+        );
+        setChatHistory([...chatHistoryRef.current]);
+        playNarratorLine({ id: challenge.narratorId, text: fullFeedback });
+
+        // On final attempt: end challenge, restart conversation on new topic
+        if (isFinal) {
+          setParisianWordChallenge(null);
+          parisianWordChallengeRef.current = null;
+          setParisianChallengeAttempt(0);
+          parisianChallengeAttemptRef.current = 0;
+
+          if (nextTopic) {
+            const restartDelay = (fullFeedback.length / 12) * 1000 + 1500; // wait for TTS
+            setTimeout(() => {
+              fetch('/api/speaking', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic: nextTopic }),
+              })
+                .then(r => r.json())
+                .then(openerData => {
+                  if (!openerData.openingLine) return;
+                  const opId = `lea-restart-${Date.now()}`;
+                  const withRestart = [
+                    ...chatHistoryRef.current,
+                    { id: opId, role: 'lea', text: openerData.openingLine, narratorId: openerData.narratorId || challenge.narratorId },
+                  ];
+                  chatHistoryRef.current = withRestart;
+                  setChatHistory(withRestart);
+                  playNarratorLine({ id: openerData.narratorId || challenge.narratorId, text: openerData.openingLine });
+                })
+                .catch(() => {});
+            }, restartDelay);
+          }
+        }
+      })
+      .catch(() => {
+        // Show a retry line rather than silently removing the bubble
+        chatHistoryRef.current = chatHistoryRef.current.map(m =>
+          m.id === leaId ? { ...m, loading: false, text: `Oups, petit souci technique… Réessaie d'utiliser « ${challenge.word} » !` } : m
+        );
+        setChatHistory([...chatHistoryRef.current]);
+      })
+      .finally(() => setChatLeaLoading(false));
+    return true;
+  };
+
   // Chat tab: on recording stop, commit utterances as user bubble then get Léa's reply
   React.useEffect(() => {
     const justStopped = chatWasRecordingRef.current && !isRecording;
