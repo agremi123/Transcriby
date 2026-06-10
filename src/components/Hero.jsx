@@ -2173,6 +2173,25 @@ export function AudioDemoCard({
       startWritingReview(trimmed);
       return;
     }
+    // Active Parisian-word challenge → a written sentence continues the exercise
+    // exactly like a spoken one (judged by the Parisian, attempts count).
+    if (parisianWordChallengeRef.current) {
+      const userId = `user-${Date.now()}`;
+      const leaId = `lea-${Date.now()}`;
+      const replyNarrator = parisianWordChallengeRef.current.narratorId || 'lea';
+      const updated = [
+        ...chatHistoryRef.current,
+        { id: userId, role: 'user', text: trimmed },
+        { id: leaId, role: 'lea', loading: true, narratorId: replyNarrator },
+      ];
+      chatHistoryRef.current = updated;
+      setChatHistory(updated);
+      setChatLeaLoading(true);
+      submitParisianChallengeAttempt(trimmed, userId, leaId);
+      setWriteText('');
+      setWriteSubmittedText('');
+      return;
+    }
     // Elsewhere (chat write box) → keep the simple preview correction.
     setNarratorReaction(pickNarratorReaction(effectiveLevel));
     fetchPreviewCorrection(writeText);
