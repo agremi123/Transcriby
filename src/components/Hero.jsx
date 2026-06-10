@@ -402,6 +402,17 @@ const DEMO_NARRATORS = {
   jules: { id: 'jules', name: 'Jules', src: '/assets/jules.png' },
 };
 
+// Little play icon shown over a clickable portrait on hover (parent needs `group`)
+function PortraitHoverPlay() {
+  return (
+    <span className="absolute inset-0 hidden group-hover:flex items-center justify-center bg-navy/35 rounded-full pointer-events-none">
+      <svg width="11" height="13" viewBox="0 0 10 12" fill="none" aria-hidden>
+        <path d="M1 1l8 5-8 5V1z" fill="white" />
+      </svg>
+    </span>
+  );
+}
+
 function NarratorPortrait({ narratorId, speaking, onReplay, hideName = false, size = 'md' }) {
   const n = DEMO_NARRATORS[narratorId];
   if (!n) return null;
