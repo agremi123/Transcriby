@@ -649,59 +649,10 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
         return;
       }
 
-      // 3. Empty stock: generate synchronously with DeepSeek
-      const claudeData = await openrouterCall('word/generate', openrouterKey, {
-        max_tokens: 250,
-        system: 'You are a French language teacher specializing in authentic Parisian French. Pick a vivid, interesting French word or expression — something a Parisian would actually say, not too basic, not too rare. Provide: the word/expression, its short English meaning, one natural example sentence in French, and an English translation of that sentence. Respond with raw JSON only, no markdown: {"word":"...","meaning":"...","example":"...","exampleTranslation":"..."}',
-        messages: [{ role: 'user', content: 'Give me an interesting Parisian French word to learn today.' }],
-      });
-      let raw = claudeData.content?.[0]?.text?.trim() || '{}';
-      raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-      parsed = JSON.parse(raw);
-      if (!parsed.word) throw new Error('No word generated');
-
-      // 4. Generate audio with ElevenLabs
-      let audioUrl = null;
-      if (elevenLabsKey && parsed.example) {
-        try {
-          const elRes = await fetch(
-            `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICES.stella}`,
-            {
-              method: 'POST',
-              headers: { 'xi-api-key': elevenLabsKey, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg' },
-              body: JSON.stringify({
-                text: parsed.example,
-                model_id: 'eleven_multilingual_v2',
-                voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
-              }),
-            }
-          );
-          if (elRes.ok) {
-            const audioBuf = Buffer.from(await elRes.arrayBuffer());
-            const fileName = `word-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.mp3`;
-            writeFileSync(resolve(AUDIO_DIR, fileName), audioBuf);
-            audioUrl = `/word-audio/${fileName}`;
-          }
-        } catch {}
-      }
-
-      // 5. Save to database
-      // parisian_words columns are all lowercase in Postgres
-      const entry = {
-        id: Date.now(),
-        word: parsed.word,
-        meaning: parsed.meaning,
-        example: parsed.example,
-        exampletranslation: parsed.exampleTranslation || '',
-        voiceid: ELEVENLABS_VOICES.stella,
-        audiourl: audioUrl,
-        createdat: new Date().toISOString(),
-      };
-      saveEntry(entry);
-
-      // 6. Return to client
+      // 3. Empty stock: generate synchronously (first run only)
+      parsed = await generateAndSaveWord();
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ ...parsed, audioUrl }));
+      res.end(JSON.stringify(parsed));
     } catch {
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ word: null }));
