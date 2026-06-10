@@ -723,12 +723,37 @@ async function generateListeningBundle(apiKey, level = 'B1') {
 }
 
 // ── Generate a writing prompt bundle ────────────────────────────────────────
+// Strip any non-Latin script (CJK, Japanese kana, Korean, Cyrillic, Arabic, etc.)
+// that some models occasionally leak into French output. Keeps Latin letters,
+// French accents, digits and common punctuation.
+function stripNonFrench(str) {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(/[Ͱ-ϿЀ-ӿ֐-׿؀-ۿ　-〿぀-ゟ゠-ヿ㄀-ㄯ㄰-㆏가-힯一-鿿豈-﫿＀-￯]/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([,.;:!?])/g, '$1')
+    .trim();
+}
+
+function deepStripNonFrench(v) {
+  if (typeof v === 'string') return stripNonFrench(v);
+  if (Array.isArray(v)) return v.map(deepStripNonFrench).filter(x => x !== '');
+  if (v && typeof v === 'object') {
+    const o = {};
+    for (const k of Object.keys(v)) o[k] = deepStripNonFrench(v[k]);
+    return o;
+  }
+  return v;
+}
+
 async function generateWritingBundle(apiKey, level = 'B1', topic = '') {
-  const data = await claudeJSON({
+  const data = deepStripNonFrench(await claudeJSON({
     apiKey, maxTokens: 1000,
-    system: `French writing teacher. Create a writing challenge for a ${level} learner${topic ? ` on: ${topic}` : ''}. Include useful vocab, expressions, grammar tips, conjugation helpers, and connectors. Raw JSON: {"prompt":"Write a paragraph about...","wordTarget":80,"tips":{"vocab":["mot1","mot2"],"expressions":["expr1"],"grammar":["tip1"],"conjugation":["verb: je ___"],"connecteurs":["d'abord","ensuite"]}}`,
+    system: `French writing teacher. Create a writing challenge for a ${level} learner${topic ? ` on: ${topic}` : ''}. Include useful vocab, expressions, grammar tips, conjugation helpers, and connectors.
+CRITICAL: Write EVERYTHING in French only. Use ONLY the Latin alphabet with French accents. NEVER include Chinese, Japanese, Korean, Cyrillic, Arabic or any other non-Latin characters — not a single one.
+Raw JSON: {"prompt":"Write a paragraph about...","wordTarget":80,"tips":{"vocab":["mot1","mot2"],"expressions":["expr1"],"grammar":["tip1"],"conjugation":["verb: je ___"],"connecteurs":["d'abord","ensuite"]}}`,
     user: topic || 'choose an everyday Parisian topic',
-  });
+  }));
   return {
     topic: topic || '',
     prompt: data.prompt || '',
