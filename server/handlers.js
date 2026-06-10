@@ -183,6 +183,7 @@ export async function handleElevenLabsTts(body) {
 
   const buf = Buffer.from(await response.arrayBuffer());
   const audioUrl = await saveNarratorAudio(slug, voiceId, text, buf);
+  logNarratorLine(slug, text, audioUrl);
 
   if (audioUrl) {
     return {
