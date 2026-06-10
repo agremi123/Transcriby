@@ -3136,15 +3136,7 @@ export function AudioDemoCard({
                         </div>
                       </TranscriptSentenceRow>
                       {/* Inline correction panel */}
-                      {chatCorrectionPopup?.msgId === msg.id && chatCorrectionPopup?.correct && (
-                        <TranscriptSentenceRow gutter={<TranscriptAudioSlot mode="empty" />}>
-                          <div className="inline-flex items-center gap-2 bg-green-50 border border-green-600/30 rounded-xl px-3 py-2 shadow-sm self-start">
-                            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-600 text-white text-[12px] leading-none">✓</span>
-                            <p className="font-display text-[14px] text-green-800 leading-snug">Ta phrase est correcte, rien à corriger !</p>
-                          </div>
-                        </TranscriptSentenceRow>
-                      )}
-                      {chatCorrectionPopup?.msgId === msg.id && !chatCorrectionPopup?.correct && (
+                      {chatCorrectionPopup?.msgId === msg.id && (
                         <TranscriptSentenceRow gutter={<TranscriptAudioSlot mode="empty" />}>
                         <div className="inline-flex items-center gap-2.5 bg-paper border border-line/50 rounded-xl px-3 py-2.5 shadow-sm self-start">
                           <button
