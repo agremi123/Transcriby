@@ -1545,13 +1545,30 @@ function speakingPromptMiddleware(apiKey) {
       let raw = d.content?.[0]?.text?.trim() || '{}';
       raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
       const parsed = JSON.parse(raw);
+      const targetGrammar = (parsed.grammarPoint || parsed.grammarHint) ? { point: parsed.grammarPoint || '', hint: parsed.grammarHint || '' } : null;
+      const targetVocab = Array.isArray(parsed.vocab) ? parsed.vocab.slice(0, 4) : null;
+
+      // Save every generated speaking prompt to Supabase (fire-and-forget)
+      const sb = getSupabaseAdmin();
+      if (sb && parsed.openingLine) {
+        sb.from('speaking_prompts').insert([{
+          topic,
+          narrator_id: narratorId,
+          opening_line: parsed.openingLine,
+          opening_line_translation: parsed.openingLineTranslation || '',
+          topic_label: parsed.topicLabel || topic,
+          target_grammar: targetGrammar,
+          target_vocab: targetVocab,
+        }]).then(({ error }) => { if (error) console.error('[speaking] Supabase insert error:', error.message); });
+      }
+
       res.end(JSON.stringify({
         narratorId,
         openingLine: parsed.openingLine || '',
         openingLineTranslation: parsed.openingLineTranslation || '',
         topicLabel: parsed.topicLabel || topic,
-        targetGrammar: (parsed.grammarPoint || parsed.grammarHint) ? { point: parsed.grammarPoint || '', hint: parsed.grammarHint || '' } : null,
-        targetVocab: Array.isArray(parsed.vocab) ? parsed.vocab.slice(0, 4) : null,
+        targetGrammar,
+        targetVocab,
       }));
     } catch { res.end(JSON.stringify({ narratorId: 'lea', openingLine: '', topicLabel: topic })); }
   };
