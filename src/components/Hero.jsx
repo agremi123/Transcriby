@@ -3868,7 +3868,7 @@ export function AudioDemoCard({
       <div className="flex items-start shrink-0">
         {/* Left column: tabs + correction UI */}
         <div className="flex-1 min-w-0 flex flex-col">
-          <div className="ml-7 flex overflow-x-auto border-t border-line/50">
+          <div className="ml-3 sm:ml-7 flex overflow-x-auto border-t border-line/50">
             {[
               { id: 'transcript', label: 'Chat' },
               { id: 'listening',  label: 'Défi listening' },
