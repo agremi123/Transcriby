@@ -2,11 +2,32 @@ import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { getEnv } from './env.js';
+import { createHash } from 'crypto';
 import {
   getCachedNarratorAudio,
   saveNarratorAudio,
   resolveNarrator,
 } from './narrator-audio-cache.js';
+import { getSupabaseAdmin } from './supabase.js';
+
+// Log every spoken narrator line (text + cached audio URL) to narrator_lines.
+// Fire-and-forget; duplicate lines are ignored via the (narrator, texthash) key.
+function logNarratorLine(slug, text, audioUrl) {
+  const sb = getSupabaseAdmin();
+  if (!sb) return;
+  const texthash = createHash('sha256').update(`${slug}\0${text}`).digest('hex').slice(0, 32);
+  sb.from('narrator_lines')
+    .upsert([{ narrator: slug, text, texthash, audiourl: audioUrl || null }], {
+      onConflict: 'narrator,texthash',
+      ignoreDuplicates: true,
+    })
+    .then(({ error }) => {
+      // Table missing until migration 009 runs — don't spam other errors
+      if (error && !/narrator_lines/.test(error.message || '')) {
+        console.warn('[narrator-lines] log failed:', error.message);
+      }
+    });
+}
 import { buildCorrectionSystemPrompts } from './correctionPrompts.js';
 import { sanitizeParisianCorrection, parseCorrectionResponse } from '../src/lib/correctionFormat.js';
 
