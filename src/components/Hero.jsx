@@ -3093,7 +3093,15 @@ export function AudioDemoCard({
                         </div>
                       ) : (
                         <p className="font-display text-[16px] italic text-navy/80 leading-snug max-w-[85%]">
-                          <TranslatableText text={msg.text} narratorId={msg.narratorId || 'lea'} />
+                          {wordPlaying && parisianSpeakingText === msg.text?.trim() && parisianTimings.length > 0 ? (
+                            parisianTimings.map((w, i) => (
+                              <span key={i} style={wordHighlightInlineStyle(isTimedWordActive(parisianTimings, i, parisianPlaybackTime))}>
+                                {w.word}{' '}
+                              </span>
+                            ))
+                          ) : (
+                            <TranslatableText text={msg.text} narratorId={msg.narratorId || 'lea'} />
+                          )}
                         </p>
                       )}
                     </div>
