@@ -1172,10 +1172,15 @@ export function AudioDemoCard({
           // Reward a correct use of the word with points (triggers the flip animation)
           if (isCorrect) firePointsDelta(3);
 
-          // Attach grammar correction to user bubble if wrong
+          // Attach grammar correction to user bubble if wrong; mark it clean
+          // otherwise so the "Correct my sentence" button shows a green tick.
           if (!isCorrect && corrected && corrected.trim() !== userText.trim()) {
             chatHistoryRef.current = chatHistoryRef.current.map(m =>
               m.id === userId ? { ...m, correction: corrected.trim() } : m
+            );
+          } else {
+            chatHistoryRef.current = chatHistoryRef.current.map(m =>
+              m.id === userId ? { ...m, correctionOk: true } : m
             );
           }
 
