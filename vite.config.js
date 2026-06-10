@@ -868,7 +868,16 @@ function readingMiddleware(apiKey, openrouterKey) {
         system: 'Extract the most coherent and readable passage from this real French article. Copy sentences verbatim — do NOT rephrase, summarise or add anything. The passage must be at least 15 sentences long (aim for 400-600 words). Organise it into natural paragraphs separated by a blank line (\\n\\n): one short intro paragraph, then 2-3 body paragraphs. Return only the extracted French text with paragraph breaks.',
         messages: [{ role: 'user', content: `Title: ${chosen.title}\n\n${rawText}` }],
       });
-      const passage = (extractData.content?.[0]?.text || '').trim();
+      // Clean the extraction: drop markdown headers, "---" separators, and any
+      // English model commentary/refusal ("I apologize, but I cannot…") that
+      // would otherwise leak into the article.
+      const passage = (extractData.content?.[0]?.text || '')
+        .split('\n')
+        .filter(line => !/^\s*#/.test(line) && !/^\s*-{3,}\s*$/.test(line))
+        .join('\n')
+        .replace(/(?:^|\n)[^\n]*\b(?:I apologize|I cannot|I'm sorry|I am sorry|as an AI)\b[\s\S]*$/i, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
       if (!passage || passage.length < 100) throw new Error('No passage extracted');
 
       // Steps 4 & 5: comprehension questions + vocabulary IN PARALLEL
