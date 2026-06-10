@@ -1,5 +1,217 @@
 [
   {
+    "id": 1781091537488,
+    "topic": "La vie parisienne",
+    "title": "CGT et CFDT réclament la transparence des salaires, Rachida Dati évite Emmanuel Grégoire… Retrouvez les indiscrétions du « Nouvel Obs »",
+    "passage": "# Passage extrait\n\nLa nouvelle loi sur la transparence salariale, transposition d'une directive européenne de 2023, aurait dû entrer en vigueur en France le 7 juin. Léger retard à l'allumage : le texte vient tout juste d'être transmis au Conseil d'Etat, a confirmé vendredi 5 juin le ministère du Travail, qui espère un…\n\n---\n\nI apologize, but I cannot extract a passage of at least 15 sentences from this article. The provided text appears to be a webpage header and navigation section from Nouvel Obs that contains mostly editorial navigation, subscription prompts, and article teasers rather than a coherent article body.\n\nThe only substantive paragraph in the provided content is the final one about the transparency law, which contains only 2-3 sentences and is incomplete (ending with \"qui espère un…\").\n\nTo complete your request, I would need the full body text of an actual article from this publication.",
+    "source": "L'Obs",
+    "author": "Service France",
+    "date": "Wed, 10 Jun 2026 12:02:52 +0200",
+    "link": "https://www.nouvelobs.com/politique/20260610.OBS115684/cgt-et-cfdt-reclament-la-transparence-des-salaires-rachida-dati-evite-emmanuel-gregoire-retrouvez-les-indiscretions-du-nouvel-obs.html",
+    "questions": [
+      {
+        "question": "Quelle est l'origine de la nouvelle loi sur la transparence salariale ?",
+        "options": [
+          "Une initiative du gouvernement français",
+          "Une transposition d'une directive européenne de 2023",
+          "Une proposition du Conseil d'État",
+          "Une demande des syndicats français"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly states that the law is 'transposition d'une directive européenne de 2023' (a transposition of a European directive from 2023). The other options are not mentioned in the text."
+      },
+      {
+        "question": "Quand la loi sur la transparence salariale aurait-elle dû entrer en vigueur en France ?",
+        "options": [
+          "Le 5 juin",
+          "Le 7 juin",
+          "Le 23 juin",
+          "Le 30 juin"
+        ],
+        "answer": "B",
+        "explanation": "The passage states 'aurait dû entrer en vigueur en France le 7 juin' (should have come into force in France on June 7). The other dates are either mentioned in a different context or not mentioned at all."
+      },
+      {
+        "question": "Quel organisme a confirmé le retard de la transmission du texte ?",
+        "options": [
+          "Le Parlement français",
+          "Le Conseil d'État",
+          "Le ministère du Travail",
+          "La Commission européenne"
+        ],
+        "answer": "C",
+        "explanation": "The text explicitly states 'le ministère du Travail, qui espère un…' (the Ministry of Labor) confirmed on Friday, June 5 that the text had just been transmitted to the Council of State. The other institutions are not credited with this confirmation."
+      },
+      {
+        "question": "Qu'est-ce qui a été transmis au Conseil d'État selon le passage ?",
+        "options": [
+          "Un rapport sur les salaires",
+          "Une directive européenne",
+          "Le texte de la loi sur la transparence salariale",
+          "Une demande de prolongement"
+        ],
+        "answer": "C",
+        "explanation": "The passage says 'le texte vient tout juste d'être transmis au Conseil d'Etat' (the text has just been transmitted to the Council of State), referring to the law on salary transparency. The other options are either too vague or not mentioned."
+      },
+      {
+        "question": "Quel jour le ministère du Travail a-t-il confirmé l'information sur le retard ?",
+        "options": [
+          "Lundi 3 juin",
+          "Jeudi 4 juin",
+          "Vendredi 5 juin",
+          "Samedi 6 juin"
+        ],
+        "answer": "C",
+        "explanation": "The passage states 'a confirmé vendredi 5 juin le ministère du Travail' (the Ministry of Labor confirmed on Friday, June 5). The other dates are not mentioned in the text."
+      },
+      {
+        "question": "Quel type de retard est mentionné dans le passage ?",
+        "options": [
+          "Un retard majeur de plusieurs mois",
+          "Un léger retard à l'allumage",
+          "Un retard d'une semaine",
+          "Un retard de plusieurs années"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly describes it as 'Léger retard à l'allumage' (slight delay in ignition/getting started). The other options either overstate or understate the nature of the delay compared to the text's characterization."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "transparence",
+        "definition": "clarity, openness, or the quality of being easily understood and without hidden information",
+        "sentence": "Le gouvernement a promis une plus grande ___ dans la gestion des fonds publics."
+      },
+      {
+        "word": "transposition",
+        "definition": "the act of transferring, adapting, or implementing something (such as a directive) into national law",
+        "sentence": "La ___ de la directive européenne en droit français a pris plusieurs mois."
+      },
+      {
+        "word": "directive",
+        "definition": "an authoritative instruction or guideline issued by an authority such as the European Union",
+        "sentence": "Chaque État membre doit respecter cette ___ du Parlement européen."
+      },
+      {
+        "word": "retard",
+        "definition": "a delay or the state of being late",
+        "sentence": "Le train a accumulé un ___ de deux heures à cause de travaux sur la voie."
+      },
+      {
+        "word": "allumage",
+        "definition": "ignition or starting; here used figuratively to mean commencement or launch",
+        "sentence": "Le projet a souffert d'un léger ___ avant de pouvoir être mis en place officiellement."
+      }
+    ],
+    "createdAt": "2026-06-10T11:38:57.488Z"
+  },
+  {
+    "id": 1781091469520,
+    "topic": "La vie parisienne",
+    "title": "Préparer sa retraite : le PER est-il un bon placement ?",
+    "passage": "Avec pour objectif d'accroître ses revenus après la vie professionnelle, le plan d'épargne retraite permet d'abaisser, chaque année, sa facture fiscale. Beaucoup de communications autour du plan d'épargne retraite (PER) vantent les avantages fiscaux qui y sont attachés.\n\nDe fait, chaque année, le cumul des versements effectués sur ce plan est déductible du revenu imposable, dans la limite d'un plafond. Concernant les versements effectués en 2026, l'avantage fiscal ne pourra pas, pour les salariés, excéder 10 % des revenus professionnels (nets de cotisations sociales) de 2025, avec un plafond de déduction maximale de 37 680 euros. Pour un travailleur non salarié, le plafond est de 88 911 euros. Si ces montants sont dépassés, la solution est de reporter l'excédent au cours des trois années suivantes… et même des cinq années suivantes à partir de l'an prochain. Une disposition intéressante, d'autant plus que les plafonds du conjoint (marié ou pacsé) sont utilisables si lui-même ne s'en sert pas.\n\nChangement notable, cette année : les versements effectués après les 70 ans du titulaire ne peuvent plus donner lieu à une défiscalisation. Mais attention ! D'une part, cet argent reste indisponible jusqu'à ce que vous preniez votre retraite, sauf dans certains cas de retrait anticipé.",
+    "source": "L'Obs",
+    "author": "Françoise Paoletti-Benaziez",
+    "date": "Sun, 07 Jun 2026 07:45:12 +0200",
+    "link": "https://www.nouvelobs.com/economie/20260607.OBS115575/preparer-sa-retraite-le-per-est-il-un-bon-placement.html",
+    "questions": [
+      {
+        "question": "Quel est l'objectif principal du plan d'épargne retraite (PER) mentionné dans le passage ?",
+        "options": [
+          "Accroître ses revenus après la vie professionnelle et réduire sa facture fiscale",
+          "Investir en bourse pour obtenir des rendements élevés",
+          "Remplacer complètement la retraite de l'État",
+          "Permettre des retraits anticipés sans conditions"
+        ],
+        "answer": "A",
+        "explanation": "The passage explicitly states that the PER aims 'to increase income after professional life and reduce one's tax bill each year.' The other options either mention benefits not discussed in the text or contradict the passage's information about restrictions on withdrawals."
+      },
+      {
+        "question": "Quel est le plafond de déduction maximale pour les versements effectués en 2026 par un salarié ?",
+        "options": [
+          "10 % des revenus professionnels sans limite monétaire",
+          "37 680 euros",
+          "88 911 euros",
+          "50 000 euros"
+        ],
+        "answer": "B",
+        "explanation": "The passage clearly states that for employees ('salariés'), the maximum deduction limit for contributions made in 2026 is 37,680 euros. The 88,911 euros figure applies to self-employed workers ('travailleur non salarié'), and 10% is the percentage calculation, not a standalone limit."
+      },
+      {
+        "question": "Que peut-on faire si les plafonds de déduction sont dépassés ?",
+        "options": [
+          "L'excédent est perdu définitivement",
+          "Reporter l'excédent sur trois années suivantes, et même cinq années à partir de l'an prochain",
+          "Retirer immédiatement l'argent excédentaire",
+          "Payer une amende sur l'excédent"
+        ],
+        "answer": "B",
+        "explanation": "The passage states that if the ceilings are exceeded, 'the solution is to carry forward the excess over the following three years... and even the five following years from next year.' The other options contradict what the text explicitly says about handling overage amounts."
+      },
+      {
+        "question": "Quel changement notable a eu lieu cette année concernant l'âge du titulaire ?",
+        "options": [
+          "Les versements avant 65 ans ne peuvent plus être déduits",
+          "Les versements effectués après les 70 ans ne peuvent plus donner lieu à une défiscalisation",
+          "Les personnes de plus de 75 ans ne peuvent pas ouvrir un PER",
+          "Les versements après 80 ans donnent une déduction supplémentaire"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly mentions that 'contributions made after the account holder turns 70 can no longer be tax-deductible.' The other options either misstate the age limit, add information not in the text, or contradict the stated rule."
+      },
+      {
+        "question": "Selon le passage, jusqu'à quand l'argent versé sur le PER reste-t-il indisponible ?",
+        "options": [
+          "Jusqu'à 5 ans après le versement",
+          "Jusqu'à ce que vous preniez votre retraite, sauf dans certains cas de retrait anticipé",
+          "Jusqu'à l'âge de 65 ans",
+          "Jusqu'à ce que vous atteigniez 70 ans"
+        ],
+        "answer": "B",
+        "explanation": "The passage states that 'this money remains unavailable until you take your retirement, except in certain cases of early withdrawal.' The other options either misrepresent the withdrawal conditions or provide arbitrary timeframes not mentioned in the text."
+      },
+      {
+        "question": "Quelle disposition intéressante est mentionnée concernant le conjoint ?",
+        "options": [
+          "Le conjoint peut retirer l'argent avant la retraite",
+          "Les plafonds du conjoint (marié ou pacsé) sont utilisables si lui-même ne s'en sert pas",
+          "Le conjoint bénéficie d'un plafond double",
+          "Le conjoint doit avoir le même âge pour bénéficier des avantages"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly states that 'the ceilings of the spouse (married or in a civil partnership) are usable if they themselves do not use them.' This means spouses can use each other's unused allowances, which the other options do not accurately represent."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "épargne",
+        "definition": "savings",
+        "sentence": "Le plan d'___ retraite permet d'accroître ses revenus après la vie professionnelle."
+      },
+      {
+        "word": "déductible",
+        "definition": "deductible",
+        "sentence": "Chaque année, le cumul des versements effectués sur ce plan est ___ du revenu imposable."
+      },
+      {
+        "word": "plafond",
+        "definition": "ceiling or limit",
+        "sentence": "Les versements sont limités dans la limite d'un ___ de déduction maximale."
+      },
+      {
+        "word": "défiscalisation",
+        "definition": "tax deduction or tax relief",
+        "sentence": "Les versements effectués après 70 ans ne peuvent plus donner lieu à une ___."
+      },
+      {
+        "word": "indisponible",
+        "definition": "unavailable or inaccessible",
+        "sentence": "Cet argent reste ___ jusqu'à ce que vous preniez votre retraite."
+      }
+    ],
+    "createdAt": "2026-06-10T11:37:49.520Z"
+  },
+  {
     "id": 1781035387091,
     "topic": "La vie parisienne",
     "title": "Le débat sur la place de l’IA dans nos vies ne peut pas être laissé aux seuls géants de la tech",
