@@ -1,5 +1,111 @@
 [
   {
+    "id": 1781095974240,
+    "topic": "La vie parisienne",
+    "title": "Quand la carte routière est laissée en plan",
+    "passage": "Les études le disent, la lecture est en baisse. Cette nouvelle vous alarme ? Raison de plus pour résister. Lisez des livres et n'hésitez pas à étendre la lutte en défendant d'autres victimes de ce mouvement délétère, écrasées elles aussi par la toute-puissance d'une technologie sans âme, les cartes routières.\n\nJe viens justement de faire coup double en finissant un livre passionnant qui raconte l'histoire de ces vieilles compagnes de nos voyages. « La France à la carte » (Editions des Equateurs), signé de notre excellent confrère Jean-Claude Raspiengeas, est un ouvrage que je conseille pour plusieurs raisons. Dans cet essai, l'auteur explore avec finesse comment les cartes routières, autrefois indispensables compagnons de route, ont progressivement été relégués aux oubliettes par l'avènement des GPS et autres systèmes de géolocalisation numériques. C'est une histoire attachante, celle de ces feuilles de papier plié qui ont guidé des générations de Français à travers les routes nationales et les petites routes départementales.",
+    "source": "L'Obs",
+    "author": "François Reynaert",
+    "date": "Fri, 05 Jun 2026 12:00:07 +0200",
+    "link": "https://www.nouvelobs.com/chroniques/20260605.OBS115521/quand-la-carte-routiere-est-laissee-en-plan.html",
+    "questions": [
+      {
+        "question": "Selon le passage, quel est le mouvement délétère qui menace à la fois les livres et les cartes routières ?",
+        "options": [
+          "L'augmentation de la population urbaine",
+          "La toute-puissance d'une technologie sans âme",
+          "Le manque d'intérêt des éditeurs",
+          "La fermeture des bibliothèques publiques"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly states 'écrasées elles aussi par la toute-puissance d'une technologie sans âme' when referring to road maps being threatened like books. The other options are not mentioned in the text."
+      },
+      {
+        "question": "Quel est le titre du livre que l'auteur recommande ?",
+        "options": [
+          "Les routes de France",
+          "Histoire des cartes numériques",
+          "La France à la carte",
+          "Voyage en France antique"
+        ],
+        "answer": "C",
+        "explanation": "The passage explicitly mentions the book title as '« La France à la carte »'. The other options are either not mentioned in the text or are invented variations."
+      },
+      {
+        "question": "Qui est l'auteur du livre que l'auteur du passage recommande ?",
+        "options": [
+          "Un géographe inconnu",
+          "Jean-Claude Raspiengeas",
+          "Un expert en technologie",
+          "Un historien spécialisé dans les routes"
+        ],
+        "answer": "B",
+        "explanation": "The passage clearly states 'signé de notre excellent confrère Jean-Claude Raspiengeas.' The other options are either not mentioned or contradicted by the text."
+      },
+      {
+        "question": "Qu'est-ce qui a progressivement remplacé les cartes routières selon le passage ?",
+        "options": [
+          "Les livres numériques",
+          "Les guides touristiques",
+          "Les GPS et autres systèmes de géolocalisation numériques",
+          "Les applications mobiles de photographie"
+        ],
+        "answer": "C",
+        "explanation": "The text states that road maps 'ont progressivement été relégués aux oubliettes par l'avènement des GPS et autres systèmes de géolocalisation numériques.' The other options are not mentioned as replacements."
+      },
+      {
+        "question": "Comment l'auteur du passage décrit-il les cartes routières dans le passé ?",
+        "options": [
+          "Comme des objets inutiles et encombrants",
+          "Comme autrefois indispensables compagnons de route",
+          "Comme des produits trop coûteux",
+          "Comme des inventions récentes et révolutionnaires"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly refers to cartes routières as 'autrefois indispensables compagnons de route.' The other options misrepresent or contradict the author's description."
+      },
+      {
+        "question": "Quelles routes sont mentionnées dans le passage comme ayant été guidées par les cartes ?",
+        "options": [
+          "Les autoroutes et les voies rapides",
+          "Les routes nationales et les petites routes départementales",
+          "Les chemins de montagne uniquement",
+          "Les routes commerciales internationales"
+        ],
+        "answer": "B",
+        "explanation": "The passage specifically mentions 'les routes nationales et les petites routes départementales' as the roads guided by maps. The other options are either not mentioned or incomplete."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "délétère",
+        "definition": "harmful, damaging, or destructive",
+        "sentence": "Les effets ___ de la pollution sur l'environnement sont bien documentés."
+      },
+      {
+        "word": "relégués",
+        "definition": "relegated, banished, or pushed aside",
+        "sentence": "Ces anciennes traditions ont été ___ au second plan par la modernité."
+      },
+      {
+        "word": "oubliettes",
+        "definition": "oblivion, forgotten state, or the forgotten past",
+        "sentence": "Beaucoup de chansons anciennes sont tombées aux ___ avec le temps."
+      },
+      {
+        "word": "avènement",
+        "definition": "advent, arrival, or emergence",
+        "sentence": "L'___ d'internet a transformé la société de manière radicale."
+      },
+      {
+        "word": "finesse",
+        "definition": "subtlety, delicacy, or refined skill",
+        "sentence": "L'auteur analyse le sujet avec beaucoup de ___ et de nuance."
+      }
+    ],
+    "createdAt": "2026-06-10T12:52:54.240Z"
+  },
+  {
     "id": 1781091936807,
     "topic": "La vie parisienne",
     "title": "MOT pour Mots : le grand festival littéraire organisé par « le Nouvel Obs », « le Monde » et « Télérama » revient",
