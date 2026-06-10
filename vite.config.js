@@ -6,6 +6,7 @@ import { tmpdir } from 'os';
 import { execFile } from 'child_process';
 import { createClient } from '@supabase/supabase-js';
 import { handleElevenLabsTts } from './server/handlers.js';
+import { resolveNarrator, saveNarratorAudio, narratorStoragePath } from './server/narrator-audio-cache.js';
 import { sendHandlerResult } from './server/node-response.js';
 import { buildCorrectionSystemPrompts } from './server/correctionPrompts.js';
 import { sanitizeParisianCorrection, parseCorrectionResponse } from './src/lib/correctionFormat.js';
@@ -574,7 +575,7 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
     if (elevenLabsKey && parsed.example) {
       try {
         const elRes = await fetch(
-          `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICES.stella}`,
+          `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICES.lea}`,
           {
             method: 'POST',
             headers: { 'xi-api-key': elevenLabsKey, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg' },
@@ -601,7 +602,7 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
       meaning: parsed.meaning,
       example: parsed.example,
       exampletranslation: parsed.exampleTranslation || '',
-      voiceid: ELEVENLABS_VOICES.stella,
+      voiceid: ELEVENLABS_VOICES.lea,
       audiourl: audioUrl,
       createdat: new Date().toISOString(),
     });
