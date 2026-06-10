@@ -3108,20 +3108,14 @@ export function AudioDemoCard({
                                   )
                                 : msg.text}
                           </span>
-                          {(msg.correction || msg.correctionOk) && (
+                          {msg.correction && (
                             <button
                               type="button"
                               onClick={() => setChatCorrectionPopup(
                                 chatCorrectionPopup?.msgId === msg.id ? null :
-                                msg.correction
-                                  ? { msgId: msg.id, original: msg.text, corrected: msg.correction }
-                                  : { msgId: msg.id, correct: true }
+                                { msgId: msg.id, original: msg.text, corrected: msg.correction }
                               )}
-                              className={`shrink-0 inline-flex items-center gap-1 text-[11px] font-sans font-semibold rounded-full px-2 py-0.5 transition-colors ${
-                                msg.correction
-                                  ? 'text-wine/70 border border-wine/30 hover:bg-wine/10 hover:text-wine'
-                                  : 'text-green-700/80 border border-green-600/30 hover:bg-green-50 hover:text-green-700'
-                              }`}
+                              className="shrink-0 inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
                             >
                               Correct my sentence
                               <svg
@@ -3131,6 +3125,13 @@ export function AudioDemoCard({
                                 <path d="M1 2.5l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                               </svg>
                             </button>
+                          )}
+                          {!msg.correction && msg.correctionOk && (
+                            <span
+                              className="shrink-0 inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-green-600 text-white text-[11px] leading-none"
+                              title="Ta phrase est correcte !"
+                              aria-label="Sentence correct"
+                            >✓</span>
                           )}
                         </div>
                       </TranscriptSentenceRow>
