@@ -4139,34 +4139,8 @@ export function AudioDemoCard({
               );
             }
 
-            if (sentenceCongrats) {
-              return (
-                <div className="flex items-center gap-2 min-w-0 w-full">
-                  <NarratorPortrait
-                    narratorId={correctionReaderId}
-                    speaking={isCongratsSpeaking}
-                    onReplay={() => {
-                      if (!sentenceCongrats?.text || !correctionReaderId) return;
-                      playNarratorLine({ id: correctionReaderId, text: sentenceCongrats.text });
-                    }}
-                    hideName
-                    size="lg"
-                  />
-                  <NarratorHoverText
-                    text={sentenceCongrats.text}
-                    translation={sentenceCongrats.translation}
-                    highlightSpeech={isCongratsSpeaking}
-                    speechPlaybackTime={isCongratsSpeaking ? parisianPlaybackTime : null}
-                    speechTimings={isCongratsSpeaking ? parisianTimings : []}
-                    className="font-display text-[16px] italic text-navy leading-snug"
-                    wrapperClassName="relative flex-1 min-w-0"
-                    scrollable
-                    tooltipPosition="above"
-                  />
-                </div>
-              );
-            }
-
+            // Congrats lines now live inside the transcript, pinned to their
+            // utterance (congratsByUtterance) — no transient banner here.
             return null;
               })()}
             </div>
