@@ -4986,12 +4986,17 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
                 wordTimings={wordTimings}
                 onWordClick={seekToWord}
                 className="font-display text-[17px] leading-[1.65] text-navy/80"
+                vocabEntries={revealedWords}
+                highlightActive={translateActive && revealedWords.length > 0}
               />
             ) : (
               // Static text mode — normalize newlines so sentences flow as prose
-              <p className="font-display text-[16px] leading-[1.7] text-navy/80">
-                {normalizedTranscript}
-              </p>
+              <PassageWithVocabHighlights
+                passage={normalizedTranscript}
+                vocabEntries={revealedWords}
+                highlightActive={translateActive && revealedWords.length > 0}
+                className="font-display text-[16px] leading-[1.7] text-navy/80"
+              />
             )}
           </div>
 
