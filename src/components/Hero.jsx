@@ -5599,10 +5599,18 @@ function WritingReviewThread({ review, question, onQuestionChange, onCorriger, o
             <button type="button" onClick={onSubmitQuestion} disabled={!question.trim()}
               className="shrink-0 text-[12px] font-mono uppercase tracking-wider px-3 py-2 rounded-lg bg-wine text-ivory hover:bg-wine2 disabled:opacity-40 transition-colors">Demander</button>
           </div>
-          <button type="button" onClick={onNewChallenge}
-            className="self-start text-[11px] font-mono uppercase tracking-wider text-navy/45 hover:text-wine transition-colors">
-            ↻ Nouveau défi
-          </button>
+          <div className="flex items-center gap-4">
+            <button type="button" onClick={onNewChallenge}
+              className="text-[11px] font-mono uppercase tracking-wider text-navy/45 hover:text-wine transition-colors">
+              ↻ Nouveau défi
+            </button>
+            {onRetry && (
+              <button type="button" onClick={onRetry}
+                className="text-[11px] font-mono uppercase tracking-wider text-navy/45 hover:text-wine transition-colors">
+                ✎ Retenter ce défi
+              </button>
+            )}
+          </div>
         </div>
       )}
 
