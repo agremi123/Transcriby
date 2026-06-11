@@ -1159,15 +1159,16 @@ export function AudioDemoCard({
         // Reward a correct use of the word with points (triggers the flip animation)
         if (isCorrect) firePointsDelta(3);
 
-        // Attach grammar correction to user bubble if wrong; mark it clean
-        // otherwise so the "Correct my sentence" button shows a green tick.
-        if (!isCorrect && corrected && corrected.trim() !== userText.trim()) {
-          chatHistoryRef.current = chatHistoryRef.current.map(m =>
-            m.id === userId ? { ...m, correction: corrected.trim() } : m
-          );
-        } else {
+        // Green tick ONLY when the Parisian judge approved the sentence.
+        // If wrong: attach the grammar correction when we have one, otherwise
+        // leave the bubble unmarked (no tick, no popup) — Léa's reply explains.
+        if (isCorrect) {
           chatHistoryRef.current = chatHistoryRef.current.map(m =>
             m.id === userId ? { ...m, correctionOk: true } : m
+          );
+        } else if (corrected && corrected.trim() !== userText.trim()) {
+          chatHistoryRef.current = chatHistoryRef.current.map(m =>
+            m.id === userId ? { ...m, correction: corrected.trim() } : m
           );
         }
 
