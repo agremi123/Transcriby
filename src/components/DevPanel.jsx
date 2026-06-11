@@ -281,7 +281,9 @@ export default function DevPanel() {
         <div className="absolute bottom-10 right-0 w-[360px] max-h-[520px] flex flex-col rounded-xl shadow-2xl border border-navy/15 bg-ivory/98 backdrop-blur-sm overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-3 py-2 border-b border-navy/10 shrink-0">
-            <span className="text-[10px] tracking-widest uppercase text-navy/60">Token usage</span>
+            <span className="text-[10px] tracking-widest uppercase text-navy/60">
+              {tab === 'transcript' ? 'System audio transcript' : 'Token usage'}
+            </span>
             <div className="flex items-center gap-2">
               <button type="button" onClick={load} className="text-navy/40 hover:text-navy transition-colors" title="Refresh">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6A4 4 0 112 6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><path d="M10 3v3H7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
