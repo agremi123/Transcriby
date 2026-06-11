@@ -117,40 +117,7 @@ export default function DevPanel() {
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
-  const [tab, setTab] = React.useState('summary'); // 'summary' | 'log' | 'cache' | 'transcript'
-
-  // Transcript state (system audio REC)
-  const [transcriptLines, setTranscriptLines] = React.useState([]);
-  const [transcriptPartial, setTranscriptPartial] = React.useState('');
-  const [recActive, setRecActive] = React.useState(false);
-  const transcriptEndRef = React.useRef(null);
-
-  const handleRecStart = React.useCallback(() => {
-    setRecActive(true);
-    setTranscriptLines([]);
-    setTranscriptPartial('');
-    setTab('transcript');
-    setOpen(true);
-  }, []);
-
-  const handleRecStop = React.useCallback(() => {
-    setRecActive(false);
-    setTranscriptPartial('');
-  }, []);
-
-  const handleFinal = React.useCallback((text) => {
-    if (!text) return;
-    setTranscriptLines(prev => [...prev, text]);
-    setTranscriptPartial('');
-  }, []);
-
-  const handlePartial = React.useCallback((text) => {
-    setTranscriptPartial(text);
-  }, []);
-
-  React.useEffect(() => {
-    transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [transcriptLines, transcriptPartial]);
+  const [tab, setTab] = React.useState('summary'); // 'summary' | 'log' | 'cache'
 
   const load = React.useCallback(() => {
     setLoading(true);
