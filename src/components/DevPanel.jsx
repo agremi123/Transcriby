@@ -175,12 +175,7 @@ export default function DevPanel() {
           </svg>
           <span className="text-[9px] tracking-widest uppercase">logout</span>
         </button>
-        <AudioRecorderButton
-          onStart={handleRecStart}
-          onStop={handleRecStop}
-          onFinal={handleFinal}
-          onPartial={handlePartial}
-        />
+        <AudioRecorderButton />
       </div>
 
       {open && (
