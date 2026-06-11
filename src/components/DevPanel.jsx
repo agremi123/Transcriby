@@ -48,40 +48,16 @@ function Chip({ ok, label }) {
   );
 }
 
-const SM_URL = 'wss://eu2.rt.speechmatics.com/v2';
-
-function joinSMResults(results) {
-  let out = '';
-  for (const r of results ?? []) {
-    const content = r.alternatives?.[0]?.content ?? '';
-    if (!content) continue;
-    const isPunct = r.type === 'punctuation' || /^[.,!?;:»)}\]]+$/.test(content);
-    out = isPunct ? out + content : out ? out + ' ' + content : content;
-  }
-  return out.trim();
-}
-
-function AudioRecorderButton({ onPartial, onFinal, onStart, onStop }) {
+function AudioRecorderButton() {
   const [recording, setRecording] = React.useState(false);
-  const wsRef = React.useRef(null);
-  const mrRef = React.useRef(null);
   const streamRef = React.useRef(null);
 
   const stop = React.useCallback(() => {
-    const ws = wsRef.current;
-    const mr = mrRef.current;
-    const stream = streamRef.current;
-    wsRef.current = null; mrRef.current = null; streamRef.current = null;
-
-    if (mr?.state !== 'inactive') mr?.stop();
-    if (ws?.readyState === WebSocket.OPEN) {
-      try { ws.send(JSON.stringify({ message: 'EndOfStream', last_seq_no: 0 })); } catch {}
-      setTimeout(() => ws.close(), 500);
-    }
-    stream?.getTracks().forEach(t => t.stop());
+    streamRef.current?.getTracks().forEach(t => t.stop());
+    streamRef.current = null;
     setRecording(false);
-    onStop?.();
-  }, [onStop]);
+    window.dispatchEvent(new Event('dev-sysaudio-stop'));
+  }, []);
 
   const start = async () => {
     try {
@@ -101,45 +77,8 @@ function AudioRecorderButton({ onPartial, onFinal, onStart, onStop }) {
       streamRef.current = audioStream;
       audioTracks[0].addEventListener('ended', stop);
 
-      const keyRes = await fetch('/api/speechmatics/key');
-      const { key } = await keyRes.json();
-
-      const ws = new WebSocket(`${SM_URL}?jwt=${key}`);
-      wsRef.current = ws;
-
-      ws.onopen = () => ws.send(JSON.stringify({
-        message: 'StartRecognition',
-        audio_format: { type: 'file' },
-        transcription_config: {
-          language: 'fr',
-          enable_partials: true,
-          max_delay: 1,
-          max_delay_mode: 'flexible',
-          operating_point: 'enhanced',
-        },
-      }));
-
-      ws.onmessage = event => {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.message === 'RecognitionStarted') {
-            const mr = new MediaRecorder(audioStream);
-            mrRef.current = mr;
-            mr.ondataavailable = e => {
-              if (e.data.size > 0 && ws.readyState === WebSocket.OPEN) ws.send(e.data);
-            };
-            mr.start(100);
-          }
-          if (data.message === 'AddPartialTranscript') onPartial?.(joinSMResults(data.results));
-          if (data.message === 'AddTranscript') onFinal?.(joinSMResults(data.results));
-          if (data.message === 'Error') stop();
-        } catch {}
-      };
-
-      ws.onclose = () => { if (recording) stop(); };
-
+      window.dispatchEvent(new CustomEvent('dev-sysaudio-start', { detail: { stream: audioStream } }));
       setRecording(true);
-      onStart?.();
     } catch {
       stop();
     }
@@ -154,7 +93,7 @@ function AudioRecorderButton({ onPartial, onFinal, onStart, onStop }) {
           ? 'border-red-400 bg-red-50/95 text-red-600 hover:bg-red-100'
           : 'border-navy/20 bg-ivory/95 text-navy/50 hover:text-wine hover:border-wine/30'
       }`}
-      title={recording ? 'Stop recording' : 'Record + transcribe system audio'}
+      title={recording ? 'Stop system audio transcription' : 'Transcribe system audio into speech box'}
     >
       {recording ? (
         <>
