@@ -48,6 +48,74 @@ function Chip({ ok, label }) {
   );
 }
 
+function AudioRecorderButton() {
+  const [recording, setRecording] = React.useState(false);
+  const recorderRef = React.useRef(null);
+  const chunksRef = React.useRef([]);
+
+  const start = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({ audio: true, video: false });
+      chunksRef.current = [];
+
+      const recorder = new MediaRecorder(stream);
+      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
+      recorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `rec-${Date.now()}.webm`;
+        a.click();
+        stream.getTracks().forEach(t => t.stop());
+        setRecording(false);
+      };
+
+      // User stops share from browser UI
+      stream.getAudioTracks()[0]?.addEventListener('ended', () => {
+        if (recorder.state !== 'inactive') recorder.stop();
+      });
+
+      recorder.start();
+      recorderRef.current = recorder;
+      setRecording(true);
+    } catch {
+      setRecording(false);
+    }
+  };
+
+  const stop = () => {
+    if (recorderRef.current?.state !== 'inactive') recorderRef.current.stop();
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={recording ? stop : start}
+      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg shadow-lg border backdrop-blur-sm transition-colors ${
+        recording
+          ? 'border-red-400 bg-red-50/95 text-red-600 hover:bg-red-100'
+          : 'border-navy/20 bg-ivory/95 text-navy/50 hover:text-wine hover:border-wine/30'
+      }`}
+      title={recording ? 'Stop recording (downloads .webm)' : 'Record tab / system audio'}
+    >
+      {recording ? (
+        <>
+          <span className="w-2 h-2 rounded-sm bg-red-500 animate-pulse shrink-0" />
+          <span className="text-[9px] tracking-widest uppercase">stop</span>
+        </>
+      ) : (
+        <>
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden>
+            <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.3" />
+            <circle cx="6" cy="6" r="2" fill="currentColor" />
+          </svg>
+          <span className="text-[9px] tracking-widest uppercase">rec</span>
+        </>
+      )}
+    </button>
+  );
+}
+
 export default function DevPanel() {
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState(null);
