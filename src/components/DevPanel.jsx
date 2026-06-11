@@ -148,7 +148,7 @@ export default function DevPanel() {
 
   return (
     <div className="fixed bottom-3 right-3 z-[9999] font-mono text-[11px]">
-      {/* Toggle button + logout */}
+      {/* Toggle button + logout + recorder */}
       <div className="flex items-center gap-1.5">
         <button
           type="button"
