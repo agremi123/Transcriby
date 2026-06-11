@@ -1037,6 +1037,9 @@ export function AudioDemoCard({
   const [narratorReaction, setNarratorReaction] = React.useState(null);
   const [correctionReaderId, setCorrectionReaderId] = React.useState(null);
   const [sentenceCongrats, setSentenceCongrats] = React.useState(null);
+  // Congrats lines pinned to their utterance — persist in the transcript
+  // (the transient below-tabs banner was removed; this is the durable record).
+  const [congratsByUtterance, setCongratsByUtterance] = React.useState({});
   const [correctionUtteranceId, setCorrectionUtteranceId] = React.useState(null);
   const [awaitingRepeat, setAwaitingRepeat] = React.useState(false);
   const [repeatFeedback, setRepeatFeedback] = React.useState(null);
