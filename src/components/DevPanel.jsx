@@ -48,59 +48,101 @@ function Chip({ ok, label }) {
   );
 }
 
-function AudioRecorderButton() {
+const SM_URL = 'wss://eu2.rt.speechmatics.com/v2';
+
+function joinSMResults(results) {
+  let out = '';
+  for (const r of results ?? []) {
+    const content = r.alternatives?.[0]?.content ?? '';
+    if (!content) continue;
+    const isPunct = r.type === 'punctuation' || /^[.,!?;:»)}\]]+$/.test(content);
+    out = isPunct ? out + content : out ? out + ' ' + content : content;
+  }
+  return out.trim();
+}
+
+function AudioRecorderButton({ onPartial, onFinal, onStart, onStop }) {
   const [recording, setRecording] = React.useState(false);
-  const recorderRef = React.useRef(null);
-  const chunksRef = React.useRef([]);
+  const wsRef = React.useRef(null);
+  const mrRef = React.useRef(null);
+  const streamRef = React.useRef(null);
+
+  const stop = React.useCallback(() => {
+    const ws = wsRef.current;
+    const mr = mrRef.current;
+    const stream = streamRef.current;
+    wsRef.current = null; mrRef.current = null; streamRef.current = null;
+
+    if (mr?.state !== 'inactive') mr?.stop();
+    if (ws?.readyState === WebSocket.OPEN) {
+      try { ws.send(JSON.stringify({ message: 'EndOfStream', last_seq_no: 0 })); } catch {}
+      setTimeout(() => ws.close(), 500);
+    }
+    stream?.getTracks().forEach(t => t.stop());
+    setRecording(false);
+    onStop?.();
+  }, [onStop]);
 
   const start = async () => {
     try {
-      // Must request video too — Chrome on macOS requires it to offer "Share system audio"
-      const stream = await navigator.mediaDevices.getDisplayMedia({
+      const displayStream = await navigator.mediaDevices.getDisplayMedia({
         audio: true,
         video: { width: 1, height: 1 },
       });
+      displayStream.getVideoTracks().forEach(t => t.stop());
 
-      // Drop the video track immediately, we only care about audio
-      stream.getVideoTracks().forEach(t => t.stop());
-
-      const audioTracks = stream.getAudioTracks();
+      const audioTracks = displayStream.getAudioTracks();
       if (!audioTracks.length) {
-        alert('No system audio captured.\nIn the dialog: pick "Entire Screen" and check "Share system audio".');
-        setRecording(false);
+        alert('No audio captured.\nPick "Entire Screen" and check "Share system audio".');
         return;
       }
 
       const audioStream = new MediaStream(audioTracks);
-      chunksRef.current = [];
+      streamRef.current = audioStream;
+      audioTracks[0].addEventListener('ended', stop);
 
-      const recorder = new MediaRecorder(audioStream);
-      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
-      recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `rec-${Date.now()}.webm`;
-        a.click();
-        audioTracks.forEach(t => t.stop());
-        setRecording(false);
+      const keyRes = await fetch('/api/speechmatics/key');
+      const { key } = await keyRes.json();
+
+      const ws = new WebSocket(`${SM_URL}?jwt=${key}`);
+      wsRef.current = ws;
+
+      ws.onopen = () => ws.send(JSON.stringify({
+        message: 'StartRecognition',
+        audio_format: { type: 'file' },
+        transcription_config: {
+          language: 'fr',
+          enable_partials: true,
+          max_delay: 1,
+          max_delay_mode: 'flexible',
+          operating_point: 'enhanced',
+        },
+      }));
+
+      ws.onmessage = event => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.message === 'RecognitionStarted') {
+            const mr = new MediaRecorder(audioStream);
+            mrRef.current = mr;
+            mr.ondataavailable = e => {
+              if (e.data.size > 0 && ws.readyState === WebSocket.OPEN) ws.send(e.data);
+            };
+            mr.start(100);
+          }
+          if (data.message === 'AddPartialTranscript') onPartial?.(joinSMResults(data.results));
+          if (data.message === 'AddTranscript') onFinal?.(joinSMResults(data.results));
+          if (data.message === 'Error') stop();
+        } catch {}
       };
 
-      // User stops share from browser UI
-      audioTracks[0].addEventListener('ended', () => {
-        if (recorder.state !== 'inactive') recorder.stop();
-      });
+      ws.onclose = () => { if (recording) stop(); };
 
-      recorder.start();
-      recorderRef.current = recorder;
       setRecording(true);
+      onStart?.();
     } catch {
-      setRecording(false);
+      stop();
     }
-  };
-
-  const stop = () => {
-    if (recorderRef.current?.state !== 'inactive') recorderRef.current.stop();
   };
 
   return (
@@ -112,7 +154,7 @@ function AudioRecorderButton() {
           ? 'border-red-400 bg-red-50/95 text-red-600 hover:bg-red-100'
           : 'border-navy/20 bg-ivory/95 text-navy/50 hover:text-wine hover:border-wine/30'
       }`}
-      title={recording ? 'Stop recording (downloads .webm)' : 'Record tab / system audio'}
+      title={recording ? 'Stop recording' : 'Record + transcribe system audio'}
     >
       {recording ? (
         <>
