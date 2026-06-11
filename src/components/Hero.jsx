@@ -4856,6 +4856,14 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
     setTranslateActive(true);
   };
 
+  const revealMoreWords = () => {
+    if (!hasMoreHints) return;
+    if (revealedBatchCount > 0 && !canAffordHint) return;
+    if (revealedBatchCount > 0) onSpendExperience?.(HINT_COST);
+    setRevealedBatchCount((c) => Math.min(c + 1, hintBatches.length));
+    setTranslateActive(true);
+  };
+
   const togglePlay = () => {
     if (!audioRef.current) return;
     if (playing) { audioRef.current.pause(); setPlaying(false); }
