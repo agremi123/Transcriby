@@ -5000,11 +5000,49 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
             )}
           </div>
 
-          {/* Footer: byline + points */}
+          {/* Footer: byline + points + translate */}
           <div className="shrink-0 border-t pt-2" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
             {byline && <p className="text-[10px] font-mono tracking-[0.12em] mb-1.5 truncate" style={{ color: '#8b1e2d' }}>{byline}</p>}
-            <div className="flex items-center gap-2">
-              <DailyParisianPointsIndicator points={dailyParisianPoints} />
+            <div className="flex items-center justify-between gap-2 relative">
+              <DailyParisianPointsIndicator points={dailyParisianPoints} hideLabel />
+
+              {vocab.length > 0 && !translateActive && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                  className="flex items-center gap-1 min-w-0 px-0.5 pointer-events-none leading-[1.15]"
+                >
+                  <span className="font-display text-[10.5px] italic text-wine/70">Use my Parisian points to translate</span>
+                  <svg width="18" height="10" viewBox="0 0 18 10" fill="none" aria-hidden className="shrink-0">
+                    <path d="M1 5 H15 M11 1.5 L15 5 L11 8.5" stroke="#8B1E2D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.65" />
+                  </svg>
+                </motion.div>
+              )}
+
+              {vocab.length > 0 && (
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={handleTranslateClick}
+                    className={`inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory px-4 py-2 text-[13px] font-medium font-display transition-colors duration-200 whitespace-nowrap ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
+                    aria-label="Translate hard words"
+                    aria-pressed={translateActive}
+                  >
+                    Translate hard words
+                  </button>
+                  {translateActive && hasMoreHints && revealedBatchCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={revealMoreWords}
+                      disabled={!canAffordHint}
+                      className={`text-[9px] font-mono tracking-widest uppercase transition-colors ${canAffordHint ? 'text-wine/70 hover:text-wine' : 'text-navy/25 cursor-not-allowed'}`}
+                    >
+                      {canAffordHint ? `+ more words — ${HINT_COST} pts` : `need ${HINT_COST} Parisianism`}
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </>
