@@ -1993,6 +1993,38 @@ export function AudioDemoCard({
     }
   };
 
+  // Dev REC button: pipe system audio into the normal speech box
+  const stopRecordingWithGraceRef = React.useRef(stopRecordingWithGrace);
+  stopRecordingWithGraceRef.current = stopRecordingWithGrace;
+  const startRef = React.useRef(start);
+  startRef.current = start;
+
+  React.useEffect(() => {
+    const onSysAudioStart = async (e) => {
+      const { stream } = e.detail;
+      if (!stream) return;
+      if (isRecording) await stopRecordingWithGraceRef.current();
+      setTime(0); setPlaybackTime(null); setIsPlaying(false);
+      setSpeakCorrection(null); setPreviewCorrection(null); setNarratorReaction(null);
+      setManualCorrection(null); setSentenceCongrats(null); setCorrectionUtteranceId(null);
+      setManualCorrecting(false); setAwaitingRepeat(false); setRepeatFeedback(null);
+      correctionAudioPlayedRef.current = null;
+      setHighlightMic(false); setShowStartHint(false);
+      repeatAutoStoppingRef.current = false;
+      stopParisianAudio(); clearTabCapture();
+      setSource('system');
+      setTabCaptureError(null);
+      await startRef.current({ stream });
+    };
+    const onSysAudioStop = () => stopRecordingWithGraceRef.current();
+    window.addEventListener('dev-sysaudio-start', onSysAudioStart);
+    window.addEventListener('dev-sysaudio-stop', onSysAudioStop);
+    return () => {
+      window.removeEventListener('dev-sysaudio-start', onSysAudioStart);
+      window.removeEventListener('dev-sysaudio-stop', onSysAudioStop);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const rafRef = React.useRef(null);
 
   const stopRaf = React.useCallback(() => {
