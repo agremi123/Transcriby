@@ -3070,6 +3070,7 @@ export function AudioDemoCard({
                   onCorriger={runWritingCorrection}
                   onSubmitQuestion={submitWritingQuestion}
                   onNewChallenge={resetWritingReview}
+                  onRetry={retryWritingChallenge}
                   onReplay={(text, id) => playNarratorLine({ id, text })}
                   onScoreDelta={firePointsDelta}
                   challengeContext={writingPrompt}
