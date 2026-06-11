@@ -3467,7 +3467,7 @@ export function AudioDemoCard({
             ) : (!isLive || !hadContentRef.current) && (
               isRecording ? (
                 <p className="font-display text-[17px] leading-snug text-navy/30">
-                  {source === 'tab' ? 'Listening to tab audio…' : 'Start speaking…'}
+                  {source === 'tab' ? 'Listening to tab audio…' : source === 'system' ? 'Listening to system audio…' : 'Start speaking…'}
                 </p>
               ) : status !== 'connecting' && activeTab !== 'speaking' && activeTab !== 'writing' ? (
                 <div className="flex items-start gap-3 py-1">
