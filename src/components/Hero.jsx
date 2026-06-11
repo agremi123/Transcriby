@@ -5626,10 +5626,18 @@ function WritingReviewThread({ review, question, onQuestionChange, onCorriger, o
           {exercise && (
             <WritingPracticeExercise exercise={exercise} narratorId={narratorId} onScoreDelta={onScoreDelta} context={challengeContext} />
           )}
-          <button type="button" onClick={onNewChallenge}
-            className="self-start text-[11px] font-mono uppercase tracking-wider text-navy/45 hover:text-wine transition-colors mt-1">
-            ↻ Nouveau défi
-          </button>
+          <div className="flex items-center gap-4 mt-1">
+            <button type="button" onClick={onNewChallenge}
+              className="text-[11px] font-mono uppercase tracking-wider text-navy/45 hover:text-wine transition-colors">
+              ↻ Nouveau défi
+            </button>
+            {onRetry && (
+              <button type="button" onClick={onRetry}
+                className="text-[11px] font-mono uppercase tracking-wider text-navy/45 hover:text-wine transition-colors">
+                ✎ Retenter ce défi
+              </button>
+            )}
+          </div>
         </>
       )}
       <div ref={endRef} />
