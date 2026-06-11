@@ -242,6 +242,93 @@ function PracticeExercise({ exercise, skillPct, onCorrect }) {
   );
 }
 
+// Fill-in-the-blank exercises attached to one grammar rule. Uses the exercises
+// stored with the rule when present; otherwise generates them on the fly via
+// /api/practice so older DB content still always has something to practice.
+function GrammarRuleExercises({ rule, onCorrect }) {
+  const stored = Array.isArray(rule.exercises) && rule.exercises.length > 0 ? rule.exercises.slice(0, 2) : null;
+  const [exercises, setExercises] = React.useState(stored);
+  const [loading, setLoading] = React.useState(!stored);
+  const [answers, setAnswers] = React.useState({});
+  const [revealed, setRevealed] = React.useState({});
+  const rewardedRef = React.useRef({});
+
+  React.useEffect(() => {
+    if (stored) return;
+    let cancelled = false;
+    fetch('/api/practice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: rule.point }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (cancelled) return;
+        setExercises((d.exercises || []).slice(0, 2));
+        setLoading(false);
+      })
+      .catch(() => { if (!cancelled) { setExercises([]); setLoading(false); } });
+    return () => { cancelled = true; };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const check = (i, expected) => {
+    const ans = String(answers[i] || '').trim().toLowerCase();
+    const ok = ans === String(expected || '').trim().toLowerCase();
+    if (ok && !rewardedRef.current[i]) {
+      rewardedRef.current[i] = true;
+      onCorrect?.();
+    }
+    setRevealed((r) => ({ ...r, [i]: true }));
+  };
+
+  if (loading) {
+    return <p className="text-[11px] text-navy/35 italic mt-2">Préparation des exercices…</p>;
+  }
+  if (!exercises || exercises.length === 0) return null;
+
+  return (
+    <div className="mt-2.5 pt-2.5 border-t border-line/40 flex flex-col gap-2.5">
+      <span className="text-[9px] font-mono tracking-widest uppercase text-navy/35">À toi de jouer</span>
+      {exercises.map((ex, i) => {
+        const parts = String(ex.sentence || '').split('___');
+        const ans = answers[i] || '';
+        const isRevealed = revealed[i];
+        const isCorrect = ans.trim().toLowerCase() === String(ex.answer || '').trim().toLowerCase();
+        return (
+          <div key={i} className="flex flex-col gap-1">
+            <p className="font-display text-[13px] text-navy/80 leading-snug">
+              {parts[0]}
+              {isRevealed ? (
+                <span className={`inline-block px-1.5 py-0.5 rounded text-[12px] font-semibold mx-0.5 ${isCorrect ? 'bg-green-100 text-green-700' : 'bg-wine/10 text-wine'}`}>{ans || '—'}</span>
+              ) : (
+                <input
+                  type="text"
+                  value={ans}
+                  onChange={(e) => setAnswers((a) => ({ ...a, [i]: e.target.value }))}
+                  onKeyDown={(e) => e.key === 'Enter' && ans.trim() && check(i, ex.answer)}
+                  className="inline-block w-[100px] border-b-2 border-wine/30 focus:border-wine bg-transparent text-navy text-center outline-none px-1 font-display text-[13px] mx-0.5 transition-colors"
+                  autoComplete="off"
+                />
+              )}
+              {parts[1]}
+              {ex.hint && !isRevealed && <span className="text-[10px] text-navy/35 ml-1.5">({ex.hint})</span>}
+            </p>
+            {isRevealed && !isCorrect && (
+              <p className="text-[11px] text-navy/40">→ <span className="font-semibold text-navy/70">{ex.answer}</span></p>
+            )}
+            {!isRevealed && ans.trim() && (
+              <button type="button" onClick={() => check(i, ex.answer)}
+                className="self-start px-3 py-0.5 rounded-full bg-wine text-ivory text-[10px] font-display hover:bg-wine/85 transition-colors">
+                Check
+              </button>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function CorrectionBlock({ original, corrected, className }) {
   const diff = React.useMemo(() => wordDiff(original, corrected), [original, corrected]);
   const [tooltip, setTooltip] = React.useState(null);
