@@ -3822,7 +3822,7 @@ export function AudioDemoCard({
                 {practiceSubTab === 'grammar' && (
                   listeningGrammar.length === 0
                     ? <p className="text-[13px] text-navy/40 italic">No grammar points available — load a listening episode first.</p>
-                    : listeningGrammar.map((g, gi) => (
+                    : listeningGrammar.slice(0, 2).map((g, gi) => (
                         <div key={gi} className="border border-line/50 p-3">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 bg-wine/8 px-1.5 py-0.5">Grammaire</span>
