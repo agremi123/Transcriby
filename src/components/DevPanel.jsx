@@ -416,6 +416,36 @@ export default function DevPanel() {
                 })}
               </div>
             )}
+
+            {tab === 'transcript' && (
+              <div className="flex flex-col h-full px-3 py-2 gap-2">
+                {!recActive && transcriptLines.length === 0 && (
+                  <div className="text-center py-6 text-navy/30 text-[10px]">
+                    Press REC, pick Entire Screen, check "Share system audio"
+                  </div>
+                )}
+                {(transcriptLines.length > 0 || transcriptPartial) && (
+                  <div className="flex-1 overflow-y-auto min-h-0 flex flex-col gap-1.5">
+                    {transcriptLines.map((line, i) => (
+                      <p key={i} className="text-navy/80 text-[11px] leading-relaxed">{line}</p>
+                    ))}
+                    {transcriptPartial && (
+                      <p className="text-navy/35 text-[11px] leading-relaxed italic">{transcriptPartial}</p>
+                    )}
+                    <div ref={transcriptEndRef} />
+                  </div>
+                )}
+                {(transcriptLines.length > 0) && (
+                  <button
+                    type="button"
+                    onClick={() => { setTranscriptLines([]); setTranscriptPartial(''); }}
+                    className="shrink-0 text-[9px] text-navy/30 hover:text-wine transition-colors uppercase tracking-widest self-end"
+                  >
+                    clear
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
