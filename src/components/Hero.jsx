@@ -2402,6 +2402,16 @@ export function AudioDemoCard({
     setTimeout(() => writeTextareaRef.current?.focus(), 50);
   }, [onNewWritingChallenge]);
 
+  // Retry the SAME challenge: back to the textarea with the previous answer
+  // kept so it can be improved — no new prompt is fetched.
+  const retryWritingChallenge = React.useCallback(() => {
+    setWriteReview({ stage: 'idle' });
+    setWriteReviewQuestion('');
+    setWriteSubmittedText(null);
+    setWriteEditing(true);
+    setTimeout(() => writeTextareaRef.current?.focus(), 50);
+  }, []);
+
   const replayCorrectionAudio = React.useCallback(() => {
     if (!manualCorrectionNarration || !correctionReaderId) return;
     if (
