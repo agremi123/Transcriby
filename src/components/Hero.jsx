@@ -1728,7 +1728,7 @@ export function AudioDemoCard({
     }
     setRepeatFeedback('fail');
     playNarratorLine(getRepeatFailLine(correctionReaderId));
-  }, [manualCorrection, correctionReaderId, gainExperience, playNarratorLine]);
+  }, [manualCorrection, correctionReaderId, correctionUtteranceId, gainExperience, playNarratorLine]);
 
   React.useEffect(() => {
     awaitingRepeatRef.current = awaitingRepeat;
