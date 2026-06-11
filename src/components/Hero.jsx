@@ -4786,19 +4786,30 @@ function AudioSyncedTranscript({ text, currentTime, duration, allWordWeights, wo
 
   return (
     <p className={className}>
-      {words.map((word, i) => (
-        <React.Fragment key={i}>
-          <span
-            ref={i === currentWordIdx ? activeRef : null}
-            onClick={() => onWordClick?.(i)}
-            className={`cursor-pointer rounded transition-colors duration-75 ${
-              i === currentWordIdx
-                ? 'bg-wine/20 text-wine'
-                : 'hover:bg-navy/8'
-            }`}
-          >{word}</span>{' '}
-        </React.Fragment>
-      ))}
+      {words.map((word, i) => {
+        const clean = word.replace(/[^\p{L}'’-]/gu, '').toLowerCase();
+        const vocabEntry = highlightActive ? vocabByWord.get(clean) : null;
+        if (vocabEntry) {
+          return (
+            <React.Fragment key={i}>
+              <VocabWordHighlight word={word} definition={vocabEntry.definition} />{' '}
+            </React.Fragment>
+          );
+        }
+        return (
+          <React.Fragment key={i}>
+            <span
+              ref={i === currentWordIdx ? activeRef : null}
+              onClick={() => onWordClick?.(i)}
+              className={`cursor-pointer rounded transition-colors duration-75 ${
+                i === currentWordIdx
+                  ? 'bg-wine/20 text-wine'
+                  : 'hover:bg-navy/8'
+              }`}
+            >{word}</span>{' '}
+          </React.Fragment>
+        );
+      })}
     </p>
   );
 }
