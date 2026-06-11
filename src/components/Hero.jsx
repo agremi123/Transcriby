@@ -1719,7 +1719,11 @@ export function AudioDemoCard({
       setRepeatFeedback('success');
       setAwaitingRepeat(false);
       setShowRepeatHint(false);
-      setSentenceCongrats(getRepeatSuccessLine(correctionReaderId));
+      const successLine = getRepeatSuccessLine(correctionReaderId);
+      setSentenceCongrats(successLine);
+      if (correctionUtteranceId != null) {
+        setCongratsByUtterance((prev) => ({ ...prev, [correctionUtteranceId]: successLine }));
+      }
       return;
     }
     setRepeatFeedback('fail');
