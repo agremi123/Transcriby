@@ -712,7 +712,7 @@ async function generateListeningBundle(apiKey, level = 'B1') {
     segmentPromise,
     claudeJSON({ apiKey, maxTokens: 800, system: `French teacher. 4 multiple-choice comprehension questions for ${level} learner. Also infer vocab theme. Raw JSON: {"vocabTheme":"...","questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"}]}`, user: previewTranscript }),
     claudeJSON({ apiKey, maxTokens: 700, system: `French teacher. 5 vocabulary fill-in-the-blank from transcript for ${level} learner. Raw JSON: {"vocab":[{"word":"...","definition":"English","sentence":"...___..."}]}`, user: previewTranscript }),
-    claudeJSON({ apiKey, maxTokens: 700, system: `French grammar teacher. 3 grammar structures from transcript for ${level} learner. Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"..."}]}`, user: previewTranscript }),
+    claudeJSON({ apiKey, maxTokens: 900, system: `French grammar teacher. Exactly 2 grammar structures from transcript for ${level} learner, each with 2 fill-in-the-blank exercises (one "___" per sentence; hint = base form of answer). Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."},{"sentence":"...___...","answer":"...","hint":"..."}]}]}`, user: previewTranscript }),
     claudeJSON({ apiKey, maxTokens: 600, system: 'French teacher. 4 conjugation fill-in-the-blank using verbs from transcript. Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}', user: previewTranscript }),
   ]);
 
