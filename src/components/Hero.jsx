@@ -3022,7 +3022,7 @@ export function AudioDemoCard({
                   {showWriteHint && (
                     <span key={`border-${writeHintKey}`} className="absolute top-3 left-3 right-3 bottom-3 rounded-lg border-2 border-wine/30 animate-pulse pointer-events-none" aria-hidden />
                   )}
-                  {!writeText.trim() && activeTab !== 'writing' && (
+                  {activeTab !== 'writing' && (
                     <div className="flex items-start gap-3 px-4 pt-4 pb-2 shrink-0">
                       <button
                         type="button"
