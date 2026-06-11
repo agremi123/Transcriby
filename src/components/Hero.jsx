@@ -5537,7 +5537,7 @@ function WritingPracticeExercise({ exercise, narratorId, onScoreDelta, context }
   );
 }
 
-function WritingReviewThread({ review, question, onQuestionChange, onCorriger, onSubmitQuestion, onNewChallenge, onReplay, onScoreDelta, challengeContext }) {
+function WritingReviewThread({ review, question, onQuestionChange, onCorriger, onSubmitQuestion, onNewChallenge, onRetry, onReplay, onScoreDelta, challengeContext }) {
   const { stage, narratorId = 'lea', reaction, original, corrected, explanation, userQuestion, exercise } = review;
   const endRef = React.useRef(null);
   React.useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [stage]);
