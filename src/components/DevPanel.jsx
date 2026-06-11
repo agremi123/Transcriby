@@ -55,10 +55,26 @@ function AudioRecorderButton() {
 
   const start = async () => {
     try {
-      const stream = await navigator.mediaDevices.getDisplayMedia({ audio: true, video: false });
+      // Must request video too — Chrome on macOS requires it to offer "Share system audio"
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        audio: true,
+        video: { width: 1, height: 1 },
+      });
+
+      // Drop the video track immediately, we only care about audio
+      stream.getVideoTracks().forEach(t => t.stop());
+
+      const audioTracks = stream.getAudioTracks();
+      if (!audioTracks.length) {
+        alert('No system audio captured.\nIn the dialog: pick "Entire Screen" and check "Share system audio".');
+        setRecording(false);
+        return;
+      }
+
+      const audioStream = new MediaStream(audioTracks);
       chunksRef.current = [];
 
-      const recorder = new MediaRecorder(stream);
+      const recorder = new MediaRecorder(audioStream);
       recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
       recorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
@@ -66,12 +82,12 @@ function AudioRecorderButton() {
         a.href = URL.createObjectURL(blob);
         a.download = `rec-${Date.now()}.webm`;
         a.click();
-        stream.getTracks().forEach(t => t.stop());
+        audioTracks.forEach(t => t.stop());
         setRecording(false);
       };
 
       // User stops share from browser UI
-      stream.getAudioTracks()[0]?.addEventListener('ended', () => {
+      audioTracks[0].addEventListener('ended', () => {
         if (recorder.state !== 'inactive') recorder.stop();
       });
 
