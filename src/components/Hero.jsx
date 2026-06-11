@@ -4040,7 +4040,7 @@ export function AudioDemoCard({
             ))}
           </div>
           {/* Correction UI - only rendered when active */}
-          {inputMode === 'speak' && (manualCorrecting || hasSpeakCorrection || !!sentenceCongrats) && (
+          {inputMode === 'speak' && (manualCorrecting || hasSpeakCorrection) && (
             <div className="px-7 pt-1 pb-3 min-w-0 overflow-visible">
               {(() => {
             const isBarLineSpeaking = (lineText) => (
