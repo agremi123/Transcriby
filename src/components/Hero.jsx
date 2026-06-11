@@ -3563,7 +3563,7 @@ export function AudioDemoCard({
                   </div>
                 )}
                 {repeatFeedback === 'success' && !isRecording && (
-                  <p className="mt-2 font-display text-[13px] italic text-green-700">+1% Parisian experience</p>
+                  <p className="mt-2 font-display text-[13px] italic text-green-700">+1 point parisien</p>
                 )}
                 {repeatFeedback === 'fail' && !isRecording && (
                   <p className="mt-2 font-display text-[13px] italic text-wine/70">Not quite — try again.</p>
