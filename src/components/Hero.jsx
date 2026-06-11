@@ -1645,7 +1645,11 @@ export function AudioDemoCard({
     if (matchesCorrectionTarget(original, corrected)) {
       setManualCorrection(null);
       setCorrectionReaderId(readerId);
-      setSentenceCongrats(getAlreadyCorrectLine(readerId));
+      const congratsLine = getAlreadyCorrectLine(readerId);
+      setSentenceCongrats(congratsLine);
+      if (targetUtteranceId != null) {
+        setCongratsByUtterance((prev) => ({ ...prev, [targetUtteranceId]: congratsLine }));
+      }
       setAwaitingRepeat(false);
       setRepeatFeedback(null);
       setRepeatAttemptText(null);
