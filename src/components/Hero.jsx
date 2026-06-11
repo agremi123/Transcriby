@@ -4737,9 +4737,20 @@ function frSyllables(word) {
   return syl + (hasPause ? 1.2 : 0);
 }
 
-function AudioSyncedTranscript({ text, currentTime, duration, allWordWeights, wordTimings, onWordClick, className }) {
+function AudioSyncedTranscript({ text, currentTime, duration, allWordWeights, wordTimings, onWordClick, className, vocabEntries = [], highlightActive = false }) {
   const words = React.useMemo(() => text.split(/\s+/).filter(Boolean), [text]);
   const activeRef = React.useRef(null);
+
+  // Revealed vocab lookup — single words match directly; multi-word entries
+  // match on their first word so the tooltip still lands somewhere sensible.
+  const vocabByWord = React.useMemo(() => {
+    const m = new Map();
+    for (const v of vocabEntries) {
+      const key = String(v.word || '').toLowerCase().split(/\s+/)[0];
+      if (key) m.set(key, v);
+    }
+    return m;
+  }, [vocabEntries]);
 
   const currentWordIdx = React.useMemo(() => {
     // --- Real Deepgram timestamps path ---
