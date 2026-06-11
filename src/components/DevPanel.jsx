@@ -322,6 +322,11 @@ export default function DevPanel() {
                 {t}{t === 'cache' && cacheLog.length > 0 ? ` (${cacheLog.length})` : ''}
               </button>
             ))}
+            <button type="button" onClick={() => setTab('transcript')}
+              className={`px-3 py-1.5 text-[9px] tracking-widest uppercase transition-colors flex items-center gap-1 ${tab === 'transcript' ? 'border-b-2 border-red-500 text-red-600' : 'text-navy/40 hover:text-navy/70'}`}>
+              {recActive && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
+              rec
+            </button>
           </div>
 
           {/* Content */}
