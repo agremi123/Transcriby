@@ -3442,40 +3442,64 @@ export function AudioDemoCard({
                       ? 'play'
                       : stoppingRecording ? 'loading' : 'empty';
 
+                    const congrats = congratsByUtterance[utt.id];
+                    const isCongratsLineSpeaking = wordPlaying && congrats && parisianSpeakingText === congrats.text?.trim();
                     return (
-                      <TranscriptSentenceRow
-                        key={utt.id}
-                        gutter={(
-                          <TranscriptAudioSlot
-                            mode={utteranceSlotMode}
-                            isPlaying={isPlayingThis}
-                            onPlay={() => toggleUtterancePlayback(utt)}
-                          />
-                        )}
-                      >
-                        {wordSpans}
-                        {utt.id === correctionUtteranceId && sentenceCongrats && (
-                          <span className="inline-flex items-center gap-1 ml-1.5 align-middle whitespace-nowrap">
-                            <svg
-                              width="18"
-                              height="18"
-                              viewBox="0 0 48 48"
-                              fill="none"
-                              stroke="#16a34a"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="shrink-0"
-                              aria-hidden
-                            >
-                              <path d="M42 12L18 36l-12-12" />
-                            </svg>
-                            <span className="parisian-exp-bump inline-flex items-center justify-center rounded-full border border-navy/15 bg-navy/[0.04] px-1.5 py-0.5 font-mono text-[9px] leading-none text-navy/45 tabular-nums">
-                              +1% Parisian
+                      <React.Fragment key={utt.id}>
+                        <TranscriptSentenceRow
+                          gutter={(
+                            <TranscriptAudioSlot
+                              mode={utteranceSlotMode}
+                              isPlaying={isPlayingThis}
+                              onPlay={() => toggleUtterancePlayback(utt)}
+                            />
+                          )}
+                        >
+                          {wordSpans}
+                          {congrats && (
+                            <span className="inline-flex items-center gap-1 ml-1.5 align-middle whitespace-nowrap">
+                              <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 48 48"
+                                fill="none"
+                                stroke="#16a34a"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="shrink-0"
+                                aria-hidden
+                              >
+                                <path d="M42 12L18 36l-12-12" />
+                              </svg>
+                              <span className="parisian-exp-bump inline-flex items-center justify-center rounded-full border border-navy/15 bg-navy/[0.04] px-1.5 py-0.5 font-mono text-[9px] leading-none text-navy/45 tabular-nums">
+                                +1 point parisien
+                              </span>
                             </span>
-                          </span>
+                          )}
+                        </TranscriptSentenceRow>
+                        {congrats && (
+                          <div className="mt-1.5 mb-1 flex items-center gap-2 min-w-0">
+                            <NarratorPortrait
+                              narratorId={congrats.id}
+                              speaking={isCongratsLineSpeaking}
+                              onReplay={() => playNarratorLine({ id: congrats.id, text: congrats.text })}
+                              hideName
+                              size="lg"
+                            />
+                            <NarratorHoverText
+                              text={congrats.text}
+                              translation={congrats.translation}
+                              highlightSpeech={isCongratsLineSpeaking}
+                              speechPlaybackTime={isCongratsLineSpeaking ? parisianPlaybackTime : null}
+                              speechTimings={isCongratsLineSpeaking ? parisianTimings : []}
+                              className="font-display text-[16px] italic text-navy leading-snug"
+                              wrapperClassName="relative flex-1 min-w-0"
+                              tooltipPosition="above"
+                            />
+                          </div>
                         )}
-                      </TranscriptSentenceRow>
+                      </React.Fragment>
                     );
                   })}
 
