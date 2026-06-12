@@ -3110,6 +3110,9 @@ export function AudioDemoCard({
                     onReplay={(text, id) => playNarratorLine({ id, text })}
                     onScoreDelta={firePointsDelta}
                     challengeContext={writingPrompt}
+                    onShowExample={fetchWritingExample}
+                    example={writeReviewExample}
+                    exampleLoading={writeReviewExampleLoading}
                   />
                   <div className="border-t border-line/40 px-4 py-2 shrink-0">
                     <textarea
