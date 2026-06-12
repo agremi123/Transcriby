@@ -1,5 +1,111 @@
 [
   {
+    "id": 1781198110372,
+    "topic": "La vie parisienne",
+    "title": "Près de 400 drones ukrainiens interceptés en Russie, dont 86 dans la région de Saint-Pétersbourg",
+    "passage": "Cette vaste attaque ukrainienne intervient au lendemain d'une lettre adressée par Volodymyr Zelensky à Vladimir Poutine, proposant une rencontre en face-à-face pour des négociations.\n\nLes forces russes ont intercepté près de 90 drones ukrainiens dans la région autour de Saint-Pétersbourg, ville où se déroule un important forum d'investissements, a annoncé le gouverneur régional ce samedi 6 juin. « Quatre-vingt-six drones ont été abattus au-dessus de la région de Leningrad. Les opérations de combat se poursuivent », a écrit sur Telegram le gouverneur, Aleksandr Drozdenko. « Saint-Pétersbourg a été la cible d'une attaque de grande ampleur menée par des drones militaires », a indiqué de son côté le gouverneur de la ville de Saint-Pétersbourg, Aleksandr Beglov. « Je demande aux habitants de Saint-Pétersbourg de rester chez eux et de ne pas sortir », a-t-il ajouté. L'aéroport international de Poulkovo, au sud de la ville, a annoncé une interruption temporaire du trafic, sans préciser la raison.\n\nMercredi, à l'ouverture du Forum de Saint-Pétersbourg, autrefois surnommé le « Davos russe » en référence au Forum économique mondial, des drones ukrainiens avaient frappé une installation pétrolière et un site militaire à proximité. Les invités arrivant à l'événement avaient été accueillis avec un panache de fumée noire en arrière-plan. Ce Forum s'achève ce samedi, au lendemain d'une intervention du dirigeant russe Vladimir Poutine.\n\nAu total, le ministère russe de la Défense a annoncé l'interception de 376 drones ukrainiens au cours de la nuit au-dessus du pays. Le maire de Moscou, Sergueï Sobianin, a indiqué que huit drones avaient été abattus alors qu'ils se dirigeaient vers la ville. L'Ukraine a récemment intensifié ses frappes de drones sur les territoires occupés et la Russie en représailles aux bombardements russes quotidiens contre son territoire. Une attaque de drones a d'ailleurs déclenché un incendie de quelque 5 000 m2 dans un dépôt de carburant à Oust-Labinsk, dans la région russe de Krasnodar, selon les autorités locales.\n\nEn Ukraine, dans la région de Zaporijjia, une attaque de drones russes contre des « infrastructures essentielles et industrielles » a fait deux morts, selon le chef militaire local, Ivan Fedorov. Dans celle de Dnipropetrovsk, visée « près de 30 fois avec des drones et de l'artillerie », une personne a perdu la vie et trois ont été blessées dans le district de Kryvyi Rig, a indiqué le chef de l'administration militaire régionale, Oleksandr Ghanza. Les services de secours ukrainiens ont également fait état d'attaques de drones sur la ville d'Odessa (sud), qui n'ont pas fait de blessé.\n\nDans une lettre ouverte, publiée le 4 juin, le président ukrainien Volodymyr Zelensky a proposé à son homologue russe Vladimir Poutine une rencontre diplomatique en face-à-face, et en terrain neutre, pour « mettre fin à cette guerre ».",
+    "source": "L'Obs",
+    "author": "",
+    "date": "Sat, 06 Jun 2026 10:12:58 +0200",
+    "link": "https://www.nouvelobs.com/monde/20260606.OBS115552/pres-de-400-drones-ukrainiens-interceptes-en-russie-dont-86-pres-de-saint-petersbourg.html",
+    "questions": [
+      {
+        "question": "Combien de drones ukrainiens ont été interceptés selon le ministère russe de la Défense au cours de la nuit ?",
+        "options": [
+          "86 drones",
+          "90 drones",
+          "376 drones",
+          "8 drones"
+        ],
+        "answer": "376 drones",
+        "explanation": "The passage explicitly states 'le ministère russe de la Défense a annoncé l'interception de 376 drones ukrainiens au cours de la nuit au-dessus du pays.' The other numbers refer to different regions or times: 86 in the Leningrad region, 90 near Saint-Petersburg, and 8 towards Moscow."
+      },
+      {
+        "question": "Quel événement important se déroulait à Saint-Pétersbourg le 6 juin ?",
+        "options": [
+          "Un tournoi militaire international",
+          "Le Forum de Saint-Pétersbourg (ancien Davos russe)",
+          "Une conférence diplomatique avec l'Ukraine",
+          "Un sommet de l'OTAN"
+        ],
+        "answer": "Le Forum de Saint-Pétersbourg (ancien Davos russe)",
+        "explanation": "The text clearly states 'Les forces russes ont intercepté près de 90 drones ukrainiens dans la région autour de Saint-Pétersbourg, ville où se déroule un important forum d'investissements' and later identifies it as 'le Forum de Saint-Pétersbourg, autrefois surnommé le « Davos russe ».' The other options are not mentioned in the passage."
+      },
+      {
+        "question": "Quelle proposition a faite Volodymyr Zelensky à Vladimir Poutine le 4 juin ?",
+        "options": [
+          "Arrêter tous les bombardements immédiatement",
+          "Accepter une reddition conditionnelle de l'Ukraine",
+          "Une rencontre diplomatique en face-à-face en terrain neutre pour mettre fin à la guerre",
+          "Accéder à tous les territoires occupés par la Russie"
+        ],
+        "answer": "Une rencontre diplomatique en face-à-face en terrain neutre pour mettre fin à la guerre",
+        "explanation": "The passage states 'le président ukrainien Volodymyr Zelensky a proposé à son homologue russe Vladimir Poutine une rencontre diplomatique en face-à-face, et en terrain neutre, pour « mettre fin à cette guerre ».' The other options misrepresent or fabricate the terms of the proposal."
+      },
+      {
+        "question": "Quel événement a marqué l'ouverture du Forum de Saint-Pétersbourg mercredi ?",
+        "options": [
+          "Un discours du président Poutine",
+          "Des drones ukrainiens ont frappé une installation pétrolière et un site militaire à proximité",
+          "L'arrivée de délégations étrangères",
+          "Une explosion accidentelle d'usine"
+        ],
+        "answer": "Des drones ukrainiens ont frappé une installation pétrolière et un site militaire à proximité",
+        "explanation": "The text explicitly states 'Mercredi, à l'ouverture du Forum de Saint-Pétersbourg...des drones ukrainiens avaient frappé une installation pétrolière et un site militaire à proximité' and notes that 'Les invités arrivant à l'événement avaient été accueillis avec un panache de fumée noire en arrière-plan.' The other options either refer to different events or are inaccurate."
+      },
+      {
+        "question": "Combien de morts ont été enregistrées en Ukraine selon le passage ?",
+        "options": [
+          "2 morts",
+          "3 morts",
+          "4 morts",
+          "5 morts"
+        ],
+        "answer": "4 morts",
+        "explanation": "The passage reports 2 deaths in the Zaporizhzhia region ('une attaque...a fait deux morts') and 1 death in the Dnipropetrovsk region ('une personne a perdu la vie'), totaling 4 deaths. The other numbers do not match the cumulative toll stated in the text."
+      },
+      {
+        "question": "Quel incendie a été déclenché par une attaque de drones en Russie ?",
+        "options": [
+          "Un incendie de 5 000 m² dans un entrepôt de munitions à Moscou",
+          "Un incendie de 5 000 m² dans un dépôt de carburant à Oust-Labinsk en Krasnodar",
+          "Un incendie de 3 000 m² dans une raffinerie près de Saint-Pétersbourg",
+          "Un incendie de 5 000 m² dans une installation pétrolière près de Moscou"
+        ],
+        "answer": "Un incendie de 5 000 m² dans un dépôt de carburant à Oust-Labinsk en Krasnodar",
+        "explanation": "The passage states 'Une attaque de drones a d'ailleurs déclenché un incendie de quelque 5 000 m2 dans un dépôt de carburant à Oust-Labinsk, dans la région russe de Krasnodar.' The other options contain incorrect locations, facilities, or measurements not mentioned in the text."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "intervient",
+        "definition": "occurs, takes place, happens",
+        "sentence": "Cette vaste attaque ukrainienne ___ au lendemain d'une lettre adressée par Volodymyr Zelensky à Vladimir Poutine."
+      },
+      {
+        "word": "ampleur",
+        "definition": "scale, magnitude, extent",
+        "sentence": "Saint-Pétersbourg a été la cible d'une attaque de grande ___ menée par des drones militaires."
+      },
+      {
+        "word": "panache",
+        "definition": "plume, flourish, style (here: cloud/burst)",
+        "sentence": "Les invités arrivant à l'événement avaient été accueillis avec un ___ de fumée noire en arrière-plan."
+      },
+      {
+        "word": "représailles",
+        "definition": "retaliation, reprisal",
+        "sentence": "L'Ukraine a récemment intensifié ses frappes de drones sur les territoires occupés et la Russie en ___ aux bombardements russes quotidiens."
+      },
+      {
+        "word": "terrain neutre",
+        "definition": "neutral ground, neutral territory",
+        "sentence": "Le président ukrainien a proposé une rencontre diplomatique en face-à-face, et en ___, pour mettre fin à cette guerre."
+      }
+    ],
+    "createdAt": "2026-06-11T17:15:10.372Z"
+  },
+  {
     "id": 1781095974240,
     "topic": "La vie parisienne",
     "title": "Quand la carte routière est laissée en plan",
