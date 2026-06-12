@@ -5620,9 +5620,32 @@ function WritingReviewThread({ review, question, onQuestionChange, onCorriger, o
       {/* Correction */}
       {stage === 'correcting' && <WriteBubble narratorId={narratorId}><TypingDots /></WriteBubble>}
       {reached('corrected') && corrected && (
-        <div className="space-y-1">
-          <p className="text-[9px] font-mono uppercase tracking-widest text-wine/55 pl-0.5">Version améliorée</p>
-          <CorrectionBlock original={original} corrected={corrected} className="font-display text-[16px] leading-relaxed text-navy select-text" />
+        <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={() => setCorrectionOpen(o => !o)}
+            className="self-start inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
+          >
+            Correct my sentence
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden className={`transition-transform duration-200 ${correctionOpen ? 'rotate-180' : ''}`}>
+              <path d="M1 2.5l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          {correctionOpen && (
+            <div className="inline-flex items-center gap-2.5 bg-paper border border-line/50 rounded-xl px-3 py-2.5 shadow-sm self-start">
+              <button
+                type="button"
+                onClick={() => onReplay(corrected, narratorId)}
+                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-wine/15 hover:bg-wine/25 shrink-0 transition-colors"
+                aria-label="Écouter la correction"
+              >
+                <svg width="7" height="9" viewBox="0 0 7 9" fill="none" aria-hidden>
+                  <path d="M1 1l5 3.5L1 8V1z" fill="#8B1E2D" opacity="0.8"/>
+                </svg>
+              </button>
+              <CorrectionBlock original={original} corrected={corrected} className="font-display text-[15px] italic text-navy/80 leading-snug select-text" />
+            </div>
+          )}
         </div>
       )}
 
