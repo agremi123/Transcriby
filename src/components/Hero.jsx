@@ -3078,18 +3078,31 @@ export function AudioDemoCard({
           ) : !isExerciseTab && activeTab !== 'practice' && inputMode === 'write' ? (
             <div className={`${transcriptHeight} flex flex-col relative`}>
               {activeTab === 'writing' && writeReview.stage !== 'idle' ? (
-                <WritingReviewThread
-                  review={writeReview}
-                  question={writeReviewQuestion}
-                  onQuestionChange={setWriteReviewQuestion}
-                  onCorriger={runWritingCorrection}
-                  onSubmitQuestion={submitWritingQuestion}
-                  onNewChallenge={resetWritingReview}
-                  onRetry={retryWritingChallenge}
-                  onReplay={(text, id) => playNarratorLine({ id, text })}
-                  onScoreDelta={firePointsDelta}
-                  challengeContext={writingPrompt}
-                />
+                <div className="flex flex-col h-full min-h-0">
+                  <WritingReviewThread
+                    review={writeReview}
+                    question={writeReviewQuestion}
+                    onQuestionChange={setWriteReviewQuestion}
+                    onCorriger={runWritingCorrection}
+                    onSubmitQuestion={submitWritingQuestion}
+                    onNewChallenge={resetWritingReview}
+                    onRetry={retryWritingChallenge}
+                    onReplay={(text, id) => playNarratorLine({ id, text })}
+                    onScoreDelta={firePointsDelta}
+                    challengeContext={writingPrompt}
+                  />
+                  <div className="border-t border-line/40 px-4 py-2 shrink-0">
+                    <textarea
+                      ref={writeTextareaRef}
+                      className="w-full bg-transparent resize-none outline-none font-display text-[16px] leading-snug text-navy placeholder:text-navy/30 scroll-premium"
+                      placeholder="Réessaie ou continue à écrire…"
+                      rows={2}
+                      spellCheck={false}
+                      value={writeText}
+                      onChange={(e) => { setWriteText(e.target.value); setWriteEditing(true); setWriteCorrection(null); setNarratorReaction(null); setManualCorrection(null); }}
+                    />
+                  </div>
+                </div>
               ) : showChatDiff ? (
                 <div
                   className="flex-1 px-4 pt-4 pb-4 overflow-y-auto scroll-premium cursor-text"
