@@ -6076,12 +6076,16 @@ export default function Hero() {
 
   // Trigger exercise generation when user clicks an exercise tab directly
   const tabTriggeredRef = React.useRef(new Set());
-  const DEFAULT_EXERCISE_TOPICS = {
-    reading: 'La vie parisienne',
-    listening: 'La culture française',
-    speaking: 'Mon quotidien à Paris',
-    writing: 'Paris et ses secrets',
+  // Topic pools — one is picked at random per visit so the défis vary.
+  const EXERCISE_TOPIC_POOLS = {
+    reading: ['La vie parisienne', 'La gastronomie française', "L'actualité culturelle", 'Le sport en France', "L'environnement", 'La technologie au quotidien', 'Le cinéma français'],
+    listening: ['La culture française', "L'histoire de France", 'La société française', 'La musique francophone', 'Le cinéma français', 'Les sciences au quotidien'],
+    speaking: ['Mon quotidien à Paris', 'Les voyages', 'La cuisine et les restos', 'Le travail et les études', 'Les loisirs et le sport', "La famille et l'amitié", 'Les week-ends parfaits'],
+    writing: ['Paris et ses secrets', 'Un souvenir de voyage', 'La vie de quartier', 'Les réseaux sociaux', 'Un dîner mémorable', 'Le métro parisien', 'Les saisons à Paris', 'Mon café préféré', 'Une rencontre inattendue'],
   };
+  const DEFAULT_EXERCISE_TOPICS = Object.fromEntries(
+    Object.entries(EXERCISE_TOPIC_POOLS).map(([k, pool]) => [k, pool[Math.floor(Math.random() * pool.length)]])
+  );
   React.useEffect(() => {
     const type = heroActiveTab;
     if (!['reading', 'listening', 'speaking', 'writing'].includes(type)) return;
