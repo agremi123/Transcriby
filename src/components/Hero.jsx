@@ -1032,6 +1032,7 @@ export function AudioDemoCard({
   const [fetchingCorrection, setFetchingCorrection] = React.useState(false);
   const [manualCorrection, setManualCorrection] = React.useState(null);
   const [manualCorrecting, setManualCorrecting] = React.useState(false);
+  const [speakCorrectionOpen, setSpeakCorrectionOpen] = React.useState(false);
   const [previewCorrection, setPreviewCorrection] = React.useState(null);
   const [fetchingPreview, setFetchingPreview] = React.useState(false);
   const [narratorReaction, setNarratorReaction] = React.useState(null);
