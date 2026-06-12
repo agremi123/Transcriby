@@ -3099,7 +3099,7 @@ export function AudioDemoCard({
           ) : !isExerciseTab && activeTab !== 'practice' && inputMode === 'write' ? (
             <div className={`${transcriptHeight} flex flex-col relative`}>
               {activeTab === 'writing' && writeReview.stage !== 'idle' ? (
-                <div className="flex flex-col h-full min-h-0">
+                <div className="flex flex-col h-full min-h-0 overflow-y-auto scroll-premium">
                   <WritingReviewThread
                     review={writeReview}
                     question={writeReviewQuestion}
