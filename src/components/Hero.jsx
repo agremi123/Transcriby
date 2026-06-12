@@ -5559,6 +5559,12 @@ function WritingReviewThread({ review, question, onQuestionChange, onCorriger, o
 
   return (
     <div className="flex-1 px-4 pt-3 pb-4 overflow-y-auto scroll-premium flex flex-col gap-4">
+      {/* The student's text stays visible — feedback goes below it */}
+      {original && (
+        <div className="self-end max-w-[85%] bg-navy/[0.06] rounded-2xl rounded-br-sm px-3 py-2">
+          <p className="font-display text-[15px] text-navy/80 leading-snug whitespace-pre-wrap">{original}</p>
+        </div>
+      )}
       {/* Reaction / judgement */}
       {stage === 'judging' ? (
         <WriteBubble narratorId={narratorId}><TypingDots /></WriteBubble>
