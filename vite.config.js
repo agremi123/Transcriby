@@ -1638,6 +1638,20 @@ function writingReviewMiddleware(apiKey) {
         res.end(JSON.stringify({ reaction: parsed.reaction || '' }));
         return;
       }
+      if (step === 'example') {
+        const { prompt = '', tips = {}, wordTarget = 80 } = body;
+        const tipList = ['vocab', 'expressions', 'grammar', 'conjugation', 'connecteurs']
+          .map(k => (tips?.[k]?.length ? `${k}: ${tips[k].join(', ')}` : null)).filter(Boolean).join(' | ');
+        const d = await claudeCall('writing-review/example', apiKey, {
+          model: 'claude-haiku-4-5-20251001', max_tokens: 400,
+          system: `Tu es ${name}, ${gender}. Écris une réponse modèle de qualité en français parisien naturel pour ce défi d'écriture.\nDéfi : "${prompt}"\nObjectif : ~${wordTarget} mots (niveau ${level})\n${tipList ? `Intègre naturellement ces éléments : ${tipList}\n` : ''}Écris directement la réponse, sans titre, sans introduction, sans commentaire. Texte brut, pas de markdown. N'utilise jamais d'astérisques.\nJSON: {"example":"..."}`,
+          messages: [{ role: 'user', content: 'Génère la réponse modèle.' }],
+        });
+        const parsed = parseJson(d);
+        res.end(JSON.stringify({ example: parsed.example || '' }));
+        return;
+      }
+
       if (step === 'explain') {
         const { question = '', original = '', corrected = '' } = body;
         if (!question.trim()) { res.end(JSON.stringify({ explanation: '', exercise: null })); return; }
