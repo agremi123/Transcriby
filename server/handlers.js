@@ -1028,7 +1028,7 @@ export async function handleWritingReview(body) {
       const result = await claudeJSON({
         apiKey: ANTHROPIC_API_KEY,
         maxTokens: 280,
-        system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte de l'étudiant par rapport au défi : a-t-il atteint la longueur, utilisé le vocabulaire / les expressions / la grammaire / les connecteurs suggérés ? Sois chaleureux(se), précis(e) et encourageant(e). 2-3 phrases en français.\nTermine TOUJOURS par une relance : une question ou un mini-défi concret qui le pousse à réessayer en utilisant 2-3 mots ou expressions PRÉCIS des conseils qu'il n'a pas encore utilisés (cite-les entre « »).\nJSON: {"reaction":"..."}`,
+        system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte de l'étudiant par rapport au défi : a-t-il atteint la longueur, utilisé le vocabulaire / les expressions / la grammaire / les connecteurs suggérés ? Sois chaleureux(se), précis(e) et encourageant(e). 2-3 phrases en français.\nTermine TOUJOURS par une relance : une question ou un mini-défi concret qui le pousse à réessayer en utilisant 2-3 mots ou expressions PRÉCIS des conseils qu'il n'a pas encore utilisés (cite-les entre « »). N'utilise JAMAIS de markdown ni d'astérisques — texte brut uniquement.\nJSON: {"reaction":"..."}`,
         user: `Texte de l'étudiant :\n"${text}"`,
       });
       return { statusCode: 200, body: { reaction: result.reaction || '' } };

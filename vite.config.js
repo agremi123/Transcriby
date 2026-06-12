@@ -1631,7 +1631,7 @@ function writingReviewMiddleware(apiKey) {
           .map(k => (tips?.[k]?.length ? `${k}: ${tips[k].join(', ')}` : null)).filter(Boolean).join(' | ');
         const d = await claudeCall('writing-review/feedback', apiKey, {
           model: 'claude-haiku-4-5-20251001', max_tokens: 280,
-          system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte par rapport au défi : longueur atteinte, vocabulaire / expressions / grammaire / connecteurs suggérés utilisés ? Sois chaleureux(se), précis(e), encourageant(e). 2-3 phrases en français.\nTermine TOUJOURS par une relance : une question ou un mini-défi concret qui le pousse à réessayer en utilisant 2-3 mots ou expressions PRÉCIS des conseils qu'il n'a pas encore utilisés (cite-les entre « »).\nJSON: {"reaction":"..."}`,
+          system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte par rapport au défi : longueur atteinte, vocabulaire / expressions / grammaire / connecteurs suggérés utilisés ? Sois chaleureux(se), précis(e), encourageant(e). 2-3 phrases en français.\nTermine TOUJOURS par une relance : une question ou un mini-défi concret qui le pousse à réessayer en utilisant 2-3 mots ou expressions PRÉCIS des conseils qu'il n'a pas encore utilisés (cite-les entre « »). N'utilise JAMAIS de markdown ni d'astérisques — texte brut uniquement.\nJSON: {"reaction":"..."}`,
           messages: [{ role: 'user', content: `Texte de l'étudiant :\n"${text}"` }],
         });
         const parsed = parseJson(d);
