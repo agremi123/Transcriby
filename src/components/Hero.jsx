@@ -2301,9 +2301,15 @@ export function AudioDemoCard({
 
   // Estimate word timings for Parisian voice playback — removed; use speechHighlight lib
 
+  // Same-text resubmission is only blocked while a review of it is in
+  // progress — if nothing is on screen (stage idle), let it through, otherwise
+  // the tick silently does nothing and looks broken.
+  const isDuplicateSubmit = (trimmed) =>
+    trimmed === writeSubmittedText && !(activeTab === 'writing' && writeReview.stage === 'idle');
+
   const finishWriteInput = () => {
     const trimmed = writeText.trim();
-    if (!trimmed || trimmed === writeSubmittedText) return;
+    if (!trimmed || isDuplicateSubmit(trimmed)) return;
     setWriteSubmittedText(trimmed);
     setWriteCorrection(null);
     setManualCorrection(null);
