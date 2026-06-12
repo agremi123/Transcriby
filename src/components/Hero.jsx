@@ -2356,7 +2356,7 @@ export function AudioDemoCard({
         body: JSON.stringify({ step: 'feedback', text, prompt: writingPrompt, tips: writingTips, wordTarget: writingWordTarget, narratorId, level: effectiveLevel || 'B1' }),
       });
       const data = await r.json();
-      const reaction = data.reaction || 'Pas mal ! Voyons comment on peut améliorer ça.';
+      const reaction = (data.reaction || 'Pas mal ! Voyons comment on peut améliorer ça.').replace(/\*\*/g, '');
       setWriteReview({ stage: 'judged', narratorId, original: text, reaction });
       playNarratorLine({ id: narratorId, text: reaction });
     } catch {
