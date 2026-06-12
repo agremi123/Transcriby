@@ -3470,6 +3470,9 @@ export function AudioDemoCard({
 
                     const congrats = congratsByUtterance[utt.id];
                     const isCongratsLineSpeaking = wordPlaying && congrats && parisianSpeakingText === congrats.text?.trim();
+                    const isLastUtt = utt === mainUtterances[mainUtterances.length - 1];
+                    const showCorrBtn = isLastUtt && hasSpeakCorrection;
+                    const repeatSucceeded = repeatFeedback === 'success';
                     return (
                       <React.Fragment key={utt.id}>
                         <TranscriptSentenceRow
@@ -3503,7 +3506,69 @@ export function AudioDemoCard({
                               </span>
                             </span>
                           )}
+                          {showCorrBtn && (
+                            <button
+                              type="button"
+                              onClick={() => setSpeakCorrectionOpen(o => !o)}
+                              className="shrink-0 inline-flex items-center gap-1 ml-1.5 align-middle text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
+                            >
+                              Correct my sentence
+                              <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden className={`transition-transform duration-200 ${speakCorrectionOpen ? 'rotate-180' : ''}`}>
+                                <path d="M1 2.5l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            </button>
+                          )}
                         </TranscriptSentenceRow>
+                        {showCorrBtn && speakCorrectionOpen && (
+                          <TranscriptSentenceRow gutter={<TranscriptAudioSlot mode="empty" />}>
+                            <div className="inline-flex items-start gap-2.5 bg-paper border border-line/50 rounded-xl px-3 py-2.5 shadow-sm self-start">
+                              <button
+                                type="button"
+                                onClick={replayCorrectionAudio}
+                                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-wine/15 hover:bg-wine/25 shrink-0 transition-colors mt-0.5"
+                                aria-label="Écouter la correction"
+                              >
+                                <svg width="7" height="9" viewBox="0 0 7 9" fill="none" aria-hidden>
+                                  <path d="M1 1l5 3.5L1 8V1z" fill="#8B1E2D" opacity="0.8"/>
+                                </svg>
+                              </button>
+                              <div className="flex flex-col gap-2">
+                                <p className="font-display text-[15px] italic text-navy/80 leading-snug">
+                                  {manualCorrection.corrected}
+                                </p>
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    type="button"
+                                    disabled={savingExpression}
+                                    onClick={async () => {
+                                      const saved = await saveCurrentExpression();
+                                      if (!saved) return;
+                                      if (!repeatSucceeded) {
+                                        await playNarratorLine({ id: correctionReaderId, text: 'Now try to repeat it.' });
+                                      }
+                                      setManualCorrection(null);
+                                      setCorrectionReaderId(null);
+                                      setSentenceCongrats(null);
+                                      setRepeatFeedback(null);
+                                    }}
+                                    className="text-[11px] font-mono uppercase tracking-wider px-3 py-1 rounded-full border border-wine bg-wine text-ivory hover:bg-wine2 transition-colors disabled:opacity-60"
+                                  >
+                                    {savingExpression ? '…' : 'Save'}
+                                  </button>
+                                  {!repeatSucceeded && (
+                                    <button
+                                      type="button"
+                                      onClick={() => { setManualCorrection(null); setCorrectionReaderId(null); }}
+                                      className="text-[11px] font-mono uppercase tracking-wider text-navy/45 hover:text-wine transition-colors"
+                                    >
+                                      Skip
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </TranscriptSentenceRow>
+                        )}
                         {congrats && (
                           <div className="mt-1.5 mb-1 flex items-center gap-2 min-w-0">
                             <NarratorPortrait
