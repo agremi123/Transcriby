@@ -7,6 +7,11 @@
     }
   },
   "rewrites": [
+    { "source": "/api/tts", "destination": "/api/audio?route=tts" },
+    { "source": "/api/elevenlabs-tts", "destination": "/api/audio?route=elevenlabs" },
+    { "source": "/api/speechmatics/key", "destination": "/api/audio?route=smkey" },
+    { "source": "/api/writing-prompt", "destination": "/api/writing?route=prompt" },
+    { "source": "/api/writing-review", "destination": "/api/writing?route=review" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
