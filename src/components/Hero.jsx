@@ -4093,73 +4093,89 @@ export function AudioDemoCard({
             if (hasSpeakCorrection) {
               const repeatSucceeded = repeatFeedback === 'success';
               return (
-                <div className="flex items-center gap-2 min-w-0 w-full">
-                  <div className="flex flex-col items-stretch gap-1 w-[3.5rem] shrink-0">
+                <div className="flex flex-col gap-2 min-w-0 w-full">
+                  <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      disabled={savingExpression}
-                      onClick={async () => {
-                        const saved = await saveCurrentExpression();
-                        if (!saved) return;
-                        if (!repeatSucceeded) {
-                          await playNarratorLine({ id: correctionReaderId, text: 'Now try to repeat it.' });
-                        }
-                        setManualCorrection(null);
-                        setCorrectionReaderId(null);
-                        setSentenceCongrats(null);
-                        setRepeatFeedback(null);
-                      }}
-                      className="font-display text-[11px] leading-none w-full h-7 rounded-full border border-wine bg-wine text-ivory hover:bg-wine2 transition-colors text-center box-border disabled:opacity-60"
+                      onClick={() => setSpeakCorrectionOpen(o => !o)}
+                      className="shrink-0 inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
                     >
-                      {savingExpression ? '…' : 'Save'}
+                      Correct my sentence
+                      <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden className={`transition-transform duration-200 ${speakCorrectionOpen ? 'rotate-180' : ''}`}>
+                        <path d="M1 2.5l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
                     </button>
-                    {!repeatSucceeded && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setManualCorrection(null);
-                          setCorrectionReaderId(null);
-                        }}
-                        className="font-display text-[11px] leading-none w-full h-7 rounded-full border border-navy/20 text-navy/50 hover:border-navy/40 hover:text-navy/70 transition-colors text-center box-border"
-                      >
-                        Skip
-                      </button>
-                    )}
                   </div>
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <NarratorPortrait
-                      narratorId={correctionReaderId}
-                      speaking={isCorrectionSpeaking || isCongratsSpeaking}
-                      onReplay={repeatSucceeded
-                        ? () => {
-                          if (!sentenceCongrats?.text || !correctionReaderId) return;
-                          playNarratorLine({ id: correctionReaderId, text: sentenceCongrats.text });
-                        }
-                        : replayCorrectionAudio}
-                      hideName
-                      size="lg"
-                    />
-                    <NarratorHoverText
-                      text={manualCorrection.corrected}
-                      translation={manualCorrection.translation}
-                      highlightSpeech={isCorrectionSpeaking}
-                      speechPlaybackTime={isCorrectionSpeaking ? parisianPlaybackTime : null}
-                      speechTimings={isCorrectionSpeaking ? parisianTimings : []}
-                      className="font-display text-[16px] italic text-navy leading-snug"
-                      wrapperClassName="relative flex-1 min-w-0"
-                      scrollable
-                      tooltipPosition="above"
-                    >
-                      {!isCorrectionSpeaking ? (
-                        <DiffText
-                          original={manualCorrection.original}
-                          corrected={manualCorrection.corrected}
-                          side="corrected"
-                          className="font-display text-[16px] italic text-navy leading-snug"
+                  {speakCorrectionOpen && (
+                    <div className="flex items-center gap-2 min-w-0 w-full">
+                      <div className="flex flex-col items-stretch gap-1 w-[3.5rem] shrink-0">
+                        <button
+                          type="button"
+                          disabled={savingExpression}
+                          onClick={async () => {
+                            const saved = await saveCurrentExpression();
+                            if (!saved) return;
+                            if (!repeatSucceeded) {
+                              await playNarratorLine({ id: correctionReaderId, text: 'Now try to repeat it.' });
+                            }
+                            setManualCorrection(null);
+                            setCorrectionReaderId(null);
+                            setSentenceCongrats(null);
+                            setRepeatFeedback(null);
+                          }}
+                          className="font-display text-[11px] leading-none w-full h-7 rounded-full border border-wine bg-wine text-ivory hover:bg-wine2 transition-colors text-center box-border disabled:opacity-60"
+                        >
+                          {savingExpression ? '…' : 'Save'}
+                        </button>
+                        {!repeatSucceeded && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setManualCorrection(null);
+                              setCorrectionReaderId(null);
+                            }}
+                            className="font-display text-[11px] leading-none w-full h-7 rounded-full border border-navy/20 text-navy/50 hover:border-navy/40 hover:text-navy/70 transition-colors text-center box-border"
+                          >
+                            Skip
+                          </button>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <NarratorPortrait
+                          narratorId={correctionReaderId}
+                          speaking={isCorrectionSpeaking || isCongratsSpeaking}
+                          onReplay={repeatSucceeded
+                            ? () => {
+                              if (!sentenceCongrats?.text || !correctionReaderId) return;
+                              playNarratorLine({ id: correctionReaderId, text: sentenceCongrats.text });
+                            }
+                            : replayCorrectionAudio}
+                          hideName
+                          size="lg"
                         />
-                      ) : null}
-                    </NarratorHoverText>
-                  </div>
+                        <NarratorHoverText
+                          text={manualCorrection.corrected}
+                          translation={manualCorrection.translation}
+                          highlightSpeech={isCorrectionSpeaking}
+                          speechPlaybackTime={isCorrectionSpeaking ? parisianPlaybackTime : null}
+                          speechTimings={isCorrectionSpeaking ? parisianTimings : []}
+                          className="font-display text-[16px] italic text-navy leading-snug"
+                          wrapperClassName="relative flex-1 min-w-0"
+                          scrollable
+                          tooltipPosition="above"
+                        >
+                          {!isCorrectionSpeaking ? (
+                            <DiffText
+                              original={manualCorrection.original}
+                              corrected={manualCorrection.corrected}
+                              side="corrected"
+                              className="font-display text-[16px] italic text-navy leading-snug"
+                            />
+                          ) : null}
+                        </NarratorHoverText>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             }
