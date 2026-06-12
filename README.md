@@ -1,6 +1,6 @@
-# Transcriby — Marketing site (v2.0)
+# Parisly
 
-Landing page for Transcriby, built from the Claude Design handoff bundle. Editorial Parisian aesthetic: ivory background, navy typography, wine-red accents, and a Paris skyline atmosphere.
+Learn real Parisian French — listening, speaking, writing, and grammar challenges with Léa and Jules.
 
 ## Stack
 
