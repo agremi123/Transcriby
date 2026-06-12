@@ -937,27 +937,34 @@ export async function handleSpeakingPrompt(body) {
   const empty = { narratorId: 'lea', openingLine: 'Bonjour !', openingLineTranslation: 'Hello!', topicLabel: topic };
   if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
 
-  const supabase = getSupabase();
+  const supabase = getSupabaseAdmin() || getSupabase();
+
+  // Serve any usable stock row: unserved first, then anything non-empty.
+  const serveFromStock = async () => {
+    if (!supabase) return null;
+    const queries = [(q) => q.eq('served', false), (q) => q];
+    for (const apply of queries) {
+      const { data: rows } = await apply(
+        supabase.from('speaking_prompts').select('*').neq('opening_line', '').order('created_at', { ascending: true })
+      ).limit(5);
+      const row = (rows || []).find(r => r.opening_line?.trim());
+      if (row) return row;
+    }
+    return null;
+  };
 
   // 1. Serve from stock
-  if (supabase) {
-    const { data: rows } = await supabase
-      .from('speaking_prompts')
-      .select('*')
-      .eq('served', false)
-      .order('created_at', { ascending: true })
-      .limit(1);
-    if (rows && rows.length > 0) {
-      const row = rows[0];
-      supabase.from('speaking_prompts').update({ served: true }).eq('id', row.id).then(() => {});
-      triggerReplenish();
-      return { statusCode: 200, body: { narratorId: row.narrator_id, openingLine: row.opening_line, openingLineTranslation: row.opening_line_translation, topicLabel: row.topic_label, targetGrammar: row.target_grammar || null, targetVocab: row.target_vocab || null } };
-    }
+  const stockRow = await serveFromStock();
+  if (stockRow) {
+    supabase.from('speaking_prompts').update({ served: true }).eq('id', stockRow.id).then(() => {});
+    triggerReplenish();
+    return { statusCode: 200, body: { narratorId: stockRow.narrator_id, openingLine: stockRow.opening_line, openingLineTranslation: stockRow.opening_line_translation, topicLabel: stockRow.topic_label, targetGrammar: stockRow.target_grammar || null, targetVocab: stockRow.target_vocab || null } };
   }
 
-  // 2. Generate on-demand
+  // 2. Generate on-demand — never save or serve an empty generation
   try {
     const bundle = await generateSpeakingBundle(ANTHROPIC_API_KEY, topic);
+    if (!bundle.opening_line?.trim()) throw new Error('Empty speaking prompt generated');
     if (supabase) {
       supabase.from('speaking_prompts').insert([{ ...bundle, served: true }]).then(() => {});
     }
