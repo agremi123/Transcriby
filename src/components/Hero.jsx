@@ -5658,8 +5658,67 @@ const TIPS_SECTIONS = [
   { key: 'connecteurs', label: 'Connecteurs',  icon: '🔗', pill: true  },
 ];
 
-function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 80 }) {
+function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 80, narratorId = 'lea' }) {
   const hasTips = TIPS_SECTIONS.some(s => (tips[s.key] || []).length > 0);
+  const name = narratorId === 'jules' ? 'Jules' : 'Léa';
+
+  const [speaking, setSpeaking] = React.useState(false);
+  const [playbackTime, setPlaybackTime] = React.useState(null);
+  const [timings, setTimings] = React.useState([]);
+  const ctxRef = React.useRef(null);
+  const sourceRef = React.useRef(null);
+  const sessionRef = React.useRef(0);
+
+  const stopAudio = React.useCallback(() => {
+    sessionRef.current += 1;
+    try { sourceRef.current?.stop(); } catch {}
+    sourceRef.current = null;
+    setSpeaking(false);
+    setPlaybackTime(null);
+    setTimings([]);
+  }, []);
+  React.useEffect(() => stopAudio, [stopAudio]);
+
+  const playPrompt = async () => {
+    if (!prompt) return;
+    if (speaking) { stopAudio(); return; }
+    stopAudio();
+    const session = sessionRef.current;
+    const siteSession = beginSiteAudioPlayback();
+    try {
+      const buf = await fetchNarratorAudio(prompt, narratorId);
+      if (session !== sessionRef.current || !isSiteAudioPlaybackCurrent(siteSession)) return;
+      const ctx = ctxRef.current || new (window.AudioContext || window.webkitAudioContext)();
+      ctxRef.current = ctx;
+      const decoded = await ctx.decodeAudioData(buf.slice(0));
+      if (session !== sessionRef.current || !isSiteAudioPlaybackCurrent(siteSession)) return;
+      setTimings(buildWordTimings(prompt, decoded.duration));
+      setPlaybackTime(0);
+      setSpeaking(true);
+      registerSiteAudioStop(stopAudio);
+      await playDecodedBuffer(ctx, {
+        buffer: decoded,
+        narrator: narratorId,
+        sourceRef,
+        connectSource: connectNarratorSource,
+        playbackSession: siteSession,
+        onTimeUpdate: (t) => {
+          if (session !== sessionRef.current) return;
+          setPlaybackTime(t);
+          if (t == null) stopAudio();
+        },
+      });
+    } catch { stopAudio(); }
+  };
+
+  // Read the challenge aloud once when it arrives
+  const autoPlayedRef = React.useRef(null);
+  React.useEffect(() => {
+    if (loading || !prompt || autoPlayedRef.current === prompt) return;
+    autoPlayedRef.current = prompt;
+    playPrompt();
+  }, [prompt, loading]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className="flex flex-col pr-4 overflow-y-auto" style={{ height: 520 }}>
       {loading ? (
@@ -5669,12 +5728,33 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
         </div>
       ) : (
         <>
-          {/* Challenge */}
+          {/* Challenge — read aloud by the narrator */}
           <div className="mb-4 shrink-0 px-4 py-3 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
             <p className="text-[10px] tracking-widest uppercase text-wine/60 mb-1.5 font-mono">Writing Challenge</p>
-            <p className="font-display text-[17px] leading-snug text-navy">
-              <TranslatableText text={prompt || 'Écris en français sur ce sujet…'} />
-            </p>
+            <div className="flex items-start gap-3">
+              <div className="relative shrink-0">
+                <button type="button" onClick={playPrompt} aria-label={`Listen to ${name}`}
+                  className="group relative w-12 h-12 rounded-full overflow-hidden border-2 transition-all hover:scale-105 active:scale-95"
+                  style={{ borderColor: speaking ? '#8b1e2d' : 'rgba(139,30,45,0.2)' }}>
+                  <img src={NARRATOR_PORTRAITS[narratorId]} alt={name} className="w-full h-full object-cover object-top" />
+                  <div className={`absolute inset-0 flex items-center justify-center bg-navy/30 transition-opacity ${speaking ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                    {speaking
+                      ? <svg width="9" height="11" viewBox="0 0 10 12" fill="none"><rect x="0" y="0" width="3" height="12" rx="0.5" fill="white"/><rect x="6" y="0" width="3" height="12" rx="0.5" fill="white"/></svg>
+                      : <svg width="9" height="11" viewBox="0 0 10 12" fill="none"><path d="M1 1l8 5-8 5V1z" fill="white"/></svg>}
+                  </div>
+                </button>
+                {speaking && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-30 pointer-events-none" />}
+              </div>
+              <p className="font-display text-[17px] leading-snug text-navy flex-1 min-w-0">
+                {speaking && timings.length > 0
+                  ? timings.map((w, i) => (
+                      <span key={i} style={wordHighlightInlineStyle(isTimedWordActive(timings, i, playbackTime))}>
+                        {w.word}{' '}
+                      </span>
+                    ))
+                  : <TranslatableText text={prompt || 'Écris en français sur ce sujet…'} />}
+              </p>
+            </div>
           </div>
 
           {/* Word target */}
