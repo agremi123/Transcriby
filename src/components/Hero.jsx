@@ -5568,12 +5568,20 @@ function WritingReviewThread({ review, question, onQuestionChange, onCorriger, o
         </WriteBubble>
       ) : null}
 
-      {/* Corriger button */}
+      {/* Corriger + retry buttons */}
       {stage === 'judged' && (
-        <button type="button" onClick={onCorriger}
-          className="self-start text-[12px] font-mono uppercase tracking-wider px-4 py-1.5 rounded-full bg-wine text-ivory hover:bg-wine2 transition-colors">
-          Corriger
-        </button>
+        <div className="flex items-center gap-3">
+          <button type="button" onClick={onCorriger}
+            className="text-[12px] font-mono uppercase tracking-wider px-4 py-1.5 rounded-full bg-wine text-ivory hover:bg-wine2 transition-colors">
+            Corriger
+          </button>
+          {onRetry && (
+            <button type="button" onClick={onRetry}
+              className="text-[11px] font-mono uppercase tracking-wider text-navy/45 hover:text-wine transition-colors">
+              ✎ Retenter ce défi
+            </button>
+          )}
+        </div>
       )}
 
       {/* Correction */}
