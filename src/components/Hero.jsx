@@ -5654,12 +5654,28 @@ function WritingReviewThread({ review, question, onQuestionChange, onCorriger, o
         </WriteBubble>
       ) : null}
 
-      {/* Show example button */}
+      {/* Show example */}
       {stage === 'judged' && (
-        <button type="button" onClick={onCorriger}
-          className="self-start text-[12px] font-mono uppercase tracking-wider px-4 py-1.5 rounded-full bg-wine text-ivory hover:bg-wine2 transition-colors">
-          Show example
-        </button>
+        <div className="flex flex-col gap-2">
+          <button type="button"
+            onClick={() => { if (!example && !exampleLoading) onShowExample?.(); }}
+            disabled={exampleLoading || example !== null}
+            className="self-start text-[12px] font-mono uppercase tracking-wider px-4 py-1.5 rounded-full bg-wine text-ivory hover:bg-wine2 transition-colors disabled:opacity-60">
+            {exampleLoading ? '…' : example !== null ? 'Example shown ↓' : 'Show example'}
+          </button>
+          {exampleLoading && (
+            <div className="flex items-center gap-1.5 text-[12px] font-display italic text-navy/40">
+              <div className="w-3 h-3 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
+              Génération de l'exemple…
+            </div>
+          )}
+          {example !== null && example !== '' && (
+            <div className="bg-paper border border-line/50 rounded-xl px-4 py-3 shadow-sm">
+              <p className="text-[9px] font-mono uppercase tracking-widest text-wine/50 mb-2">Exemple de rédaction</p>
+              <p className="font-display text-[15px] text-navy/80 leading-relaxed whitespace-pre-wrap">{example}</p>
+            </div>
+          )}
+        </div>
       )}
 
       <div ref={endRef} />
