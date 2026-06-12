@@ -799,6 +799,7 @@ Raw JSON: {"prompt":"Write a paragraph about...","wordTarget":80,"tips":{"vocab"
 
 // ── Generate a speaking prompt bundle ───────────────────────────────────────
 async function generateSpeakingBundle(apiKey, topic = '', level = 'B1') {
+  topic = topic || pickPromptTopic();
   const narrators = ['lea', 'jules'];
   const narratorId = narrators[Math.floor(Math.random() * narrators.length)];
   const data = await claudeJSON({
