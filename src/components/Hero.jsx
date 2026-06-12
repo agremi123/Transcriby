@@ -4192,7 +4192,7 @@ export function AudioDemoCard({
             </PointsBurst>
             {/* Submit button — same size as mic */}
             <button type="button" onClick={finishWriteInput}
-              disabled={!writeText.trim() || writeText.trim() === writeSubmittedText}
+              disabled={!writeText.trim() || isDuplicateSubmit(writeText.trim())}
               className="relative w-11 h-11 rounded-full bg-wine hover:bg-wine2 disabled:opacity-40 disabled:cursor-default inline-flex items-center justify-center transition-all hover:scale-105"
               aria-label="Submit writing">
               <svg width="13" height="13" viewBox="0 0 12 12" fill="none" aria-hidden>
