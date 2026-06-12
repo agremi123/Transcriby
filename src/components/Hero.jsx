@@ -6281,6 +6281,7 @@ export default function Hero() {
                 prompt={writingPrompt}
                 tips={writingTips}
                 wordTarget={writingWordTarget}
+                narratorId={writingNarrator}
               />
             )}
             {/* Always mounted so Reveal components don't re-animate on tab switch */}
