@@ -5581,7 +5581,7 @@ function WritingPracticeExercise({ exercise, narratorId, onScoreDelta, context }
   );
 }
 
-function WritingReviewThread({ review, question, onQuestionChange, onCorriger, onSubmitQuestion, onNewChallenge, onRetry, onReplay, onScoreDelta, challengeContext }) {
+function WritingReviewThread({ review, question, onQuestionChange, onCorriger, onSubmitQuestion, onNewChallenge, onRetry, onReplay, onScoreDelta, challengeContext, onShowExample, example, exampleLoading }) {
   const { stage, narratorId = 'lea', reaction, original, corrected, explanation, userQuestion, exercise } = review;
   const endRef = React.useRef(null);
   const [correctionOpen, setCorrectionOpen] = React.useState(false);
