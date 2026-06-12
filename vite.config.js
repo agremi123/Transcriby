@@ -1211,32 +1211,36 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: '', questions: [], vocab: [], grammar: [] })); return;
     }
     try {
-      // Check Supabase cache first
+      // Check Supabase cache first — restock requests skip the cache so they
+      // always run the full generation pipeline (which saves a new episode).
       const level = learnerLevel || 'B1';
-      if (supabase) {
+      const isRestock = req.headers['x-restock'] === '1';
+      if (supabase && !isRestock) {
         try {
-          const { data: cached } = await supabase
+          let { data: cached } = await supabase
             .from('listening_episodes')
             .select('*')
             .eq('level', level)
             .order('created_at', { ascending: false })
             .limit(20);
+          const levelStock = cached?.length || 0;
+          // No episode for this level yet → serve ANY level instantly rather
+          // than making the user wait for a live scrape.
+          if (!levelStock) {
+            ({ data: cached } = await supabase
+              .from('listening_episodes')
+              .select('*')
+              .order('created_at', { ascending: false })
+              .limit(20));
+          }
           if (cached && cached.length > 0) {
             const row = cached[Math.floor(Math.random() * cached.length)];
-            console.log(`[listening] Cache hit for level=${level}: "${row.title}"`);
-            // Re-trim audio from stored URL if available
-            let clipAudioUrl = null;
-            if (row.audio_url) {
-              try {
-                const buf = await makeAudioClip(row.audio_url);
-                const sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
-                SESSION_AUDIO.set(sid, buf);
-                setTimeout(() => SESSION_AUDIO.delete(sid), 60 * 60 * 1000);
-                clipAudioUrl = `/api/audio-session/${sid}`;
-              } catch {
-                clipAudioUrl = `/api/audio-proxy?url=${encodeURIComponent(row.audio_url)}`;
-              }
-            }
+            console.log(`[listening] Cache hit for level=${level}: "${row.title}" (stock: ${levelStock})`);
+            // Stream via proxy immediately — the player clips to 3 min itself.
+            // (The old path downloaded + ffmpeg-trimmed BEFORE responding.)
+            const clipAudioUrl = row.audio_url
+              ? `/api/audio-proxy?url=${encodeURIComponent(row.audio_url)}`
+              : null;
             CACHE_LOG.push({ ts: Date.now(), endpoint: 'listening', source: 'database', level, title: row.title, fields: { text: !!row.transcript, audio: !!row.audio_url, questions: (row.questions||[]).length, vocab: (row.vocab||[]).length, grammar: (row.grammar||[]).length } });
             if (CACHE_LOG.length > 1000) CACHE_LOG.shift();
             persistDevCosts();
@@ -1253,6 +1257,16 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
               vocab: row.vocab || [],
               grammar: row.grammar || [],
             }));
+            // Background restock: keep LISTENING_TARGET episodes per level.
+            // Self-call so the full generation pipeline runs without blocking.
+            if (levelStock < LISTENING_TARGET) {
+              const port = req.socket?.localPort || 5173;
+              fetch(`http://localhost:${port}/api/listening`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-restock': '1' },
+                body: JSON.stringify({ topic, learnerLevel: level }),
+              }).catch(() => {});
+            }
             return;
           }
         } catch (e) {
