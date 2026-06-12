@@ -769,7 +769,18 @@ function deepStripNonFrench(v) {
   return v;
 }
 
+// Random topic pool for background replenishment — without this, the model
+// regenerates near-identical "everyday Parisian" prompts every time.
+const PROMPT_TOPIC_POOL = [
+  'Paris et ses secrets', 'Un souvenir de voyage', 'La vie de quartier', 'Les réseaux sociaux',
+  'Un dîner mémorable', 'Le métro parisien', 'Les saisons à Paris', 'Mon café préféré',
+  'Une rencontre inattendue', 'Le travail et les études', 'La cuisine et les restos',
+  'Les loisirs et le sport', "La famille et l'amitié", 'Les voyages', 'Le cinéma français',
+];
+const pickPromptTopic = () => PROMPT_TOPIC_POOL[Math.floor(Math.random() * PROMPT_TOPIC_POOL.length)];
+
 async function generateWritingBundle(apiKey, level = 'B1', topic = '') {
+  topic = topic || pickPromptTopic();
   const data = deepStripNonFrench(await claudeJSON({
     apiKey, maxTokens: 1000,
     system: `French writing teacher. Create a writing challenge for a ${level} learner${topic ? ` on: ${topic}` : ''}. Include useful vocab, expressions, grammar tips, conjugation helpers, and connectors.
