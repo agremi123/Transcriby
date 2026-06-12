@@ -2412,12 +2412,30 @@ export function AudioDemoCard({
   const resetWritingReview = React.useCallback(() => {
     setWriteReview({ stage: 'idle' });
     setWriteReviewQuestion('');
+    setWriteReviewExample(null);
+    setWriteReviewExampleLoading(false);
     setWriteText('');
     setWriteSubmittedText(null);
     setWriteEditing(true);
     onNewWritingChallenge?.();
     setTimeout(() => writeTextareaRef.current?.focus(), 50);
   }, [onNewWritingChallenge]);
+
+  const fetchWritingExample = React.useCallback(async () => {
+    if (writeReviewExampleLoading || writeReviewExample !== null) return;
+    setWriteReviewExampleLoading(true);
+    try {
+      const r = await fetch('/api/writing-review', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ step: 'example', prompt: writingPrompt, tips: writingTips, wordTarget: writingWordTarget, narratorId: writeReview.narratorId || 'lea', level: effectiveLevel || 'B1' }),
+      });
+      const data = await r.json();
+      setWriteReviewExample(data.example || '');
+    } catch {
+      setWriteReviewExample('');
+    }
+    setWriteReviewExampleLoading(false);
+  }, [writeReviewExampleLoading, writeReviewExample, writingPrompt, writingTips, writingWordTarget, writeReview.narratorId, effectiveLevel]);
 
   // Retry the SAME challenge: back to the textarea with the previous answer
   // kept so it can be improved — no new prompt is fetched.
