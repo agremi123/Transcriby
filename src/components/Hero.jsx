@@ -5626,59 +5626,6 @@ function WritingReviewThread({ review, question, onQuestionChange, onCorriger, o
         </button>
       )}
 
-      {/* Correction loading (only when not triggered via the inline button) */}
-      {stage === 'correcting' && !correctionOpen && <WriteBubble narratorId={narratorId}><TypingDots /></WriteBubble>}
-
-      {/* Ask which word/expression */}
-      {reached('corrected') && (
-        <WriteBubble narratorId={narratorId} text="Quel mot ou quelle expression tu n'as pas compris ?" onReplay={onReplay}>
-          Quel mot ou quelle expression tu n'as pas compris&nbsp;?
-        </WriteBubble>
-      )}
-
-      {/* User's typed question (once asked) */}
-      {userQuestion && (
-        <div className="self-end max-w-[80%] bg-navy/[0.06] rounded-2xl rounded-br-sm px-3 py-1.5">
-          <span className="font-display text-[14px] text-navy/80">{userQuestion}</span>
-        </div>
-      )}
-
-      {/* Question input + new challenge */}
-      {stage === 'corrected' && (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <input value={question} onChange={(e) => onQuestionChange(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && question.trim()) onSubmitQuestion(); }}
-              placeholder="Un mot, une expression…"
-              className="flex-1 min-w-0 text-[14px] font-display px-3 py-2 rounded-lg border border-navy/15 bg-ivory/80 outline-none focus:border-wine/40" />
-            <button type="button" onClick={onSubmitQuestion} disabled={!question.trim()}
-              className="shrink-0 text-[12px] font-mono uppercase tracking-wider px-3 py-2 rounded-lg bg-wine text-ivory hover:bg-wine2 disabled:opacity-40 transition-colors">Demander</button>
-          </div>
-          <button type="button" onClick={onNewChallenge}
-            className="self-start text-[11px] font-mono uppercase tracking-wider text-navy/45 hover:text-wine transition-colors">
-            ↻ Nouveau défi
-          </button>
-        </div>
-      )}
-
-      {/* Explanation + exercise */}
-      {stage === 'explaining' && <WriteBubble narratorId={narratorId}><TypingDots /></WriteBubble>}
-      {stage === 'explained' && (
-        <>
-          {explanation && (
-            <WriteBubble narratorId={narratorId} text={explanation} onReplay={onReplay}>
-              <TranslatableText text={explanation} narratorId={narratorId} context={challengeContext} />
-            </WriteBubble>
-          )}
-          {exercise && (
-            <WritingPracticeExercise exercise={exercise} narratorId={narratorId} onScoreDelta={onScoreDelta} context={challengeContext} />
-          )}
-          <button type="button" onClick={onNewChallenge}
-            className="self-start text-[11px] font-mono uppercase tracking-wider text-navy/45 hover:text-wine transition-colors mt-1">
-            ↻ Nouveau défi
-          </button>
-        </>
-      )}
       <div ref={endRef} />
     </div>
   );
