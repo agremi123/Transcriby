@@ -1255,7 +1255,8 @@ export async function handleListening(body) {
   const empty = { title: '', audioUrl: null, transcript: '', source: '', date: null, vocabTheme: '', questions: [], vocab: [], grammar: [], conjugation: [] };
   if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
 
-  const supabase = getSupabase();
+  // Service role so the fire-and-forget save can't be blocked by RLS
+  const supabase = getSupabaseAdmin() || getSupabase();
 
   try {
     // 1. Serve from DB stock — fall back to ANY level rather than generating
