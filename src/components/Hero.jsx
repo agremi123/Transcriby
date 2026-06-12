@@ -5599,7 +5599,7 @@ function WritingReviewThread({ review, question, onQuestionChange, onCorriger, o
   };
 
   return (
-    <div className="flex-1 px-4 pt-3 pb-4 overflow-y-auto scroll-premium flex flex-col gap-4">
+    <div className="px-4 pt-3 pb-2 flex flex-col gap-4 shrink-0">
       {/* Original text + "Correct my sentence" inline — appears as soon as judged */}
       {original && (
         <div className="flex flex-col gap-2">
