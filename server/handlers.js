@@ -1110,7 +1110,7 @@ function narratorForWord(word) {
 }
 
 export async function handleWord() {
-  const { ANTHROPIC_API_KEY } = getEnv();
+  const { ANTHROPIC_API_KEY, ELEVENLABS_API_KEY } = getEnv();
   if (!ANTHROPIC_API_KEY) {
     return { statusCode: 200, body: { word: null } };
   }
