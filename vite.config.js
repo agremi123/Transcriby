@@ -980,6 +980,7 @@ const AUDIO_MAX_BYTES = 3_000_000;
 
 const CLIP_SECONDS = 150; // 2 min 30 sec target clip length
 const DOWNLOAD_BYTES = 8_000_000; // download 8 MB — enough for 5+ min at 128 kbps
+const LISTENING_TARGET = 5; // episodes kept in stock per level (restocked in background)
 
 /**
  * Downloads the first DOWNLOAD_BYTES of an audio URL and trims it to
