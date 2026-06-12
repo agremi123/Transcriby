@@ -1556,10 +1556,22 @@ function speakingPromptMiddleware(apiKey) {
     try {
       const narratorId = SPEAKING_NARRATORS[Math.floor(Math.random() * SPEAKING_NARRATORS.length)];
       const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+      // Fetch recent openers so each challenge feels new
+      let recentOpeners = [];
+      const sbRead = getSupabaseAdmin();
+      if (sbRead) {
+        try {
+          const { data } = await sbRead.from('speaking_prompts').select('opening_line').order('id', { ascending: false }).limit(15);
+          recentOpeners = (data || []).map(r => r.opening_line).filter(Boolean);
+        } catch {}
+      }
+      const avoidBlock = recentOpeners.length
+        ? `\nAlready-used opening questions — yours MUST be clearly different in scenario and wording from ALL of these:\n${recentOpeners.map(p => `- ${p.slice(0, 120)}`).join('\n')}`
+        : '';
       const d = await claudeCall('speaking/opener', apiKey, {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 600,
-        system: `You are ${name}, a Parisian French speaking coach designing a practice challenge for a B1-B2 learner about the given topic. Design: 1) ONE grammar structure to practice (e.g. passé composé, subjonctif, pronoms relatifs, comparatifs). 2) THREE useful French words/expressions to use. 3) A warm, natural opening QUESTION in French that pushes the learner to use that grammar and those words in their spoken answer. Return ONLY raw JSON: {"openingLine":"...","openingLineTranslation":"English","topicLabel":"short FR label","grammarPoint":"FR name","grammarHint":"short English hint","vocab":[{"word":"FR","meaning":"English"}]}`,
+        system: `You are ${name}, a Parisian French speaking coach designing a practice challenge for a B1-B2 learner about the given topic. Design: 1) ONE grammar structure to practice (e.g. passé composé, subjonctif, pronoms relatifs, comparatifs). 2) THREE useful French words/expressions to use. 3) A warm, natural opening QUESTION in French that pushes the learner to use that grammar and those words in their spoken answer. Vary the angle — daily life, opinions, memories, hypotheticals.${avoidBlock} Return ONLY raw JSON: {"openingLine":"...","openingLineTranslation":"English","topicLabel":"short FR label","grammarPoint":"FR name","grammarHint":"short English hint","vocab":[{"word":"FR","meaning":"English"}]}`,
         messages: [{ role: 'user', content: `Topic: ${topic}` }],
       });
       let raw = d.content?.[0]?.text?.trim() || '{}';
