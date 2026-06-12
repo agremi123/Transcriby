@@ -1195,6 +1195,28 @@ export async function handleWord() {
       }
     }
 
+    // Pre-warm the narrator's explanation audio so the intro plays instantly
+    const narratorId = narratorForWord(parsed.word);
+    const explanation = buildWordIntro(parsed);
+    if (ELEVENLABS_API_KEY) {
+      try {
+        const { slug, voiceId } = resolveNarrator(narratorId);
+        const cachedIntro = await getCachedNarratorAudio(slug, voiceId, explanation);
+        if (!cachedIntro?.audioUrl) {
+          const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+            method: 'POST',
+            headers: { 'xi-api-key': ELEVENLABS_API_KEY, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
+            body: JSON.stringify({
+              text: explanation,
+              model_id: 'eleven_multilingual_v2',
+              voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
+            }),
+          });
+          if (elRes.ok) await saveNarratorAudio(slug, voiceId, explanation, Buffer.from(await elRes.arrayBuffer()));
+        }
+      } catch {}
+    }
+
     // NOTE: parisian_words columns are all lowercase in Postgres
     const entry = {
       id: Date.now(),
@@ -1205,14 +1227,21 @@ export async function handleWord() {
       voiceid: ELEVENLABS_VOICES.lea,
       audiourl: audioUrl,
       createdat: new Date().toISOString(),
+      explanation,
+      narratorid: narratorId,
     };
 
     if (supabase) {
-      const { error } = await supabase.from('parisian_words').insert([entry]);
+      let { error } = await supabase.from('parisian_words').insert([entry]);
+      // Migration 008 not run yet → retry without the new columns
+      if (error && /explanation|narratorid/i.test(error.message || '')) {
+        const { explanation: _e, narratorid: _n, ...legacy } = entry;
+        ({ error } = await supabase.from('parisian_words').insert([legacy]));
+      }
       if (error) console.error('[word] parisian_words insert failed:', error.message);
     }
 
-    return { statusCode: 200, body: { ...parsed, audioUrl } };
+    return { statusCode: 200, body: { ...parsed, audioUrl, explanation, narratorId } };
   } catch {
     return { statusCode: 200, body: { word: null } };
   }
