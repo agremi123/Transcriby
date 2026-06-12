@@ -1453,8 +1453,13 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
         grammar,
       };
 
-      // Save to Supabase cache (fire-and-forget)
-      if (supabase) {
+      // Save to Supabase cache (fire-and-forget) — but never save junk:
+      // music-only clips, outros and ads transcribe to almost nothing.
+      const transcriptWordCount = String(transcript || '').split(/\s+/).filter(Boolean).length;
+      if (supabase && transcriptWordCount < 60) {
+        console.warn(`[listening] NOT saving "${episode.title}" — transcript too short (${transcriptWordCount} words, likely music/outro)`);
+      }
+      if (supabase && transcriptWordCount >= 60) {
         supabase.from('listening_episodes').insert([{
           level,
           content_level: contentLevel,
@@ -1757,7 +1762,7 @@ export default defineConfig(() => {
           server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(audioProxyMiddleware());
           server.middlewares.use(sessionAudioMiddleware());
-          server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY, env.INNERFRENCH_COOKIE));
+          server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY, env.INNERFRENCH_COOKIE));
           server.middlewares.use(speakingPromptMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(writingReviewMiddleware(env.ANTHROPIC_API_KEY));
@@ -1776,7 +1781,7 @@ export default defineConfig(() => {
           server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(audioProxyMiddleware());
           server.middlewares.use(sessionAudioMiddleware());
-          server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY, env.INNERFRENCH_COOKIE));
+          server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY, env.INNERFRENCH_COOKIE));
           server.middlewares.use(speakingPromptMiddleware(env.ANTHROPIC_API_KEY));
           server.middlewares.use(writingPromptMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(writingReviewMiddleware(env.ANTHROPIC_API_KEY));
