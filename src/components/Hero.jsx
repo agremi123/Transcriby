@@ -2329,6 +2329,7 @@ export function AudioDemoCard({
 
     // On the Writing tab → run the guided review flow (judge against the challenge).
     if (activeTab === 'writing') {
+      setWriteText('');
       startWritingReview(trimmed);
       return;
     }
