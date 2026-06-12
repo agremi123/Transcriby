@@ -1258,14 +1258,22 @@ export async function handleListening(body) {
   const supabase = getSupabase();
 
   try {
-    // 1. Serve from DB stock
+    // 1. Serve from DB stock — fall back to ANY level rather than generating
+    // live, so the user never waits when stock exists at all.
     if (supabase) {
-      const { data: cached } = await supabase
+      let { data: cached } = await supabase
         .from('listening_episodes')
         .select('*')
         .eq('level', level)
         .order('created_at', { ascending: false })
         .limit(20);
+      if (!cached || cached.length === 0) {
+        ({ data: cached } = await supabase
+          .from('listening_episodes')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(20));
+      }
       if (cached && cached.length > 0) {
         const row = cached[Math.floor(Math.random() * cached.length)];
         return {
