@@ -1602,6 +1602,8 @@ export function AudioDemoCard({
     if (chatAudioRef.current) { chatAudioRef.current.pause(); chatAudioRef.current = null; setChatPlayingId(null); setChatPlayingTime(null); }
   }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  React.useEffect(() => { setSpeakCorrectionOpen(false); }, [manualCorrection]);
+
   const playNarratorLine = React.useCallback(async (line) => {
     if (!line?.text) return;
     const session = beginSiteAudioPlayback();
