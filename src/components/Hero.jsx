@@ -4954,6 +4954,7 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
   const [revealedBatchCount, setRevealedBatchCount] = React.useState(0);
 
   React.useEffect(() => { setTranslateActive(false); setRevealedBatchCount(0); }, [transcript]);
+  React.useEffect(() => () => { audioRef.current?.pause(); }, []);
 
   // Normalize transcript (Deepgram flat string, or old scraped text with newlines)
   const normalizedTranscript = React.useMemo(() =>
