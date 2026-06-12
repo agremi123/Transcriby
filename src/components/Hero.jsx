@@ -5571,6 +5571,8 @@ function WritingPracticeExercise({ exercise, narratorId, onScoreDelta, context }
 function WritingReviewThread({ review, question, onQuestionChange, onCorriger, onSubmitQuestion, onNewChallenge, onRetry, onReplay, onScoreDelta, challengeContext }) {
   const { stage, narratorId = 'lea', reaction, original, corrected, explanation, userQuestion, exercise } = review;
   const endRef = React.useRef(null);
+  const [correctionOpen, setCorrectionOpen] = React.useState(false);
+  React.useEffect(() => { setCorrectionOpen(false); }, [corrected]);
   // Scroll ONLY the thread container — scrollIntoView would also scroll the
   // page itself, yanking the viewport away from the speech box.
   React.useEffect(() => {
