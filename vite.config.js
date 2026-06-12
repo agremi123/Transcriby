@@ -1675,9 +1675,21 @@ function writingPromptMiddleware(apiKey, openrouterKey) {
     const empty = { prompt: '', tips: { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] }, wordTarget: 80 };
     if (!apiKey) { res.end(JSON.stringify(empty)); return; }
     try {
+      // Fetch recent prompts so the model never produces a near-duplicate
+      let recentPrompts = [];
+      const sbRead = getSupabaseAdmin();
+      if (sbRead) {
+        try {
+          const { data } = await sbRead.from('writing_prompts').select('prompt').order('id', { ascending: false }).limit(15);
+          recentPrompts = (data || []).map(r => r.prompt).filter(Boolean);
+        } catch {}
+      }
+      const avoidBlock = recentPrompts.length
+        ? `\nAlready-used prompts — your prompt MUST be clearly different in scenario, angle and wording from ALL of these:\n${recentPrompts.map(p => `- ${p.slice(0, 120)}`).join('\n')}`
+        : '';
       const d = await openrouterCall('writing/prompt', openrouterKey, {
         max_tokens: 500,
-        system: `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss.
+        system: `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss. Be creative and vary the scenario type (a letter, an opinion, a story, a description, a message to a friend…).${avoidBlock}
 CRITICAL: Write EVERYTHING in French only. Use ONLY the Latin alphabet with French accents. NEVER include Chinese, Japanese, Korean, Cyrillic, Arabic or any other non-Latin characters — not a single one.
 Return ONLY raw JSON (no markdown):
 {
