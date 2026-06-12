@@ -889,28 +889,39 @@ export async function handleWritingPrompt(body) {
   const empty = { prompt: '', tips: { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] }, wordTarget: 80 };
   if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
 
-  const supabase = getSupabase();
+  const supabase = getSupabaseAdmin() || getSupabase();
+
+  // Serve any usable stock row: exact level first, then any level, then even
+  // already-served rows — anything beats an empty prompt. Skips empty rows.
+  const serveFromStock = async () => {
+    if (!supabase) return null;
+    const queries = [
+      (q) => q.eq('served', false).eq('level', level),
+      (q) => q.eq('served', false),
+      (q) => q,
+    ];
+    for (const apply of queries) {
+      const { data: rows } = await apply(
+        supabase.from('writing_prompts').select('*').neq('prompt', '').order('created_at', { ascending: true })
+      ).limit(5);
+      const row = (rows || []).find(r => r.prompt?.trim());
+      if (row) return row;
+    }
+    return null;
+  };
 
   // 1. Serve from stock
-  if (supabase) {
-    const { data: rows } = await supabase
-      .from('writing_prompts')
-      .select('*')
-      .eq('served', false)
-      .eq('level', level)
-      .order('created_at', { ascending: true })
-      .limit(1);
-    if (rows && rows.length > 0) {
-      const row = rows[0];
-      supabase.from('writing_prompts').update({ served: true }).eq('id', row.id).then(() => {});
-      triggerReplenish();
-      return { statusCode: 200, body: { prompt: row.prompt, tips: row.tips || empty.tips, wordTarget: row.word_target || 80 } };
-    }
+  const stockRow = await serveFromStock();
+  if (stockRow) {
+    supabase.from('writing_prompts').update({ served: true }).eq('id', stockRow.id).then(() => {});
+    triggerReplenish();
+    return { statusCode: 200, body: { prompt: stockRow.prompt, tips: stockRow.tips || empty.tips, wordTarget: stockRow.word_target || 80 } };
   }
 
-  // 2. Generate on-demand
+  // 2. Generate on-demand — never save or serve an empty generation
   try {
     const bundle = await generateWritingBundle(ANTHROPIC_API_KEY, level, topic);
+    if (!bundle.prompt?.trim()) throw new Error('Empty writing prompt generated');
     if (supabase) {
       supabase.from('writing_prompts').insert([{ ...bundle, served: true }]).then(() => {});
     }
