@@ -1076,7 +1076,12 @@ export async function handleSpeakingReaction(body) {
 // ── Trigger background replenishment via self-call ───────────────────────────
 async function triggerReplenish() {
   const base = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:5173';
-  fetch(`${base}/api/replenish`, { method: 'POST' }).catch(() => {});
+  // Routed through /api/practice — see api/practice.js (12-function limit)
+  fetch(`${base}/api/practice`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ replenish: true }),
+  }).catch(() => {});
 }
 
 export async function handleReplenish() {
