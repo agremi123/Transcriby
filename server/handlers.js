@@ -1096,16 +1096,27 @@ export async function handleReplenish() {
   return { statusCode: 200, body: { ok: true, generated: tasks.length } };
 }
 
+// The narrator's spoken explanation for a Parisian word (deterministic so its
+// TTS audio can be pre-generated and cached in the narrator-audio bucket).
+function buildWordIntro(w) {
+  return `Voici ton mot parisien du jour : « ${w.word} ». Ça veut dire "${w.meaning}". Par exemple : "${w.example}". Essaie maintenant de l'utiliser dans une phrase !`;
+}
+
+// Deterministic narrator per word so the pre-warmed audio always matches.
+function narratorForWord(word) {
+  let h = 0;
+  for (const c of String(word)) h = (h * 31 + c.codePointAt(0)) | 0;
+  return Math.abs(h) % 2 === 0 ? 'lea' : 'jules';
+}
+
 export async function handleWord() {
-  const { ANTHROPIC_API_KEY, ELEVENLABS_API_KEY, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY } = getEnv();
+  const { ANTHROPIC_API_KEY } = getEnv();
   if (!ANTHROPIC_API_KEY) {
     return { statusCode: 200, body: { word: null } };
   }
 
-  let supabase = null;
-  if (NEXT_PUBLIC_SUPABASE_URL && NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
-    supabase = createClient(NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
-  }
+  // Service role so reads AND restock inserts work (RLS blocks the anon key)
+  const supabase = getSupabaseAdmin() || getSupabase();
 
   try {
     let cachedWords = [];
@@ -1116,8 +1127,9 @@ export async function handleWord() {
       } catch {}
     }
 
-    const useCached = cachedWords.length > 0 && Math.random() < 0.7;
-    if (useCached) {
+    // Stock-first: ALWAYS serve instantly from DB when stock exists.
+    // Generation only happens when the stock is completely empty.
+    if (cachedWords.length > 0) {
       const cached = cachedWords[Math.floor(Math.random() * cachedWords.length)];
       return {
         statusCode: 200,
@@ -1128,6 +1140,8 @@ export async function handleWord() {
           // DB columns are lowercase; fall back to camelCase for safety
           exampleTranslation: cached.exampletranslation ?? cached.exampleTranslation ?? '',
           audioUrl: cached.audiourl ?? cached.audioUrl ?? null,
+          explanation: cached.explanation || buildWordIntro(cached),
+          narratorId: cached.narratorid || narratorForWord(cached.word),
         },
       };
     }
