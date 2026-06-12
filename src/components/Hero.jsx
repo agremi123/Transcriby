@@ -5563,10 +5563,39 @@ function WritingReviewThread({ review, question, onQuestionChange, onCorriger, o
 
   return (
     <div className="flex-1 px-4 pt-3 pb-4 overflow-y-auto scroll-premium flex flex-col gap-4">
-      {/* The student's text stays visible — feedback goes below it */}
+      {/* Original text + inline correction button (appears once correction is ready) */}
       {original && (
-        <div className="self-end max-w-[85%] bg-navy/[0.06] rounded-2xl rounded-br-sm px-3 py-2">
-          <p className="font-display text-[15px] text-navy/80 leading-snug whitespace-pre-wrap">{original}</p>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <p className="font-display text-[16px] text-navy leading-snug whitespace-pre-wrap">{original}</p>
+            {reached('corrected') && corrected && (
+              <button
+                type="button"
+                onClick={() => setCorrectionOpen(o => !o)}
+                className="shrink-0 inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
+              >
+                Correct my sentence
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden className={`transition-transform duration-200 ${correctionOpen ? 'rotate-180' : ''}`}>
+                  <path d="M1 2.5l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            )}
+          </div>
+          {reached('corrected') && corrected && correctionOpen && (
+            <div className="inline-flex items-center gap-2.5 bg-paper border border-line/50 rounded-xl px-3 py-2.5 shadow-sm self-start">
+              <button
+                type="button"
+                onClick={() => onReplay(corrected, narratorId)}
+                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-wine/15 hover:bg-wine/25 shrink-0 transition-colors"
+                aria-label="Écouter la correction"
+              >
+                <svg width="7" height="9" viewBox="0 0 7 9" fill="none" aria-hidden>
+                  <path d="M1 1l5 3.5L1 8V1z" fill="#8B1E2D" opacity="0.8"/>
+                </svg>
+              </button>
+              <CorrectionBlock original={original} corrected={corrected} className="font-display text-[15px] italic text-navy/80 leading-snug select-text" />
+            </div>
+          )}
         </div>
       )}
       {/* Reaction / judgement */}
@@ -5594,37 +5623,8 @@ function WritingReviewThread({ review, question, onQuestionChange, onCorriger, o
         </div>
       )}
 
-      {/* Correction */}
+      {/* Correction loading */}
       {stage === 'correcting' && <WriteBubble narratorId={narratorId}><TypingDots /></WriteBubble>}
-      {reached('corrected') && corrected && (
-        <div className="flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={() => setCorrectionOpen(o => !o)}
-            className="self-start inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
-          >
-            Correct my sentence
-            <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden className={`transition-transform duration-200 ${correctionOpen ? 'rotate-180' : ''}`}>
-              <path d="M1 2.5l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-          {correctionOpen && (
-            <div className="inline-flex items-center gap-2.5 bg-paper border border-line/50 rounded-xl px-3 py-2.5 shadow-sm self-start">
-              <button
-                type="button"
-                onClick={() => onReplay(corrected, narratorId)}
-                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-wine/15 hover:bg-wine/25 shrink-0 transition-colors"
-                aria-label="Écouter la correction"
-              >
-                <svg width="7" height="9" viewBox="0 0 7 9" fill="none" aria-hidden>
-                  <path d="M1 1l5 3.5L1 8V1z" fill="#8B1E2D" opacity="0.8"/>
-                </svg>
-              </button>
-              <CorrectionBlock original={original} corrected={corrected} className="font-display text-[15px] italic text-navy/80 leading-snug select-text" />
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Ask which word/expression */}
       {reached('corrected') && (
