@@ -2736,7 +2736,8 @@ export function AudioDemoCard({
     hadContentRef.current = false;
     prevPartialRef.current = '';
     setOverallLevel(null); setOverallStrength(null); setOverallWeakness(null); setPracticeTopics([]);
-    setActiveTab('transcript');
+    // Stay on the Speaking défi tab; only the open-ended Chat falls back to transcript.
+    if (activeTab !== 'speaking') setActiveTab('transcript');
     setPracticeExercises(null);
     setSkillProgress({});
     setCompletedInBatch(new Set());
