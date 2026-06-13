@@ -6356,6 +6356,28 @@ export default function Hero() {
   const [writingTips, setWritingTips] = React.useState({ vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] });
   const [writingWordTarget, setWritingWordTarget] = React.useState(80);
   const [writingNarrator, setWritingNarrator] = React.useState('lea');
+  // Which conseils the learner has fulfilled in their writing (→ blue ticks),
+  // plus the badge earned once every conseil is used.
+  const [writingUsedTips, setWritingUsedTips] = React.useState({});
+  const [writingBadge, setWritingBadge] = React.useState(null);
+  const writingAwardedRef = React.useRef(false);
+
+  const handleWritingProgress = React.useCallback((usedTips) => {
+    setWritingUsedTips(usedTips || {});
+    if (!writingAwardedRef.current && allTipsFulfilled(writingTips, usedTips)) {
+      writingAwardedRef.current = true;
+      const before = effectiveLevel;
+      const updated = gainExperience(DEFI_COMPLETE_XP);
+      const after = getEffectiveLevel(updated);
+      setWritingBadge({ level: after, leveledUp: after !== before });
+    }
+  }, [writingTips, effectiveLevel, gainExperience]);
+
+  const resetWritingProgress = React.useCallback(() => {
+    setWritingUsedTips({});
+    setWritingBadge(null);
+    writingAwardedRef.current = false;
+  }, []);
 
   React.useEffect(() => {
     if (practiceType === 'writing' && practiceTopic && loadedWritingTopicRef.current !== practiceTopic) {
