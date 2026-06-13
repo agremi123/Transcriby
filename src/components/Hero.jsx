@@ -6168,7 +6168,7 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
           {hasTips && (
             <div className="border border-line/40 bg-paper/60 px-4 py-3 shrink-0">
               <div className="flex items-center justify-between gap-2 mb-3">
-                <p className="text-[10px] tracking-widest uppercase text-navy/35 font-mono">Goals</p>
+                <span className="inline-flex items-center text-[13px] font-bold tracking-wide uppercase text-navy border border-navy/25 bg-navy/[0.06] rounded-md px-2.5 py-1 font-mono">Goals</span>
                 <div className="relative group shrink-0 flex flex-col items-end gap-1 w-[130px]">
                   {/* The button IS the progress bar — its fill grows as goals complete */}
                   <button
