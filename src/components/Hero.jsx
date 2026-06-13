@@ -1133,6 +1133,7 @@ export function AudioDemoCard({
   exerciseGrammar = [],
   exerciseConjugation = [],
   exerciseLoading = false,
+  onNextArticle = null,
   exerciseSubTabProp = null,
   onExerciseSubTabChange = null,
   speakingNarratorId = 'lea',
