@@ -3177,9 +3177,8 @@ export function AudioDemoCard({
                             : 'text-navy/30 border-navy/15 bg-navy/[0.03] cursor-not-allowed'
                         }`}
                       >
-                        Article
+                        Next article
                         <span className="font-mono tabular-nums opacity-80">{Math.min(articleIndex, THEME_ARTICLE_TOTAL)}/{THEME_ARTICLE_TOTAL}</span>
-                        <svg width="9" height="9" viewBox="0 0 16 16" fill="none" aria-hidden><path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
                       </button>
                       <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-30 w-56 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
                         {allDone
