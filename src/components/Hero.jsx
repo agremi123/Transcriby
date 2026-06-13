@@ -3158,62 +3158,71 @@ export function AudioDemoCard({
               </div>
               {/* Exercise content */}
               <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3">
-                {/* COMPRÉHENSION — 6 correct answers to validate; a wrong answer adds another below */}
+                {/* COMPRÉHENSION — EXERCISE_GOAL correct answers to validate; a wrong answer adds another below */}
                 {exerciseSubTab === 'comprehension' && (
-                  comprehensionList.length === 0
+                  compProg.list.length === 0
                     ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">{exerciseLoading ? 'Chargement des questions…' : "Pas de questions pour cet article."}</p>
                     : (
                       <>
-                        {comprehensionList.map(({ q, key }, qi) => (
-                          <ComprehensionItem key={key} q={q} qi={qi} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} onAnswered={handleComprehensionAnswered} />
+                        {compProg.list.map(({ item, key }, qi) => (
+                          <ComprehensionItem key={key} q={item} qi={qi} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} onAnswered={compProg.onAnswered} />
                         ))}
-                        {comprehensionDone ? (
-                          <p className="text-[12px] font-display italic text-green-700 mt-1 flex items-center gap-1.5">
-                            <svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="#16a34a" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M42 12L18 36l-12-12" /></svg>
-                            Compréhension validée ! ({COMPREHENSION_GOAL}/{COMPREHENSION_GOAL})
-                          </p>
-                        ) : (
-                          <p className="text-[11px] font-mono text-navy/40 mt-1">
-                            {comprehensionCorrect}/{COMPREHENSION_GOAL} bonnes réponses — il en faut {COMPREHENSION_GOAL} pour valider. Une mauvaise réponse ajoute une question.
-                          </p>
-                        )}
+                        <ExerciseStatus prog={compProg} />
                       </>
                     )
                 )}
                 {/* VOCABULAIRE */}
                 {exerciseSubTab === 'vocabulary' && (
-                  exerciseVocab.length === 0
+                  vocabProg.list.length === 0
                     ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">{exerciseLoading ? 'Chargement du vocabulaire…' : "Pas de vocabulaire pour cet article."}</p>
-                    : exerciseVocab.map((v, vi) => (
-                        <VocabItem key={vi} v={v} vi={vi} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} />
-                      ))
+                    : (
+                      <>
+                        {vocabProg.list.map(({ item, key }, vi) => (
+                          <VocabItem key={key} v={item} vi={vi} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} onAnswered={vocabProg.onAnswered} />
+                        ))}
+                        <ExerciseStatus prog={vocabProg} />
+                      </>
+                    )
                 )}
-                {/* GRAMMAIRE */}
+                {/* GRAMMAIRE — rule references on top, then a counted fill-in stream */}
                 {exerciseSubTab === 'grammar' && (
-                  exerciseGrammar.length === 0
+                  grammarProg.list.length === 0
                     ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">{exerciseLoading ? 'Chargement de la grammaire…' : "Pas d'exercice de grammaire pour cet article."}</p>
-                    : exerciseGrammar.slice(0, 2).map((g, gi) => (
-                        <div key={g.point || gi} className="border border-line/50 p-3">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 bg-wine/8 px-1.5 py-0.5">Grammaire</span>
-                            <span className="font-display text-[14px] text-navy font-medium"><TranslatableText text={g.point} narratorId={exerciseNarrator} /></span>
+                    : (
+                      <>
+                        {exerciseGrammar.slice(0, 2).map((g, gi) => (
+                          <div key={g.point || gi} className="border border-line/50 p-3">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 bg-wine/8 px-1.5 py-0.5">Grammaire</span>
+                              <span className="font-display text-[14px] text-navy font-medium"><TranslatableText text={g.point} narratorId={exerciseNarrator} /></span>
+                            </div>
+                            {g.example && <blockquote className="border-l-2 border-navy/20 pl-2 mb-2"><p className="font-display text-[12px] italic text-navy/70">« <TranslatableText text={g.example} narratorId={exerciseNarrator} /> »</p></blockquote>}
+                            <p className="text-[12px] text-navy/75 leading-snug mb-1"><TranslatableText text={g.explanation} narratorId={exerciseNarrator} /></p>
+                            {g.tip && <p className="text-[11px] font-mono text-wine/70"><span className="text-[9px] uppercase tracking-widest mr-1">Tip:</span><TranslatableText text={g.tip} narratorId={exerciseNarrator} /></p>}
                           </div>
-                          {g.example && <blockquote className="border-l-2 border-navy/20 pl-2 mb-2"><p className="font-display text-[12px] italic text-navy/70">« <TranslatableText text={g.example} narratorId={exerciseNarrator} /> »</p></blockquote>}
-                          <p className="text-[12px] text-navy/75 leading-snug mb-1"><TranslatableText text={g.explanation} narratorId={exerciseNarrator} /></p>
-                          {g.tip && <p className="text-[11px] font-mono text-wine/70"><span className="text-[9px] uppercase tracking-widest mr-1">Tip:</span><TranslatableText text={g.tip} narratorId={exerciseNarrator} /></p>}
-                          <GrammarRuleExercises rule={g} onCorrect={() => firePointsDelta(2)} />
-                        </div>
-                      ))
+                        ))}
+                        <span className="text-[9px] font-mono tracking-widest uppercase text-navy/35">À toi de jouer</span>
+                        {grammarProg.list.map(({ item, key }) => (
+                          <GrammarBlankItem key={key} ex={item} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} onAnswered={grammarProg.onAnswered} />
+                        ))}
+                        <ExerciseStatus prog={grammarProg} />
+                        <ProductionExercise
+                          instruction={exerciseGrammar[0]?.production?.instruction || (exerciseGrammar[0]?.point ? `À ton tour : écris ta propre phrase en utilisant « ${exerciseGrammar[0].point} ».` : 'Écris ta propre phrase en utilisant ce point de grammaire.')}
+                          requireGrammar={exerciseGrammar[0]?.point ? `la structure grammaticale « ${exerciseGrammar[0].point} »` : ''}
+                        />
+                      </>
+                    )
                 )}
                 {/* CONJUGAISON */}
                 {exerciseSubTab === 'conjugation' && (
-                  exerciseConjugation.length === 0
+                  conjProg.list.length === 0
                     ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">{exerciseLoading ? 'Chargement des conjugaisons…' : "Pas d'exercice de conjugaison pour cet article."}</p>
                     : (
                       <>
-                        {exerciseConjugation.map((c, ci) => (
-                          <ConjugationItem key={ci} c={c} ci={ci} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} />
+                        {conjProg.list.map(({ item, key }, ci) => (
+                          <ConjugationItem key={key} c={item} ci={ci} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} onAnswered={conjProg.onAnswered} />
                         ))}
+                        <ExerciseStatus prog={conjProg} />
                         {(() => {
                           const verbs = [...new Set(exerciseConjugation.map(c => c.verb).filter(Boolean))].slice(0, 2);
                           const tense = exerciseConjugation[0]?.tense || '';
