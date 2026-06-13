@@ -6467,6 +6467,7 @@ export default function Hero() {
       setReadingActive(true);
       setReadingTopic(practiceTopic);
       setReadingLoading(true);
+      setArticleIndex(1); // new theme → article 1
       setReadingPassage('');
       setReadingSource(null);
       fetch('/api/reading', {
