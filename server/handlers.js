@@ -1037,6 +1037,9 @@ export async function handleWritingReview(body) {
 
     if (step === 'example') {
       const { prompt = '', tips = {}, wordTarget = 80 } = body || {};
+      // Reuse a stored example for this exact prompt + conseils if we have one.
+      const stored = await getStoredWritingExample(prompt);
+      if (stored) return { statusCode: 200, body: { example: stored } };
       const tipParts = [];
       if (tips?.vocab?.length) tipParts.push(`le vocabulaire : ${tips.vocab.join(', ')}`);
       if (tips?.expressions?.length) tipParts.push(`les expressions : ${tips.expressions.join(', ')}`);
