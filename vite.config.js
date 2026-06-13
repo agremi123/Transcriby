@@ -1732,9 +1732,7 @@ function writingPromptMiddleware(apiKey, openrouterKey) {
       const avoidBlock = recentPrompts.length
         ? `\nAlready-used prompts — your prompt MUST be clearly different in scenario, angle and wording from ALL of these:\n${recentPrompts.map(p => `- ${p.slice(0, 120)}`).join('\n')}`
         : '';
-      const d = await openrouterCall('writing/prompt', openrouterKey, {
-        max_tokens: 500,
-        system: `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss. Be creative and vary the scenario type (a letter, an opinion, a story, a description, a message to a friend…).${avoidBlock}
+      const sys = `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss. Be creative and vary the scenario type (a letter, an opinion, a story, a description, a message to a friend…).${avoidBlock}
 CRITICAL: Write EVERYTHING in French only. Use ONLY the Latin alphabet with French accents. NEVER include Chinese, Japanese, Korean, Cyrillic, Arabic or any other non-Latin characters — not a single one.
 Return ONLY raw JSON (no markdown):
 {
@@ -1747,12 +1745,28 @@ Return ONLY raw JSON (no markdown):
     "connecteurs": ["4-5 logical connectors in French, e.g. 'cependant', 'en revanche', 'par conséquent'"]
   },
   "wordTarget": 80
-}`,
+}`;
+      const parsePrompt = (text) => {
+        const raw = (text || '{}').replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        try { return deepStripNonFrench(JSON.parse(raw)); } catch { return {}; }
+      };
+      const d = await openrouterCall('writing/prompt', openrouterKey, {
+        max_tokens: 500,
+        system: sys,
         messages: [{ role: 'user', content: `Topic: ${topic}` }],
       });
-      let raw = d.content?.[0]?.text?.trim() || '{}';
-      raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-      const parsed = deepStripNonFrench(JSON.parse(raw));
+      let parsed = parsePrompt(d.content?.[0]?.text?.trim());
+      // OpenRouter/DeepSeek intermittently returns an empty body — fall back to
+      // Claude (Haiku) so the learner never gets a blank prompt.
+      if (!parsed.prompt?.trim() && apiKey) {
+        const cd = await claudeCall('writing/prompt-fallback', apiKey, {
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 600,
+          system: sys,
+          messages: [{ role: 'user', content: `Topic: ${topic}` }],
+        });
+        parsed = parsePrompt(cd.content?.[0]?.text?.trim());
+      }
       const tips = parsed.tips || {};
 
       // Save every generated writing prompt to Supabase (fire-and-forget)
