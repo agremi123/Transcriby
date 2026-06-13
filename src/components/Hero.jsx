@@ -2419,6 +2419,7 @@ export function AudioDemoCard({
 
   const resetWritingReview = React.useCallback(() => {
     setWriteReview({ stage: 'idle' });
+    setWriteReviewHistory([]);
     setWriteReviewQuestion('');
     setWriteReviewExample(null);
     setWriteReviewExampleLoading(false);
