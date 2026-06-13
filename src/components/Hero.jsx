@@ -1111,7 +1111,8 @@ export function AudioDemoCard({
   React.useEffect(() => {
     const sc = writeThreadScrollRef.current;
     if (!sc) return;
-    const id = requestAnimationFrame(() => sc.scrollTo({ top: sc.scrollHeight, behavior: 'smooth' }));
+    // Instant scroll — smooth behavior is unreliable here over large distances.
+    const id = requestAnimationFrame(() => { sc.scrollTop = sc.scrollHeight; });
     return () => cancelAnimationFrame(id);
   }, [writeReview.stage, writeReview.reaction, writeReview.corrected, writeReview.explanation, writeReviewHistory.length, writeReviewExample, writeReviewExampleLoading]);
   const writeTextareaRef = React.useRef(null);
