@@ -1521,6 +1521,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
           questions,
           vocab,
           grammar,
+          conjugation,
           word_timings: wordTimings || null,
         }]).then(({ error }) => {
           if (error) console.warn('[listening] Supabase insert failed:', error.message);
