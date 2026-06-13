@@ -1146,6 +1146,10 @@ export function AudioDemoCard({
   const [replyByUtterance, setReplyByUtterance] = React.useState({});
   const [replyLoadingUttId, setReplyLoadingUttId] = React.useState(null);
   const [defiComplete, setDefiComplete] = React.useState(false);
+  // Cumulative défi progress: which target vocab words + the target grammar the
+  // learner has used so far. Reported up so the "Ton défi" card can light them up.
+  const [defiUsedVocab, setDefiUsedVocab] = React.useState([]);
+  const [defiUsedGrammar, setDefiUsedGrammar] = React.useState(false);
   const [correctionReaderId, setCorrectionReaderId] = React.useState(null);
   const [sentenceCongrats, setSentenceCongrats] = React.useState(null);
   // Congrats lines pinned to their utterance — persist in the transcript
