@@ -1325,6 +1325,17 @@ export function AudioDemoCard({
         const reply = { id: speakingNarratorId, text: data.text, translation: data.translation };
         setReplyByUtterance((prev) => ({ ...prev, [uttId]: reply }));
         playNarratorLine(reply);
+        const corrected = data.correction?.corrected?.trim() || '';
+        const correct = data.sentenceCorrect !== false
+          && (!corrected || corrected === latestText.trim());
+        setCorrectionByUtterance((prev) => ({
+          ...prev,
+          [uttId]: {
+            correct,
+            corrected: correct ? '' : corrected,
+            translation: data.correction?.translation?.trim() || '',
+          },
+        }));
         if (Array.isArray(data.usedVocab) && data.usedVocab.length) {
           setDefiUsedVocab((prev) => Array.from(new Set([...prev, ...data.usedVocab])));
         }
