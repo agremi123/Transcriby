@@ -2746,6 +2746,8 @@ export function AudioDemoCard({
     setReplyByUtterance({});
     setReplyLoadingUttId(null);
     setDefiComplete(false);
+    setDefiUsedVocab([]);
+    setDefiUsedGrammar(false);
     setCorrectionReaderId(null);
     setManualCorrection(null);
     setSentenceCongrats(null);
