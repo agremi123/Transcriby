@@ -3778,7 +3778,7 @@ export function AudioDemoCard({
                             <button
                               type="button"
                               onClick={() => setOpenCorrectionUttId(o => (o === utt.id ? null : utt.id))}
-                              className="shrink-0 inline-flex items-center gap-1 ml-1.5 align-middle text-[11px] font-sans font-semibold text-navy/70 border border-navy/30 rounded-full px-2 py-0.5 hover:bg-navy/10 hover:text-navy transition-colors"
+                              className="shrink-0 inline-flex items-center gap-1 ml-1.5 align-middle text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
                             >
                               Correct my sentence
                               <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden className={`transition-transform duration-200 ${openCorrectionUttId === utt.id ? 'rotate-180' : ''}`}>
