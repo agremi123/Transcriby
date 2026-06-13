@@ -1239,6 +1239,7 @@ export async function handleWord() {
           if (elRes.ok) {
             const buf = Buffer.from(await elRes.arrayBuffer());
             audioUrl = await saveNarratorAudio(slug, voiceId, parsed.example, buf);
+            logNarratorLine(slug, parsed.example, audioUrl);
           }
         } catch {}
       }
