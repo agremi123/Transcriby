@@ -6040,7 +6040,9 @@ const TIPS_SECTIONS = [
 
 function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 80, narratorId = 'lea', usedTips = {}, badge = null, onNewChallenge = null }) {
   const hasTips = TIPS_SECTIONS.some(s => (tips[s.key] || []).length > 0);
-  const goalsDone = allTipsFulfilled(tips, usedTips);
+  const { done: goalsDoneCount, total: goalsTotal } = tipsProgress(tips, usedTips);
+  const goalsDone = goalsTotal > 0 && goalsDoneCount === goalsTotal;
+  const goalsPct = goalsTotal ? Math.round((goalsDoneCount / goalsTotal) * 100) : 0;
   const name = narratorId === 'jules' ? 'Jules' : 'Léa';
 
   const [speaking, setSpeaking] = React.useState(false);
