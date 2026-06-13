@@ -3157,6 +3157,35 @@ export function AudioDemoCard({
                     </button>
                   );
                 })}
+                </div>
+                {/* Next article — unlocked only when all four tabs are validated */}
+                {(() => {
+                  const allDone = compProg.done && vocabProg.done && grammarProg.done && conjProg.done;
+                  return (
+                    <div className="relative group shrink-0 flex items-center px-2 border-l border-line/40">
+                      <button
+                        type="button"
+                        onClick={() => { if (allDone) onNextArticle?.(); }}
+                        aria-disabled={!allDone}
+                        className={`inline-flex items-center gap-1 text-[9px] tracking-widest uppercase font-semibold rounded-full px-2.5 py-1 border transition-colors whitespace-nowrap ${
+                          allDone
+                            ? 'text-ivory bg-wine border-wine hover:bg-wine2 cursor-pointer'
+                            : 'text-navy/30 border-navy/15 bg-navy/[0.03] cursor-not-allowed'
+                        }`}
+                      >
+                        Next article
+                        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
+                          <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                      <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-30 w-56 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                        {allDone
+                          ? 'Tout est validé — charge le prochain article !'
+                          : 'Valide les 4 onglets (6 bonnes réponses chacun) pour débloquer le prochain article.'}
+                      </span>
+                    </div>
+                  );
+                })()}
               </div>
               {/* Exercise content */}
               <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3">
