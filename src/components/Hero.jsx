@@ -7153,6 +7153,7 @@ export default function Hero() {
               exerciseConjugation={heroActiveTab === 'listening' ? listeningConjugation : readingConjugation}
               exerciseLoading={heroActiveTab === 'listening' ? listeningLoading : readingLoading}
               onNextArticle={heroActiveTab === 'listening' ? loadNextListeningEpisode : loadNextReadingArticle}
+              articleIndex={articleIndex}
               activeTab={heroActiveTab}
               onTabChange={setHeroActiveTab}
               exerciseSubTabProp={exerciseSubTab}
