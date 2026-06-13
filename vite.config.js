@@ -1491,7 +1491,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       // Step 6: generate grammar points from the transcript
       const gData = await openrouterCall('listening/grammar', openrouterKey, {
         max_tokens: 2200,
-        system: `You are a French grammar teacher. From the French transcript, identify exactly 2 grammar structures or patterns that a ${level} learner should study. For each, quote the exact sentence from the transcript that illustrates it, name the grammar point, explain it simply in English (1-2 sentences), give a short usage tip, write exactly 6 fill-in-the-blank practice exercises (one blank marked "___" per sentence; "hint" = infinitive/base form of the answer), AND a "production" task: an instruction (in French) telling the learner to write their own sentence using this grammar, plus a correct model sentence. Return ONLY raw JSON: {"grammar":[{"point":"Le passé composé","example":"Exact sentence from transcript","explanation":"Used to describe completed past actions.","tip":"Use avoir or être as auxiliary + past participle.","exercises":[{"sentence":"Hier, j'___ au cinéma.","answer":"suis allé","hint":"aller"},{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"Écris une phrase au passé composé sur ta journée d'hier.","example":"Hier, j'ai mangé au restaurant avec des amis."}},{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}`,
+        system: LISTENING_GRAMMAR_PROMPT(level),
         messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
       });
       let gRaw = gData.content?.[0]?.text?.trim() || '{}';
