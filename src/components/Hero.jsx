@@ -5585,6 +5585,7 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
                     {CEFR_BADGE[contentLevel].label}
                   </span>
                 )}
+                <NextArticleButton allDone={allDone} articleIndex={articleIndex} onNextArticle={onNextArticle} />
               </div>
               {vocabTheme && <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 mt-0.5 block">{vocabTheme}</span>}
             </div>
