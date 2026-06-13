@@ -315,12 +315,15 @@ export async function handleCorrect(body) {
 
   const systemPrompts = buildCorrectionSystemPrompts(levelCtx);
   let system = systemPrompts[register] || systemPrompts.Parisien;
-  if (requireGrammar) {
+  if (task || requireGrammar) {
     // Dedicated production-exercise prompt — REPLACES the register prompt so
     // the "fix only errors, don't reformulate" rule doesn't block the rewrite.
-    system = `Tu es un professeur de français qui corrige un EXERCICE DE PRODUCTION. L'étudiant devait écrire une phrase qui emploie ${requireGrammar}.
-Réécris sa phrase pour qu'elle emploie CORRECTEMENT ${requireGrammar}, en gardant son idée quand c'est possible. Si sa phrase est trop courte, vague ou n'emploie pas du tout cette structure, transforme-la (ou complète-la) en une phrase naturelle et correcte qui l'emploie vraiment. Corrige aussi toutes les fautes de grammaire et d'orthographe.
-Si la phrase emploie DÉJÀ correctement ${requireGrammar} et ne contient aucune faute, renvoie-la EXACTEMENT inchangée.
+    // Prefer the French consigne (task); the grammar point name may be English.
+    const consigne = task ? `Consigne donnée à l'étudiant : « ${task} »` : `L'étudiant devait employer ${requireGrammar}`;
+    system = `Tu es un professeur de français qui corrige un EXERCICE DE PRODUCTION.
+${consigne}.
+Réécris la phrase de l'étudiant pour qu'elle RESPECTE la consigne — c'est-à-dire qu'elle emploie correctement la structure grammaticale ou le temps demandé — en gardant son idée quand c'est possible. Si sa phrase est trop courte, vague, ou n'emploie pas la structure demandée, transforme-la ou complète-la en une phrase naturelle et correcte qui l'emploie vraiment. Corrige aussi toutes les fautes de grammaire et d'orthographe. Utilise un français naturel et correct (jamais le passif sauf s'il est demandé).
+Si la phrase respecte DÉJÀ la consigne et ne contient aucune faute, renvoie-la EXACTEMENT inchangée.
 Réponds UNIQUEMENT en JSON brut, sans markdown : {"corrected":"la phrase en français","translation":"natural English translation of the corrected sentence","level":"A1|A2|B1|B2|C1|C2"}`;
   }
 
