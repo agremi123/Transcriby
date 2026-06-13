@@ -5470,7 +5470,7 @@ const CEFR_BADGE = {
   C2: { bg: '#4a1942', label: 'C2' },
 };
 
-function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180, transcript, wordTimings = null, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', contentLevel = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience }) {
+function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180, transcript, wordTimings = null, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', contentLevel = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience, allDone = false, articleIndex = 1, onNextArticle = null }) {
   const [playing, setPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
