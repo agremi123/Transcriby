@@ -6479,6 +6479,7 @@ export default function Hero() {
       setWritingActive(true);
       setWritingLoading(true);
       resetWritingProgress();
+      setWritingChallengeIndex(1); // new theme → back to challenge 1
       setWritingNarrator(Math.random() < 0.5 ? 'lea' : 'jules');
       fetch('/api/writing-prompt', {
         method: 'POST',
