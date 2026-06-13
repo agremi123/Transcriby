@@ -1313,6 +1313,10 @@ export function AudioDemoCard({
         const reply = { id: speakingNarratorId, text: data.text, translation: data.translation };
         setReplyByUtterance((prev) => ({ ...prev, [uttId]: reply }));
         playNarratorLine(reply);
+        if (Array.isArray(data.usedVocab) && data.usedVocab.length) {
+          setDefiUsedVocab((prev) => Array.from(new Set([...prev, ...data.usedVocab])));
+        }
+        if (data.usedGrammar) setDefiUsedGrammar(true);
         if (data.complete) {
           gainExperience(1);
           setDefiComplete(true);
