@@ -5698,13 +5698,8 @@ function WritingReviewThread({ review, frozen = false, question, onQuestionChang
   // Reset the toggle only when a brand-new sentence loads — NOT when its
   // correction arrives (that would snap the panel shut right after opening).
   React.useEffect(() => { setCorrectionOpen(frozen && !!corrected); }, [original]); // eslint-disable-line react-hooks/exhaustive-deps
-  // Scroll the actual scroll container (the outer .scroll-premium), not the
-  // thread's own non-scrolling root div — otherwise a new reaction renders
-  // below the fold and the learner hears the audio but never sees the text.
-  React.useEffect(() => {
-    const scroller = endRef.current?.closest('.overflow-y-auto');
-    if (scroller) scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
-  }, [stage]);
+  // Auto-scroll is handled by the parent container (it owns the scroller and
+  // can defer until the whole thread has laid out).
   const reached = (s) => {
     const order = ['idle', 'judging', 'judged', 'correcting', 'corrected', 'explaining', 'explained'];
     return order.indexOf(stage) >= order.indexOf(s);
