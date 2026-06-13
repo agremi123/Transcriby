@@ -1363,6 +1363,26 @@ export async function handleListening(body) {
       }
       if (cached && cached.length > 0) {
         const row = cached[Math.floor(Math.random() * cached.length)];
+        // Backfill exercise types missing from older cached episodes so every
+        // tab (grammaire + conjugaison) always has content.
+        let g = row.grammar || [];
+        let c = row.conjugation || [];
+        const txt = (row.transcript || '').slice(0, 2000);
+        const jobs = [];
+        if (c.length === 0 && txt) {
+          jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 700,
+            system: 'French teacher. Create exactly 4 conjugation fill-in-the-blank exercises using verbs from the transcript. One "___" per sentence; hint = the pronoun/subject (je/tu/il...). Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}',
+            user: txt }).then((r) => { if (r.conjugation?.length) c = r.conjugation; }).catch(() => {}));
+        }
+        if (g.length === 0 && txt) {
+          jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 2000,
+            system: 'French grammar teacher. Exactly 2 grammar structures from the transcript. Each has 6 fill-in-the-blank exercises ("___" per sentence; hint = base form) AND a "production" task (a French instruction to write a sentence using it, plus a model sentence). Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}',
+            user: txt }).then((r) => { if (r.grammar?.length) g = r.grammar; }).catch(() => {}));
+        }
+        if (jobs.length) {
+          await Promise.all(jobs);
+          supabase.from('listening_episodes').update({ grammar: g, conjugation: c }).eq('id', row.id).then(() => {});
+        }
         return {
           statusCode: 200,
           body: {
@@ -1377,8 +1397,8 @@ export async function handleListening(body) {
             vocabTheme: row.vocab_theme,
             questions: row.questions || [],
             vocab: row.vocab || [],
-            grammar: row.grammar || [],
-            conjugation: row.conjugation || [],
+            grammar: g,
+            conjugation: c,
           },
         };
       }
