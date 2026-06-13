@@ -329,6 +329,32 @@ function GrammarRuleExercises({ rule, onCorrect }) {
           </div>
         );
       })}
+
+      {/* Production exercise — write a sentence using the grammar, then reveal a model answer */}
+      {rule.production?.instruction && (
+        <div className="flex flex-col gap-1.5 mt-1 pt-2.5 border-t border-line/40">
+          <span className="text-[9px] font-mono tracking-widest uppercase text-navy/35">À ton tour d'écrire</span>
+          <p className="font-display text-[13px] text-navy/80 leading-snug">{rule.production.instruction}</p>
+          <textarea
+            value={prodAnswer}
+            onChange={(e) => setProdAnswer(e.target.value)}
+            rows={2}
+            placeholder="Écris ta phrase…"
+            className="w-full border border-wine/20 rounded px-2 py-1.5 bg-transparent text-navy text-[13px] font-display outline-none focus:border-wine/50 resize-none"
+          />
+          {!prodRevealed ? (
+            <button type="button" onClick={() => setProdRevealed(true)}
+              className="self-start px-3 py-0.5 rounded-full bg-wine text-ivory text-[10px] font-display hover:bg-wine/85 transition-colors">
+              Voir un exemple
+            </button>
+          ) : rule.production.example ? (
+            <div className="bg-paper border border-line/50 rounded-lg px-3 py-2">
+              <p className="text-[9px] font-mono uppercase tracking-widest text-wine/50 mb-1">Exemple</p>
+              <p className="font-display text-[13px] italic text-navy/80 leading-snug">{rule.production.example}</p>
+            </div>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 }
