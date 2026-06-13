@@ -1098,6 +1098,21 @@ function GrammarBlankItem({ ex, firePointsDelta, narratorId = 'lea', onAnswered 
   );
 }
 
+// Status line under an exercise tab's questions: progress toward the goal, or
+// a "validated" tick once reached.
+function ExerciseStatus({ prog }) {
+  return prog.done ? (
+    <p className="text-[12px] font-display italic text-green-700 mt-1 flex items-center gap-1.5">
+      <svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="#16a34a" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M42 12L18 36l-12-12" /></svg>
+      Validé ! ({EXERCISE_GOAL}/{EXERCISE_GOAL})
+    </p>
+  ) : (
+    <p className="text-[11px] font-mono text-navy/40 mt-1">
+      {prog.correct}/{EXERCISE_GOAL} bonnes réponses — il en faut {EXERCISE_GOAL} pour valider. Une mauvaise réponse ajoute une question.
+    </p>
+  );
+}
+
 export function AudioDemoCard({
   fullscreen = false,
   onClose,
