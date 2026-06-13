@@ -1022,12 +1022,12 @@ function ConjugationItem({ c, ci, firePointsDelta, narratorId = 'lea', onAnswere
           <span className={`font-display text-[13px] font-medium ${correct ? 'text-green-600' : 'text-wine'}`}>{ans} {correct ? '✓' : `✗ → ${c.answer}`}</span>
         ) : (
           <input type="text" value={ans} onChange={e => setAns(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter' && ans.trim()) { setSubmitted(true); firePointsDelta(ans.trim().toLowerCase() === c.answer.toLowerCase() ? 2 : -1); } }}
+            onKeyDown={e => { if (e.key === 'Enter') submit(); }}
             placeholder="Conjuguez…"
             className="flex-1 border border-navy/20 px-2 py-0.5 text-[12px] font-display text-navy focus:outline-none focus:border-wine/50 bg-transparent" />
         )}
         {!submitted && ans.trim() && (
-          <button type="button" onClick={() => { setSubmitted(true); firePointsDelta(ans.trim().toLowerCase() === c.answer.toLowerCase() ? 2 : -1); }}
+          <button type="button" onClick={submit}
             className="px-2 py-0.5 text-[10px] font-mono bg-wine text-ivory hover:bg-wine/80 transition-colors">OK</button>
         )}
       </div>
