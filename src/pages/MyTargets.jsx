@@ -524,7 +524,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                     marginLeft: isAuto && studyCheck ? undefined : 'auto',
                     ...(isAuto && studyHl ? { animation: 'studyHlPulse 0.4s ease-in-out infinite alternate', boxShadow: '0 0 0 2px rgba(139,30,45,0.5)' } : {}),
                   }}
-                  onMouseDown={isAuto ? undefined : () => navigate(practiceUrl(t.topic, themeInfo, themeInfo?.cat ?? t.category))}
+                  onMouseDown={() => navigate(practiceUrl(t.topic, themeInfo, themeInfo?.cat ?? t.category))}
                 >
                   Study →
                 </button>
