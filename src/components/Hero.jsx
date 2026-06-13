@@ -5191,6 +5191,33 @@ function AutoFitTitle({ title }) {
   );
 }
 
+// Gated "Next article X/3" button — unlocked only when all four exercise tabs
+// are validated; a hover tooltip explains the lock. Shown in the title box.
+function NextArticleButton({ allDone = false, articleIndex = 1, onNextArticle = null }) {
+  return (
+    <div className="relative group shrink-0">
+      <button
+        type="button"
+        onClick={() => { if (allDone) onNextArticle?.(); }}
+        aria-disabled={!allDone}
+        className={`inline-flex items-center gap-1 text-[10px] tracking-wide uppercase font-semibold rounded-full px-2.5 py-1 border transition-colors whitespace-nowrap ${
+          allDone
+            ? 'text-ivory bg-wine border-wine hover:bg-wine2 cursor-pointer'
+            : 'text-navy/30 border-navy/20 bg-navy/[0.04] cursor-not-allowed'
+        }`}
+      >
+        Next article
+        <span className="font-mono tabular-nums opacity-80">{Math.min(articleIndex, THEME_ARTICLE_TOTAL)}/{THEME_ARTICLE_TOTAL}</span>
+      </button>
+      <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-30 w-56 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+        {allDone
+          ? 'Tout est validé — charge le prochain article !'
+          : 'Valide les 4 onglets (6 bonnes réponses chacun) pour débloquer le prochain article.'}
+      </span>
+    </div>
+  );
+}
+
 function ReadingArticlePanel({
   loading,
   title,
@@ -5202,6 +5229,9 @@ function ReadingArticlePanel({
   parisianPercent = 0,
   dailyParisianPoints = 0,
   onSpendExperience,
+  allDone = false,
+  articleIndex = 1,
+  onNextArticle = null,
 }) {
   const [revealedBatchCount, setRevealedBatchCount] = React.useState(0);
   const [translateActive, setTranslateActive] = React.useState(false);
