@@ -79,24 +79,24 @@ export function ButtonPrimary({ children, className = '', to, showArrow = true, 
 export function ParisianExperienceHint({ className = '', showBadge = false }) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: 4 }}
-      animate={{ opacity: 1, x: [0, 1.5, 0] }}
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: [0, 2, 0] }}
       transition={{
         delay: 0.6,
         duration: 0.5,
-        x: { repeat: Infinity, duration: 1.8, ease: 'easeInOut', delay: 1.1 },
+        y: { repeat: Infinity, duration: 1.8, ease: 'easeInOut', delay: 1.1 },
       }}
-      className={`absolute left-full ml-2.5 inset-y-0 hidden sm:flex items-center gap-2 pointer-events-none ${className}`.trim()}
+      className={`absolute bottom-full right-0 mb-1.5 hidden sm:flex flex-col items-end gap-0.5 pointer-events-none ${className}`.trim()}
       aria-hidden
     >
-      <svg width="7" height="9" viewBox="0 0 10 8" fill="none" className="shrink-0 rotate-[90deg]">
-        <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6" />
-      </svg>
-      <span className="font-display text-[15px] sm:text-[16px] italic text-wine leading-[1.25] text-left w-[172px]">
+      <span className="font-display text-[15px] sm:text-[16px] italic text-wine leading-[1.25] text-right whitespace-nowrap">
         Click here to gain
         <br />
         Parisian experience
       </span>
+      <svg width="9" height="7" viewBox="0 0 10 8" fill="none" className="shrink-0 mr-8">
+        <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6" />
+      </svg>
     </motion.div>
   );
 }
