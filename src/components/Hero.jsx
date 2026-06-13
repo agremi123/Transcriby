@@ -6205,6 +6205,8 @@ export default function Hero() {
   // Fresh speaking défi on the same theme: new question + new target words/grammar.
   const loadNewSpeakingChallenge = React.useCallback(() => {
     setSpeakingLoading(true);
+    setSpeakingUsedVocab([]);
+    setSpeakingUsedGrammar(false);
     fetch('/api/speaking', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ topic: practiceTopic || speakingTopicLabel || 'la vie parisienne' }),
