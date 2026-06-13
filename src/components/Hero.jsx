@@ -6500,6 +6500,7 @@ export default function Hero() {
   const loadNewWritingChallenge = React.useCallback(() => {
     setWritingLoading(true);
     resetWritingProgress();
+    setWritingChallengeIndex((n) => Math.min(THEME_CHALLENGE_TOTAL, n + 1)); // next challenge in the theme
     setWritingNarrator(Math.random() < 0.5 ? 'lea' : 'jules');
     fetch('/api/writing-prompt', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
