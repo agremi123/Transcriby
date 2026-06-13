@@ -3106,8 +3106,17 @@ export function AudioDemoCard({
             </motion.div>
           ) : !isExerciseTab && activeTab !== 'practice' && inputMode === 'write' ? (
             <div className={`${transcriptHeight} flex flex-col relative`}>
-              {activeTab === 'writing' && writeReview.stage !== 'idle' ? (
+              {activeTab === 'writing' && (writeReview.stage !== 'idle' || writeReviewHistory.length > 0) ? (
                 <div className="flex flex-col h-full min-h-0 overflow-y-auto scroll-premium">
+                  {writeReviewHistory.map((rv) => (
+                    <WritingReviewThread
+                      key={rv.id}
+                      review={rv}
+                      frozen
+                      onReplay={(text, id) => playNarratorLine({ id, text })}
+                      challengeContext={writingPrompt}
+                    />
+                  ))}
                   <WritingReviewThread
                     review={writeReview}
                     question={writeReviewQuestion}
