@@ -6572,7 +6572,7 @@ export default function Hero() {
             <Reveal delay={0.42}>
               <div className="mt-8 flex items-center">
                 <div className="relative inline-flex">
-                  <ParisianExperienceHint />
+                  <ParisianExperienceHint placement="below" />
                   <div className="relative">
                     <ButtonPrimary
                       onClick={() => goToDashboard()}
