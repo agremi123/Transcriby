@@ -15,7 +15,7 @@ import ReadingExercise from './pages/ReadingExercise';
 import WelcomeOnboarding from './components/WelcomeOnboarding';
 import DevPanel from './components/DevPanel';
 import { LearnerProfileProvider, useLearnerProfile } from './context/LearnerProfileContext';
-import { isProfileSetupComplete } from './lib/learnerProfile';
+import { isProfileSetupComplete, loadLearnerProfile } from './lib/learnerProfile';
 
 
 
