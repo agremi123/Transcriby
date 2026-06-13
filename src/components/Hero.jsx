@@ -3796,6 +3796,30 @@ export function AudioDemoCard({
                             />
                           </div>
                         )}
+                        {/* Parisian's conversational reply, pinned under this utterance */}
+                        {replyLoadingUttId === utt.id && (
+                          <div className="mt-2 mb-1">
+                            <NarratorAnswerLoading narratorId={speakingNarratorId} />
+                          </div>
+                        )}
+                        {replyByUtterance[utt.id] && (
+                          <div className="mt-1.5 mb-1 flex items-start gap-2.5 min-w-0">
+                            <NarratorPortrait
+                              narratorId={replyByUtterance[utt.id].id}
+                              speaking={wordPlaying && parisianSpeakingText === replyByUtterance[utt.id].text?.trim()}
+                              onReplay={() => playNarratorLine(replyByUtterance[utt.id])}
+                              hideName
+                              size="lg"
+                            />
+                            <NarratorHoverText
+                              text={replyByUtterance[utt.id].text}
+                              translation={replyByUtterance[utt.id].translation}
+                              className="font-display text-[16px] italic text-navy leading-snug"
+                              wrapperClassName="relative flex-1 min-w-0"
+                              tooltipPosition="above"
+                            />
+                          </div>
+                        )}
                       </React.Fragment>
                     );
                   })}
