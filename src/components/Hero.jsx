@@ -366,15 +366,29 @@ function GrammarRuleExercises({ rule, onCorrect }) {
               className="self-start px-3 py-0.5 rounded-full bg-wine text-ivory text-[10px] font-display hover:bg-wine/85 transition-colors disabled:opacity-40">
               {prodCorrecting ? 'Correction…' : 'Corriger ma phrase'}
             </button>
-          ) : (
-            <div className="bg-paper border border-line/50 rounded-lg px-3 py-2">
-              <p className="text-[9px] font-mono uppercase tracking-widest text-wine/50 mb-1">Correction</p>
-              <CorrectionBlock original={prodCorrection.original} corrected={prodCorrection.corrected} className="font-display text-[13px] text-navy/80 leading-snug select-text" />
-              {prodCorrection.translation && (
-                <p className="text-[11px] text-navy/45 italic mt-1.5">{prodCorrection.translation}</p>
-              )}
-            </div>
-          )}
+          ) : (() => {
+            // Already correct → the Parisian correction returns the sentence
+            // unchanged. Show a green tick instead of an empty "correction".
+            const norm = (s) => (s || '').trim().replace(/\s+/g, ' ').replace(/[.!?…]+$/, '').toLowerCase();
+            const isCorrect = norm(prodCorrection.original) === norm(prodCorrection.corrected);
+            return isCorrect ? (
+              <div className="flex items-center gap-1.5 text-[12px] font-display text-green-600">
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
+                  <circle cx="7" cy="7" r="6.4" stroke="currentColor" strokeWidth="1.2" opacity="0.5"/>
+                  <path d="M4 7.2l2 2 4-4.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Parfait, c'est correct&nbsp;! Bien joué.
+              </div>
+            ) : (
+              <div className="bg-paper border border-line/50 rounded-lg px-3 py-2">
+                <p className="text-[9px] font-mono uppercase tracking-widest text-wine/50 mb-1">Correction</p>
+                <CorrectionBlock original={prodCorrection.original} corrected={prodCorrection.corrected} className="font-display text-[13px] text-navy/80 leading-snug select-text" />
+                {prodCorrection.translation && (
+                  <p className="text-[11px] text-navy/45 italic mt-1.5">{prodCorrection.translation}</p>
+                )}
+              </div>
+            );
+          })()}
         </div>
       )}
     </div>
