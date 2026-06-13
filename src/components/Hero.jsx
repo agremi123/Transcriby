@@ -1148,6 +1148,9 @@ export function AudioDemoCard({
   const [replyByUtterance, setReplyByUtterance] = React.useState({});
   const [replyLoadingUttId, setReplyLoadingUttId] = React.useState(null);
   const [defiComplete, setDefiComplete] = React.useState(false);
+  // Achievement shown when a défi is completed: the level badge earned and
+  // whether this completion levelled the learner up to a new CEFR level.
+  const [defiBadge, setDefiBadge] = React.useState(null); // { level, leveledUp }
   // Cumulative défi progress: which target vocab words + the target grammar the
   // learner has used so far. Reported up so the "Ton défi" card can light them up.
   const [defiUsedVocab, setDefiUsedVocab] = React.useState([]);
