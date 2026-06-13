@@ -313,7 +313,10 @@ export async function handleCorrect(body) {
   }
 
   const systemPrompts = buildCorrectionSystemPrompts(levelCtx);
-  const system = systemPrompts[register] || systemPrompts.Parisien;
+  let system = systemPrompts[register] || systemPrompts.Parisien;
+  if (requireGrammar) {
+    system += `\nEXERCICE DE PRODUCTION : la phrase DOIT employer ${requireGrammar}. Si l'étudiant ne l'utilise pas (ou l'emploie mal), réécris "corrected" pour qu'elle emploie correctement ${requireGrammar} en gardant son idée. Si elle l'emploie déjà correctement et sans faute, renvoie-la EXACTEMENT inchangée.`;
+  }
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
