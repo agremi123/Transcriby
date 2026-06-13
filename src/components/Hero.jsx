@@ -2838,10 +2838,22 @@ export function AudioDemoCard({
         reset();
         chatCommittedRef.current = 0; // keep chat utterance tracking in sync
       }
-      // Leaving the Writing tab resets the guided review.
-      if (activeTab !== 'writing') { setWriteReview({ stage: 'idle' }); setWriteReviewHistory([]); setWriteReviewQuestion(''); }
+      // The guided writing review is preserved across tab switches (see the
+      // prompt-change effect below) so the student can leave and come back.
     }
   }, [activeTab, isRecording, reset]);
+
+  // Reset the guided writing review only when a genuinely new writing challenge
+  // arrives (the prompt changes) — not on every tab switch.
+  const writeReviewPromptRef = React.useRef(writingPrompt);
+  React.useEffect(() => {
+    if (writeReviewPromptRef.current !== writingPrompt) {
+      writeReviewPromptRef.current = writingPrompt;
+      setWriteReview({ stage: 'idle' });
+      setWriteReviewHistory([]);
+      setWriteReviewQuestion('');
+    }
+  }, [writingPrompt]);
 
   const speakActionControls = inputMode === 'speak' ? (
     <div className="flex items-center gap-3 shrink-0">
