@@ -5512,15 +5512,20 @@ function isVocabUsed(word, usedList) {
 
 // Writing conseils categories, and whether every provided conseil has been used.
 const TIP_KEYS = ['vocab', 'expressions', 'grammar', 'conjugation', 'connecteurs'];
-function allTipsFulfilled(tips, usedTips) {
-  let total = 0;
+// How many of the provided conseils have been used, and how many there are.
+function tipsProgress(tips, usedTips) {
+  let done = 0, total = 0;
   for (const c of TIP_KEYS) {
     for (const item of (tips?.[c] || [])) {
       total++;
-      if (!isVocabUsed(item, usedTips?.[c] || [])) return false;
+      if (isVocabUsed(item, usedTips?.[c] || [])) done++;
     }
   }
-  return total > 0;
+  return { done, total };
+}
+function allTipsFulfilled(tips, usedTips) {
+  const { done, total } = tipsProgress(tips, usedTips);
+  return total > 0 && done === total;
 }
 
 function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null, usedVocab = [], usedGrammar = false }) {
