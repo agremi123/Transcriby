@@ -1223,6 +1223,9 @@ export function AudioDemoCard({
   const repeatUtteranceBaseRef = React.useRef(0);
   const originalUtteranceEndRef = React.useRef(0);
   const awaitingRepeatRef = React.useRef(false);
+  // True while the current recording is a "repeat-after-me" attempt, so the
+  // auto-correct effect doesn't fire a second full correction over it.
+  const isRepeatRecordingRef = React.useRef(false);
   const checkRepeatAttemptRef = React.useRef(() => {});
   const repeatAutoStoppingRef = React.useRef(false);
   const correctionAudioPlayedRef = React.useRef(null);
