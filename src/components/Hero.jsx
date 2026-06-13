@@ -3101,13 +3101,27 @@ export function AudioDemoCard({
               </div>
               {/* Exercise content */}
               <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3">
-                {/* COMPRÉHENSION */}
+                {/* COMPRÉHENSION — 6 correct answers to validate; a wrong answer adds another below */}
                 {exerciseSubTab === 'comprehension' && (
-                  exerciseQuestions.length === 0
+                  comprehensionList.length === 0
                     ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">{exerciseLoading ? 'Chargement des questions…' : "Pas de questions pour cet article."}</p>
-                    : exerciseQuestions.map((q, qi) => (
-                        <ComprehensionItem key={qi} q={q} qi={qi} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} />
-                      ))
+                    : (
+                      <>
+                        {comprehensionList.map(({ q, key }, qi) => (
+                          <ComprehensionItem key={key} q={q} qi={qi} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} onAnswered={handleComprehensionAnswered} />
+                        ))}
+                        {comprehensionDone ? (
+                          <p className="text-[12px] font-display italic text-green-700 mt-1 flex items-center gap-1.5">
+                            <svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="#16a34a" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M42 12L18 36l-12-12" /></svg>
+                            Compréhension validée ! ({COMPREHENSION_GOAL}/{COMPREHENSION_GOAL})
+                          </p>
+                        ) : (
+                          <p className="text-[11px] font-mono text-navy/40 mt-1">
+                            {comprehensionCorrect}/{COMPREHENSION_GOAL} bonnes réponses — il en faut {COMPREHENSION_GOAL} pour valider. Une mauvaise réponse ajoute une question.
+                          </p>
+                        )}
+                      </>
+                    )
                 )}
                 {/* VOCABULAIRE */}
                 {exerciseSubTab === 'vocabulary' && (
