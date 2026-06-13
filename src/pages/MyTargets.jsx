@@ -189,12 +189,12 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
   const animTimersRef = React.useRef([]);
 
   React.useEffect(() => {
-    // Lesson circle timing (full sequence)
-    const HL = 1400, TT = 3800, STUDY_DELAY = 1200, CHECK_PAUSE = 1200, PTS = 1500, SETTLE = 600, SEG = 1100;
+    // Lesson circle timing (full sequence) — ~30% faster than before
+    const HL = 1000, TT = 2600, STUDY_DELAY = 800, CHECK_PAUSE = 800, PTS = 1000, SETTLE = 450, SEG = 800;
     // Deco circle timing
-    const DECO_HL = 800, DECO_PTS = 900, DECO_SETTLE = 350, DECO_SEG = 800;
+    const DECO_HL = 550, DECO_PTS = 600, DECO_SETTLE = 250, DECO_SEG = 550;
     const DECO_C = 14, MIN_G = 0.07;
-    let delay = 1200;
+    let delay = 800;
     const timers = [];
     const at = (ms, fn) => timers.push(setTimeout(fn, ms));
 
