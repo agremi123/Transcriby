@@ -3766,7 +3766,49 @@ export function AudioDemoCard({
                               </svg>
                             </button>
                           )}
+                          {/* Défi: correct → blue tick; wrong → "Correct my sentence" */}
+                          {defiCorr && defiCorr.correct && (
+                            <span className="inline-flex items-center ml-1.5 align-middle shrink-0" title="Parfait, c'est correct !">
+                              <svg width="18" height="18" viewBox="0 0 48 48" fill="none" stroke="#1A2340" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden>
+                                <path d="M42 12L18 36l-12-12" />
+                              </svg>
+                            </span>
+                          )}
+                          {defiNeedsFix && (
+                            <button
+                              type="button"
+                              onClick={() => setOpenCorrectionUttId(o => (o === utt.id ? null : utt.id))}
+                              className="shrink-0 inline-flex items-center gap-1 ml-1.5 align-middle text-[11px] font-sans font-semibold text-navy/70 border border-navy/30 rounded-full px-2 py-0.5 hover:bg-navy/10 hover:text-navy transition-colors"
+                            >
+                              Correct my sentence
+                              <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden className={`transition-transform duration-200 ${openCorrectionUttId === utt.id ? 'rotate-180' : ''}`}>
+                                <path d="M1 2.5l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            </button>
+                          )}
                         </TranscriptSentenceRow>
+                        {defiNeedsFix && openCorrectionUttId === utt.id && (
+                          <TranscriptSentenceRow gutter={<TranscriptAudioSlot mode="empty" />}>
+                            <div className="inline-flex items-start gap-2.5 bg-paper border border-line/50 rounded-xl px-3 py-2.5 shadow-sm self-start">
+                              <button
+                                type="button"
+                                onClick={() => playNarratorLine({ id: speakingNarratorId, text: defiCorr.corrected })}
+                                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-navy/10 hover:bg-navy/20 shrink-0 transition-colors mt-0.5"
+                                aria-label="Écouter la correction"
+                              >
+                                <svg width="7" height="9" viewBox="0 0 7 9" fill="none" aria-hidden>
+                                  <path d="M1 1l5 3.5L1 8V1z" fill="#1A2340" opacity="0.8"/>
+                                </svg>
+                              </button>
+                              <div className="flex flex-col gap-1 min-w-0">
+                                <p className="font-display text-[15px] italic text-navy/90 leading-snug">{defiCorr.corrected}</p>
+                                {defiCorr.translation && (
+                                  <p className="text-[12px] text-navy/45 italic leading-snug">{defiCorr.translation}</p>
+                                )}
+                              </div>
+                            </div>
+                          </TranscriptSentenceRow>
+                        )}
                         {showCorrBtn && speakCorrectionOpen && (
                           <TranscriptSentenceRow gutter={<TranscriptAudioSlot mode="empty" />}>
                             <div className="inline-flex items-start gap-2.5 bg-paper border border-line/50 rounded-xl px-3 py-2.5 shadow-sm self-start">
