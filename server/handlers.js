@@ -9,6 +9,7 @@ import {
   resolveNarrator,
 } from './narrator-audio-cache.js';
 import { getSupabaseAdmin } from './supabase.js';
+import { getStoredWritingExample, saveWritingExample } from './writing-examples.js';
 
 // Log every spoken narrator line (text + cached audio URL) to narrator_lines.
 // Fire-and-forget; duplicate lines are ignored via the (narrator, texthash) key.
