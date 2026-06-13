@@ -880,8 +880,8 @@ function readingMiddleware(apiKey, openrouterKey) {
         .trim();
       if (!passage || passage.length < 100) throw new Error('No passage extracted');
 
-      // Steps 4 & 5: comprehension questions + vocabulary IN PARALLEL
-      const [qData, vData] = await Promise.all([
+      // Steps 4, 5 & 6: comprehension questions + vocabulary + grammar IN PARALLEL
+      const [qData, vData, gData] = await Promise.all([
         claudeCall('reading/questions', apiKey, {
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 1600,
@@ -894,6 +894,12 @@ function readingMiddleware(apiKey, openrouterKey) {
           system: `From the given French passage, pick exactly 5 difficult or interesting vocabulary words. For each: "definition" MUST be the English translation/meaning (in English, not French), and write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"French word","definition":"English meaning","sentence":"...___..."}]}`,
           messages: [{ role: 'user', content: passage }],
         }),
+        claudeCall('reading/grammar', apiKey, {
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 1600,
+          system: `From the given French passage, identify ONE grammar structure a learner should study. Name the grammar point, quote an example sentence from the passage, explain it simply in English (1-2 sentences), give a short usage tip, AND write exactly 6 fill-in-the-blank practice exercises (one blank marked "___" per sentence; "hint" = infinitive/base form of the answer). Return ONLY raw JSON: {"grammar":{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}]}}`,
+          messages: [{ role: 'user', content: passage }],
+        }),
       ]);
       let qRaw = (qData.content?.[0]?.text || '{}').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
       let questions = [];
@@ -901,6 +907,10 @@ function readingMiddleware(apiKey, openrouterKey) {
       let vRaw = (vData.content?.[0]?.text || '{}').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
       let vocab = [];
       try { ({ vocab = [] } = JSON.parse(vRaw)); } catch {}
+      let gRaw = (gData.content?.[0]?.text || '{}').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+      let grammarObj = null;
+      try { ({ grammar: grammarObj = null } = JSON.parse(gRaw)); } catch {}
+      const grammar = grammarObj ? [grammarObj] : [];
 
       const { title, feedName: source, author, pubDate: date, link } = chosen;
       saveSession({ id: Date.now(), topic, title, passage, source, author, date, link, questions, vocab, createdAt: new Date().toISOString() });
