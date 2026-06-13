@@ -246,7 +246,7 @@ function PracticeExercise({ exercise, skillPct, onCorrect }) {
 // stored with the rule when present; otherwise generates them on the fly via
 // /api/practice so older DB content still always has something to practice.
 function GrammarRuleExercises({ rule, onCorrect }) {
-  const stored = Array.isArray(rule.exercises) && rule.exercises.length > 0 ? rule.exercises.slice(0, 2) : null;
+  const stored = Array.isArray(rule.exercises) && rule.exercises.length > 0 ? rule.exercises.slice(0, 6) : null;
   const [exercises, setExercises] = React.useState(stored);
   const [loading, setLoading] = React.useState(!stored);
   const [answers, setAnswers] = React.useState({});
