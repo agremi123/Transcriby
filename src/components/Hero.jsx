@@ -2711,6 +2711,7 @@ export function AudioDemoCard({
     setPreviewCorrection(null);
     setFetchingPreview(false);
     setAwaitingRepeat(false);
+    isRepeatRecordingRef.current = false;
     setRepeatFeedback(null);
     setRepeatAttemptText(null);
     setRepeatUtteranceBase(0);
