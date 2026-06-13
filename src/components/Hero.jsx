@@ -2478,7 +2478,9 @@ export function AudioDemoCard({
     try {
       const r = await fetch('/api/correct', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: original, register: 'Parisien', learnerLevel: effectiveLevel }),
+        // Standard register = fix only real grammar errors. A correct sentence
+        // comes back unchanged → we show a green tick instead of a "correction".
+        body: JSON.stringify({ text: original, register: 'Standard', learnerLevel: effectiveLevel }),
       });
       const data = await r.json();
       const corrected = data.corrected?.trim() || original;
