@@ -400,7 +400,12 @@ function correctionMiddleware(apiKey) {
     const systemPrompts = buildCorrectionSystemPrompts();
     let system = systemPrompts[register] || systemPrompts.Parisien;
     if (requireGrammar) {
-      system += `\nEXERCICE DE PRODUCTION : la phrase DOIT employer ${requireGrammar}. Si l'étudiant ne l'utilise pas (ou l'emploie mal), réécris "corrected" pour qu'elle emploie correctement ${requireGrammar} en gardant son idée. Si elle l'emploie déjà correctement et sans faute, renvoie-la EXACTEMENT inchangée.`;
+      // Dedicated production-exercise prompt — REPLACES the register prompt so
+      // the "fix only errors, don't reformulate" rule doesn't block the rewrite.
+      system = `Tu es un professeur de français qui corrige un EXERCICE DE PRODUCTION. L'étudiant devait écrire une phrase qui emploie ${requireGrammar}.
+Réécris sa phrase pour qu'elle emploie CORRECTEMENT ${requireGrammar}, en gardant son idée quand c'est possible. Si sa phrase est trop courte, vague ou n'emploie pas du tout cette structure, transforme-la (ou complète-la) en une phrase naturelle et correcte qui l'emploie vraiment. Corrige aussi toutes les fautes de grammaire et d'orthographe.
+Si la phrase emploie DÉJÀ correctement ${requireGrammar} et ne contient aucune faute, renvoie-la EXACTEMENT inchangée.
+Réponds UNIQUEMENT en JSON brut, sans markdown : {"corrected":"la phrase en français","translation":"natural English translation of the corrected sentence","level":"A1|A2|B1|B2|C1|C2"}`;
     }
 
     try {
