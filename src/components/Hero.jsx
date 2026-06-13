@@ -264,7 +264,9 @@ function ProductionExercise({ instruction, requireGrammar = '' }) {
       // use the target grammar. A correct sentence that uses it → unchanged → tick.
       const r = await fetch('/api/correct', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, register: 'Standard', requireGrammar }),
+        // `task` (the exercise prompt) is always sent so the corrector knows
+        // what was asked even if no explicit grammar point is available.
+        body: JSON.stringify({ text, register: 'Standard', requireGrammar, task: instruction }),
       });
       const d = await r.json();
       setCorrection({ original: text, corrected: d.corrected?.trim() || text, translation: d.translation?.trim() || null });
