@@ -1104,6 +1104,16 @@ export function AudioDemoCard({
   const [writeReviewQuestion, setWriteReviewQuestion] = React.useState('');
   const [writeReviewExample, setWriteReviewExample] = React.useState(null);
   const [writeReviewExampleLoading, setWriteReviewExampleLoading] = React.useState(false);
+  const writeThreadScrollRef = React.useRef(null);
+  // Keep the newest reaction/correction in view as the thread grows. Driven from
+  // the parent (not each thread) and deferred so it runs AFTER layout settles —
+  // otherwise a new reaction renders below the fold and the learner only hears it.
+  React.useEffect(() => {
+    const sc = writeThreadScrollRef.current;
+    if (!sc) return;
+    const id = requestAnimationFrame(() => sc.scrollTo({ top: sc.scrollHeight, behavior: 'smooth' }));
+    return () => cancelAnimationFrame(id);
+  }, [writeReview.stage, writeReview.reaction, writeReview.corrected, writeReview.explanation, writeReviewHistory.length, writeReviewExample, writeReviewExampleLoading]);
   const writeTextareaRef = React.useRef(null);
   const writeBoxRef = React.useRef(null);
   const [speakCorrection, setSpeakCorrection] = React.useState(null);
