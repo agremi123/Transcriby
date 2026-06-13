@@ -880,8 +880,8 @@ function readingMiddleware(apiKey, openrouterKey) {
         .trim();
       if (!passage || passage.length < 100) throw new Error('No passage extracted');
 
-      // Steps 4, 5 & 6: comprehension questions + vocabulary + grammar IN PARALLEL
-      const [qData, vData, gData] = await Promise.all([
+      // Steps 4–7: comprehension questions + vocabulary + grammar + conjugation IN PARALLEL
+      const [qData, vData, gData, cData] = await Promise.all([
         claudeCall('reading/questions', apiKey, {
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 1600,
@@ -900,6 +900,12 @@ function readingMiddleware(apiKey, openrouterKey) {
           system: `From the given French passage, identify ONE grammar structure a learner should study. Name the grammar point, quote an example sentence from the passage, explain it simply in English (1-2 sentences), give a short usage tip, write exactly 6 fill-in-the-blank practice exercises (one blank marked "___" per sentence; "hint" = infinitive/base form of the answer), AND a "production" task: an instruction (in French) telling the learner to write their own sentence using this grammar, plus a correct model sentence. Return ONLY raw JSON: {"grammar":{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}}`,
           messages: [{ role: 'user', content: passage }],
         }),
+        claudeCall('reading/conjugation', apiKey, {
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 800,
+          system: `From the given French passage, create exactly 4 conjugation fill-in-the-blank exercises using verbs from the text. One blank marked "___" per sentence; "hint" = the pronoun/subject context (je/tu/il...). Return ONLY raw JSON: {"conjugation":[{"verb":"infinitive","tense":"présent/passé composé/...","sentence":"...___...","answer":"conjugated form","hint":"je/tu/il..."}]}`,
+          messages: [{ role: 'user', content: passage }],
+        }),
       ]);
       let qRaw = (qData.content?.[0]?.text || '{}').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
       let questions = [];
@@ -911,6 +917,9 @@ function readingMiddleware(apiKey, openrouterKey) {
       let grammarObj = null;
       try { ({ grammar: grammarObj = null } = JSON.parse(gRaw)); } catch {}
       const grammar = grammarObj ? [grammarObj] : [];
+      let cRaw = (cData.content?.[0]?.text || '{}').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+      let conjugation = [];
+      try { ({ conjugation = [] } = JSON.parse(cRaw)); } catch {}
 
       const { title, feedName: source, author, pubDate: date, link } = chosen;
       saveSession({ id: Date.now(), topic, title, passage, source, author, date, link, questions, vocab, createdAt: new Date().toISOString() });
@@ -919,14 +928,14 @@ function readingMiddleware(apiKey, openrouterKey) {
       const sb = getSupabaseAdmin();
       if (sb) {
         sb.from('reading_articles')
-          .insert([{ title, passage, source, author, date, link, questions, vocab }])
+          .insert([{ title, passage, source, author, date, link, questions, vocab, grammar, conjugation }])
           .then(({ error }) => { if (error) console.error('[reading] Supabase insert error:', error.message); });
       } else {
         console.warn('[reading] Supabase not configured, article not saved to DB');
       }
 
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ title, passage, source, author, date, link, questions, vocab, grammar }));
+      res.end(JSON.stringify({ title, passage, source, author, date, link, questions, vocab, grammar, conjugation }));
     } catch (err) {
       console.error('[reading] error:', err.message);
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
