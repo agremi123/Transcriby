@@ -42,6 +42,9 @@ const DEFI_COMPLETE_XP = 15;
 // How many challenges make up one theme (shown on the "Next challenge" button).
 const THEME_CHALLENGE_TOTAL = 5;
 
+// How many reading/listening articles make up one theme (shown on "Next article").
+const THEME_ARTICLE_TOTAL = 3;
+
 // Small TTS play button for corrections
 function TtsPlayButton({ text }) {
   const [playing, setPlaying] = React.useState(false);
