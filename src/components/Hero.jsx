@@ -6450,6 +6450,8 @@ export default function Hero() {
   const [readingGrammar, setReadingGrammar] = React.useState([]);
   const [readingConjugation, setReadingConjugation] = React.useState([]);
   const [readingLoading, setReadingLoading] = React.useState(false);
+  // Which article of the current theme we're on (1..THEME_ARTICLE_TOTAL).
+  const [articleIndex, setArticleIndex] = React.useState(1);
 
   // Track which topic is currently loaded per exercise type.
   // Exercises persist through Chat tab switches; only reload when a *new* topic arrives.
