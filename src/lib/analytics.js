@@ -16,9 +16,13 @@ let started = false;
 
 export function initAnalytics() {
   if (started || typeof window === 'undefined') return;
+  // Production only — never record localhost / dev sessions (keeps the data clean).
+  if (!import.meta.env.PROD) return;
   started = true;
 
-  const clarityId = import.meta.env.VITE_PUBLIC_CLARITY_ID;
+  // Clarity Project ID is public (it ships to the browser), so it's safe to
+  // default here; an env var can still override it.
+  const clarityId = import.meta.env.VITE_PUBLIC_CLARITY_ID || 'x6hhtuis4d';
   const posthogKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
   const posthogHost = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com';
 
