@@ -1060,11 +1060,16 @@ export async function handleWritingReview(body) {
         .filter(Boolean).join(' | ');
       const result = await claudeJSON({
         apiKey: ANTHROPIC_API_KEY,
-        maxTokens: 280,
-        system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte de l'étudiant par rapport au défi : a-t-il atteint la longueur, utilisé le vocabulaire / les expressions / la grammaire / les connecteurs suggérés ? Sois chaleureux(se), précis(e) et encourageant(e). 2-3 phrases en français.\nTermine TOUJOURS par une relance : une question ou un mini-défi concret qui le pousse à réessayer en utilisant 2-3 mots ou expressions PRÉCIS des conseils qu'il n'a pas encore utilisés (cite-les entre « »). N'utilise JAMAIS de markdown ni d'astérisques — texte brut uniquement.\nJSON: {"reaction":"..."}`,
+        maxTokens: 360,
+        system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte de l'étudiant par rapport au défi : a-t-il atteint la longueur, utilisé le vocabulaire / les expressions / la grammaire / les connecteurs suggérés ? Sois chaleureux(se), précis(e) et encourageant(e). 2-3 phrases en français.\nTermine TOUJOURS par une relance : une question ou un mini-défi concret qui le pousse à réessayer en utilisant 2-3 mots ou expressions PRÉCIS des conseils qu'il n'a pas encore utilisés (cite-les entre « »). N'utilise JAMAIS de markdown ni d'astérisques — texte brut uniquement.\nDonne aussi usedTips : pour chaque catégorie, la liste EXACTE (reprise à l'identique de la liste donnée) des conseils que l'étudiant a réellement employés dans son texte. Mets une liste vide si aucun.\nJSON: {"reaction":"...","usedTips":{"vocab":[],"expressions":[],"grammar":[],"conjugation":[],"connecteurs":[]}}`,
         user: `Texte de l'étudiant :\n"${text}"`,
       });
-      return { statusCode: 200, body: { reaction: result.reaction || '' } };
+      const ut = result.usedTips || {};
+      const usedTips = {};
+      for (const k of ['vocab', 'expressions', 'grammar', 'conjugation', 'connecteurs']) {
+        usedTips[k] = Array.isArray(ut[k]) ? ut[k].filter(Boolean).map(String) : [];
+      }
+      return { statusCode: 200, body: { reaction: result.reaction || '', usedTips } };
     }
 
     if (step === 'example') {
