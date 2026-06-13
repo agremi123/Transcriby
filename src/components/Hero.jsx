@@ -3780,6 +3780,12 @@ export function AudioDemoCard({
                   )}
                 </div>
 
+                {/* Parisian thinking — inline below the recorded speech */}
+                {manualCorrecting && (
+                  <div className="mt-2">
+                    <NarratorAnswerLoading narratorId={pendingNarratorId} />
+                  </div>
+                )}
                 {/* Inline narrator reaction — auto-plays audio */}
                 {narratorReaction && !manualCorrection && !manualCorrecting && (
                   <div className="mt-2">
