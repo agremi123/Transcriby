@@ -2550,6 +2550,7 @@ export function AudioDemoCard({
       });
       const data = await r.json();
       const reaction = (data.reaction || 'Pas mal ! Voyons comment on peut améliorer ça.').replace(/\*\*/g, '');
+      if (data.usedTips) onWritingProgress?.(data.usedTips);
       setWriteReview({ stage: 'judged', narratorId, original: text, reaction });
       playNarratorLine({ id: narratorId, text: reaction });
     } catch {
