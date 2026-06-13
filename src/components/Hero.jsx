@@ -6141,10 +6141,34 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
             <span className="text-[11px] font-mono text-navy/40">Objectif : ~{wordTarget} mots</span>
           </div>
 
-          {/* Conseils */}
+          {/* Goals */}
           {hasTips && (
             <div className="border border-line/40 bg-paper/60 px-4 py-3 shrink-0">
-              <p className="text-[10px] tracking-widest uppercase text-navy/35 font-mono mb-3">Conseils</p>
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <p className="text-[10px] tracking-widest uppercase text-navy/35 font-mono">Goals</p>
+                <div className="relative group shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => { if (goalsDone) onNewChallenge?.(); }}
+                    aria-disabled={!goalsDone}
+                    className={`inline-flex items-center gap-1 text-[11px] font-sans font-semibold rounded-full px-2.5 py-1 border transition-colors ${
+                      goalsDone
+                        ? 'text-ivory bg-navy border-navy hover:bg-navy2 cursor-pointer'
+                        : 'text-navy/30 border-navy/15 bg-navy/[0.03] cursor-not-allowed'
+                    }`}
+                  >
+                    Next challenge
+                    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
+                      <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                  <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-20 w-52 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                    {goalsDone
+                      ? 'Tous les goals sont validés — charge un nouveau défi !'
+                      : 'Termine tous les goals (ils deviennent bleus ✓) pour débloquer le prochain défi.'}
+                  </span>
+                </div>
+              </div>
               <div className="space-y-3">
                 {TIPS_SECTIONS.map(({ key, label, icon, pill }) => {
                   const items = tips[key] || [];
