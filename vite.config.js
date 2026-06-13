@@ -303,6 +303,7 @@ function correctionMiddleware(apiKey) {
     let interviewReport = false;
     let dimensionBreakdown = false;
     let claimedLevel = '';
+    let requireGrammar = '';
     try {
       const body = JSON.parse(await readBody(req));
       text = body.text || '';
@@ -311,6 +312,7 @@ function correctionMiddleware(apiKey) {
       interviewReport = !!body.interviewReport;
       dimensionBreakdown = !!body.dimensionBreakdown;
       claimedLevel = body.claimedLevel || '';
+      requireGrammar = body.requireGrammar || '';
     } catch {
       res.statusCode = 400;
       res.setHeader('Content-Type', 'application/json');
