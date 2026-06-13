@@ -23,7 +23,9 @@ export function initAnalytics() {
   // Clarity Project ID is public (it ships to the browser), so it's safe to
   // default here; an env var can still override it.
   const clarityId = import.meta.env.VITE_PUBLIC_CLARITY_ID || 'x6hhtuis4d';
-  const posthogKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
+  // PostHog project key is public (ships to the browser by design), so it's
+  // safe to default here — same as the Clarity id and Supabase anon key.
+  const posthogKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY || 'phc_AS85ssw7rBXXcgZbL4y7cwbpZRUG4xRDMyweip5DG3e2';
   const posthogHost = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com';
 
   // ── Microsoft Clarity — official snippet, only when an id is configured ──
