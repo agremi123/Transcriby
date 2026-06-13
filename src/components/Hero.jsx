@@ -5738,19 +5738,33 @@ function WritingReviewThread({ review, frozen = false, question, onQuestionChang
           </div>
           {correctionOpen && (
             corrected ? (
-              <div className="inline-flex items-center gap-2.5 bg-paper border border-line/50 rounded-xl px-3 py-2.5 shadow-sm self-start">
-                <button
-                  type="button"
-                  onClick={() => onReplay(corrected, narratorId)}
-                  className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-wine/15 hover:bg-wine/25 shrink-0 transition-colors"
-                  aria-label="Écouter la correction"
-                >
-                  <svg width="7" height="9" viewBox="0 0 7 9" fill="none" aria-hidden>
-                    <path d="M1 1l5 3.5L1 8V1z" fill="#8B1E2D" opacity="0.8"/>
-                  </svg>
-                </button>
-                <CorrectionBlock original={original} corrected={corrected} className="font-display text-[15px] italic text-navy/80 leading-snug select-text" />
-              </div>
+              (() => {
+                const norm = (s) => (s || '').trim().replace(/\s+/g, ' ').replace(/[.!?…]+$/, '').toLowerCase();
+                const isCorrect = norm(original) === norm(corrected);
+                return isCorrect ? (
+                  <div className="flex items-center gap-1.5 text-[13px] font-display text-green-600 self-start">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+                      <circle cx="7" cy="7" r="6.4" stroke="currentColor" strokeWidth="1.2" opacity="0.5"/>
+                      <path d="M4 7.2l2 2 4-4.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    Parfait, ta phrase est correcte&nbsp;!
+                  </div>
+                ) : (
+                  <div className="inline-flex items-center gap-2.5 bg-paper border border-line/50 rounded-xl px-3 py-2.5 shadow-sm self-start">
+                    <button
+                      type="button"
+                      onClick={() => onReplay(corrected, narratorId)}
+                      className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-wine/15 hover:bg-wine/25 shrink-0 transition-colors"
+                      aria-label="Écouter la correction"
+                    >
+                      <svg width="7" height="9" viewBox="0 0 7 9" fill="none" aria-hidden>
+                        <path d="M1 1l5 3.5L1 8V1z" fill="#8B1E2D" opacity="0.8"/>
+                      </svg>
+                    </button>
+                    <CorrectionBlock original={original} corrected={corrected} className="font-display text-[15px] italic text-navy/80 leading-snug select-text" />
+                  </div>
+                );
+              })()
             ) : (
               <div className="flex items-center gap-1.5 text-[12px] font-display italic text-navy/40">
                 <div className="w-3 h-3 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
