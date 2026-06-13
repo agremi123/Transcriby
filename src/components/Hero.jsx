@@ -2454,6 +2454,9 @@ export function AudioDemoCard({
   const startWritingReview = React.useCallback(async (text) => {
     const narratorId = writingNarratorId || 'lea';
     setWriteReviewQuestion('');
+    // Fresh exchange → clear the previous "Show example" so it doesn't carry over.
+    setWriteReviewExample(null);
+    setWriteReviewExampleLoading(false);
     setWriteReview({ stage: 'judging', narratorId, original: text });
     try {
       const r = await fetch('/api/writing-review', {
