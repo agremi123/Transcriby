@@ -926,7 +926,7 @@ function readingMiddleware(apiKey, openrouterKey) {
       }
 
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ title, passage, source, author, date, link, questions, vocab }));
+      res.end(JSON.stringify({ title, passage, source, author, date, link, questions, vocab, grammar }));
     } catch (err) {
       console.error('[reading] error:', err.message);
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
