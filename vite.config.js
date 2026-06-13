@@ -62,6 +62,9 @@ async function claudeCall(label, apiKey, body) {
 // Shared prompt: 4 conjugation fill-in-the-blank exercises from a French text.
 const CONJUGATION_PROMPT = `From the given French text, create exactly 4 conjugation fill-in-the-blank exercises using verbs from the text. One blank marked "___" per sentence; "hint" = the pronoun/subject context (je/tu/il...). Return ONLY raw JSON: {"conjugation":[{"verb":"infinitive","tense":"présent/passé composé/...","sentence":"...___...","answer":"conjugated form","hint":"je/tu/il..."}]}`;
 
+// Shared prompt: 2 grammar points (each with 6 drills + a production task) from a French text.
+const LISTENING_GRAMMAR_PROMPT = (level) => `You are a French grammar teacher. From the French text, identify exactly 2 grammar structures or patterns that a ${level} learner should study. For each, quote an example sentence from the text, name the grammar point, explain it simply in English (1-2 sentences), give a short usage tip, write exactly 6 fill-in-the-blank practice exercises (one blank marked "___" per sentence; "hint" = infinitive/base form of the answer), AND a "production" task: an instruction (in French) telling the learner to write their own sentence using this grammar, plus a correct model sentence. Return ONLY raw JSON: {"grammar":[{"point":"Le passé composé","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}`;
+
 // OpenRouter — OpenAI-compatible, supports DeepSeek + Perplexity + others
 const DEEPSEEK_MODEL = 'deepseek/deepseek-chat-v3-0324';
 const PERPLEXITY_IN_PER_M  = 0.20;
