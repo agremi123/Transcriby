@@ -404,6 +404,7 @@ function GrammarRuleExercises({ rule, onCorrect }) {
           gets a production exercise. */}
       <ProductionExercise
         instruction={rule.production?.instruction || (rule.point ? `À ton tour : écris ta propre phrase en utilisant « ${rule.point} ».` : 'Écris ta propre phrase en utilisant ce point de grammaire.')}
+        requireGrammar={rule.point ? `la structure grammaticale « ${rule.point} »` : ''}
       />
     </div>
   );
