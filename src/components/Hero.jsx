@@ -3010,7 +3010,10 @@ export function AudioDemoCard({
                           const instr = verbs.length
                             ? `Écris ta propre phrase en conjuguant ${verbs.map(v => `« ${v} »`).join(' ou ')}${tense ? ` (par exemple au ${tense})` : ''}.`
                             : 'Écris ta propre phrase en utilisant un des verbes ci-dessus.';
-                          return <ProductionExercise instruction={instr} />;
+                          const req = verbs.length
+                            ? `${verbs.map(v => `le verbe « ${v} »`).join(' ou ')}${tense ? ` au ${tense}` : ''}`
+                            : '';
+                          return <ProductionExercise instruction={instr} requireGrammar={req} />;
                         })()}
                       </>
                     )
