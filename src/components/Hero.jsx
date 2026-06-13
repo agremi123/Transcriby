@@ -1175,38 +1175,17 @@ export function AudioDemoCard({
   const [practiceExercises, setPracticeExercises] = React.useState(null);
   const [loadingPractice, setLoadingPractice] = React.useState(false);
   const [skillProgress, setSkillProgress] = React.useState({});
-  // Compréhension is a progress bar: 6 correct answers to validate it. A wrong
-  // answer appends another (recycled) question below so the goal stays reachable.
-  const COMPREHENSION_GOAL = 6;
-  const [comprehensionList, setComprehensionList] = React.useState([]);
-  const [comprehensionCorrect, setComprehensionCorrect] = React.useState(0);
-  const comprehensionCorrectRef = React.useRef(0);
-  const comprehensionAppendedRef = React.useRef(0);
-  React.useEffect(() => { comprehensionCorrectRef.current = comprehensionCorrect; }, [comprehensionCorrect]);
-  // Seed (and reset) the list whenever the article's questions change.
-  React.useEffect(() => {
-    setComprehensionList((exerciseQuestions || []).map((q, i) => ({ q, key: `c-${i}` })));
-    setComprehensionCorrect(0);
-    comprehensionCorrectRef.current = 0;
-    comprehensionAppendedRef.current = 0;
-  }, [exerciseQuestions]);
-  const comprehensionDone = comprehensionCorrect >= COMPREHENSION_GOAL;
-  const handleComprehensionAnswered = React.useCallback((isCorrect) => {
-    if (isCorrect) {
-      setComprehensionCorrect((c) => Math.min(COMPREHENSION_GOAL, c + 1));
-      return;
-    }
-    // Wrong → recycle another question (rotate through the pool) so the learner
-    // can still reach 6 correct, unless the goal is already met.
-    setComprehensionList((list) => {
-      if (comprehensionCorrectRef.current >= COMPREHENSION_GOAL) return list;
-      const pool = exerciseQuestions || [];
-      if (pool.length === 0) return list;
-      const n = comprehensionAppendedRef.current++;
-      const pick = pool[(list.length + n) % pool.length];
-      return [...list, { q: pick, key: `c-extra-${n}` }];
-    });
-  }, [exerciseQuestions]);
+  // Each exercise tab is its own progress bar: EXERCISE_GOAL correct answers to
+  // validate it; a wrong answer appends another (recycled) question below.
+  const grammarPool = React.useMemo(
+    () => (exerciseGrammar || []).flatMap((g) => (g.exercises || []).map((ex) => ({ ...ex, point: g.point }))),
+    [exerciseGrammar],
+  );
+  const compProg = useExerciseProgress(exerciseQuestions);
+  const vocabProg = useExerciseProgress(exerciseVocab);
+  const grammarProg = useExerciseProgress(grammarPool);
+  const conjProg = useExerciseProgress(exerciseConjugation);
+  const TAB_PROGRESS = { comprehension: compProg, vocabulary: vocabProg, grammar: grammarProg, conjugation: conjProg };
   const [completedInBatch, setCompletedInBatch] = React.useState(new Set());
   const [loadingMore, setLoadingMore] = React.useState(false);
   const [inputMode, setInputMode] = React.useState('speak');
