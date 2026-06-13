@@ -2556,7 +2556,7 @@ export function AudioDemoCard({
     } catch {
       setWriteReview({ stage: 'judged', narratorId, original: text, reaction: 'Bien joué ! Regardons la correction.' });
     }
-  }, [writingNarratorId, writingPrompt, writingTips, writingWordTarget, effectiveLevel, playNarratorLine]);
+  }, [writingNarratorId, writingPrompt, writingTips, writingWordTarget, effectiveLevel, playNarratorLine, onWritingProgress]);
 
   const runWritingCorrection = React.useCallback(async () => {
     setWriteReview((rv) => ({ ...rv, stage: 'correcting' }));
