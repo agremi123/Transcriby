@@ -1063,6 +1063,7 @@ export function AudioDemoCard({
   writingPrompt = '',
   writingTips = {},
   writingWordTarget = 80,
+  onWritingProgress = null,
   onNewWritingChallenge = null,
 }) {
   const { effectiveLevel, gainExperience, gainDailyParisianPoints } = useLearnerProfile();
