@@ -1151,6 +1151,10 @@ export function AudioDemoCard({
   // used all the défi's target grammar + vocab (→ ready for a new question).
   const [replyByUtterance, setReplyByUtterance] = React.useState({});
   const [replyLoadingUttId, setReplyLoadingUttId] = React.useState(null);
+  // Per-utterance correctness in the défi: { [uttId]: { correct, corrected, translation } }.
+  // Correct → a blue tick next to the sentence; wrong → a "Correct my sentence" button.
+  const [correctionByUtterance, setCorrectionByUtterance] = React.useState({});
+  const [openCorrectionUttId, setOpenCorrectionUttId] = React.useState(null);
   const [defiComplete, setDefiComplete] = React.useState(false);
   // Achievement shown when a défi is completed: the level badge earned and
   // whether this completion levelled the learner up to a new CEFR level.
