@@ -6573,6 +6573,7 @@ export default function Hero() {
 
   const loadNextListeningEpisode = React.useCallback(() => {
     setListeningLoading(true);
+    setArticleIndex((n) => Math.min(THEME_ARTICLE_TOTAL, n + 1));
     fetch('/api/listening', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ topic: practiceTopic || 'la vie parisienne', learnerLevel: effectiveLevel || 'B1' }),
