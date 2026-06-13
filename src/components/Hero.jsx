@@ -2332,6 +2332,10 @@ export function AudioDemoCard({
 
     // On the Writing tab → run the guided review flow (judge against the challenge).
     if (activeTab === 'writing') {
+      // Freeze the exchange we just finished so it stays in the thread.
+      if (writeReview.stage !== 'idle' && writeReview.original) {
+        setWriteReviewHistory((h) => [...h, { ...writeReview, id: writeReview.id || `wr-${Date.now()}` }]);
+      }
       setWriteText('');
       startWritingReview(trimmed);
       return;
