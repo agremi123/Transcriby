@@ -3186,8 +3186,8 @@ export function AudioDemoCard({
                       </button>
                       <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-30 w-56 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
                         {allDone
-                          ? 'Tout est validé — charge le prochain article !'
-                          : 'Valide les 4 onglets (6 bonnes réponses chacun) pour débloquer le prochain article.'}
+                          ? 'All four tabs done — load the next article!'
+                          : 'Complete all 4 tabs (6 correct answers each) to unlock the next article.'}
                       </span>
                     </div>
                   );
@@ -5191,28 +5191,37 @@ function AutoFitTitle({ title }) {
   );
 }
 
-// Gated "Next article X/3" button — unlocked only when all four exercise tabs
-// are validated; a hover tooltip explains the lock. Shown in the title box.
-function NextArticleButton({ allDone = false, articleIndex = 1, onNextArticle = null }) {
+// Gated "Next article X/3" button that is ALSO a progress bar: its fill grows as
+// each of the four exercise tabs is finished (25% each). Unlocked + clickable
+// only when all four are done; a hover tooltip explains the lock.
+function NextArticleButton({ doneTabs = 0, totalTabs = 4, articleIndex = 1, onNextArticle = null, compact = false }) {
+  const allDone = doneTabs >= totalTabs;
+  const pct = Math.round((Math.min(doneTabs, totalTabs) / totalTabs) * 100);
+  const sizeCls = compact ? 'text-[8px] tracking-wide px-1.5 py-0.5' : 'text-[10px] tracking-wide px-2.5 py-1';
   return (
     <div className="relative group shrink-0">
       <button
         type="button"
         onClick={() => { if (allDone) onNextArticle?.(); }}
         aria-disabled={!allDone}
-        className={`inline-flex items-center gap-1 text-[10px] tracking-wide uppercase font-semibold rounded-full px-2.5 py-1 border transition-colors whitespace-nowrap ${
+        className={`relative overflow-hidden inline-flex items-center uppercase font-semibold rounded-full border transition-colors whitespace-nowrap ${sizeCls} ${
           allDone
             ? 'text-ivory bg-wine border-wine hover:bg-wine2 cursor-pointer'
-            : 'text-navy/30 border-navy/20 bg-navy/[0.04] cursor-not-allowed'
+            : 'text-navy/55 border-navy/20 bg-navy/[0.04] cursor-not-allowed'
         }`}
       >
-        Next article
-        <span className="font-mono tabular-nums opacity-80">{Math.min(articleIndex, THEME_ARTICLE_TOTAL)}/{THEME_ARTICLE_TOTAL}</span>
+        {!allDone && (
+          <span className="absolute inset-y-0 left-0 bg-wine/20 transition-all duration-500" style={{ width: `${pct}%` }} aria-hidden />
+        )}
+        <span className="relative z-10 inline-flex items-center gap-1">
+          Next article
+          <span className="font-mono tabular-nums opacity-80">{Math.min(articleIndex, THEME_ARTICLE_TOTAL)}/{THEME_ARTICLE_TOTAL}</span>
+        </span>
       </button>
       <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-30 w-56 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
         {allDone
-          ? 'Tout est validé — charge le prochain article !'
-          : 'Valide les 4 onglets (6 bonnes réponses chacun) pour débloquer le prochain article.'}
+          ? 'All four tabs done — load the next article!'
+          : `${doneTabs}/${totalTabs} tabs done. Complete all 4 (6 correct answers each) to unlock the next article.`}
       </span>
     </div>
   );
@@ -6387,8 +6396,8 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
                   </button>
                   <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-20 w-52 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
                     {goalsDone
-                      ? 'Tous les goals sont validés — charge un nouveau défi !'
-                      : 'Termine tous les goals (ils deviennent bleus ✓) pour débloquer le prochain défi.'}
+                      ? 'All goals done — load a new challenge!'
+                      : 'Complete all the goals (they turn blue ✓) to unlock the next challenge.'}
                   </span>
                 </div>
               </div>
