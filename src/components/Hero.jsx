@@ -3896,21 +3896,14 @@ export function AudioDemoCard({
                   <p className="mt-2 font-display text-[13px] italic text-wine/70">Not quite — try again.</p>
                 )}
 
-                {/* Défi speaking: once the Parisian has answered, the learner moves on
-                    at their own pace (no auto-reset). */}
-                {activeTab === 'speaking' && !isRecording && !manualCorrecting
-                  && (manualCorrection || sentenceCongrats || repeatFeedback) && (
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      onClick={() => { resetTranscript(); onNewSpeakingChallenge?.(); }}
-                      className="inline-flex items-center gap-1.5 font-display text-[15px] italic px-4 h-9 rounded-full bg-wine text-ivory hover:bg-wine2 shadow-sm transition-colors"
-                    >
-                      Nouvelle question
-                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
-                        <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
+                {/* Défi réussi: the learner used the target grammar + vocab — a fresh
+                    question loads automatically right after. */}
+                {activeTab === 'speaking' && defiComplete && (
+                  <div className="mt-4 flex items-center gap-2 text-green-700">
+                    <svg width="20" height="20" viewBox="0 0 48 48" fill="none" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden>
+                      <path d="M42 12L18 36l-12-12" />
+                    </svg>
+                    <span className="font-display text-[15px] italic">Défi réussi ! Question suivante…</span>
                   </div>
                 )}
 
