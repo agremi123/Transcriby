@@ -1207,9 +1207,9 @@ export function AudioDemoCard({
   const grammarProg = useExerciseProgress(grammarPool);
   const conjProg = useExerciseProgress(exerciseConjugation);
   const TAB_PROGRESS = { comprehension: compProg, vocabulary: vocabProg, grammar: grammarProg, conjugation: conjProg };
-  const allExercisesDone = compProg.done && vocabProg.done && grammarProg.done && conjProg.done;
-  // Report up so the article title box can gate its own "Next article" button.
-  React.useEffect(() => { onExercisesAllDone?.(allExercisesDone); }, [allExercisesDone]); // eslint-disable-line react-hooks/exhaustive-deps
+  const exerciseTabsDone = [compProg, vocabProg, grammarProg, conjProg].filter((p) => p.done).length;
+  // Report the count up so the article title box's "Next article" bar fills too.
+  React.useEffect(() => { onExercisesProgress?.(exerciseTabsDone); }, [exerciseTabsDone]); // eslint-disable-line react-hooks/exhaustive-deps
   const [completedInBatch, setCompletedInBatch] = React.useState(new Set());
   const [loadingMore, setLoadingMore] = React.useState(false);
   const [inputMode, setInputMode] = React.useState('speak');
