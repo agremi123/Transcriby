@@ -901,7 +901,6 @@ function VocabItem({ v, vi, firePointsDelta, narratorId = 'lea' }) {
           <button type="button" onClick={() => { setSubmitted(true); firePointsDelta(ans.trim().toLowerCase() === v.word.toLowerCase() ? 2 : -1); }}
             className="px-2 py-0.5 text-[10px] font-mono bg-wine text-ivory hover:bg-wine/80 transition-colors">OK</button>
         )}
-        {submitted && <button type="button" onClick={() => { setAns(''); setSubmitted(false); }} className="text-[10px] font-mono text-navy/30 hover:text-navy/60">retry</button>}
       </div>
       <p className="text-[11px] text-navy/45 mt-1 italic">{v.definition}</p>
     </div>
