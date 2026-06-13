@@ -4302,40 +4302,8 @@ export function AudioDemoCard({
               </button>
             ))}
           </div>
-          {/* Correction UI - only rendered when active */}
-          {inputMode === 'speak' && (manualCorrecting || hasSpeakCorrection) && (
-            <div className="px-7 pt-1 pb-3 min-w-0 overflow-visible">
-              {(() => {
-            const isBarLineSpeaking = (lineText) => (
-              wordPlaying
-              && lineText
-              && parisianSpeakingText === lineText.trim()
-            );
-            const isCorrectionSpeaking = isBarLineSpeaking(manualCorrection?.corrected);
-            const isCongratsSpeaking = isBarLineSpeaking(sentenceCongrats?.text);
-
-            if (manualCorrecting) {
-              return (
-                <div className="flex items-start gap-2 min-w-0 w-full">
-                  <div className="flex flex-col items-stretch gap-1 w-[3.5rem] shrink-0">
-                    <div className="h-7 rounded-full bg-wine/10 animate-pulse" aria-hidden />
-                    <div className="h-7 rounded-full bg-navy/5 animate-pulse" aria-hidden />
-                  </div>
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <NarratorAnswerLoading narratorId={pendingNarratorId} hideName />
-                  </div>
-                </div>
-              );
-            }
-
-            if (hasSpeakCorrection) return null;
-
-            // Congrats lines now live inside the transcript, pinned to their
-            // utterance (congratsByUtterance) — no transient banner here.
-            return null;
-              })()}
-            </div>
-          )}
+          {/* Parisian reaction + correction now render inline in the transcript
+              above (no separate bottom bar). */}
         </div>{/* end left column */}
         {/* Right controls */}
         {inputMode === 'write' ? (
