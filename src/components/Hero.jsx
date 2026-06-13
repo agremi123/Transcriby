@@ -6184,14 +6184,11 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
                     {!goalsDone && (
                       <span className="absolute inset-y-0 left-0 bg-navy/25 transition-all duration-500" style={{ width: `${goalsPct}%` }} aria-hidden />
                     )}
-                    <span className="relative z-10 inline-flex items-center gap-1">
+                    <span className="relative z-10 inline-flex items-center gap-1.5">
                       Next challenge
-                      <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
-                        <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                      <span className="font-mono tabular-nums opacity-80">{Math.min(challengeIndex, THEME_CHALLENGE_TOTAL)}/{THEME_CHALLENGE_TOTAL}</span>
                     </span>
                   </button>
-                  <span className="text-[9px] font-mono text-navy/45 tabular-nums leading-none">{goalsDoneCount} / {goalsTotal}</span>
                   <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-20 w-52 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
                     {goalsDone
                       ? 'Tous les goals sont validés — charge un nouveau défi !'
