@@ -6174,6 +6174,9 @@ export default function Hero() {
   const [speakingTopicLabel, setSpeakingTopicLabel] = React.useState('');
   const [speakingTargetGrammar, setSpeakingTargetGrammar] = React.useState(null);
   const [speakingTargetVocab, setSpeakingTargetVocab] = React.useState(null);
+  // Live défi progress reported by the recording card (which targets are used).
+  const [speakingUsedVocab, setSpeakingUsedVocab] = React.useState([]);
+  const [speakingUsedGrammar, setSpeakingUsedGrammar] = React.useState(false);
 
   React.useEffect(() => {
     if (practiceType === 'speaking' && practiceTopic && loadedSpeakingTopicRef.current !== practiceTopic) {
