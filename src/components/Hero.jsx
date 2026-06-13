@@ -6033,7 +6033,7 @@ const TIPS_SECTIONS = [
   { key: 'connecteurs', label: 'Connecteurs',  icon: '🔗', pill: true  },
 ];
 
-function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 80, narratorId = 'lea' }) {
+function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 80, narratorId = 'lea', usedTips = {}, badge = null }) {
   const hasTips = TIPS_SECTIONS.some(s => (tips[s.key] || []).length > 0);
   const name = narratorId === 'jules' ? 'Jules' : 'Léa';
 
