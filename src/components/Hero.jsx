@@ -6658,19 +6658,17 @@ export default function Hero() {
     }, { replace: true });
   }, [heroActiveTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // When switching back to Chat: keep all exercise state so students can return mid-exercise.
-  // Only reset the trigger tracker + URL params so tabs can re-trigger if the student
-  // hasn't visited them yet. The loaded-topic refs prevent unnecessary API re-calls
-  // when the same default topic is re-set by the trigger.
+  // When switching back to Chat: keep all exercise state so students can return
+  // mid-exercise. We clear the URL params for cleanliness, but we do NOT reset
+  // tabTriggeredRef — each tab stays "triggered" so re-entering it reuses the
+  // already-loaded challenge instead of fetching a brand-new one. Unvisited tabs
+  // are still not in the set, so they trigger on first visit as normal.
   const prevHeroTabRef = React.useRef(heroActiveTab);
   React.useEffect(() => {
     const prev = prevHeroTabRef.current;
     prevHeroTabRef.current = heroActiveTab;
     const wasExercise = ['reading', 'listening', 'speaking', 'writing'].includes(prev);
     if (heroActiveTab !== 'transcript' || !wasExercise) return;
-    // Allow re-triggering unvisited exercise tabs (topic refs prevent actual reload)
-    tabTriggeredRef.current = new Set();
-    // Clear URL params for cleanliness (exercises are preserved via state, not URL)
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
       next.delete('practice');
