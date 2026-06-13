@@ -1,5 +1,217 @@
 [
   {
+    "id": 1781371542939,
+    "topic": "French travel transport Paris vocabulary",
+    "title": "L’ambition XXL d’Isack Hadjar au Grand Prix de Monaco : « Je suis là où j’ai toujours voulu être »",
+    "passage": "A 21 ans, le Parisien Isack Hadjar a hérité d'un volant aussi convoité que casse-gueule : celui d'équipier de Max Verstappen. A l'occasion du Grand Prix de Monaco ce week-end, et de la sortie d'une nouvelle montre signée TAG Heuer, nous avons échangé quelques mots avec le jeune pilote.\n\nFin 2025, le jeune champion né à Paris répondait franchement : « Non, il est meilleur dans tous les domaines. » Cette semaine, en visio depuis Monaco, Isack Hadjar se prépare pour le Grand Prix de manière presque décontractée – eu égard à la difficulté de ce tracé en pleine ville. Pour lui, tout va pourtant très vite. Hier grand espoir dans une écurie satellite, il est arrivé en début de saison chez Red Bull où il côtoie le quadruple champion du monde. « Sur le papier, courir pour une écurie qui joue les podiums rajoute de la pression, mais c'est aussi une trajectoire rêvée. Je suis là où j'ai toujours voulu être. »\n\nCe dimanche 7 juin, le décor est prestigieux – et frustrant. Monaco, c'est le tracé le plus lent et le plus court de la Formule 1 : 3,337 km seulement, 78 tours en tout, 19 virages dont le plus lent de la F1 (l'épingle du Fairmont, à 50 km/h), mais également le tunnel où l'on bombe à 260 km/h. Ce n'est pas un circuit de vitesse pure, plutôt une compétition urbaine tendue à l'extrême, où dépasser relève de l'exploit. En a-t-il rêvé, le jeune Isack, de cette course mythique ? « Oui, parce que Monaco, pour moi, c'est Ayrton Senna, recordman de la course avec six victoires, et mon idole depuis toujours. » Le pilote brésilien fut aussi l'ambassadeur historique de TAG Heuer ; c'est ainsi qu'Hadjar a connu la marque.\n\nDepuis son arrivée chez Red Bull, Hadjar n'a pas eu le temps de visiter la manufacture horlogère à la double casquette : partenaire de l'écurie Red Bull et chronométreur officiel du championnat de F1. Et s'il vient de recevoir sa première TAG, une Monaco en or rose et cadran noir, son poignet reste nu lors des courses. Une affaire de sensations : il veut un « feeling symétrique », les deux mains à égalité sur le volant.",
+    "source": "L'Obs",
+    "author": "Françoise-Marie Santucci",
+    "date": "Sun, 07 Jun 2026 08:42:34 +0200",
+    "link": "https://www.nouvelobs.com/tendances/20260606.OBS115559/l-ambition-xxl-d-isack-hadjar-au-grand-prix-de-monaco-je-suis-la-ou-j-ai-toujours-voulu-etre.html",
+    "questions": [
+      {
+        "question": "Quel âge a Isack Hadjar et d'où vient-il ?",
+        "options": [
+          "Il a 21 ans et vient de Monaco",
+          "Il a 21 ans et vient de Paris",
+          "Il a 25 ans et vient de Paris",
+          "Il a 21 ans et vient de Red Bull"
+        ],
+        "answer": "Il a 21 ans et vient de Paris",
+        "explanation": "The passage states 'A 21 ans, le Parisien Isack Hadjar'. The other options either give wrong age, wrong location, or confuse Red Bull (his team) with his origin."
+      },
+      {
+        "question": "Selon Isack Hadjar à la fin de 2025, comment se compare-t-il à Max Verstappen ?",
+        "options": [
+          "Il est meilleur dans tous les domaines",
+          "Il est égal à Max Verstappen",
+          "Max Verstappen est meilleur dans tous les domaines",
+          "Il n'a pas voulu répondre à cette question"
+        ],
+        "answer": "Max Verstappen est meilleur dans tous les domaines",
+        "explanation": "The passage directly quotes Hadjar: 'Non, il est meilleur dans tous les domaines.' This means Max is better in all areas. The other options misrepresent or contradict this clear statement."
+      },
+      {
+        "question": "Combien de victoires à Monaco détient le recordman de cette course ?",
+        "options": [
+          "Quatre victoires",
+          "Cinq victoires",
+          "Six victoires",
+          "Sept victoires"
+        ],
+        "answer": "Six victoires",
+        "explanation": "The text explicitly states: 'Ayrton Senna, recordman de la course avec six victoires.' The other numbers are incorrect according to the passage."
+      },
+      {
+        "question": "Quelle est la longueur du circuit de Monaco ?",
+        "options": [
+          "2,337 km",
+          "3,337 km",
+          "4,337 km",
+          "5,337 km"
+        ],
+        "answer": "3,337 km",
+        "explanation": "The passage states: 'Monaco, c'est le tracé le plus lent et le plus court de la Formule 1 : 3,337 km seulement.' The other options have incorrect distances."
+      },
+      {
+        "question": "Pourquoi Isack Hadjar ne porte-t-il pas sa montre TAG Heuer pendant les courses ?",
+        "options": [
+          "Parce qu'elle est trop chère",
+          "Parce qu'il veut un feeling symétrique avec les deux mains à égalité sur le volant",
+          "Parce que TAG Heuer ne le lui permet pas",
+          "Parce qu'il l'a seulement reçue récemment"
+        ],
+        "answer": "Parce qu'il veut un feeling symétrique avec les deux mains à égalité sur le volant",
+        "explanation": "The passage explains: 'Une affaire de sensations : il veut un 'feeling symétrique', les deux mains à égalité sur le volant.' The other options are either not mentioned or contradict the actual reason given."
+      },
+      {
+        "question": "Quel est le virage le plus lent de la Formule 1 à Monaco ?",
+        "options": [
+          "Le tunnel à 260 km/h",
+          "L'épingle du Fairmont à 50 km/h",
+          "La chicane à 100 km/h",
+          "Le virage de Tabac à 80 km/h"
+        ],
+        "answer": "L'épingle du Fairmont à 50 km/h",
+        "explanation": "The text states: '19 virages dont le plus lent de la F1 (l'épingle du Fairmont, à 50 km/h)'. The tunnel is faster at 260 km/h, and the other options are not mentioned in the passage."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "convoité",
+        "definition": "highly desired or sought after",
+        "sentence": "Ce poste de pilote est ___ par tous les jeunes coureurs du monde."
+      },
+      {
+        "word": "casse-gueule",
+        "definition": "dangerous or risky; breaking one's face",
+        "sentence": "Ce circuit montagneux est réputé pour être ___ en raison de ses nombreux virages."
+      },
+      {
+        "word": "tracé",
+        "definition": "circuit layout or course",
+        "sentence": "Le ___ de ce circuit automobile est particulièrement difficile avec ses 20 virages."
+      },
+      {
+        "word": "épingle",
+        "definition": "hairpin turn (sharp U-turn on a track)",
+        "sentence": "Le pilote doit freiner drastiquement avant d'aborder l'___ du virage."
+      },
+      {
+        "word": "relève de l'exploit",
+        "definition": "amounts to a feat or is a difficult achievement",
+        "sentence": "Dépasser son adversaire sur ce circuit étroit ___ de l'exploit tant c'est compliqué."
+      }
+    ],
+    "createdAt": "2026-06-13T17:25:42.939Z"
+  },
+  {
+    "id": 1781371537250,
+    "topic": "La technologie au quotidien",
+    "title": "« Le Village de Madeleine » : carnets de campagne au cœur de la mémoire rurale",
+    "passage": "Si le destin existe, il se présenta à Madeleine de Sinéty (1934-2011) le 1er juillet 1972 non loin de Rennes alors qu'elle remontait vers Paris, et prit la forme du gigantesque embouteillage qui lui dictait de quitter la nationale pour rouler sur une petite route de l'Ille-et-Vilaine. Si le destin a de la suite dans les idées, alors il la guida vers la sortie qui menait au bourg de Poilley, où elle trouva une chambre pour la nuit. Réveillée à l'aube par le chant d'un coq et une bonne odeur d'herbes, elle prit la bicyclette dans sa voiture et pédala, avec l'appareil photo en bandoulière qu'elle ne quittait jamais, jusqu'à trouver une ferme.\n\nSon enfance, elle l'avait passée dans un château du Val de Loire, avec la stricte interdiction d'entrer dans la ferme d'à côté. A Poilley, l'heure était venue de rencontrer ceux dont on l'avait privée. La jeune étrangère avait des manières simples ; elle fut bien accueillie. C'est à peine si on s'étonna de la voir actionner sans cesse le petit œil curieux de son appareil. Le séjour dura huit ans. Elle trouva ici une famille de cœur, et ce fut un déchirement de part et d'autre lorsqu'elle annonça son départ pour l'Amérique avec un fiancé. Aujourd'hui, les milliers de photos prises à Poilley sont un trésor.\n\nLa grande fille timide avait un talent de photographe et des dispositions d'ethnologue. Cinq enfants grimpés sur un chargement de pommes à cidre avec leur chien. Les mêmes dans la classe derrière des pupitres de bois. Un homme à vélo sur une route déserte, la gitane au bec, menant par une corde un cheval de labour. Une femme en robe à fleurs et bottes de caoutchouc trayant sa vache. Toute une famille de fermiers assise, à la veillée, sur la pierre d'une cheminée coiffée de dentelle. Une mère lavant son fils dans une bassine. L'œuvre de Madeleine, tantôt noir et blanc, tantôt couleurs, raconte les choses de la vie. Le film de Julie Bertuccelli semble inspiré d'un roman de Modiano ou de Jaenada pour la grâce furtive de la nostalgie et la résurrection d'un monde. Un demi-siècle plus tard, l'hommage est double : les photos de Madeleine de Sinéty sont exposées au Jeu de paume, à Paris (jusqu'au 27 septembre).",
+    "source": "L'Obs",
+    "author": "Anne Crignon",
+    "date": "Fri, 12 Jun 2026 18:00:24 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260612.OBS115755/le-village-de-madeleine-carnets-de-campagne-au-c-ur-de-la-memoire-rurale.html",
+    "questions": [
+      {
+        "question": "En quelle année Madeleine de Sinéty a-t-elle découvert Poilley ?",
+        "options": [
+          "1934",
+          "1972",
+          "1964",
+          "2011"
+        ],
+        "answer": "1972",
+        "explanation": "The passage states that Madeleine arrived in Poilley on July 1st, 1972, after being diverted by a traffic jam near Rennes. The other dates refer to her birth year (1934), her death year (2011), or are incorrect."
+      },
+      {
+        "question": "Pourquoi Madeleine a-t-elle dû quitter la nationale ?",
+        "options": [
+          "Pour visiter un château",
+          "À cause d'un gigantesque embouteillage",
+          "Pour trouver une bicyclette",
+          "Pour échapper à la pluie"
+        ],
+        "answer": "À cause d'un gigantesque embouteillage",
+        "explanation": "The text explicitly states that a massive traffic jam ('gigantesque embouteillage') near Rennes forced her to leave the highway and take a small road. The other options are not mentioned as reasons for her detour."
+      },
+      {
+        "question": "Combien de temps Madeleine a-t-elle passé à Poilley ?",
+        "options": [
+          "Un an",
+          "Trois ans",
+          "Huit ans",
+          "Dix ans"
+        ],
+        "answer": "Huit ans",
+        "explanation": "The passage clearly states 'Le séjour dura huit ans' (The stay lasted eight years). This period allowed her to become deeply connected to the farming family and to take thousands of photographs."
+      },
+      {
+        "question": "Quel objet Madeleine n'abandonnait jamais ?",
+        "options": [
+          "Sa bicyclette",
+          "Son appareil photo",
+          "Sa voiture",
+          "Son fiancé"
+        ],
+        "answer": "Son appareil photo",
+        "explanation": "The text states she wore her camera as a shoulder strap ('l'appareil photo en bandoulière qu'elle ne quittait jamais'). The camera was essential to her work as a photographer and ethnologist throughout her stay."
+      },
+      {
+        "question": "Pourquoi l'entrée à la ferme était-elle interdite à Madeleine pendant son enfance ?",
+        "options": [
+          "Parce qu'elle vivait dans un château",
+          "Parce que la ferme était dangereuse",
+          "Le texte ne l'explique pas",
+          "Parce qu'elle n'aimait pas les animaux"
+        ],
+        "answer": "Le texte ne l'explique pas",
+        "explanation": "The passage mentions that she was forbidden to enter the farm near her childhood château in the Loire Valley, but does not provide an explanation for this prohibition. We only know the fact, not the reason."
+      },
+      {
+        "question": "Où les photos de Madeleine de Sinéty sont-elles actuellement exposées ?",
+        "options": [
+          "À Poilley, en Bretagne",
+          "Au château du Val de Loire",
+          "Au Jeu de paume, à Paris",
+          "En Amérique"
+        ],
+        "answer": "Au Jeu de paume, à Paris",
+        "explanation": "The final paragraph states that Madeleine's photographs are being exhibited at the Jeu de paume in Paris until September 27th. The other locations are mentioned in the text but not as exhibition venues for her work."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "embouteillage",
+        "definition": "traffic jam",
+        "sentence": "Le gigantesque ___ l'a forcée à quitter l'autoroute."
+      },
+      {
+        "word": "bandoulière",
+        "definition": "shoulder strap or sling",
+        "sentence": "Elle portait son appareil photo en ___ autour de son cou."
+      },
+      {
+        "word": "déchirement",
+        "definition": "heartbreak or emotional pain",
+        "sentence": "Son départ pour l'Amérique causa un ___ de part et d'autre."
+      },
+      {
+        "word": "ethnologue",
+        "definition": "ethnologist (a person who studies cultures and peoples)",
+        "sentence": "Elle avait des dispositions d'___ et observait attentivement la vie paysanne."
+      },
+      {
+        "word": "furtive",
+        "definition": "fleeting or passing quickly",
+        "sentence": "La ___ nostalgie imprègne chaque photographie de Madeleine."
+      }
+    ],
+    "createdAt": "2026-06-13T17:25:37.250Z"
+  },
+  {
     "id": 1781371345486,
     "topic": "French media news vocabulary B2",
     "title": "« The Hack » : au cœur du scandale des écoutes téléphoniques au Royaume-Uni",
