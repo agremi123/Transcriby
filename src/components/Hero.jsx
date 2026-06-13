@@ -6507,6 +6507,59 @@ export default function Hero() {
     }
   }, [practiceTopic, practiceType, effectiveLevel]);
 
+  // Load the NEXT reading article (a fresh unserved one from the pool). Used by
+  // the "Next article" button once all four exercise tabs are validated.
+  const loadNextReadingArticle = React.useCallback(() => {
+    setReadingLoading(true);
+    fetch('/api/reading', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: readingTopic || practiceTopic || 'la vie parisienne' }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        setReadingPassage(data.passage || '');
+        setReadingTitle(data.title || '');
+        setReadingSource(data.source || null);
+        setReadingAuthor(data.author || null);
+        setReadingDate(data.date || null);
+        setExerciseSubTab('comprehension');
+        setReadingQuestions(data.questions || []);
+        setReadingVocab(data.vocab || []);
+        setReadingGrammar(data.grammar || []);
+        setReadingConjugation(data.conjugation || []);
+        setReadingLoading(false);
+      })
+      .catch(() => setReadingLoading(false));
+  }, [readingTopic, practiceTopic]);
+
+  const loadNextListeningEpisode = React.useCallback(() => {
+    setListeningLoading(true);
+    fetch('/api/listening', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: practiceTopic || 'la vie parisienne', learnerLevel: effectiveLevel || 'B1' }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        setListeningTitle(data.title || '');
+        setListeningAudioUrl(data.audioUrl || null);
+        setListeningClipStart(data.clipStart ?? 0);
+        setListeningClipEnd(data.clipEnd ?? 180);
+        setListeningTranscript(data.transcript || '');
+        setListeningSource(data.source || null);
+        setListeningDate(data.date || null);
+        setListeningVocabTheme(data.vocabTheme || '');
+        setListeningContentLevel(data.contentLevel || '');
+        setListeningWordTimings(data.wordTimings || null);
+        setExerciseSubTab('comprehension');
+        setListeningQuestions(data.questions || []);
+        setListeningVocab(data.vocab || []);
+        setListeningGrammar(data.grammar || []);
+        setListeningConjugation(data.conjugation || []);
+        setListeningLoading(false);
+      })
+      .catch(() => setListeningLoading(false));
+  }, [practiceTopic, effectiveLevel]);
+
   // Speaking challenge state
   const [speakingActive, setSpeakingActive] = React.useState(false);
   const [speakingLoading, setSpeakingLoading] = React.useState(false);
