@@ -2662,7 +2662,7 @@ export function AudioDemoCard({
         chatCommittedRef.current = 0; // keep chat utterance tracking in sync
       }
       // Leaving the Writing tab resets the guided review.
-      if (activeTab !== 'writing') { setWriteReview({ stage: 'idle' }); setWriteReviewQuestion(''); }
+      if (activeTab !== 'writing') { setWriteReview({ stage: 'idle' }); setWriteReviewHistory([]); setWriteReviewQuestion(''); }
     }
   }, [activeTab, isRecording, reset]);
 
