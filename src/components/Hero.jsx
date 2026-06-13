@@ -5396,7 +5396,26 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
 
 const NARRATOR_PORTRAITS = { lea: '/assets/lea.png', jules: '/assets/jules.png' };
 
-function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null }) {
+// Normalize a vocab item for loose matching (strip articles, accents, case).
+function normVocab(s) {
+  return String(s || '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/^(l['’]|le |la |les |un |une |des |du |de |d['’])/, '')
+    .replace(/[^a-z' ]/g, '')
+    .trim();
+}
+// Did the learner use this target vocab word? (tolerant of inflection/articles)
+function isVocabUsed(word, usedList) {
+  const t = normVocab(word);
+  if (!t) return false;
+  return (usedList || []).some((u) => {
+    const n = normVocab(u);
+    return n && (n === t || n.includes(t) || t.includes(n));
+  });
+}
+
+function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null, usedVocab = [], usedGrammar = false }) {
   const name = narratorId === 'lea' ? 'Léa' : 'Jules';
 
   const [speaking, setSpeaking] = React.useState(false);
