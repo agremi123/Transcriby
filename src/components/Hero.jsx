@@ -6516,6 +6516,7 @@ export default function Hero() {
       loadedListeningTopicRef.current = practiceTopic;
       setListeningActive(true);
       setListeningLoading(true);
+      setArticleIndex(1); // new theme → article 1
       fetch('/api/listening', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
