@@ -1474,6 +1474,16 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       let grammar = [];
       try { ({ grammar = [] } = JSON.parse(gRaw)); } catch {}
 
+      // Step 7: conjugation exercises from the transcript
+      const cData = await openrouterCall('listening/conjugation', openrouterKey, {
+        max_tokens: 800,
+        system: CONJUGATION_PROMPT,
+        messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
+      });
+      let cRaw = (cData.content?.[0]?.text?.trim() || '{}').replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+      let conjugation = [];
+      try { ({ conjugation = [] } = JSON.parse(cRaw)); } catch {}
+
       const result = {
         title: episode.title,
         audioUrl: clipAudioUrl,
@@ -1486,6 +1496,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
         questions,
         vocab,
         grammar,
+        conjugation,
       };
 
       // Save to Supabase cache (fire-and-forget) — but never save junk:
