@@ -5216,7 +5216,7 @@ function ReadingArticlePanel({
   parisianPercent = 0,
   dailyParisianPoints = 0,
   onSpendExperience,
-  allDone = false,
+  doneTabs = 0,
   articleIndex = 1,
   onNextArticle = null,
 }) {
