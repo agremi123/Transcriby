@@ -3986,10 +3986,6 @@ export function AudioDemoCard({
                                   OK
                                 </button>
                               )}
-                              {submitted && (
-                                <button type="button" onClick={() => setPracticeVocabAnswers((p) => ({ ...p, [vi]: '' }))}
-                                  className="text-[10px] font-mono text-navy/30 hover:text-navy/60 transition-colors">retry</button>
-                              )}
                             </div>
                             <p className="text-[11px] text-navy/45 mt-1 italic">{v.definition}</p>
                           </div>
