@@ -6549,6 +6549,7 @@ export default function Hero() {
   // the "Next article" button once all four exercise tabs are validated.
   const loadNextReadingArticle = React.useCallback(() => {
     setReadingLoading(true);
+    setArticleIndex((n) => Math.min(THEME_ARTICLE_TOTAL, n + 1));
     fetch('/api/reading', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ topic: readingTopic || practiceTopic || 'la vie parisienne' }),
