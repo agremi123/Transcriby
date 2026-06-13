@@ -1036,16 +1036,31 @@ export async function handleWritingReview(body) {
 
     if (step === 'example') {
       const { prompt = '', tips = {}, wordTarget = 80 } = body || {};
-      const tipList = ['vocab', 'expressions', 'grammar', 'conjugation', 'connecteurs']
-        .map(k => (tips?.[k]?.length ? `${k}: ${tips[k].join(', ')}` : null))
-        .filter(Boolean).join(' | ');
-      const result = await claudeJSON({
-        apiKey: ANTHROPIC_API_KEY,
-        maxTokens: 400,
-        system: `Tu es ${name}, ${gender}. Écris une réponse modèle de qualité en français parisien naturel pour ce défi d'écriture.\nDéfi : "${prompt}"\nObjectif : ~${wordTarget} mots (niveau ${level})\n${tipList ? `Intègre naturellement ces éléments : ${tipList}\n` : ''}Écris directement la réponse, sans titre, sans introduction, sans commentaire. Texte brut, pas de markdown. N'utilise jamais d'astérisques.\nJSON: {"example":"..."}`,
-        user: 'Génère la réponse modèle.',
+      const tipParts = [];
+      if (tips?.vocab?.length) tipParts.push(`le vocabulaire : ${tips.vocab.join(', ')}`);
+      if (tips?.expressions?.length) tipParts.push(`les expressions : ${tips.expressions.join(', ')}`);
+      if (tips?.grammar?.length) tipParts.push(`la grammaire : ${tips.grammar.join(', ')}`);
+      if (tips?.conjugation?.length) tipParts.push(`les temps : ${tips.conjugation.join(', ')}`);
+      if (tips?.connecteurs?.length) tipParts.push(`les connecteurs : ${tips.connecteurs.join(', ')}`);
+      const tipBlock = tipParts.length ? `Tu DOIS intégrer naturellement TOUS ces éléments des conseils :\n- ${tipParts.join('\n- ')}\n` : '';
+      // Plain-text response — the model answer is free prose with apostrophes,
+      // quotes and line breaks that routinely break JSON parsing.
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 700,
+          system: `Tu es ${name}, ${gender}. Écris une réponse modèle exemplaire en français parisien naturel pour ce défi d'écriture, niveau ${level}.\nDéfi : "${prompt}"\nLongueur : vise environ ${wordTarget} mots (reste proche de ce nombre).\n${tipBlock}Écris UNIQUEMENT la réponse modèle elle-même : pas de titre, pas d'introduction, pas de commentaire, pas de guillemets autour, pas de markdown, jamais d'astérisques.`,
+          messages: [{ role: 'user', content: 'Écris la réponse modèle maintenant.' }],
+        }),
       });
-      return { statusCode: 200, body: { example: result.example || '' } };
+      const data = await r.json();
+      const example = (data.content?.[0]?.text || '').trim()
+        .replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/, '')
+        .replace(/^\s*["«»]\s*/, '').replace(/\s*["«»]\s*$/, '')
+        .trim();
+      return { statusCode: 200, body: { example } };
     }
 
     if (step === 'explain') {
