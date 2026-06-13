@@ -1681,6 +1681,7 @@ function writingReviewMiddleware(apiKey) {
           .replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/, '')
           .replace(/^\s*["«»]\s*/, '').replace(/\s*["«»]\s*$/, '')
           .trim();
+        if (example) saveWritingExample({ prompt, tips, wordTarget, level, example });
         res.end(JSON.stringify({ example }));
         return;
       }
