@@ -6621,6 +6621,8 @@ export default function Hero() {
               speakingNarratorId={speakingNarrator}
               speakingTopicLabel={speakingTopicLabel}
               speakingOpeningLine={speakingOpeningLine}
+              speakingTargetGrammar={speakingTargetGrammar}
+              speakingTargetVocab={speakingTargetVocab}
               onNewSpeakingChallenge={loadNewSpeakingChallenge}
               writingNarratorId={writingNarrator}
               writingPrompt={writingPrompt}
