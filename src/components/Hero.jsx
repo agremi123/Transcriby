@@ -2729,6 +2729,9 @@ export function AudioDemoCard({
     setSpeakCorrection(null);
     setFetchingCorrection(false);
     setNarratorReaction(null);
+    setReplyByUtterance({});
+    setReplyLoadingUttId(null);
+    setDefiComplete(false);
     setCorrectionReaderId(null);
     setManualCorrection(null);
     setSentenceCongrats(null);
