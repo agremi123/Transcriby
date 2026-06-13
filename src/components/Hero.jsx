@@ -5510,6 +5510,19 @@ function isVocabUsed(word, usedList) {
   });
 }
 
+// Writing conseils categories, and whether every provided conseil has been used.
+const TIP_KEYS = ['vocab', 'expressions', 'grammar', 'conjugation', 'connecteurs'];
+function allTipsFulfilled(tips, usedTips) {
+  let total = 0;
+  for (const c of TIP_KEYS) {
+    for (const item of (tips?.[c] || [])) {
+      total++;
+      if (!isVocabUsed(item, usedTips?.[c] || [])) return false;
+    }
+  }
+  return total > 0;
+}
+
 function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null, usedVocab = [], usedGrammar = false }) {
   const name = narratorId === 'lea' ? 'Léa' : 'Jules';
 
