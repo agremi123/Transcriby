@@ -1603,22 +1603,56 @@ function speakingPromptMiddleware(apiKey) {
 
     // Reaction mode (chat reply)
     if (isCombined && body.type === 'reaction') {
-      const { utterance = '', narratorId = 'lea', topic = '', openingLine = '' } = body;
-      if (!apiKey || !utterance.trim()) { res.end(JSON.stringify({ text: '', translation: '' })); return; }
+      const {
+        utterance = '', narratorId = 'lea', topic = '', openingLine = '',
+        targetGrammar = null, targetVocab = null, history = [],
+      } = body;
+      const emptyReaction = { text: '', translation: '', usedGrammar: false, usedVocab: [], complete: false };
+      if (!apiKey || !utterance.trim()) { res.end(JSON.stringify(emptyReaction)); return; }
       try {
         const name = narratorId === 'lea' ? 'Léa' : 'Jules';
         const gender = narratorId === 'lea' ? 'une Parisienne' : 'un Parisien';
+        const vocabWords = Array.isArray(targetVocab) ? targetVocab.map(v => v?.word).filter(Boolean) : [];
+        const grammarPoint = targetGrammar?.point || '';
+        const grammarHint = targetGrammar?.hint || '';
+        const turns = (Array.isArray(history) ? history : []).filter(Boolean);
+        const allTurns = turns.length ? turns.join('\n- ') : utterance;
+        const hasTargets = Boolean(grammarPoint || vocabWords.length);
+        const system = !hasTargets
+          ? `Tu es ${name}, ${gender} natif(ve) qui aide un étudiant à pratiquer le français oral.\nLe sujet de conversation: "${topic || 'conversation libre'}"\nTu as lancé la conversation en disant: "${openingLine}"\nL'étudiant vient de parler. Réponds naturellement en 1-2 phrases courtes en français.\nSois curieux(se), encourageant(e), et rebondis sur ce qu'il a dit.\nJSON: {"text":"...","translation":"...","usedGrammar":true,"usedVocab":[],"complete":false}`
+          : `Tu es ${name}, ${gender} natif(ve) qui fait pratiquer le français oral à un étudiant dans une conversation guidée.
+Sujet : "${topic || 'conversation libre'}". Tu as lancé la conversation par : "${openingLine}".
+Au fil de la discussion, l'étudiant doit employer :
+${grammarPoint ? `- Grammaire : ${grammarPoint}${grammarHint ? ` (${grammarHint})` : ''}` : '- (pas de grammaire imposée)'}
+${vocabWords.length ? `- Vocabulaire : ${vocabWords.map(w => `« ${w} »`).join(', ')}` : '- (pas de vocabulaire imposé)'}
+Tout ce que l'étudiant a dit jusqu'ici (du plus ancien au plus récent) :
+- ${allTurns}
+Analyse l'ENSEMBLE de ses tours :
+- usedGrammar : a-t-il employé la structure grammaticale cible au moins une fois ? (true/false${grammarPoint ? '' : ' — pas de grammaire imposée, donc true'})
+- usedVocab : la liste exacte des mots cibles déjà employés (même sous une forme fléchie).
+- complete : true UNIQUEMENT si usedGrammar est true ET que TOUS les mots cibles ont été employés.
+Puis réponds à son DERNIER tour en 1 à 2 phrases courtes, naturelles et chaleureuses, en rebondissant sur ce qu'il a dit.
+- Si complete est false : termine par une relance (question ou mini-défi) qui l'amène naturellement à employer les éléments cibles qui MANQUENT encore — cite les mots manquants entre « ».
+- Si complete est true : félicite-le brièvement et conclus la conversation de façon naturelle.
+N'utilise JAMAIS de markdown ni d'astérisques. Réponds uniquement en JSON :
+{"text":"...","translation":"...","usedGrammar":bool,"usedVocab":["..."],"complete":bool}`;
         const d = await claudeCall('speaking/reaction', apiKey, {
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 200,
-          system: `Tu es ${name}, ${gender} natif(ve) qui aide un étudiant à pratiquer le français oral.\nLe sujet de conversation: "${topic || 'conversation libre'}"\nTu as lancé la conversation en disant: "${openingLine}"\nL'étudiant vient de parler. Réponds naturellement en 1-2 phrases courtes en français.\nSois curieux(se), encourageant(e), et rebondis sur ce qu'il a dit.\nJSON: {"text":"...", "translation":"..."}`,
-          messages: [{ role: 'user', content: `L'étudiant a dit: "${utterance}"` }],
+          max_tokens: 320,
+          system,
+          messages: [{ role: 'user', content: `L'étudiant vient de dire: "${utterance}"` }],
         });
         let raw = d.content?.[0]?.text?.trim() || '{}';
         raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
         const parsed = JSON.parse(raw);
-        res.end(JSON.stringify({ text: parsed.text || '', translation: parsed.translation || '' }));
-      } catch { res.end(JSON.stringify({ text: '', translation: '' })); }
+        res.end(JSON.stringify({
+          text: parsed.text || '',
+          translation: parsed.translation || '',
+          usedGrammar: !!parsed.usedGrammar,
+          usedVocab: Array.isArray(parsed.usedVocab) ? parsed.usedVocab : [],
+          complete: hasTargets ? !!parsed.complete : false,
+        }));
+      } catch { res.end(JSON.stringify(emptyReaction)); }
       return;
     }
 
