@@ -1,5 +1,111 @@
 [
   {
+    "id": 1781369364889,
+    "topic": "La technologie au quotidien",
+    "title": "« Le Village de Madeleine » : carnets de campagne au cœur de la mémoire rurale",
+    "passage": "Si le destin existe, il se présenta à Madeleine de Sinéty (1934-2011) le 1er juillet 1972 non loin de Rennes alors qu'elle remontait vers Paris, et prit la forme du gigantesque embouteillage qui lui dictait de quitter la nationale pour rouler sur une petite route de l'Ille-et-Vilaine. Si le destin a de la suite dans les idées, alors il la guida vers la sortie qui menait au bourg de Poilley, où elle trouva une chambre pour la nuit. Réveillée à l'aube par le chant d'un coq et une bonne odeur d'herbes, elle prit la bicyclette dans sa voiture et pédala, avec l'appareil photo en bandoulière qu'elle ne quittait jamais, jusqu'à trouver une ferme.\n\nSa première photographie fut la cour. Son enfance, elle l'avait passée dans un château du Val de Loire, avec la stricte interdiction d'entrer dans la ferme d'à côté. A Poilley, l'heure était venue de rencontrer ceux dont on l'avait privée. La jeune étrangère avait des manières simples ; elle fut bien accueillie. C'est à peine si on s'étonna de la voir actionner sans cesse le petit œil curieux de son appareil. Le séjour dura huit ans. Elle trouva ici une famille de cœur, et ce fut un déchirement de part et d'autre lorsqu'elle annonça son départ pour l'Amérique avec un fiancé.\n\nAujourd'hui, les milliers de photos prises à Poilley sont un trésor. La grande fille timide avait un talent de photographe et des dispositions d'ethnologue. Cinq enfants grimpés sur un chargement de pommes à cidre avec leur chien. Les mêmes dans la classe derrière des pupitres de bois. Un homme à vélo sur une route déserte, la gitane au bec, menant par une corde un cheval de labour. Une femme en robe à fleurs et bottes de caoutchouc trayant sa vache. Toute une famille de fermiers assise, à la veillée, sur la pierre d'une cheminée coiffée de dentelle. Une mère lavant son fils dans une bassine. L'œuvre de Madeleine, tantôt noir et blanc, tantôt couleurs, raconte les choses de la vie. Le film de Julie Bertuccelli semble inspiré d'un roman de Modiano ou de Jaenada pour la grâce furtive de la nostalgie et la résurrection d'un monde. Un demi-siècle plus tard, l'hommage est double : les photos de Madeleine de Sinéty sont exposées au Jeu de paume, à Paris (jusqu'au 27 septembre).",
+    "source": "L'Obs",
+    "author": "Anne Crignon",
+    "date": "Fri, 12 Jun 2026 18:00:24 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260612.OBS115755/le-village-de-madeleine-carnets-de-campagne-au-c-ur-de-la-memoire-rurale.html",
+    "questions": [
+      {
+        "question": "En quelle année Madeleine de Sinéty a-t-elle découvert Poilley ?",
+        "options": [
+          "1934",
+          "1972",
+          "1964",
+          "2011"
+        ],
+        "answer": "1",
+        "explanation": "The passage states 'le 1er juillet 1972' as the date when Madeleine arrived near Rennes and was directed to Poilley. The other dates refer to her birth year (1934), a year before her arrival (1964 would be incorrect), and her death year (2011)."
+      },
+      {
+        "question": "Pourquoi Madeleine a-t-elle dû quitter la nationale pour emprunter une petite route ?",
+        "options": [
+          "Elle cherchait volontairement Poilley",
+          "Un gigantesque embouteillage l'y a obligée",
+          "Elle voulait visiter le château du Val de Loire",
+          "Elle fuyait Paris pour aller en Amérique"
+        ],
+        "answer": "1",
+        "explanation": "The text explicitly states 'il se présenta à Madeleine de Sinéty...la forme du gigantesque embouteillage qui lui dictait de quitter la nationale.' The other options misrepresent her motivations or are contradicted by the passage."
+      },
+      {
+        "question": "Quel objet Madeleine ne quittait jamais et qui a été déterminant pour son œuvre à Poilley ?",
+        "options": [
+          "Une bicyclette",
+          "Un appareil photo",
+          "Une gitane",
+          "Une bassine"
+        ],
+        "answer": "1",
+        "explanation": "The passage mentions she carried 'l'appareil photo en bandoulière qu'elle ne quittait jamais' and this camera became essential to her artistic work at Poilley. The bicycle was just transportation, and the other items appear in her photographs but were not personal possessions she carried."
+      },
+      {
+        "question": "Quel sentiment ou événement a marqué la fin du séjour de Madeleine à Poilley ?",
+        "options": [
+          "L'ennui et la nostalgie du château familial",
+          "Un déchirement émotionnel de part et d'autre lors de son annonce de départ en Amérique",
+          "La mort d'un membre de la famille qui l'accueillait",
+          "L'interdiction de continuer à photographier"
+        ],
+        "answer": "1",
+        "explanation": "The text explicitly states 'ce fut un déchirement de part et d'autre lorsqu'elle annonça son départ pour l'Amérique avec un fiancé.' The other options are not mentioned in the passage or contradict its content."
+      },
+      {
+        "question": "Pendant combien de temps Madeleine a-t-elle passé à Poilley ?",
+        "options": [
+          "Quelques mois",
+          "Deux ans",
+          "Huit ans",
+          "Une décennie complète"
+        ],
+        "answer": "2",
+        "explanation": "The passage clearly states 'Le séjour dura huit ans.' The other time periods do not match this explicit statement in the text."
+      },
+      {
+        "question": "Où sont exposées aujourd'hui les photographies de Madeleine de Sinéty ?",
+        "options": [
+          "Au château du Val de Loire",
+          "À Poilley dans une ferme transformée en musée",
+          "Au Jeu de paume à Paris",
+          "En Amérique où elle a émigré"
+        ],
+        "answer": "2",
+        "explanation": "The text states 'les photos de Madeleine de Sinéty sont exposées au Jeu de paume, à Paris (jusqu'au 27 septembre).' The other locations are either not mentioned or contradicted by the passage."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "embouteillage",
+        "definition": "traffic jam",
+        "sentence": "Le ___ sur l'autoroute nous a retardés de trois heures."
+      },
+      {
+        "word": "bandoulière",
+        "definition": "shoulder strap or sling",
+        "sentence": "Il portait son sac en ___ pour avoir les mains libres."
+      },
+      {
+        "word": "déchirement",
+        "definition": "heartbreak or tearing apart (emotionally)",
+        "sentence": "Le ___ était immense quand elle a dû quitter sa famille d'accueil."
+      },
+      {
+        "word": "gitane",
+        "definition": "a type of French cigarette",
+        "sentence": "L'homme fumait une ___ en marchant dans la rue."
+      },
+      {
+        "word": "furtive",
+        "definition": "fleeting or stealthy",
+        "sentence": "Un regard ___ a traversé son visage quand il a entendu cette musique."
+      }
+    ],
+    "createdAt": "2026-06-13T16:49:24.889Z"
+  },
+  {
     "id": 1781367786922,
     "topic": "La technologie au quotidien",
     "title": "Ella Rumpf, Monia Chokri et Noémie Lvovsky brillent dans « Des preuves d’amour »",
