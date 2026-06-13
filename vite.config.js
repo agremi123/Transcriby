@@ -304,6 +304,7 @@ function correctionMiddleware(apiKey) {
     let dimensionBreakdown = false;
     let claimedLevel = '';
     let requireGrammar = '';
+    let task = '';
     try {
       const body = JSON.parse(await readBody(req));
       text = body.text || '';
@@ -313,6 +314,7 @@ function correctionMiddleware(apiKey) {
       dimensionBreakdown = !!body.dimensionBreakdown;
       claimedLevel = body.claimedLevel || '';
       requireGrammar = body.requireGrammar || '';
+      task = body.task || '';
     } catch {
       res.statusCode = 400;
       res.setHeader('Content-Type', 'application/json');
