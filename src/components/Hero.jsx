@@ -1011,6 +1011,7 @@ export function AudioDemoCard({
   exerciseVocab = [],
   exerciseGrammar = [],
   exerciseConjugation = [],
+  exerciseLoading = false,
   exerciseSubTabProp = null,
   onExerciseSubTabChange = null,
   speakingNarratorId = 'lea',
