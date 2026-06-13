@@ -6633,9 +6633,15 @@ export default function Hero() {
     speaking: ['Mon quotidien à Paris', 'Les voyages', 'La cuisine et les restos', 'Le travail et les études', 'Les loisirs et le sport', "La famille et l'amitié", 'Les week-ends parfaits'],
     writing: ['Paris et ses secrets', 'Un souvenir de voyage', 'La vie de quartier', 'Les réseaux sociaux', 'Un dîner mémorable', 'Le métro parisien', 'Les saisons à Paris', 'Mon café préféré', 'Une rencontre inattendue'],
   };
-  const DEFAULT_EXERCISE_TOPICS = Object.fromEntries(
-    Object.entries(EXERCISE_TOPIC_POOLS).map(([k, pool]) => [k, pool[Math.floor(Math.random() * pool.length)]])
-  );
+  // Pick a default topic per exercise tab ONCE (not every render) — otherwise
+  // re-entering a tab would land on a new random topic and reload the challenge.
+  const defaultExerciseTopicsRef = React.useRef(null);
+  if (!defaultExerciseTopicsRef.current) {
+    defaultExerciseTopicsRef.current = Object.fromEntries(
+      Object.entries(EXERCISE_TOPIC_POOLS).map(([k, pool]) => [k, pool[Math.floor(Math.random() * pool.length)]])
+    );
+  }
+  const DEFAULT_EXERCISE_TOPICS = defaultExerciseTopicsRef.current;
   React.useEffect(() => {
     const type = heroActiveTab;
     if (!['reading', 'listening', 'speaking', 'writing'].includes(type)) return;
