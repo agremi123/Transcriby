@@ -1,5 +1,1278 @@
 [
   {
+    "id": 1781335815732,
+    "topic": "sport",
+    "title": "Des centaines d’enfants déshabillés par l’IA ? Le double visage de Michel A., le photographe de Pauillac",
+    "passage": "Fin novembre, l'interpellation du photographe Michel A., 64 ans, a créé un séisme dans la commune de Pauillac, en Gironde. Il est soupçonné d'avoir utilisé l'IA pour déshabiller plusieurs centaines de fillettes et adolescentes qu'il a photographiées, pendant de nombreuses années, lors de multiples événements sportifs et festifs. A Pauillac, tout le monde connaît au moins un enfant concerné, et les parents redoutent d'être contactés par les gendarmes depuis des mois.\n\nTout était prêt pour ce moment tant attendu des enfants. Le matériel était loué : l'imposante bulle aux airs d'igloo translucide, le fauteuil de velours blanc, le renne lumineux et les épicéas aux boules scintillantes. Le père Noël et son costume étaient réservés. Le photographe était engagé. Ce serait Michel, bien sûr, comme chaque année, secondé par sa jeune collaboratrice Stéphanie*.\n\nIci, à Pauillac, commune de 5 000 habitants sur la rive gauche de l'estuaire de la Gironde, au cœur du Médoc et de son prestigieux vignoble, tout le monde connaît Michel A. C'est « le » photographe de Pauillac. Depuis plus de dix ans, grosses bagues argentées à tous les doigts et chapeau de cowboy sur la tête, l'homme de 64 ans traîne ses santiags, son SUV gris et sa bonhomie dans tous les événements festifs. C'est simple, il photographie tout. Les galas de gym et de danse ? C'est lui. Les concours de miss…",
+    "source": "L'Obs",
+    "author": "Céline Rastello",
+    "date": "Fri, 12 Jun 2026 12:57:51 +0200",
+    "link": "https://www.nouvelobs.com/justice/20260606.OBS115567/des-centaines-d-enfants-deshabilles-par-l-ia-le-double-visage-de-michel-a-le-photographe-de-pauillac.html",
+    "questions": [
+      {
+        "question": "Quel est l'âge du photographe Michel A. au moment de son interpellation ?",
+        "options": [
+          "60 ans",
+          "64 ans",
+          "70 ans",
+          "55 ans"
+        ],
+        "answer": "B",
+        "explanation": "The passage clearly states 'le photographe Michel A., 64 ans' in the opening sentence. The other ages are not mentioned in the text."
+      },
+      {
+        "question": "Dans quel département la commune de Pauillac est-elle située ?",
+        "options": [
+          "La Dordogne",
+          "Les Landes",
+          "La Gironde",
+          "La Charente"
+        ],
+        "answer": "C",
+        "explanation": "The text explicitly states 'la commune de Pauillac, en Gironde.' The other departments are not mentioned in the passage."
+      },
+      {
+        "question": "Combien d'habitants la commune de Pauillac compte-t-elle environ ?",
+        "options": [
+          "1 000 habitants",
+          "3 000 habitants",
+          "5 000 habitants",
+          "10 000 habitants"
+        ],
+        "answer": "C",
+        "explanation": "The passage states 'commune de 5 000 habitants.' This specific number is given in the text, making the other options incorrect."
+      },
+      {
+        "question": "Depuis combien de temps Michel A. exerce-t-il la profession de photographe à Pauillac ?",
+        "options": [
+          "Moins de 5 ans",
+          "Plus de 10 ans",
+          "Environ 20 ans",
+          "Depuis 3 ans"
+        ],
+        "answer": "B",
+        "explanation": "The text states 'Depuis plus de dix ans...l'homme de 64 ans traîne ses santiags.' The passage explicitly mentions 'plus de dix ans,' making this the correct answer."
+      },
+      {
+        "question": "Quel est le rôle de Stéphanie mentionnée dans le texte ?",
+        "options": [
+          "Elle est la femme de Michel",
+          "Elle est sa jeune collaboratrice",
+          "Elle est responsable de la location du matériel",
+          "Elle joue le rôle du Père Noël"
+        ],
+        "answer": "B",
+        "explanation": "The passage describes Stéphanie as 'sa jeune collaboratrice.' She is not identified as his wife, equipment manager, or the person playing Santa Claus."
+      },
+      {
+        "question": "Que soupçonne-t-on Michel A. d'avoir utilisé pour commettre ses actes répréhensibles ?",
+        "options": [
+          "Un logiciel de retouche photo classique",
+          "Une caméra cachée",
+          "L'intelligence artificielle (IA)",
+          "Un appareil photo spécialisé"
+        ],
+        "answer": "C",
+        "explanation": "The opening sentence clearly states 'Il est soupçonné d'avoir utilisé l'IA pour déshabiller plusieurs centaines de fillettes et adolescentes.' The use of artificial intelligence is explicitly mentioned as the method in question."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "interpellation",
+        "definition": "arrest or questioning by police",
+        "sentence": "L'___ du suspect a provoqué une grande surprise dans la ville."
+      },
+      {
+        "word": "séisme",
+        "definition": "earthquake or major upheaval/shock",
+        "sentence": "Cette découverte a créé un véritable ___ dans la communauté locale."
+      },
+      {
+        "word": "soupçonné",
+        "definition": "suspected",
+        "sentence": "Il est ___ d'avoir commis plusieurs crimes graves."
+      },
+      {
+        "word": "épicéas",
+        "definition": "spruce trees",
+        "sentence": "Les ___ décorés de guirlandes illuminaient la place du village."
+      },
+      {
+        "word": "santiags",
+        "definition": "cowboy boots",
+        "sentence": "Il portait des ___ usées qui claquaient sur le sol."
+      }
+    ],
+    "createdAt": "2026-06-13T07:30:15.733Z"
+  },
+  {
+    "id": 1781335395469,
+    "topic": "La vie parisienne",
+    "title": "Steven Soderbergh : « Chacun de mes films doit détruire celui d’avant »",
+    "passage": "Il nous reçoit à Londres où se déroulent ses deux derniers films, ville sophistiquée et discrète qui lui va bien. On l'imagine s'y être installé mais non : Steven Soderbergh, éternel franc-tireur intégré au système, vit à Los Angeles. Insatiable alchimiste des récits et images, le réalisateur américain, qui est son propre monteur et directeur de la photo, a tout connu : la palme d'or à 26 ans pour son premier film, « Sexe, mensonges et vidéo », l'indifférence pour les quatre suivants, les oscars pour « Traffic » et « Erin Brockovich » et les bides noirs.\n\nIl fut l'un des premiers à troquer la pellicule pour le numérique, papillonne de majors en plateformes de streaming, met la liberté que ses castings de stars lui procurent au service d'idées volontiers expérimentales, teste sans cesse de nouvelles manières de faire et sortir les films, et tourne, tourne… Alors qu'il vient de présenter à Cannes son documentaire « John Lennon. The Last Interview », voici son quatrième film en deux ans : « The Christophers », joute astucieuse entre un vieux peintre anti-woke (colossal Ian McKellen), et une jeune copiste frustrée (magnétique Michaela Coel, révélée par l…",
+    "source": "L'Obs",
+    "author": "Nicolas Schaller",
+    "date": "Wed, 10 Jun 2026 20:00:07 +0200",
+    "link": "https://www.nouvelobs.com/cinema/20260610.OBS115701/steven-soderbergh-chacun-de-mes-films-doit-detruire-celui-d-avant.html",
+    "questions": [
+      {
+        "question": "Où se déroulent les deux derniers films de Steven Soderbergh présentés dans ce passage ?",
+        "options": [
+          "À Los Angeles",
+          "À Londres",
+          "À Cannes",
+          "À New York"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly states 'Il nous reçoit à Londres où se déroulent ses deux derniers films' (We meet him in London where his two latest films take place). The other options are mentioned in different contexts but not as the setting for his recent films."
+      },
+      {
+        "question": "Quel était l'âge de Soderbergh quand il a remporté la Palme d'or ?",
+        "options": [
+          "20 ans",
+          "24 ans",
+          "26 ans",
+          "30 ans"
+        ],
+        "answer": "C",
+        "explanation": "The text directly states 'la palme d'or à 26 ans pour son premier film, « Sexe, mensonges et vidéo »' (the Palme d'Or at 26 years old for his first film). The other ages are not mentioned in the passage."
+      },
+      {
+        "question": "Quel type de technologie Soderbergh a-t-il adopté parmi les premiers ?",
+        "options": [
+          "La réalité virtuelle",
+          "Le numérique",
+          "La 3D",
+          "Les drones"
+        ],
+        "answer": "B",
+        "explanation": "The passage states 'Il fut l'un des premiers à troquer la pellicule pour le numérique' (He was one of the first to exchange film for digital). The other technologies are not mentioned as early adoptions by Soderbergh."
+      },
+      {
+        "question": "Quels films de Soderbergh ont remporté des oscars ?",
+        "options": [
+          "« Sexe, mensonges et vidéo » et « The Christophers »",
+          "« Traffic » et « Erin Brockovich »",
+          "« John Lennon. The Last Interview » et « The Christophers »",
+          "Tous ses films sans exception"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly mentions 'les oscars pour « Traffic » et « Erin Brockovich »' (oscars for 'Traffic' and 'Erin Brockovich'). The other options refer to different films or make incorrect claims about awards."
+      },
+      {
+        "question": "Combien de films Soderbergh a-t-il tournés en deux ans avant de présenter son documentaire à Cannes ?",
+        "options": [
+          "Deux films",
+          "Trois films",
+          "Quatre films",
+          "Cinq films"
+        ],
+        "answer": "C",
+        "explanation": "The passage states 'voici son quatrième film en deux ans' (here is his fourth film in two years) when referring to 'The Christophers' that came after presenting his documentary at Cannes. This clearly indicates four films in that period."
+      },
+      {
+        "question": "Qui joue le rôle du vieux peintre anti-woke dans « The Christophers » ?",
+        "options": [
+          "Michaela Coel",
+          "Ian McKellen",
+          "Steven Soderbergh",
+          "John Lennon"
+        ],
+        "answer": "B",
+        "explanation": "The text describes 'un vieux peintre anti-woke (colossal Ian McKellen)' (an old anti-woke painter, colossal Ian McKellen), making it clear that Ian McKellen plays this role. The other actors are mentioned in different contexts or are not part of this film."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "franc-tireur",
+        "definition": "a person who acts independently and refuses to follow conventions; a maverick",
+        "sentence": "Steven Soderbergh est un ___ du cinéma qui ne suit pas les règles traditionnelles."
+      },
+      {
+        "word": "alchimiste",
+        "definition": "a person who transforms or combines things in a seemingly magical way",
+        "sentence": "Cet ___ des images crée des films originaux et surprenants."
+      },
+      {
+        "word": "troquer",
+        "definition": "to exchange or swap one thing for another",
+        "sentence": "Le réalisateur a décidé de ___ la pellicule pour le numérique."
+      },
+      {
+        "word": "papillonne",
+        "definition": "flutters about; moves from one thing to another restlessly",
+        "sentence": "Il ___ entre différents studios et plateformes de streaming."
+      },
+      {
+        "word": "joute",
+        "definition": "a contest or competition; a verbal sparring match",
+        "sentence": "Ce film est une ___ astucieuse entre deux personnages très différents."
+      }
+    ],
+    "createdAt": "2026-06-13T07:23:15.469Z"
+  },
+  {
+    "id": 1781334745520,
+    "topic": "La technologie au quotidien",
+    "title": "« Le Village de Madeleine » : carnets de campagne au cœur de la mémoire rurale",
+    "passage": "Si le destin existe, il se présenta à Madeleine de Sinéty (1934-2011) le 1er juillet 1972 non loin de Rennes alors qu'elle remontait vers Paris, et prit la forme du gigantesque embouteillage qui lui dictait de quitter la nationale pour rouler sur une petite route de l'Ille-et-Vilaine. Si le destin a de la suite dans les idées, alors il la guida vers la sortie qui menait au bourg de Poilley, où elle trouva une chambre pour la nuit. Réveillée à l'aube par le chant d'un coq et une bonne odeur d'herbes, elle prit la bicyclette dans sa voiture et pédala, avec l'appareil photo en bandoulière qu'elle ne quittait jamais, jusqu'à trouver une ferme. Sa première photographie fut la cour. Son enfance, elle l'avait passée dans un château du Val de Loire, avec la stricte interdiction d'entrer dans la ferme d'à côté. A Poilley, l'heure était venue de rencontrer ceux dont on l'avait privée.\n\nLa jeune étrangère avait des manières simples ; elle fut bien accueillie. C'est à peine si on s'étonna de la voir actionner sans cesse le petit œil curieux de son appareil. Le séjour dura huit ans. Elle trouva ici une famille de cœur, et ce fut un déchirement de part et d'autre lorsqu'elle annonça son départ pour l'Amérique avec un fiancé. Aujourd'hui, les milliers de photos prises à Poilley sont un trésor. La grande fille timide avait un talent de photographe et des dispositions d'ethnologue. Cinq enfants grimpés sur un chargement de pommes à cidre avec leur chien. Les mêmes dans la classe derrière des pupitres de bois. Un homme à vélo sur une route déserte, la gitane au bec, menant par une corde un cheval de labour. Une femme en robe à fleurs et bottes de caoutchouc trayant sa vache. Toute une famille de fermiers assise, à la veillée, sur la pierre d'une cheminée coiffée de dentelle. Une mère lavant son fils dans une bassine.\n\nL'œuvre de Madeleine, tantôt noir et blanc, tantôt couleurs, raconte les choses de la vie. Le film de Julie Bertuccelli semble inspiré d'un roman de Modiano ou de Jaenada pour la grâce furtive de la nostalgie et la résurrection d'un monde. Un demi-siècle plus tard, l'hommage est double : les photos de Madeleine de Sinéty sont exposées au Jeu de paume , à Paris (jusqu'au 27 septembre).",
+    "source": "L'Obs",
+    "author": "Anne Crignon",
+    "date": "Fri, 12 Jun 2026 18:00:24 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260612.OBS115755/le-village-de-madeleine-carnets-de-campagne-au-c-ur-de-la-memoire-rurale.html",
+    "questions": [
+      {
+        "question": "En quelle année Madeleine de Sinéty a-t-elle découvert Poilley ?",
+        "options": [
+          "1934",
+          "1972",
+          "1980",
+          "2011"
+        ],
+        "answer": "B",
+        "explanation": "The passage states that Madeleine discovered Poilley on July 1st, 1972 when she took a detour from the main road due to traffic; the other dates refer to her birth year (1934), the end of her 8-year stay (approximately 1980), or her death year (2011)."
+      },
+      {
+        "question": "Qu'est-ce qui a guidé Madeleine à Poilley au début ?",
+        "options": [
+          "Une invitation d'amis",
+          "Un embouteillage sur la nationale qui l'a obligée à prendre une petite route",
+          "Une envie de visiter une ferme en particulier",
+          "Un guide touristique qu'elle avait lu"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly states that destiny presented itself to Madeleine in the form of a giant traffic jam ('gigantesque embouteillage') that forced her to leave the main road and take a small road in Ille-et-Vilaine; the other options are not mentioned in the text."
+      },
+      {
+        "question": "Pourquoi Madeleine n'était-elle jamais entrée dans une ferme pendant son enfance ?",
+        "options": [
+          "Elle avait peur des animaux",
+          "C'était trop loin de son château",
+          "On lui avait interdit d'entrer dans la ferme d'à côté",
+          "Elle préférait rester dans le château"
+        ],
+        "answer": "C",
+        "explanation": "The passage states clearly that during her childhood in the Loire Valley château, she had 'la stricte interdiction d'entrer dans la ferme d'à côté' (the strict prohibition from entering the neighboring farm); the other options are not supported by the text."
+      },
+      {
+        "question": "Combien de temps Madeleine a-t-elle passé à Poilley ?",
+        "options": [
+          "Une nuit seulement",
+          "Deux ans",
+          "Huit ans",
+          "Cinquante ans"
+        ],
+        "answer": "C",
+        "explanation": "The passage explicitly states 'Le séjour dura huit ans' (The stay lasted eight years); one night was just how long she stayed in her first accommodation, and fifty years refers to the time that had passed since then when the film was made."
+      },
+      {
+        "question": "Qu'est-ce que Madeleine avait toujours avec elle selon le texte ?",
+        "options": [
+          "Une bicyclette",
+          "Un appareil photo en bandoulière",
+          "Un journal pour écrire",
+          "Une carte de France"
+        ],
+        "answer": "B",
+        "explanation": "The passage states that she never left her camera ('l'appareil photo en bandoulière qu'elle ne quittait jamais'), which she used to take photographs; the bicycle was in her car, not something she carried constantly."
+      },
+      {
+        "question": "Où les photographies de Madeleine de Sinéty sont-elles exposées selon le texte ?",
+        "options": [
+          "Au château du Val de Loire",
+          "À Poilley dans une ferme",
+          "Au Jeu de paume à Paris",
+          "En Amérique avec son fiancé"
+        ],
+        "answer": "C",
+        "explanation": "The passage states that Madeleine's photographs are exhibited at the Jeu de paume in Paris (until September 27th); the other locations are either her past residences or the place where she left to go."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "embouteillage",
+        "definition": "traffic jam",
+        "sentence": "L'___ sur l'autoroute a retardé notre arrivée à Paris de deux heures."
+      },
+      {
+        "word": "bandoulière",
+        "definition": "shoulder strap or sling",
+        "sentence": "Il portait son sac en ___ pour avoir les mains libres."
+      },
+      {
+        "word": "déchirement",
+        "definition": "heartbreak or emotional pain",
+        "sentence": "Le ___ de quitter ses amis était difficile à supporter."
+      },
+      {
+        "word": "ethnologue",
+        "definition": "ethnologist or anthropologist",
+        "sentence": "L'___ a étudié les traditions culturelles du village pendant plusieurs années."
+      },
+      {
+        "word": "furtive",
+        "definition": "fleeting or elusive",
+        "sentence": "La beauté ___ du coucher de soleil a inspiré le poète."
+      }
+    ],
+    "createdAt": "2026-06-13T07:12:25.520Z"
+  },
+  {
+    "id": 1781334698625,
+    "topic": "technologie",
+    "title": "« Quand la ville dort » : le chef-d’œuvre du film de casse selon John Huston",
+    "passage": "Souvent imité, jamais égalé. C'est l'un des plus beaux films de John Huston, inspiré par l'un des plus beaux romans de William R. Burnett. Ce qui explique la réaction imbécile du producteur Louis B. Mayer, quand il vit le film terminé : « C'est de la merde. Cette ville qui dort est pleine de gens affreux, qui font des choses affreuses. Je ne traverserais pas la rue pour voir un truc pareil. » Lui, non. Mais le public, oui. La preuve : quatre nominations aux Oscars en 1951.\n\nReprenons : Burnett, l'auteur de « Little Caesar » et de « High Sierra », publie en 1949 l'histoire d'un « cerveau », « Doc » Riedenschneider, qui imagine, à peine sorti de prison, un braquage d'enfer. Financé par un riche avocat, « Doc » recrute une équipe de pointe, et l'affaire déraille sérieusement… Scénario de Ben Maddow (blacklisté, ce dernier survivra en faisant le nègre pour des scripts comme « Johnny Guitare » ou « l'Equipée sauvage »), mise en scène de John Huston (c'est son dixième film), casting formidable : dans le rôle principal, Sterling Hayden, héros de guerre mal remis (alcoolique et déprimé), alors soupçonné d'accointances communistes. Face à lui, Louis Calhern, éternel méchant crapuleux ; Jean Hagen (la ridicule de « Chantons sous la pluie ») ; James Whitmore en chauffeur bossu, et Sam Jaffe, acteur au visage incroyable - une vraie gueule -, fils d'une actrice ukrainienne.\n\nEt n'oublions pas Marilyn Monroe, dans l'un de ses premiers rôles : au départ, c'est la blonde Lola Albright qui avait été choisie, mais elle n'était pas disponible. Convoquée pour un essai, Marilyn ne réussit pas à convaincre Huston. Mais en la regardant de dos, sortant de son bureau, ce dernier changea d'avis : « Elle est l'une des rares à faire une entrée en sortant » , dit-il. Le scénario original a été recyclé ensuite, comme d'habitude : dans « l'Or du Hollandais », western de Delmer Daves (1958), puis dans « les Bijoux du Pharaon », de Wolf Rilla (avec George Sanders, 1963), et, enfin, en version blaxploitation, dans « Cool Breeze », de Barry Pollack (1972). Une série télé a aussi vu le jour en 1961, avec un bonus - une musique de Duke Ellington.",
+    "source": "L'Obs",
+    "author": "François Forestier",
+    "date": "Thu, 11 Jun 2026 17:32:32 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260611.OBS115721/quand-la-ville-dort-le-chef-d-uvre-du-film-de-casse-selon-john-huston.html",
+    "questions": [
+      {
+        "question": "Quelle a été la réaction de Louis B. Mayer en voyant le film terminé ?",
+        "options": [
+          "Il a trouvé le film magnifique et plein de potentiel",
+          "Il a dit que c'était de la merde et qu'il ne traverserait pas la rue pour le voir",
+          "Il a proposé d'augmenter le budget pour améliorer le film",
+          "Il a immédiatement prédit quatre nominations aux Oscars"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states that Mayer called it 'merde' and said he would not cross the street to see such a thing. The other options contradict his actual negative reaction described in the passage."
+      },
+      {
+        "question": "En quelle année William R. Burnett a-t-il publié le roman qui a inspiré le film ?",
+        "options": [
+          "1947",
+          "1948",
+          "1949",
+          "1950"
+        ],
+        "answer": "C",
+        "explanation": "The passage clearly states 'Burnett... publie en 1949 l'histoire d'un « cerveau ».' The other years are incorrect and not mentioned in the text."
+      },
+      {
+        "question": "Qui a écrit le scénario du film ?",
+        "options": [
+          "John Huston",
+          "William R. Burnett",
+          "Ben Maddow",
+          "Louis B. Mayer"
+        ],
+        "answer": "C",
+        "explanation": "The text explicitly mentions 'Scénario de Ben Maddow.' While Burnett wrote the original novel, Maddow wrote the screenplay. Huston was the director and Mayer was the producer."
+      },
+      {
+        "question": "Pourquoi Marilyn Monroe a-t-elle finalement été choisie pour le rôle ?",
+        "options": [
+          "Elle avait plus d'expérience que les autres actrices",
+          "Huston a changé d'avis en la regardant de dos quitter son bureau, pensant qu'elle savait faire une bonne sortie",
+          "Louis B. Mayer l'a exigée pour le rôle",
+          "L'actrice initialement choisie, Lola Albright, a refusé le rôle"
+        ],
+        "answer": "B",
+        "explanation": "The text states that Huston initially was not convinced by Marilyn's screen test, but changed his mind after watching her leave: 'en la regardant de dos, sortant de son bureau, ce dernier changea d'avis.' Option A and C are not mentioned, and while D is true (Lola Albright was unavailable), it doesn't explain why Marilyn was ultimately chosen."
+      },
+      {
+        "question": "Combien de fois le scénario original a-t-il été réutilisé selon le passage ?",
+        "options": [
+          "Une fois",
+          "Deux fois",
+          "Trois fois au cinéma plus une série télé",
+          "Quatre fois au cinéma sans compter la série télé"
+        ],
+        "answer": "C",
+        "explanation": "The text mentions three films where the script was recycled: 'l'Or du Hollandais' (1958), 'les Bijoux du Pharaon' (1963), and 'Cool Breeze' (1972), plus a 1961 television series. That totals four adaptations, with three being films and one being a TV series."
+      },
+      {
+        "question": "Quel était le métier principal de Sterling Hayden avant de jouer dans ce film ?",
+        "options": [
+          "Scénariste",
+          "Réalisateur",
+          "Héros de guerre",
+          "Producteur de cinéma"
+        ],
+        "answer": "C",
+        "explanation": "The passage describes Sterling Hayden as 'héros de guerre mal remis (alcoolique et déprimé).' While he was struggling with alcoholism and depression at the time, his primary background was as a war hero. The other options are not mentioned in relation to Hayden."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "imbécile",
+        "definition": "stupid or foolish",
+        "sentence": "La ___ réaction du producteur montra son manque de goût cinématographique."
+      },
+      {
+        "word": "braquage",
+        "definition": "heist or robbery",
+        "sentence": "Le ___ d'enfer que planifie « Doc » devient le cœur du film."
+      },
+      {
+        "word": "déraille",
+        "definition": "goes off the rails or goes wrong",
+        "sentence": "Quand l'affaire ___ sérieusement, tout commence à s'effondrer pour l'équipe."
+      },
+      {
+        "word": "crapuleux",
+        "definition": "villainous or disreputable",
+        "word_note": "relating to fraud or dishonest dealings",
+        "sentence": "Louis Calhern joue un personnage ___ dans le film."
+      },
+      {
+        "word": "blaxploitation",
+        "definition": "exploitation films featuring Black actors and themes",
+        "sentence": "Le scénario a été adapté en version ___ avec le film « Cool Breeze » en 1972."
+      }
+    ],
+    "createdAt": "2026-06-13T07:11:38.625Z"
+  },
+  {
+    "id": 1781334684484,
+    "topic": "technologie",
+    "title": "10 films à aller voir en salle avant qu’il ne soit trop tard : « la Bataille de Gaulle », « The Plague », « Toutes mes sœurs »…",
+    "passage": "« La Bataille de Gaulle : l'âge de fer » : Simon Abkarian excelle en général mi-James Bond, mi-Rambo Drame par Antonin Baudry, avec Simon Abkarian, Simon Russell Beale, Florian Lesieur (France-Belgique, 2h40). En salle le 3 juin. ★★★☆☆\n\n« Bait » : une guerre idéologique et politique en Cornouailles filmée avec brio Drame social par Mark Jenkin, avec Edward Rowe, Simon Shepherd (Grande-Bretagne, 1h29). En salle le 3 juin ★★★★☆\n\n« The Plague » : entre drame social et thriller fantastique, ce premier film joue dans la cour des grands Drame par Charlie Polinger, avec Joel Edgerton, Everett Blunck, Elliott Heffernan (Roumanie-Etats-Unis, 1h35). En salle le 3 juin ★★★★☆\n\n« Toutes mes sœurs » : une histoire intime, mais aussi sociétale, qui raconte la condition féminine en Iran Documentaire par Massoud Bakhshi (Iran, 1h18). En salle le 3 juin ★★★★☆\n\n« En nous » : Juliette Binoche filme au plus près le processus créatif de la danse Documentaire par Juliette Binoche (France, 2h05). En salle le 3 juin ★★★☆☆\n\nAvec « Autofiction », Pedro Almodóvar réalise un film à la fois crépusculaire dans sa forme et impitoyable sur le fond Drame par Pedro Almodóvar, avec Bárbara Lennie, Leonardo Sbaraglia, Aitana Sánchez-Gijón, Victoria Luengo (Espagne, 1h51). En salle le …\n\n« L'Être aimé » : Javier Bardem est magistral dans ce film qui manque toutefois d'un supplément d'âme Drame par Rodrigo Sorogoyen, avec Javier Bardem, Victoria Luengo, Marina Foïs (Espagne-France, 2h15). En salle le 20 mai ★★★☆☆\n\n« La Vénus électrique » : Pierre Salvadori réalise une comédie qui virevolte jusqu'à procurer un plaisir physique Comédie par Pierre Salvadori, avec Anaïs Demoustier, Pio Marmaï, Gilles Lellouche, Vimala Pons (France, 2h02). En salle le 13 ★★★★★\n\n« Le Dernier Souffle d'un yakusa » : un film d'animation réaliste qui revisite les souvenirs d'un gangster Film d'animation par Baku Kinoshita avec les voix de Kaoru Kobayashi, Hikari Mitsushima. (Japon, 1h30). En salle le 27 mai ★★★☆☆\n\n« Tout va super » : un film cathartique, à la fois grave et léger, avec Hakim Jemili et Noémie Lvovsky Comédie dramatique par Patrick Cassir, avec Hakim Jemili, Noémie Lvovsky (France, 1h31). En salle le 27 mai ★★★☆☆",
+    "source": "L'Obs",
+    "author": "",
+    "date": "Fri, 05 Jun 2026 18:00:21 +0200",
+    "link": "https://www.nouvelobs.com/cinema/20260605.OBS115542/10-films-a-aller-voir-en-salle-avant-qu-il-ne-soit-trop-tard-la-bataille-de-gaulle-the-plague-toutes-mes-s-urs.html",
+    "questions": [
+      {
+        "question": "Quel film réalisé par Pedro Almodóvar est décrit comme « crépusculaire dans sa forme et impitoyable sur le fond » ?",
+        "options": [
+          "La Bataille de Gaulle : l'âge de fer",
+          "Autofiction",
+          "L'Être aimé",
+          "La Vénus électrique"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states that 'Autofiction' is a drama by Pedro Almodóvar described as both 'crépusculaire dans sa forme et impitoyable sur le fond.' The other options are films by different directors or are not associated with this description."
+      },
+      {
+        "question": "Quel documentaire sur la condition féminine en Iran est réalisé par Massoud Bakhshi ?",
+        "options": [
+          "En nous",
+          "Toutes mes sœurs",
+          "Le Dernier Souffle d'un yakusa",
+          "Bait"
+        ],
+        "answer": "B",
+        "explanation": "'Toutes mes sœurs' is the Iranian documentary by Massoud Bakhshi that addresses the condition of women in Iran. 'En nous' is a French documentary by Juliette Binoche about dance; the other options are not documentaries or are unrelated to Iran."
+      },
+      {
+        "question": "Quel film obtient la note maximale de cinq étoiles ?",
+        "options": [
+          "Bait",
+          "The Plague",
+          "La Vénus électrique",
+          "Toutes mes sœurs"
+        ],
+        "answer": "C",
+        "explanation": "'La Vénus électrique' directed by Pierre Salvadori is the only film marked with five stars (★★★★★). All other listed films have either three or four stars."
+      },
+      {
+        "question": "Quel est le réalisateur du film « Bait » et quel est son genre ?",
+        "options": [
+          "Antonin Baudry, drame",
+          "Mark Jenkin, drame social",
+          "Charlie Polinger, thriller fantastique",
+          "Pierre Salvadori, comédie"
+        ],
+        "answer": "B",
+        "explanation": "'Bait' is a social drama (drame social) directed by Mark Jenkin. The other options either refer to different films or provide incorrect information about the director or genre."
+      },
+      {
+        "question": "Quels acteurs jouent dans le film « L'Être aimé » ?",
+        "options": [
+          "Simon Abkarian et Simon Russell Beale",
+          "Edward Rowe et Simon Shepherd",
+          "Javier Bardem, Victoria Luengo et Marina Foïs",
+          "Anaïs Demoustier et Gilles Lellouche"
+        ],
+        "answer": "C",
+        "explanation": "The text clearly states that 'L'Être aimé' stars Javier Bardem, Victoria Luengo, and Marina Foïs. The other options are casts from different films listed in the review."
+      },
+      {
+        "question": "Quel film est décrit comme « une comédie qui virevolte jusqu'à procurer un plaisir physique » ?",
+        "options": [
+          "Tout va super",
+          "La Bataille de Gaulle : l'âge de fer",
+          "La Vénus électrique",
+          "En nous"
+        ],
+        "answer": "C",
+        "explanation": "'La Vénus électrique' is the film described with this exact phrase about being a comedy that twirls until it provides physical pleasure. The other options are either not comedies or have different descriptions in the text."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "excelle",
+        "definition": "excels, performs excellently",
+        "sentence": "Simon Abkarian ___ dans le rôle du général."
+      },
+      {
+        "word": "brio",
+        "definition": "brilliance, skill, excellence",
+        "sentence": "Ce film a été réalisé avec ___ et créativité."
+      },
+      {
+        "word": "crépusculaire",
+        "definition": "twilight-like, dim, shadowy",
+        "sentence": "L'atmosphère ___ du film crée une ambiance mélancolique."
+      },
+      {
+        "word": "impitoyable",
+        "definition": "merciless, ruthless, harsh",
+        "sentence": "La critique du réalisateur est ___ et sans compromis."
+      },
+      {
+        "word": "virevolte",
+        "definition": "twirls, whirls, spins",
+        "sentence": "La comédie ___ avec légèreté et grâce."
+      }
+    ],
+    "createdAt": "2026-06-13T07:11:24.484Z"
+  },
+  {
+    "id": 1781334148539,
+    "topic": "culture",
+    "title": "« Une forme de terreur fonctionne » : Nadav Lapid, réalisateur israélien ciblé par un boycott",
+    "passage": "Invité comme jury au FID Marseille, le festival international de cinéma qui se tiendra du 7 au 12 juillet dans la cité phocéenne, le réalisateur israélien Nadav Lapid, qui devait aussi y donner une masterclass, a été poussé à annuler sa venue. Les organisateurs de l'événement essuyaient depuis plusieurs semaines menaces, intimidations et autres pressions appelant au boycott culturel d'Israël. Notamment celles d'une dizaine de réalisateurs qui avaient retiré leurs films de la programmation pour protester contre la présence du cinéaste au festival.\n\nSous la pression des appels au boycott culturel d'Israël, le cinéaste Nadav Lapid, d'une virulence jamais démentie contre la politique de Netanyahou, a annulé sa participation au FID, le festival international de cinéma de Marseille. Une décision prise à son corps défendant, comme il l'explique dans cette interview au « Nouvel Obs ». Encore un déplorable épisode de la guerre culturelle liée à Gaza, à Israël et à la cause palestinienne.",
+    "source": "L'Obs",
+    "author": "Nicolas Schaller",
+    "date": "Fri, 12 Jun 2026 13:04:36 +0200",
+    "link": "https://www.nouvelobs.com/culture/20260609.OBS115678/une-forme-de-terreur-fonctionne-nadav-lapid-realisateur-israelien-cible-par-un-boycott.html",
+    "questions": [
+      {
+        "question": "Quand le FID Marseille devait-il se tenir ?",
+        "options": [
+          "Du 5 au 10 juillet",
+          "Du 7 au 12 juillet",
+          "Du 10 au 15 juillet",
+          "Du 12 au 17 juillet"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states 'du 7 au 12 juillet' when describing the festival dates. The other options contain incorrect date ranges that are not mentioned in the passage."
+      },
+      {
+        "question": "Pourquoi Nadav Lapid a-t-il annulé sa venue au festival ?",
+        "options": [
+          "Pour raisons de santé",
+          "En raison des menaces, intimidations et pressions pour un boycott culturel d'Israël",
+          "Parce que ses films ont été retirés de la programmation",
+          "Parce qu'il n'avait pas le temps de préparer sa masterclass"
+        ],
+        "answer": "B",
+        "explanation": "The passage clearly states that the organizers faced threats, intimidation, and pressure calling for a cultural boycott of Israel, which led Lapid to cancel. Options A and D are not mentioned; option C confuses cause and effect—the films were withdrawn by other directors to protest his presence, not the reason he cancelled."
+      },
+      {
+        "question": "Combien de réalisateurs environ ont retiré leurs films en protestation ?",
+        "options": [
+          "Trois réalisateurs",
+          "Cinq réalisateurs",
+          "Une dizaine de réalisateurs",
+          "Vingt réalisateurs"
+        ],
+        "answer": "C",
+        "explanation": "The text states 'une dizaine de réalisateurs' (about ten directors) withdrew their films to protest Lapid's presence. The other numerical options do not match the information provided."
+      },
+      {
+        "question": "Quel est le nom du festival mentionné dans le texte ?",
+        "options": [
+          "Festival de Cannes",
+          "FID Marseille",
+          "Festival de Venise",
+          "Festival de Berlin"
+        ],
+        "answer": "B",
+        "explanation": "The passage repeatedly refers to 'FID Marseille' (Festival International de cinéma de Marseille). The other options are famous film festivals but are not the one discussed in this text."
+      },
+      {
+        "question": "Comment est décrite la position politique de Nadav Lapid envers Netanyahou ?",
+        "options": [
+          "Timide et prudente",
+          "D'une virulence jamais démentie",
+          "Supportrice et favorable",
+          "Neutre et indifférente"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states that Lapid acts with 'une virulence jamais démentie contre la politique de Netanyahou' (unrelenting virulence against Netanyahu's policy). The other options contradict this characterization."
+      },
+      {
+        "question": "Quelle description est donnée de cette situation dans le dernier paragraphe ?",
+        "options": [
+          "Une victoire pour la cause palestinienne",
+          "Une decision courageuse du cinéaste",
+          "Un déplorable épisode de la guerre culturelle liée à Gaza",
+          "Un triomphe pour le festival de Marseille"
+        ],
+        "answer": "C",
+        "explanation": "The final sentence explicitly describes this as 'un déplorable épisode de la guerre culturelle liée à Gaza, à Israël et à la cause palestinienne.' The other options either misrepresent or contradict the author's critical tone toward these events."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "phocéenne",
+        "definition": "relating to Phocaea or Marseille (ancient Greek colony); characteristic of Marseille",
+        "sentence": "Le festival se tiendra dans la cité ___, qui est riche d'histoire méditerranéenne."
+      },
+      {
+        "word": "essuyaient",
+        "definition": "were subjected to; were experiencing; were enduring",
+        "sentence": "Les organisateurs ___ des critiques sévères de la part des cinéastes."
+      },
+      {
+        "word": "virulence",
+        "definition": "intensity; vehemence; harshness or severity of expression or feeling",
+        "sentence": "La ___ de ses discours politiques était bien connue du public cinématographique."
+      },
+      {
+        "word": "démentie",
+        "definition": "contradicted; disproven; denied",
+        "sentence": "Son engagement politique n'a jamais été ___ par ses actions."
+      },
+      {
+        "word": "à son corps défendant",
+        "definition": "reluctantly; against one's will; unwillingly",
+        "sentence": "Il a pris cette décision ___, pressé par les menaces de boycott."
+      }
+    ],
+    "createdAt": "2026-06-13T07:02:28.539Z"
+  },
+  {
+    "id": 1781334030007,
+    "topic": "La gastronomie française",
+    "title": "Alain Schifres est mort, il avait décrit les familles françaises comme personne dans « le Nouvel Observateur »",
+    "passage": "Nous apprenons avec tristesse la disparition du journaliste et écrivain Alain Schifres (1939-2026), qui fut l'une des irrésistibles plumes des pages « Notre époque », au « Nouvel Observateur », où il racontait les étranges mœurs de ses contemporains. Pour lui rendre hommage, nous republions ici cet article de 1988, où il avait classé les familles françaises… en sept grandes familles.\n\nNé en 1939 à Montmorency, Alain Schifres est mort le 8 juin 2026 à l'âge de 87 ans. Auteur de nombreux livres, dont « Ceux qui savent de quoi je parle comprendront ce que je veux dire » (1986), « Dictionnaire amoureux du bonheur » (2005) ou encore « Je préfère ne pas » (2020), il fut l'une des grandes plumes du « Nouvel Observateur » pendant toutes les années 1980. Il y a raconté et commenté, avec beaucoup d'humour, les évolutions sociétales de cette décennie, notamment à travers de nombreux articles consacrés à la vie sexuelle des Français, à leur amour du vin, à leurs modes de consommation, aux dessous de la pub à la télévision… ou encore, comme dans cette d…",
+    "source": "L'Obs",
+    "author": "Alain Schifres",
+    "date": "Fri, 12 Jun 2026 18:30:11 +0200",
+    "link": "https://www.nouvelobs.com/societe/20260612.OBS115756/alain-schifres-est-mort-il-avait-decrit-les-familles-francaises-comme-personne-dans-le-nouvel-observateur.html",
+    "questions": [
+      {
+        "question": "En quelle année Alain Schifres est-il né ?",
+        "options": [
+          "1936",
+          "1939",
+          "1945",
+          "1950"
+        ],
+        "answer": "1939",
+        "explanation": "The passage explicitly states 'Né en 1939 à Montmorency, Alain Schifres...'; the other dates are incorrect and not mentioned in the text."
+      },
+      {
+        "question": "Quel était le nom du journal où Alain Schifres a écrit ses articles les plus célèbres ?",
+        "options": [
+          "Le Monde",
+          "Nouvel Observateur",
+          "Libération",
+          "Le Figaro"
+        ],
+        "answer": "Nouvel Observateur",
+        "explanation": "The text clearly states 'il fut l'une des grandes plumes du « Nouvel Observateur »'; the other newspapers are not mentioned in connection with Schifres's work."
+      },
+      {
+        "question": "À quel âge Alain Schifres est-il mort ?",
+        "options": [
+          "85 ans",
+          "87 ans",
+          "89 ans",
+          "91 ans"
+        ],
+        "answer": "87 ans",
+        "explanation": "The passage states 'Alain Schifres est mort le 8 juin 2026 à l'âge de 87 ans'; the other ages are incorrect calculations or fabrications."
+      },
+      {
+        "question": "Quel est le titre d'un livre écrit par Alain Schifres en 2005 ?",
+        "options": [
+          "Je préfère ne pas",
+          "Dictionnaire amoureux du bonheur",
+          "Ceux qui savent de quoi je parle comprendront",
+          "Les sept familles françaises"
+        ],
+        "answer": "Dictionnaire amoureux du bonheur",
+        "explanation": "The text explicitly lists '« Dictionnaire amoureux du bonheur » (2005)' as one of his books; the other titles either belong to different years or are not mentioned as his works."
+      },
+      {
+        "question": "Pendant quelle décennie Alain Schifres a-t-il écrit ses articles les plus célèbres au Nouvel Observateur ?",
+        "options": [
+          "les années 1970",
+          "les années 1980",
+          "les années 1990",
+          "les années 2000"
+        ],
+        "answer": "les années 1980",
+        "explanation": "The passage states 'il fut l'une des grandes plumes du « Nouvel Observateur » pendant toutes les années 1980'; the other decades are not supported by the text."
+      },
+      {
+        "question": "Dans ses articles, sur quels thèmes Alain Schifres n'a-t-il PAS écrit selon le passage ?",
+        "options": [
+          "La vie sexuelle des Français",
+          "L'histoire politique du pays",
+          "Les modes de consommation",
+          "La publicité à la télévision"
+        ],
+        "answer": "L'histoire politique du pays",
+        "explanation": "The text lists specific topics like 'la vie sexuelle des Français, à leur amour du vin, à leurs modes de consommation, aux dessous de la pub à la télévision' but does not mention political history; the other topics are explicitly mentioned in the passage."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "disparition",
+        "definition": "death or passing away",
+        "sentence": "Nous apprenons avec tristesse la ___ du journaliste et écrivain Alain Schifres."
+      },
+      {
+        "word": "irrésistibles",
+        "definition": "irresistible or compelling",
+        "sentence": "Il fut l'une des ___ plumes des pages « Notre époque »."
+      },
+      {
+        "word": "mœurs",
+        "definition": "customs, manners, or morals",
+        "sentence": "Il racontait les étranges ___ de ses contemporains."
+      },
+      {
+        "word": "sociétales",
+        "definition": "societal or relating to society",
+        "sentence": "Il y a raconté les évolutions ___ de cette décennie."
+      },
+      {
+        "word": "dessous",
+        "definition": "secrets, inner workings, or behind-the-scenes aspects",
+        "sentence": "Il s'intéressait aux ___ de la pub à la télévision."
+      }
+    ],
+    "createdAt": "2026-06-13T07:00:30.007Z"
+  },
+  {
+    "id": 1781334025309,
+    "topic": "La gastronomie française",
+    "title": "Alain Schifres est mort, il avait décrit les familles françaises comme personne dans « le Nouvel Observateur »",
+    "passage": "Nous apprenons avec tristesse la disparition du journaliste et écrivain Alain Schifres (1939-2026), qui fut l'une des irrésistibles plumes des pages « Notre époque », au « Nouvel Observateur », où il racontait les étranges mœurs de ses contemporains. Pour lui rendre hommage, nous republions ici cet article de 1988, où il avait classé les familles françaises… en sept grandes familles.\n\nNé en 1939 à Montmorency, Alain Schifres est mort le 8 juin 2026 à l'âge de 87 ans. Auteur de nombreux livres, dont « Ceux qui savent de quoi je parle comprendront ce que je veux dire » (1986), « Dictionnaire amoureux du bonheur » (2005) ou encore « Je préfère ne pas » (2020), il fut l'une des grandes plumes du « Nouvel Observateur » pendant toutes les années 1980. Il y a raconté et commenté, avec beaucoup d'humour, les évolutions sociétales de cette décennie, notamment à travers de nombreux articles consacrés à la vie sexuelle des Français, à leur amour du vin, à leurs modes de consommation, aux dessous de la pub à la télévision… ou encore, comme dans cette d…",
+    "source": "L'Obs",
+    "author": "Alain Schifres",
+    "date": "Fri, 12 Jun 2026 18:30:11 +0200",
+    "link": "https://www.nouvelobs.com/societe/20260612.OBS115756/alain-schifres-est-mort-il-avait-decrit-les-familles-francaises-comme-personne-dans-le-nouvel-observateur.html",
+    "questions": [
+      {
+        "question": "En quelle année Alain Schifres est-il né ?",
+        "options": [
+          "1936",
+          "1939",
+          "1945",
+          "1950"
+        ],
+        "answer": "1939",
+        "explanation": "The passage clearly states 'Né en 1939 à Montmorency'. The other dates are incorrect and are not mentioned in the text."
+      },
+      {
+        "question": "Dans quel journal Alain Schifres a-t-il écrit ses articles les plus célèbres ?",
+        "options": [
+          "Le Monde",
+          "Le Nouvel Observateur",
+          "Libération",
+          "L'Express"
+        ],
+        "answer": "Le Nouvel Observateur",
+        "explanation": "The text repeatedly mentions that Schifres was 'l'une des grandes plumes du « Nouvel Observateur »' and wrote for its 'Notre époque' section. The other newspapers are not mentioned."
+      },
+      {
+        "question": "À quel âge Alain Schifres est-il décédé ?",
+        "options": [
+          "82 ans",
+          "85 ans",
+          "87 ans",
+          "90 ans"
+        ],
+        "answer": "87 ans",
+        "explanation": "The passage states 'il est mort le 8 juin 2026 à l'âge de 87 ans'. The other ages are not supported by the text."
+      },
+      {
+        "question": "Quel est le titre d'un livre écrit par Alain Schifres en 2005 ?",
+        "options": [
+          "Ceux qui savent de quoi je parle",
+          "Dictionnaire amoureux du bonheur",
+          "Je préfère ne pas",
+          "Les sept familles françaises"
+        ],
+        "answer": "Dictionnaire amoureux du bonheur",
+        "explanation": "The text explicitly lists '« Dictionnaire amoureux du bonheur » (2005)' as one of Schifres' books. The other titles are either from different years or not mentioned."
+      },
+      {
+        "question": "Pendant quelle décennie Alain Schifres a-t-il principalement écrit au Nouvel Observateur ?",
+        "options": [
+          "les années 1970",
+          "les années 1980",
+          "les années 1990",
+          "les années 2000"
+        ],
+        "answer": "les années 1980",
+        "explanation": "The passage states he was 'l'une des grandes plumes du « Nouvel Observateur » pendant toutes les années 1980'. The other decades are not mentioned as his primary writing period."
+      },
+      {
+        "question": "Quels sujets Alain Schifres abordait-il dans ses articles ?",
+        "options": [
+          "Uniquement la politique et l'économie",
+          "La vie sexuelle, le vin, la consommation et la publicité",
+          "Seulement les sports et les loisirs",
+          "Exclusivement la littérature et l'art"
+        ],
+        "answer": "La vie sexuelle, le vin, la consommation et la publicité",
+        "explanation": "The text explicitly mentions he wrote about 'la vie sexuelle des Français, à leur amour du vin, à leurs modes de consommation, aux dessous de la pub à la télévision'. The other options are either incomplete or contradict the passage."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "disparition",
+        "definition": "death; passing away",
+        "sentence": "Nous apprenons avec tristesse la ___ du journaliste et écrivain Alain Schifres."
+      },
+      {
+        "word": "irrésistibles",
+        "definition": "irresistible; compelling",
+        "sentence": "Il fut l'une des ___ plumes des pages « Notre époque »."
+      },
+      {
+        "word": "mœurs",
+        "definition": "customs; manners; morals",
+        "sentence": "Il racontait les étranges ___ de ses contemporains."
+      },
+      {
+        "word": "sociétales",
+        "definition": "societal; relating to society",
+        "sentence": "Il a raconté et commenté les évolutions ___ de cette décennie."
+      },
+      {
+        "word": "dessous",
+        "definition": "underside; hidden aspects; behind-the-scenes",
+        "sentence": "Il a écrit de nombreux articles consacrés aux ___ de la pub à la télévision."
+      }
+    ],
+    "createdAt": "2026-06-13T07:00:25.309Z"
+  },
+  {
+    "id": 1781333963223,
+    "topic": "La gastronomie française",
+    "title": "Alain Schifres est mort, il avait décrit les familles françaises comme personne dans « le Nouvel Observateur »",
+    "passage": "Né en 1939 à Montmorency, Alain Schifres est mort le 8 juin 2026 à l'âge de 87 ans. Auteur de nombreux livres, dont « Ceux qui savent de quoi je parle comprendront ce que je veux dire » (1986), « Dictionnaire amoureux du bonheur » (2005) ou encore « Je préfère ne pas » (2020), il fut l'une des grandes plumes du « Nouvel Observateur » pendant toutes les années 1980. Il y a raconté et commenté, avec beaucoup d'humour, les évolutions sociétales de cette décennie, notamment à travers de nombreux articles consacrés à la vie sexuelle des Français, à leur amour du vin, à leurs modes de consommation, aux dessous de la pub à la télévision… ou encore, comme dans cette d…\n\nNous apprenons avec tristesse la disparition du journaliste et écrivain Alain Schifres (1939-2026), qui fut l'une des irrésistibles plumes des pages « Notre époque », au « Nouvel Observateur », où il racontait les étranges mœurs de ses contemporains. Pour lui rendre hommage, nous republions ici cet article de 1988, où il avait classé les familles françaises… en sept grandes familles.",
+    "source": "L'Obs",
+    "author": "Alain Schifres",
+    "date": "Fri, 12 Jun 2026 18:30:11 +0200",
+    "link": "https://www.nouvelobs.com/societe/20260612.OBS115756/alain-schifres-est-mort-il-avait-decrit-les-familles-francaises-comme-personne-dans-le-nouvel-observateur.html",
+    "questions": [
+      {
+        "question": "En quelle année Alain Schifres est-il né ?",
+        "options": [
+          "1936",
+          "1939",
+          "1945",
+          "1950"
+        ],
+        "answer": "1939",
+        "explanation": "The passage clearly states 'Né en 1939 à Montmorency' (Born in 1939 in Montmorency). The other years are incorrect as they do not match the information provided."
+      },
+      {
+        "question": "Dans quel journal Alain Schifres a-t-il été l'une des grandes plumes pendant les années 1980 ?",
+        "options": [
+          "Le Monde",
+          "Nouvel Observateur",
+          "Libération",
+          "Le Figaro"
+        ],
+        "answer": "Nouvel Observateur",
+        "explanation": "The text explicitly states 'il fut l'une des grandes plumes du « Nouvel Observateur » pendant toutes les années 1980' (he was one of the great writers of the Nouvel Observateur during the entire 1980s). The other newspapers are not mentioned in the passage."
+      },
+      {
+        "question": "À quel âge Alain Schifres est-il décédé ?",
+        "options": [
+          "80 ans",
+          "85 ans",
+          "87 ans",
+          "90 ans"
+        ],
+        "answer": "87 ans",
+        "explanation": "The passage states 'mort le 8 juin 2026 à l'âge de 87 ans' (died on June 8, 2026 at the age of 87). The other ages are incorrect based on the information given."
+      },
+      {
+        "question": "Lequel de ces livres a été publié en 2005 ?",
+        "options": [
+          "Ceux qui savent de quoi je parle comprendront ce que je veux dire",
+          "Dictionnaire amoureux du bonheur",
+          "Je préfère ne pas",
+          "Notre époque"
+        ],
+        "answer": "Dictionnaire amoureux du bonheur",
+        "explanation": "The text explicitly mentions '« Dictionnaire amoureux du bonheur » (2005)' with the publication year in parentheses. The other books either have different publication dates or are not books written by Schifres."
+      },
+      {
+        "question": "De quels sujets Alain Schifres parlait-il principalement dans ses articles des années 1980 ?",
+        "options": [
+          "La politique et les élections",
+          "Les évolutions sociétales, la vie sexuelle, le vin et les modes de consommation",
+          "L'histoire et la philosophie",
+          "Le sport et les loisirs"
+        ],
+        "answer": "Les évolutions sociétales, la vie sexuelle, le vin et les modes de consommation",
+        "explanation": "The passage states he 'raconté et commenté, avec beaucoup d'humour, les évolutions sociétales de cette décennie, notamment à travers de nombreux articles consacrés à la vie sexuelle des Français, à leur amour du vin, à leurs modes de consommation, aux dessous de la pub à la télévision' (recounted and commented on the social changes of that decade, particularly through numerous articles about French sexual life, their love of wine, their consumption habits, and television advertising). The other topics are not mentioned."
+      },
+      {
+        "question": "Dans quel article republié de 1988 Alain Schifres avait-il classé les familles françaises ?",
+        "options": [
+          "En cinq familles",
+          "En six familles",
+          "En sept familles",
+          "En huit familles"
+        ],
+        "answer": "En sept familles",
+        "explanation": "The final sentence of the passage states 'nous republions ici cet article de 1988, où il avait classé les familles françaises… en sept grandes familles' (we republish here this 1988 article where he had classified French families into seven large families). The other numbers do not match the information provided."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "plumes",
+        "definition": "writers or talented writers (literally: pens/feathers)",
+        "sentence": "Les ___ du journal ont écrit de nombreux articles intéressants cette année."
+      },
+      {
+        "word": "sociétales",
+        "definition": "societal, relating to society",
+        "sentence": "Les évolutions ___ du XXe siècle ont transformé la vie des gens."
+      },
+      {
+        "word": "irrésistibles",
+        "definition": "irresistible, impossible to resist",
+        "sentence": "Ses chroniques ___ attiraient des milliers de lecteurs chaque semaine."
+      },
+      {
+        "word": "mœurs",
+        "definition": "customs, habits, morals, ways of life",
+        "sentence": "L'anthropologue étudiait les ___ des différentes cultures du monde."
+      },
+      {
+        "word": "disparition",
+        "definition": "disappearance, death, passing away",
+        "sentence": "La ___ du célèbre acteur a attristé tous ses fans."
+      }
+    ],
+    "createdAt": "2026-06-13T06:59:23.223Z"
+  },
+  {
+    "id": 1781333952950,
+    "topic": "La gastronomie française",
+    "title": "« La randonnée, une affaire qui marche » : une passion française",
+    "passage": "Depuis la pandémie de Covid, la randonnée s'est imposée comme le sport préféré des Français. Chaque semaine, ils seraient 27 millions à enfiler leurs chaussures de marche, empoigner leurs bâtons et parfois porter des sacs de plusieurs kilos pour s'enivrer des paysages de l'Hexagone - soit 56 % de la population, selon les chiffres impressionnants avancés par la Fédération française de la Randonnée pédestre. Pour documenter ce phénomène de société, Anne-Sophie Lévy-Chambon est partie à la rencontre de marcheurs, guides, hébergeurs et bénévoles, sur quatre grands itinéraires parmi les 230 000 kilomètres de sentiers balisés que compte la France.\n\nLe film prend le temps de s'arrêter sur des personnages attachants : Marie-Josée, aide-soignante à la retraite, qui a économisé pendant un an pour s'offrir dix jours sur le chemin de Compostelle ; Anne et Karen, deux collègues citadines en route pour leur première grande randonnée sur le chemin de Stevenson ; Amaya et Sancho, une mère et son fils de 13 ans lancés dans le tour du Mont-Blanc un peu à l'aventure. La réalisatrice montre également comment La Malle postale, ce service de transport de bagages d'étape en étape moyennant une dizaine d'euros par jour, a contribué à faciliter la pratique. Et fait une halte au Vieux Campeur, institution familiale née en 1941 dans le Quartier latin, dont le chiffre d'affaires a bondi ces dernières années.\n\nMais la documentariste explore aussi les revers de cet engouement. Marie Millet, accompagnatrice en montagne, qui connaît le Mont-Blanc comme sa poche, évite désormais certains secteurs saturés comme le lac Blanc. Quant à la gardienne du lieu, elle déplore les réclamations sur le manque de wifi ou la qualité de l'eau du robinet. Dans les Bouches-du-Rhône, le Parc national des Calanques a instauré des quotas pour pallier la surfréquentation comme à Sugiton, où l'accès, sur réservation, est limité à 400 marcheurs par jour et où les agents n'hésitent pas à verbaliser afin de préserver ces territoires fragiles. Le film restitue avec finesse ces tensions, entre liberté et régulation, démocratisation et protection de la nature.",
+    "source": "L'Obs",
+    "author": "Hélène Riffaudeau",
+    "date": "Tue, 09 Jun 2026 17:30:19 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260609.OBS115658/la-randonnee-une-affaire-qui-marche-une-passion-francaise.html",
+    "questions": [
+      {
+        "question": "Selon la Fédération française de la Randonnée pédestre, quel pourcentage de la population française pratique la randonnée chaque semaine ?",
+        "options": [
+          "27 %",
+          "41 %",
+          "56 %",
+          "70 %"
+        ],
+        "answer": "C",
+        "explanation": "The passage states '27 millions à enfiler leurs chaussures de marche...soit 56 % de la population' according to the French hiking federation's figures. The other percentages are not mentioned in the text."
+      },
+      {
+        "question": "Combien de kilomètres de sentiers balisés la France compte-t-elle selon le texte ?",
+        "options": [
+          "27 000 kilomètres",
+          "56 000 kilomètres",
+          "230 000 kilomètres",
+          "400 000 kilomètres"
+        ],
+        "answer": "C",
+        "explanation": "The passage explicitly mentions '230 000 kilomètres de sentiers balisés que compte la France.' The other numbers refer to different statistics in the text."
+      },
+      {
+        "question": "Quel service La Malle postale propose-t-elle aux randonneurs ?",
+        "options": [
+          "Un service de guides professionnels",
+          "Un transport de bagages d'étape en étape",
+          "Un service de réservation d'hébergement",
+          "Un service de restauration en montagne"
+        ],
+        "answer": "B",
+        "explanation": "The text states 'La Malle postale, ce service de transport de bagages d'étape en étape moyennant une dizaine d'euros par jour.' The other options are not mentioned in relation to this service."
+      },
+      {
+        "question": "En quelle année l'institution Le Vieux Campeur a-t-elle été fondée ?",
+        "options": [
+          "1920",
+          "1941",
+          "1956",
+          "1980"
+        ],
+        "answer": "B",
+        "explanation": "The passage clearly states 'institution familiale née en 1941 dans le Quartier latin.' The other dates are not mentioned in the text."
+      },
+      {
+        "question": "Pourquoi le Parc national des Calanques a-t-il instauré des quotas ?",
+        "options": [
+          "Pour augmenter les revenus du parc",
+          "Pour pallier la surfréquentation",
+          "Pour former davantage de guides",
+          "Pour construire de nouveaux sentiers"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states 'le Parc national des Calanques a instauré des quotas pour pallier la surfréquentation.' The other options are not supported by information in the passage."
+      },
+      {
+        "question": "Sur combien de sentiers majeurs Anne-Sophie Lévy-Chambon a-t-elle documenté ce phénomène ?",
+        "options": [
+          "Deux grands itinéraires",
+          "Trois grands itinéraires",
+          "Quatre grands itinéraires",
+          "Cinq grands itinéraires"
+        ],
+        "answer": "C",
+        "explanation": "The passage states that the filmmaker 'est partie à la rencontre de marcheurs...sur quatre grands itinéraires parmi les 230 000 kilomètres de sentiers balisés.' The other numbers are not mentioned."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "empoigner",
+        "definition": "to grasp or seize firmly",
+        "sentence": "Ils enfilen leurs chaussures et ___ leurs bâtons avant de partir en randonnée."
+      },
+      {
+        "word": "balisés",
+        "definition": "marked or sign-posted (with markers)",
+        "sentence": "La France compte 230 000 kilomètres de sentiers ___ pour faciliter la randonnée."
+      },
+      {
+        "word": "engouement",
+        "definition": "enthusiasm or craze",
+        "sentence": "La documentariste explore les revers de cet ___ pour la randonnée en montagne."
+      },
+      {
+        "word": "pallier",
+        "definition": "to remedy or offset",
+        "sentence": "Le parc a instauré des quotas pour ___ la surfréquentation des sentiers."
+      },
+      {
+        "word": "verbaliser",
+        "definition": "to issue a fine or citation",
+        "sentence": "Les agents n'hésitent pas à ___ les randonneurs qui ne respectent pas les règles du parc."
+      }
+    ],
+    "createdAt": "2026-06-13T06:59:12.950Z"
+  },
+  {
+    "id": 1781333946637,
+    "topic": "La gastronomie française",
+    "title": "Israël refoule une journaliste française, Radio France dénonce une « entrave à la liberté de la presse »",
+    "passage": "Les autorités israéliennes ont annoncé ce jeudi 11 juin avoir refoulé une journaliste française, Alice Froussard, couvrant depuis plusieurs années le conflit israélo-palestinien pour Radio France et Radio France Internationale (RFI). La journaliste s'est vue refuser l'entrée du territoire israélien à son arrivée mercredi après-midi à l'aéroport international Ben-Gourion, près de Tel-Aviv où elle a été contrainte à passer la nuit avant d'être renvoyée vers Paris dans un avion ayant décollé jeudi matin.\n\nSon refoulement a été annoncé par le ministre de la Diaspora et de la Lutte contre l'antisémitisme, Amichaï Chikli. Alice Froussard « a tenté d'entrer en Israël et de reprendre son travail ici de manière permanente, mais la recommandation du ministère a été acceptée, et la journaliste a été expulsée et remise dans un avion pour la France », écrit Amichaï Chikli dans un communiqué accusant la journaliste d'être un soutien du mouvement islamiste palestinien Hamas. La journaliste était arrivée mercredi à l'aéroport de Tel-Aviv et « devait rejoindre la Cisjordanie pour un reportage », rapporte Reporters sans frontières. Selon l'organisation, « trente minutes » après son arrivée à l'aéroport Ben Gurion en Israël, elle a été interpellée, interrogée puis expulsée du pays par la police israélienne. L'interdiction officielle, consultée par RSF, invoque comme motifs du refus « des considérations de sécurité publique, de sûreté publique ou d'ordre public » et « des considérations liées à la prévention de l'immigration clandestine ». La journaliste disposait pourtant de toutes les pièces requises, d'un visa et d'un contrat officiel avec RFI, rapporte l'organisme. La lettre d'expulsion précise qu'Alice Froussard devra présenter une demande préalable avant toute future visite en Israël.\n\nRFI, qui fait partie du pôle extérieur de l'audiovisuel public français, a dénoncé une « entrave à la liberté de la presse » et affiché son soutien à la journaliste. « La journaliste de RFI Alice Froussard s'est vue refuser l'entrée sur le territoire israélien […] alors qu'elle disposait de l'autorisation de voyage requise et d'une demande de visa de presse en bonne et due forme pour travailler en Cisjordanie », a réagi RFI dans un communiqué. « Les autorités israéliennes n'ont pas transmis à RFI de justification de cette décision », poursuit la radio dans ce texte, ajoutant que « la direction de RFI apporte tout son soutien à Alice Froussard et proteste contre cette expulsion qui constitue une entrave à la liberté de la presse et qui intervient dans un contexte de difficultés croissantes rencontrées par les journalistes pour couvrir l'actualité de la région ». Dans un communiqué, Radio France s'est joint à RFI pour exprimer « son indignation et son inquiétude ». Agnès Vahramian, directrice de l'information de Radio France et directrice de Franceinfo a dénoncé « une entrave » à la liberté de la presse, dans un contexte où l'accès au terrain est « déjà",
+    "source": "L'Obs",
+    "author": "Service Actu",
+    "date": "Thu, 11 Jun 2026 14:40:07 +0200",
+    "link": "https://www.nouvelobs.com/medias/20260611.OBS115715/israel-refoule-une-journaliste-francaise-radio-france-denonce-une-entrave-a-la-liberte-de-la-presse.html",
+    "questions": [
+      {
+        "question": "Quel jour les autorités israéliennes ont-elles annoncé le refoulement d'Alice Froussard ?",
+        "options": [
+          "Mercredi 10 juin",
+          "Jeudi 11 juin",
+          "Mardi 9 juin",
+          "Vendredi 12 juin"
+        ],
+        "answer": "Jeudi 11 juin",
+        "explanation": "The passage explicitly states in the first sentence: 'Les autorités israéliennes ont annoncé ce jeudi 11 juin avoir refoulé une journaliste française, Alice Froussard.' The other dates are incorrect because the announcement was made on Thursday, June 11th, not on any other date mentioned."
+      },
+      {
+        "question": "Pour quels médias Alice Froussard couvrait-elle le conflit israélo-palestinien ?",
+        "options": [
+          "France Télévisions et Franceinfo",
+          "Radio France et Radio France Internationale (RFI)",
+          "Le Monde et Libération",
+          "France 24 et Euronews"
+        ],
+        "answer": "Radio France et Radio France Internationale (RFI)",
+        "explanation": "The first paragraph clearly states that Alice Froussard was 'couvrant depuis plusieurs années le conflit israélo-palestinien pour Radio France et Radio France Internationale (RFI).' The other options mention different media outlets that are not mentioned in the passage."
+      },
+      {
+        "question": "Quel est le titre officiel du ministre qui a annoncé le refoulement ?",
+        "options": [
+          "Ministre de la Défense",
+          "Ministre des Affaires étrangères",
+          "Ministre de la Diaspora et de la Lutte contre l'antisémitisme",
+          "Ministre de la Sécurité intérieure"
+        ],
+        "answer": "Ministre de la Diaspora et de la Lutte contre l'antisémitisme",
+        "explanation": "The passage states: 'Son refoulement a été annoncé par le ministre de la Diaspora et de la Lutte contre l'antisémitisme, Amichaï Chikli.' The other titles are not mentioned in the text as the responsible minister's position."
+      },
+      {
+        "question": "Selon Amichaï Chikli, pourquoi la journaliste a-t-elle été expulsée ?",
+        "options": [
+          "Elle n'avait pas de visa valide",
+          "Elle était un soutien du mouvement islamiste palestinien Hamas",
+          "Elle avait violé les lois de sécurité israéliennes",
+          "Elle ne disposait pas de contrat de travail"
+        ],
+        "answer": "Elle était un soutien du mouvement islamiste palestinien Hamas",
+        "explanation": "The passage explicitly states that Amichaï Chikli's communiqué accused the journalist of 'être un soutien du mouvement islamiste palestinien Hamas.' The other options are either contradicted by the text (she did have a visa and a contract) or not mentioned as Chikli's stated reason for expulsion."
+      },
+      {
+        "question": "Combien de temps après son arrivée à l'aéroport Alice Froussard a-t-elle été interpellée ?",
+        "options": [
+          "Environ 5 minutes",
+          "Environ 15 minutes",
+          "Environ 30 minutes",
+          "Environ une heure"
+        ],
+        "answer": "Environ 30 minutes",
+        "explanation": "According to Reporters sans frontières quoted in the passage: '« trente minutes » après son arrivée à l'aéroport Ben Gurion en Israël, elle a été interpellée, interrogée puis expulsée du pays par la police israélienne.' The other time frames are not mentioned in the text."
+      },
+      {
+        "question": "Quelle était la destination prévue d'Alice Froussard après son arrivée à l'aéroport ?",
+        "options": [
+          "Jérusalem-Est",
+          "La Cisjordanie pour un reportage",
+          "Gaza",
+          "Tel-Aviv"
+        ],
+        "answer": "La Cisjordanie pour un reportage",
+        "explanation": "The passage states: 'elle était arrivée mercredi à l'aéroport de Tel-Aviv et « devait rejoindre la Cisjordanie pour un reportage ».' The other locations are either mentioned as departure points (Tel-Aviv) or not mentioned as her intended destination."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "refouler",
+        "definition": "to turn back, to refuse entry, to expel",
+        "sentence": "Les autorités ont décidé de ___ la journaliste à la frontière."
+      },
+      {
+        "word": "couvrir",
+        "definition": "to cover (as in reporting/journalism)",
+        "sentence": "Elle travaille pour ___ les événements politiques depuis dix ans."
+      },
+      {
+        "word": "expulsée",
+        "definition": "expelled, forced to leave",
+        "sentence": "La journaliste a été ___ du territoire israélien par les autorités."
+      },
+      {
+        "word": "entrave",
+        "definition": "obstacle, hindrance, obstruction",
+        "sentence": "Cette décision constitue une ___ à la liberté de la presse."
+      },
+      {
+        "word": "en bonne et due forme",
+        "definition": "in proper form, properly, duly completed",
+        "sentence": "Elle avait rempli tous les documents ___ avant son voyage."
+      }
+    ],
+    "createdAt": "2026-06-13T06:59:06.637Z"
+  },
+  {
+    "id": 1781333851368,
+    "topic": "La gastronomie française",
+    "title": "Alain Schifres est mort, il avait décrit les familles françaises comme personne dans « le Nouvel Observateur »",
+    "passage": "Nous apprenons avec tristesse la disparition du journaliste et écrivain Alain Schifres (1939-2026), qui fut l'une des irrésistibles plumes des pages « Notre époque », au « Nouvel Observateur », où il racontait les étranges mœurs de ses contemporains. Pour lui rendre hommage, nous republions ici cet article de 1988, où il avait classé les familles françaises… en sept grandes familles.\n\nNé en 1939 à Montmorency, Alain Schifres est mort le 8 juin 2026 à l'âge de 87 ans. Auteur de nombreux livres, dont « Ceux qui savent de quoi je parle comprendront ce que je veux dire » (1986), « Dictionnaire amoureux du bonheur » (2005) ou encore « Je préfère ne pas » (2020), il fut l'une des grandes plumes du « Nouvel Observateur » pendant toutes les années 1980. Il y a raconté et commenté, avec beaucoup d'humour, les évolutions sociétales de cette décennie, notamment à travers de nombreux articles consacrés à la vie sexuelle des Français, à leur amour du vin, à leurs modes de consommation, aux dessous de la pub à la télévision… ou encore, comme dans cette d…",
+    "source": "L'Obs",
+    "author": "Alain Schifres",
+    "date": "Fri, 12 Jun 2026 18:30:11 +0200",
+    "link": "https://www.nouvelobs.com/societe/20260612.OBS115756/alain-schifres-est-mort-il-avait-decrit-les-familles-francaises-comme-personne-dans-le-nouvel-observateur.html",
+    "questions": [
+      {
+        "question": "En quelle année Alain Schifres est-il né ?",
+        "options": [
+          "1936",
+          "1939",
+          "1945",
+          "1950"
+        ],
+        "answer": "1939",
+        "explanation": "The passage clearly states 'Né en 1939 à Montmorency, Alain Schifres'. The other dates are incorrect and do not match the information provided in the text."
+      },
+      {
+        "question": "Dans quel journal Alain Schifres a-t-il écrit les pages « Notre époque » ?",
+        "options": [
+          "Le Monde",
+          "Le Figaro",
+          "Nouvel Observateur",
+          "Libération"
+        ],
+        "answer": "Nouvel Observateur",
+        "explanation": "The passage explicitly mentions 'au « Nouvel Observateur »' where he wrote the 'Notre époque' pages. The other newspapers are not mentioned in relation to his work."
+      },
+      {
+        "question": "À quel âge Alain Schifres est-il décédé ?",
+        "options": [
+          "82 ans",
+          "85 ans",
+          "87 ans",
+          "89 ans"
+        ],
+        "answer": "87 ans",
+        "explanation": "The text states 'Alain Schifres est mort le 8 juin 2026 à l'âge de 87 ans.' The other ages listed do not match the information provided."
+      },
+      {
+        "question": "Quel est le titre d'un livre écrit par Alain Schifres en 2005 ?",
+        "options": [
+          "Ceux qui savent de quoi je parle comprendront ce que je veux dire",
+          "Dictionnaire amoureux du bonheur",
+          "Je préfère ne pas",
+          "Les Familles françaises"
+        ],
+        "answer": "Dictionnaire amoureux du bonheur",
+        "explanation": "The passage lists this book with the date '(2005)'. The other options are either published in different years or are not mentioned as being published in 2005."
+      },
+      {
+        "question": "Pendant quelle décennie Alain Schifres a-t-il surtout écrit au « Nouvel Observateur » ?",
+        "options": [
+          "Les années 1970",
+          "Les années 1980",
+          "Les années 1990",
+          "Les années 2000"
+        ],
+        "answer": "Les années 1980",
+        "explanation": "The passage explicitly states 'il fut l'une des grandes plumes du « Nouvel Observateur » pendant toutes les années 1980.' The other decades are not mentioned as periods of his major activity there."
+      },
+      {
+        "question": "Parmi les sujets suivants, lequel Alain Schifres n'a PAS traité dans ses articles ?",
+        "options": [
+          "La vie politique française",
+          "La vie sexuelle des Français",
+          "L'amour du vin",
+          "Les modes de consommation"
+        ],
+        "answer": "La vie politique française",
+        "explanation": "The passage lists his article topics as 'la vie sexuelle des Français, à leur amour du vin, à leurs modes de consommation, aux dessous de la pub à la télévision' but does not mention political life. The other three topics are explicitly mentioned in the text."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "disparition",
+        "definition": "death, passing away",
+        "sentence": "Nous apprenons avec tristesse la ___ du journaliste et écrivain Alain Schifres."
+      },
+      {
+        "word": "irrésistibles",
+        "definition": "irresistible, compelling",
+        "sentence": "Il fut l'une des ___ plumes des pages « Notre époque »."
+      },
+      {
+        "word": "mœurs",
+        "definition": "customs, manners, morals",
+        "sentence": "Il racontait les étranges ___ de ses contemporains."
+      },
+      {
+        "word": "sociétales",
+        "definition": "societal, relating to society",
+        "sentence": "Il y a raconté et commenté les évolutions ___ de cette décennie."
+      },
+      {
+        "word": "dessous",
+        "definition": "hidden aspects, underbelly, behind-the-scenes",
+        "sentence": "Il écrivait sur les ___ de la pub à la télévision."
+      }
+    ],
+    "createdAt": "2026-06-13T06:57:31.368Z"
+  },
+  {
     "id": 1781333317348,
     "topic": "Le cinéma français",
     "title": "« La Reine Margot » avec Isabelle Adjani : sous les dentelles, l’enfer",
