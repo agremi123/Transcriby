@@ -6455,6 +6455,8 @@ export default function Hero() {
   const [readingLoading, setReadingLoading] = React.useState(false);
   // Which article of the current theme we're on (1..THEME_ARTICLE_TOTAL).
   const [articleIndex, setArticleIndex] = React.useState(1);
+  // Whether all four exercise tabs are validated (reported up from AudioDemoCard).
+  const [exercisesAllDone, setExercisesAllDone] = React.useState(false);
 
   // Track which topic is currently loaded per exercise type.
   // Exercises persist through Chat tab switches; only reload when a *new* topic arrives.
