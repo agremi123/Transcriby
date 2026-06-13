@@ -1140,6 +1140,12 @@ export function AudioDemoCard({
   const [previewCorrection, setPreviewCorrection] = React.useState(null);
   const [fetchingPreview, setFetchingPreview] = React.useState(false);
   const [narratorReaction, setNarratorReaction] = React.useState(null);
+  // Défi speaking conversation: the Parisian's reply pinned under each learner
+  // utterance, which utterance is awaiting a reply, and whether the learner has
+  // used all the défi's target grammar + vocab (→ ready for a new question).
+  const [replyByUtterance, setReplyByUtterance] = React.useState({});
+  const [replyLoadingUttId, setReplyLoadingUttId] = React.useState(null);
+  const [defiComplete, setDefiComplete] = React.useState(false);
   const [correctionReaderId, setCorrectionReaderId] = React.useState(null);
   const [sentenceCongrats, setSentenceCongrats] = React.useState(null);
   // Congrats lines pinned to their utterance — persist in the transcript
