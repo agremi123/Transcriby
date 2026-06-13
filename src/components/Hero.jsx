@@ -3843,6 +3843,24 @@ export function AudioDemoCard({
                   <p className="mt-2 font-display text-[13px] italic text-wine/70">Not quite — try again.</p>
                 )}
 
+                {/* Défi speaking: once the Parisian has answered, the learner moves on
+                    at their own pace (no auto-reset). */}
+                {activeTab === 'speaking' && !isRecording && !manualCorrecting
+                  && (manualCorrection || sentenceCongrats || repeatFeedback) && (
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      onClick={() => { resetTranscript(); onNewSpeakingChallenge?.(); }}
+                      className="inline-flex items-center gap-1.5 font-display text-[15px] italic px-4 h-9 rounded-full bg-wine text-ivory hover:bg-wine2 shadow-sm transition-colors"
+                    >
+                      Nouvelle question
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+                        <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                )}
+
                 {/* Make it Parisien — inline below last utterance (not on Défi speaking: correction is automatic there) */}
                 {inputMode === 'speak' && activeTab !== 'speaking' && !manualCorrection && !sentenceCongrats && !isLive && !narratorReaction && utterances.length > 0 && (
                   <div className="mt-3">
