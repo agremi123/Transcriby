@@ -1170,12 +1170,17 @@ export async function handleSpeakingReaction(body) {
       user: `L'étudiant vient de dire: "${utterance}"`,
       maxTokens: 320,
     });
+    const sentenceCorrect = result.sentenceCorrect !== false;
     return { statusCode: 200, body: {
       text: result.text || '',
       translation: result.translation || '',
       usedGrammar: !!result.usedGrammar,
       usedVocab: Array.isArray(result.usedVocab) ? result.usedVocab : [],
       complete: hasTargets ? !!result.complete : false,
+      sentenceCorrect,
+      correction: !sentenceCorrect && result.correction?.corrected
+        ? { corrected: String(result.correction.corrected), translation: String(result.correction.translation || '') }
+        : null,
     } };
   } catch {
     return { statusCode: 200, body: empty };
