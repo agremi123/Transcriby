@@ -1050,6 +1050,8 @@ export function AudioDemoCard({
   speakingNarratorId = 'lea',
   speakingTopicLabel = '',
   speakingOpeningLine = '',
+  speakingTargetGrammar = null,
+  speakingTargetVocab = null,
   onNewSpeakingChallenge = null,
   writingNarratorId = 'lea',
   writingPrompt = '',
