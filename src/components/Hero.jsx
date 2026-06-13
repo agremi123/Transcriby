@@ -5536,8 +5536,13 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
                   <div className="flex items-start gap-2">
                     <span className="text-[9px] font-mono uppercase tracking-wider text-wine/50 shrink-0 mt-1 w-[58px]">Grammaire</span>
                     <div className="min-w-0">
-                      <span className="font-display text-[15px] text-navy font-medium">{targetGrammar.point}</span>
-                      {targetGrammar.hint && <p className="text-[12px] text-navy/55 leading-snug">{targetGrammar.hint}</p>}
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-display text-[14px] font-medium transition-colors duration-300 ${usedGrammar ? 'bg-navy/10 border border-navy/30 text-navy' : 'text-navy'}`}>
+                        {usedGrammar && (
+                          <svg width="13" height="13" viewBox="0 0 48 48" fill="none" stroke="#1A2340" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden><path d="M42 12L18 36l-12-12" /></svg>
+                        )}
+                        {targetGrammar.point}
+                      </span>
+                      {targetGrammar.hint && <p className="text-[12px] text-navy/55 leading-snug mt-0.5">{targetGrammar.hint}</p>}
                     </div>
                   </div>
                 )}
@@ -5546,12 +5551,18 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
                   <div className="flex items-start gap-2">
                     <span className="text-[9px] font-mono uppercase tracking-wider text-wine/50 shrink-0 mt-1 w-[58px]">Vocab</span>
                     <div className="flex flex-wrap gap-1.5 min-w-0">
-                      {targetVocab.map((v, i) => (
-                        <span key={i} className="inline-flex items-baseline gap-1 px-2 py-0.5 rounded-full bg-wine/10 border border-wine/15">
-                          <span className="font-display text-[13px] text-wine font-medium">{v.word}</span>
-                          {v.meaning && <span className="text-[10px] text-navy/45">· {v.meaning}</span>}
-                        </span>
-                      ))}
+                      {targetVocab.map((v, i) => {
+                        const used = isVocabUsed(v.word, usedVocab);
+                        return (
+                          <span key={i} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border transition-colors duration-300 ${used ? 'bg-navy/10 border-navy/30' : 'bg-wine/10 border-wine/15'}`}>
+                            {used && (
+                              <svg width="11" height="11" viewBox="0 0 48 48" fill="none" stroke="#1A2340" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden><path d="M42 12L18 36l-12-12" /></svg>
+                            )}
+                            <span className={`font-display text-[13px] font-medium transition-colors duration-300 ${used ? 'text-navy' : 'text-wine'}`}>{v.word}</span>
+                            {v.meaning && <span className="text-[10px] text-navy/45">· {v.meaning}</span>}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
