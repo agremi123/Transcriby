@@ -2951,7 +2951,7 @@ export function AudioDemoCard({
                 {/* CONJUGAISON */}
                 {exerciseSubTab === 'conjugation' && (
                   exerciseConjugation.length === 0
-                    ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">Chargement des conjugaisons…</p>
+                    ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">{exerciseLoading ? 'Chargement des conjugaisons…' : "Pas d'exercice de conjugaison pour cet article."}</p>
                     : exerciseConjugation.map((c, ci) => (
                         <ConjugationItem key={ci} c={c} ci={ci} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} />
                       ))
