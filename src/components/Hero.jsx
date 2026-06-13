@@ -6774,6 +6774,7 @@ export default function Hero() {
                 usedTips={writingUsedTips}
                 badge={writingBadge}
                 onNewChallenge={loadNewWritingChallenge}
+                challengeIndex={writingChallengeIndex}
               />
             )}
             {/* Always mounted so Reveal components don't re-animate on tab switch */}
