@@ -2974,9 +2974,21 @@ export function AudioDemoCard({
                 {exerciseSubTab === 'conjugation' && (
                   exerciseConjugation.length === 0
                     ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">{exerciseLoading ? 'Chargement des conjugaisons…' : "Pas d'exercice de conjugaison pour cet article."}</p>
-                    : exerciseConjugation.map((c, ci) => (
-                        <ConjugationItem key={ci} c={c} ci={ci} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} />
-                      ))
+                    : (
+                      <>
+                        {exerciseConjugation.map((c, ci) => (
+                          <ConjugationItem key={ci} c={c} ci={ci} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} />
+                        ))}
+                        {(() => {
+                          const verbs = [...new Set(exerciseConjugation.map(c => c.verb).filter(Boolean))].slice(0, 2);
+                          const tense = exerciseConjugation[0]?.tense || '';
+                          const instr = verbs.length
+                            ? `Écris ta propre phrase en conjuguant ${verbs.map(v => `« ${v} »`).join(' ou ')}${tense ? ` (par exemple au ${tense})` : ''}.`
+                            : 'Écris ta propre phrase en utilisant un des verbes ci-dessus.';
+                          return <ProductionExercise instruction={instr} />;
+                        })()}
+                      </>
+                    )
                 )}
               </div>
             </div>
