@@ -6972,7 +6972,7 @@ export default function Hero() {
                 parisianPercent={profile?.parisianPercent ?? 0}
                 dailyParisianPoints={dailyParisianPoints}
                 onSpendExperience={spendExperience}
-                allDone={exercisesAllDone}
+                doneTabs={exerciseTabsDone}
                 articleIndex={articleIndex}
                 onNextArticle={loadNextReadingArticle}
               />
