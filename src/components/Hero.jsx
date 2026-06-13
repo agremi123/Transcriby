@@ -1137,6 +1137,7 @@ export function AudioDemoCard({
   exerciseConjugation = [],
   exerciseLoading = false,
   onNextArticle = null,
+  onExercisesAllDone = null,
   articleIndex = 1,
   exerciseSubTabProp = null,
   onExerciseSubTabChange = null,
