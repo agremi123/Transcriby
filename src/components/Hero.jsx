@@ -2764,6 +2764,8 @@ export function AudioDemoCard({
     setNarratorReaction(null);
     setReplyByUtterance({});
     setReplyLoadingUttId(null);
+    setCorrectionByUtterance({});
+    setOpenCorrectionUttId(null);
     setDefiComplete(false);
     setDefiBadge(null);
     setDefiUsedVocab([]);
