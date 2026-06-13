@@ -248,7 +248,7 @@ function PracticeExercise({ exercise, skillPct, onCorrect }) {
 // Write-your-own-sentence task: learner writes a sentence applying the rule /
 // tense, then the AI checks it. Correct → green tick; otherwise → correction.
 // Used by both the grammar and conjugation exercise sections.
-function ProductionExercise({ instruction }) {
+function ProductionExercise({ instruction, requireGrammar = '' }) {
   const [answer, setAnswer] = React.useState('');
   const [correction, setCorrection] = React.useState(null); // { original, corrected, translation }
   const [correcting, setCorrecting] = React.useState(false);
@@ -260,10 +260,11 @@ function ProductionExercise({ instruction }) {
     setCorrecting(true);
     try {
       // Standard register = fix only real grammar errors (keep the learner's
-      // words). A correct sentence comes back unchanged → green tick.
+      // words). requireGrammar also rewrites the sentence if it doesn't actually
+      // use the target grammar. A correct sentence that uses it → unchanged → tick.
       const r = await fetch('/api/correct', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, register: 'Standard' }),
+        body: JSON.stringify({ text, register: 'Standard', requireGrammar }),
       });
       const d = await r.json();
       setCorrection({ original: text, corrected: d.corrected?.trim() || text, translation: d.translation?.trim() || null });
