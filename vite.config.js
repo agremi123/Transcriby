@@ -8,6 +8,7 @@ import { createClient } from '@supabase/supabase-js';
 import { handleElevenLabsTts } from './server/handlers.js';
 import { resolveNarrator, saveNarratorAudio, narratorStoragePath } from './server/narrator-audio-cache.js';
 import { getSupabaseAdmin } from './server/supabase.js';
+import { getStoredWritingExample, saveWritingExample } from './server/writing-examples.js';
 import { sendHandlerResult } from './server/node-response.js';
 import { buildCorrectionSystemPrompts } from './server/correctionPrompts.js';
 import { sanitizeParisianCorrection, parseCorrectionResponse } from './src/lib/correctionFormat.js';
