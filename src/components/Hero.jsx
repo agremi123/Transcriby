@@ -3793,15 +3793,15 @@ export function AudioDemoCard({
                               <button
                                 type="button"
                                 onClick={() => playNarratorLine({ id: speakingNarratorId, text: defiCorr.corrected })}
-                                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-navy/10 hover:bg-navy/20 shrink-0 transition-colors mt-0.5"
+                                className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-wine/15 hover:bg-wine/25 shrink-0 transition-colors mt-0.5"
                                 aria-label="Écouter la correction"
                               >
                                 <svg width="7" height="9" viewBox="0 0 7 9" fill="none" aria-hidden>
-                                  <path d="M1 1l5 3.5L1 8V1z" fill="#1A2340" opacity="0.8"/>
+                                  <path d="M1 1l5 3.5L1 8V1z" fill="#8B1E2D" opacity="0.8"/>
                                 </svg>
                               </button>
                               <div className="flex flex-col gap-1 min-w-0">
-                                <p className="font-display text-[15px] italic text-navy/90 leading-snug">{defiCorr.corrected}</p>
+                                <p className="font-display text-[15px] italic text-wine/90 leading-snug">{defiCorr.corrected}</p>
                                 {defiCorr.translation && (
                                   <p className="text-[12px] text-navy/45 italic leading-snug">{defiCorr.translation}</p>
                                 )}
