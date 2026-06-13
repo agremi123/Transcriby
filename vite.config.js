@@ -896,8 +896,8 @@ function readingMiddleware(apiKey, openrouterKey) {
         }),
         claudeCall('reading/grammar', apiKey, {
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 1600,
-          system: `From the given French passage, identify ONE grammar structure a learner should study. Name the grammar point, quote an example sentence from the passage, explain it simply in English (1-2 sentences), give a short usage tip, AND write exactly 6 fill-in-the-blank practice exercises (one blank marked "___" per sentence; "hint" = infinitive/base form of the answer). Return ONLY raw JSON: {"grammar":{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}]}}`,
+          max_tokens: 1800,
+          system: `From the given French passage, identify ONE grammar structure a learner should study. Name the grammar point, quote an example sentence from the passage, explain it simply in English (1-2 sentences), give a short usage tip, write exactly 6 fill-in-the-blank practice exercises (one blank marked "___" per sentence; "hint" = infinitive/base form of the answer), AND a "production" task: an instruction (in French) telling the learner to write their own sentence using this grammar, plus a correct model sentence. Return ONLY raw JSON: {"grammar":{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}}`,
           messages: [{ role: 'user', content: passage }],
         }),
       ]);
