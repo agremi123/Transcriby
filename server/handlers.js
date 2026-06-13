@@ -1262,7 +1262,10 @@ export async function handleWord() {
               voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
             }),
           });
-          if (elRes.ok) await saveNarratorAudio(slug, voiceId, explanation, Buffer.from(await elRes.arrayBuffer()));
+          if (elRes.ok) {
+            const introUrl = await saveNarratorAudio(slug, voiceId, explanation, Buffer.from(await elRes.arrayBuffer()));
+            logNarratorLine(slug, explanation, introUrl);
+          }
         }
       } catch {}
     }
