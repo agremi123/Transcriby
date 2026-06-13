@@ -6682,6 +6682,8 @@ export default function Hero() {
                 tips={writingTips}
                 wordTarget={writingWordTarget}
                 narratorId={writingNarrator}
+                usedTips={writingUsedTips}
+                badge={writingBadge}
               />
             )}
             {/* Always mounted so Reveal components don't re-animate on tab switch */}
