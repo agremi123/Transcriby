@@ -5688,10 +5688,11 @@ function WritingReviewThread({ review, frozen = false, question, onQuestionChang
   // Reset the toggle only when a brand-new sentence loads — NOT when its
   // correction arrives (that would snap the panel shut right after opening).
   React.useEffect(() => { setCorrectionOpen(frozen && !!corrected); }, [original]); // eslint-disable-line react-hooks/exhaustive-deps
-  // Scroll ONLY the thread container — scrollIntoView would also scroll the
-  // page itself, yanking the viewport away from the speech box.
+  // Scroll the actual scroll container (the outer .scroll-premium), not the
+  // thread's own non-scrolling root div — otherwise a new reaction renders
+  // below the fold and the learner hears the audio but never sees the text.
   React.useEffect(() => {
-    const scroller = endRef.current?.parentElement;
+    const scroller = endRef.current?.closest('.overflow-y-auto');
     if (scroller) scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
   }, [stage]);
   const reached = (s) => {
