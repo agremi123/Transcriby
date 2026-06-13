@@ -1659,15 +1659,25 @@ function writingReviewMiddleware(apiKey) {
       }
       if (step === 'example') {
         const { prompt = '', tips = {}, wordTarget = 80 } = body;
-        const tipList = ['vocab', 'expressions', 'grammar', 'conjugation', 'connecteurs']
-          .map(k => (tips?.[k]?.length ? `${k}: ${tips[k].join(', ')}` : null)).filter(Boolean).join(' | ');
+        const tipParts = [];
+        if (tips?.vocab?.length) tipParts.push(`le vocabulaire : ${tips.vocab.join(', ')}`);
+        if (tips?.expressions?.length) tipParts.push(`les expressions : ${tips.expressions.join(', ')}`);
+        if (tips?.grammar?.length) tipParts.push(`la grammaire : ${tips.grammar.join(', ')}`);
+        if (tips?.conjugation?.length) tipParts.push(`les temps : ${tips.conjugation.join(', ')}`);
+        if (tips?.connecteurs?.length) tipParts.push(`les connecteurs : ${tips.connecteurs.join(', ')}`);
+        const tipBlock = tipParts.length ? `Tu DOIS intégrer naturellement TOUS ces éléments des conseils :\n- ${tipParts.join('\n- ')}\n` : '';
         const d = await claudeCall('writing-review/example', apiKey, {
-          model: 'claude-haiku-4-5-20251001', max_tokens: 400,
-          system: `Tu es ${name}, ${gender}. Écris une réponse modèle de qualité en français parisien naturel pour ce défi d'écriture.\nDéfi : "${prompt}"\nObjectif : ~${wordTarget} mots (niveau ${level})\n${tipList ? `Intègre naturellement ces éléments : ${tipList}\n` : ''}Écris directement la réponse, sans titre, sans introduction, sans commentaire. Texte brut, pas de markdown. N'utilise jamais d'astérisques.\nJSON: {"example":"..."}`,
-          messages: [{ role: 'user', content: 'Génère la réponse modèle.' }],
+          model: 'claude-haiku-4-5-20251001', max_tokens: 700,
+          // Plain-text response — the example is free prose with apostrophes,
+          // quotes and line breaks that routinely break JSON parsing.
+          system: `Tu es ${name}, ${gender}. Écris une réponse modèle exemplaire en français parisien naturel pour ce défi d'écriture, niveau ${level}.\nDéfi : "${prompt}"\nLongueur : vise environ ${wordTarget} mots (reste proche de ce nombre).\n${tipBlock}Écris UNIQUEMENT la réponse modèle elle-même : pas de titre, pas d'introduction, pas de commentaire, pas de guillemets autour, pas de markdown, jamais d'astérisques.`,
+          messages: [{ role: 'user', content: 'Écris la réponse modèle maintenant.' }],
         });
-        const parsed = parseJson(d);
-        res.end(JSON.stringify({ example: parsed.example || '' }));
+        let example = (d.content?.[0]?.text || '').trim()
+          .replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/, '')
+          .replace(/^\s*["«»]\s*/, '').replace(/\s*["«»]\s*$/, '')
+          .trim();
+        res.end(JSON.stringify({ example }));
         return;
       }
 
