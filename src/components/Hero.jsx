@@ -1025,6 +1025,9 @@ export function AudioDemoCard({
   const [writeSubmittedText, setWriteSubmittedText] = React.useState(null);
   // Guided writing review flow: idle → judging → judged → correcting → corrected → explaining → explained
   const [writeReview, setWriteReview] = React.useState({ stage: 'idle' });
+  // Past exchanges in the current challenge — kept on screen so writing more
+  // below doesn't erase the previous conversation.
+  const [writeReviewHistory, setWriteReviewHistory] = React.useState([]);
   const [writeReviewQuestion, setWriteReviewQuestion] = React.useState('');
   const [writeReviewExample, setWriteReviewExample] = React.useState(null);
   const [writeReviewExampleLoading, setWriteReviewExampleLoading] = React.useState(false);
