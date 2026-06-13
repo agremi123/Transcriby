@@ -6397,6 +6397,7 @@ export default function Hero() {
       loadedWritingTopicRef.current = practiceTopic;
       setWritingActive(true);
       setWritingLoading(true);
+      resetWritingProgress();
       setWritingNarrator(Math.random() < 0.5 ? 'lea' : 'jules');
       fetch('/api/writing-prompt', {
         method: 'POST',
