@@ -1660,6 +1660,9 @@ function writingReviewMiddleware(apiKey) {
       }
       if (step === 'example') {
         const { prompt = '', tips = {}, wordTarget = 80 } = body;
+        // Reuse a stored example for this exact prompt + conseils if we have one.
+        const stored = await getStoredWritingExample(prompt);
+        if (stored) { res.end(JSON.stringify({ example: stored })); return; }
         const tipParts = [];
         if (tips?.vocab?.length) tipParts.push(`le vocabulaire : ${tips.vocab.join(', ')}`);
         if (tips?.expressions?.length) tipParts.push(`les expressions : ${tips.expressions.join(', ')}`);
