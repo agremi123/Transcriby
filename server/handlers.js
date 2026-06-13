@@ -1122,8 +1122,9 @@ export async function handleWritingReview(body) {
 // défi. The Parisian keeps the conversation going and nudges the learner to use
 // the défi's target grammar + vocab, and reports when they've used them all.
 function buildSpeakingReactionSystem({ name, gender, topic, openingLine, grammarPoint, grammarHint, vocabWords, allTurns, hasTargets }) {
+  const correctionRule = `Évalue aussi la correction du DERNIER tour de l'étudiant (français naturel et correct ?). Ignore la ponctuation, les majuscules et le bruit de transcription orale. S'il y a la moindre faute (grammaire, conjugaison, accord, mot mal employé, ordre des mots), mets sentenceCorrect=false et donne dans correction la phrase corrigée en français naturel + sa traduction anglaise. Sinon sentenceCorrect=true et correction=null.`;
   if (!hasTargets) {
-    return `Tu es ${name}, ${gender} natif(ve) qui aide un étudiant à pratiquer le français oral.\nLe sujet de conversation: "${topic || 'conversation libre'}"\nTu as lancé la conversation en disant: "${openingLine}"\nL'étudiant vient de parler. Réponds naturellement en 1-2 phrases courtes en français.\nSois curieux(se), encourageant(e), et rebondis sur ce qu'il a dit.\nJSON: {"text":"...","translation":"...","usedGrammar":true,"usedVocab":[],"complete":false}`;
+    return `Tu es ${name}, ${gender} natif(ve) qui aide un étudiant à pratiquer le français oral.\nLe sujet de conversation: "${topic || 'conversation libre'}"\nTu as lancé la conversation en disant: "${openingLine}"\nL'étudiant vient de parler. Réponds naturellement en 1-2 phrases courtes en français.\nSois curieux(se), encourageant(e), et rebondis sur ce qu'il a dit.\n${correctionRule}\nJSON: {"text":"...","translation":"...","usedGrammar":true,"usedVocab":[],"complete":false,"sentenceCorrect":bool,"correction":{"corrected":"...","translation":"..."}|null}`;
   }
   return `Tu es ${name}, ${gender} natif(ve) qui fait pratiquer le français oral à un étudiant dans une conversation guidée.
 Sujet : "${topic || 'conversation libre'}". Tu as lancé la conversation par : "${openingLine}".
@@ -1136,11 +1137,12 @@ Analyse l'ENSEMBLE de ses tours :
 - usedGrammar : a-t-il employé la structure grammaticale cible au moins une fois ? (true/false${grammarPoint ? '' : ' — pas de grammaire imposée, donc true'})
 - usedVocab : la liste exacte des mots cibles déjà employés (même sous une forme fléchie).
 - complete : true UNIQUEMENT si usedGrammar est true ET que TOUS les mots cibles ont été employés.
+${correctionRule}
 Puis réponds à son DERNIER tour en 1 à 2 phrases courtes, naturelles et chaleureuses, en rebondissant sur ce qu'il a dit.
 - Si complete est false : termine par une relance (question ou mini-défi) qui l'amène naturellement à employer les éléments cibles qui MANQUENT encore — cite les mots manquants entre « ».
 - Si complete est true : félicite-le brièvement et conclus la conversation de façon naturelle.
 N'utilise JAMAIS de markdown ni d'astérisques. Réponds uniquement en JSON :
-{"text":"...","translation":"...","usedGrammar":bool,"usedVocab":["..."],"complete":bool}`;
+{"text":"...","translation":"...","usedGrammar":bool,"usedVocab":["..."],"complete":bool,"sentenceCorrect":bool,"correction":{"corrected":"...","translation":"..."}|null}`;
 }
 
 export async function handleSpeakingReaction(body) {
