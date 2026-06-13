@@ -1,5 +1,323 @@
 [
   {
+    "id": 1781342316711,
+    "topic": "Le sport en France",
+    "title": "Coupe du Monde 2026 et paris sportifs : le gouvernement accusé de bloquer une campagne de prévention",
+    "passage": "A la veille du Mondial de football, un collectif s'inquiète de voir une campagne de prévention sur l'addiction aux paris sportifs déprogrammée. Evènement festif planétaire, la Coupe du monde de foot, qui démarre jeudi 10 juin en Amérique du Nord, est une période à hauts risques d'addiction aux paris sportifs pour les jeunes et les joueurs excessifs, cibles du puissant marketing des opérateurs tels que Winamax ou Unibet, estiment des associations et experts.\n\nEn France, les parieurs au jeu excessif, caractérisé par une perte de contrôle – l'incapacité à s'arrêter de jouer ou à jouer moins malgré des conséquences négatives, financières, psychologiques, familiales ou sociales – sont évalués à 15 % des parieurs, soit trois fois plus que sur l'ensemble des jeux d'argent. Or ceux-ci « peuvent se retrouver particulièrement ciblés » par le marketing des opérateurs sportifs, qui dépenseront cette année 785 millions d'euros de publicité, pour moitié sur le digital, un « montant en hausse de 25 % » , a déclaré Isabelle Falque-Pierrotin, présidente du gendarme des jeux, l'Autorité nationale des jeux (ANJ), jeudi dernier au « Parisien » . La Coupe du monde de foot est une « période à risques » , avec une « promotion des paris de plus en plus efficace » mêlant influenceurs, publicités, conseillers en paris, bonus…, a-t-elle souligné. Et de souhaiter, comme au Royaume-Uni, une interdiction de la publicité « dans une période allant de cinq minutes avant à cinq minutes après » la fin d'un match pour protéger les mineurs.\n\nLe collectif « Santé publique en danger » s'est dit ce mercredi « consterné » de voir une campagne de prévention sur l'addiction aux paris sportifs « bloquée » par le gouvernement, la troisième d'affilée, selon ces agents de Santé publique France et ces syndicats, à ne pas être diffusée. « Le gouvernement joue avec la santé des Français » , estime ce collectif dans un communiqué : « Cette fois-ci, c'est la campagne de prévention sur les paris sportifs » de l'agence sanitaire « qui est bloquée en raison des décisions du Gouvernement » . « Après le blocage récent de la campagne de prévention sur les fortes chaleurs et l'absence de campagne de prévention du tabagisme lors de la journée mondiale sans tabac du 31 mai, c'est la campagne \"Parier, c'est pas rien\" qui ne sera pas rediffusée à l'occasion de la Coupe du Monde de football » , déplorent ces agents de SpF et l'intersyndicale.\n\nCette campagne qui « alerte sur les dangers des paris sportifs devait être diffusée dès mi-mai » en amont du Mondial, « avant que les opérateurs de jeux ne déploient leur arsenal publicitaire avec des moyens bien plus importants que ceux de la santé publique » , poursuivent-ils. Elle aurait « permis d'exposer plus efficacement les parieurs aux messages de prévention et de les orienter vers le dispositif d'aide à distance \"Joueurs info service\" » , détaillent-ils. Pour Myriam Savy, responsable du plaidoyer chez Addictions France, il faut interdire la publicité entre « une h",
+    "source": "L'Obs",
+    "author": "Service Actu",
+    "date": "Wed, 10 Jun 2026 18:03:02 +0200",
+    "link": "https://www.nouvelobs.com/sport/20260610.OBS115697/coupe-du-monde-2026-et-paris-sportifs-le-gouvernement-accuse-de-bloquer-une-campagne-de-prevention.html",
+    "questions": [
+      {
+        "question": "Quel est l'événement sportif mentionné comme période à hauts risques d'addiction aux paris ?",
+        "options": [
+          "Le championnat d'Europe de football",
+          "La Coupe du monde de football",
+          "La Ligue des champions",
+          "Le tournoi de Wimbledon"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states 'la Coupe du monde de foot, qui démarre jeudi 10 juin en Amérique du Nord, est une période à hauts risques d'addiction aux paris sportifs.' The other options are different sporting events not mentioned in the passage."
+      },
+      {
+        "question": "Quel pourcentage de parieurs en France sont caractérisés par un jeu excessif ?",
+        "options": [
+          "5 %",
+          "10 %",
+          "15 %",
+          "20 %"
+        ],
+        "answer": "C",
+        "explanation": "The text states 'En France, les parieurs au jeu excessif...sont évalués à 15 % des parieurs.' The other percentages are not mentioned in the passage."
+      },
+      {
+        "question": "Combien d'euros les opérateurs sportifs dépenseront-ils en publicité cette année ?",
+        "options": [
+          "500 millions d'euros",
+          "625 millions d'euros",
+          "785 millions d'euros",
+          "900 millions d'euros"
+        ],
+        "answer": "C",
+        "explanation": "Isabelle Falque-Pierrotin, president of the ANJ, stated that operators will spend '785 millions d'euros de publicité' this year. The other amounts are not mentioned in the text."
+      },
+      {
+        "question": "Quel est le nom de la campagne de prévention bloquée par le gouvernement ?",
+        "options": [
+          "\"Jouer responsable\"",
+          "\"Parier, c'est pas rien\"",
+          "\"Stop aux paris\"",
+          "\"Prudence jeux d'argent\""
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly mentions the campaign name: 'c'est la campagne \"Parier, c'est pas rien\" qui ne sera pas rediffusée.' The other campaign names are fictional and not mentioned in the passage."
+      },
+      {
+        "question": "Selon Isabelle Falque-Pierrotin, quelle augmentation en pourcentage de publicité a-t-on observée ?",
+        "options": [
+          "10 %",
+          "15 %",
+          "25 %",
+          "30 %"
+        ],
+        "answer": "C",
+        "explanation": "The text states that Falque-Pierrotin declared a 'montant en hausse de 25 %' regarding advertising spending. The other percentages are not mentioned as the rate of increase."
+      },
+      {
+        "question": "Quel collectif s'est exprimé sur le blocage de la campagne de prévention ?",
+        "options": [
+          "\"Addiction et famille\"",
+          "\"Santé publique en danger\"",
+          "\"Protection des mineurs\"",
+          "\"France sans jeux\""
+        ],
+        "answer": "B",
+        "explanation": "The text clearly states 'Le collectif \"Santé publique en danger\" s'est dit ce mercredi \"consterné\".' The other collective names are not mentioned in the passage."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "déprogrammée",
+        "definition": "cancelled or removed from schedule",
+        "sentence": "La campagne de prévention a été ___ par le gouvernement avant le Mondial."
+      },
+      {
+        "word": "excessifs",
+        "definition": "excessive or immoderate",
+        "sentence": "Les joueurs ___ sont particulièrement vulnérables aux campagnes marketing des opérateurs."
+      },
+      {
+        "word": "consterné",
+        "definition": "dismayed or deeply shocked",
+        "sentence": "Le collectif s'est dit ___ de voir cette décision du gouvernement."
+      },
+      {
+        "word": "arsenal",
+        "definition": "a collection or array of weapons or tools",
+        "sentence": "Les opérateurs déploient leur ___ publicitaire avec des moyens importants."
+      },
+      {
+        "word": "plaidoyer",
+        "definition": "advocacy or plea",
+        "sentence": "En tant que responsable du ___, Myriam Savy demande une interdiction stricte."
+      }
+    ],
+    "createdAt": "2026-06-13T09:18:36.711Z"
+  },
+  {
+    "id": 1781342104076,
+    "topic": "Le cinéma français",
+    "title": "« La Reine Margot » avec Isabelle Adjani : sous les dentelles, l’enfer",
+    "passage": "« La Reine Margot » est autant un récit d'aventures fiévreux, qui ne lâche jamais le spectateur, qu'une évocation terriblement actuelle des guerres de Religion. Suivant le mariage de Marguerite de Valois et d'Henri de Navarre, qualifié de « noces vermeilles », la Saint-Barthélemy trouve une représentation effroyablement réaliste. Les cadavres de protestants jonchent par milliers les rues de Paris avant d'être déversés dans des charniers.\n\nLe chef opérateur Philippe Rousselot peint, avec les couleurs de Goya et de Géricault, ces amoncellements de corps qui préfigurent les crimes de masse des Etats totalitaires. Cette nature vampirique d'un pouvoir égorgeant son propre peuple trouve son allégorie lorsque Charles IX, empoisonné, exsude du sang par tous les pores. Chéreau représente un monde corrompu et dominé par la mort, faisant basculer le film du côté du cinéma d'horreur. Pas plus que Dumas, Chéreau n'a cure de l'exactitude historique. Ainsi, on ne trouvera pas les fameuses « fraises » d'Henri III ni ses « mignons ». Le cinéaste fait de ses jeunes nobles des versions XVIe siècle de Mick Jagger et Jim Morrison, cheveux longs et chemises blanches lacérées. Couverts de sang et de boue, plein de panache, décadents ou cruels, Pascal Greggory, Jean-Hugues Anglade et Vincent Perez sont irrésistibles de beauté vénéneuse.\n\nMême Daniel Auteuil, en Henri de Navarre, est mis au diapason de cette vision très sensuelle de la cour de France. Au milieu de ces figures maléfiques trône Marguerite, dont la peau d'albâtre est elle aussi maculée du sang de ses frères et de ses amants. Qui d'autre pour l'incarner qu'Isabelle Adjani, la reine écarlate du cinéma français ? Après « l'Histoire d'Adèle H. », « Nosferatu » et « Possession », elle s'inscrit dans une lignée de personnages tourmentés par l'amour et les créatures démoniaques. Pourtant, c'est l'époque qui est chaotique, et Marguerite apparaît surtout comme courageuse et maîtresse de ses désirs. Alors que les hommes s'entretuent pour le pouvoir, Adjani et Chéreau composent le portrait d'une femme libre.",
+    "source": "L'Obs",
+    "author": "Stéphane du Mesnildot",
+    "date": "Thu, 11 Jun 2026 18:00:02 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260611.OBS115724/la-reine-margot-avec-isabelle-adjani-sous-les-dentelles-l-enfer.html",
+    "questions": [
+      {
+        "question": "Quel événement historique est représenté de manière « effroyablement réaliste » dans le film « La Reine Margot » ?",
+        "options": [
+          "Le couronnement de Charles IX",
+          "La Saint-Barthélemy",
+          "Le mariage secret d'Henri III",
+          "La révolte des protestants parisiens"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states 'la Saint-Barthélemy trouve une représentation effroyablement réaliste' in the context of the Protestant massacre. The other options are not mentioned as the main historical event depicted in the film."
+      },
+      {
+        "question": "Comment le chef opérateur Philippe Rousselot peint-il les scènes de carnage ?",
+        "options": [
+          "Avec les couleurs de Rembrandt et de Delacroix",
+          "Avec un style minimaliste et épuré",
+          "Avec les couleurs de Goya et de Géricault",
+          "Avec des tons pastels et doux"
+        ],
+        "answer": "C",
+        "explanation": "The text directly states 'Philippe Rousselot peint, avec les couleurs de Goya et de Géricault, ces amoncellements de corps.' The other painters and artistic styles are not mentioned in the passage."
+      },
+      {
+        "question": "Que refuse de faire le cinéaste Patrice Chéreau, tout comme Dumas ?",
+        "options": [
+          "De montrer la violence religieuse",
+          "De respecter l'exactitude historique",
+          "De développer les personnages féminins",
+          "De créer des scènes spectaculaires"
+        ],
+        "answer": "B",
+        "explanation": "The text states 'Pas plus que Dumas, Chéreau n'a cure de l'exactitude historique.' This means the filmmaker does not care about historical accuracy, unlike the other incorrect options which are not mentioned in the passage."
+      },
+      {
+        "question": "Quels accessoires et éléments du costume sont volontairement absents du film ?",
+        "options": [
+          "Les robes richement brodées des dames",
+          "Les armes et les épées",
+          "Les fameuses « fraises » d'Henri III et ses « mignons »",
+          "Les bijoux et les couronnes"
+        ],
+        "answer": "C",
+        "explanation": "The text explicitly states 'on ne trouvera pas les fameuses « fraises » d'Henri III ni ses « mignons ».' This is the only specific historical detail mentioned as being deliberately omitted from the film."
+      },
+      {
+        "question": "Quel personnage subit une transformation physique symbolique qui représente la corruption du pouvoir ?",
+        "options": [
+          "Marguerite de Valois",
+          "Henri de Navarre",
+          "Charles IX",
+          "Isabelle Adjani"
+        ],
+        "answer": "C",
+        "explanation": "The text states 'Charles IX, empoisonné, exsude du sang par tous les pores,' which symbolizes the vampiric nature of power consuming its own people. The other options are not described as undergoing this symbolic physical transformation."
+      },
+      {
+        "question": "Comment le texte caractérise-t-il finalement le personnage de Marguerite tel que le composent Adjani et Chéreau ?",
+        "options": [
+          "Une femme manipulée par les événements politiques",
+          "Une reine écarlate souffrant constamment",
+          "Une femme libre, courageuse et maîtresse de ses désirs",
+          "Une victime passive des hommes au pouvoir"
+        ],
+        "answer": "C",
+        "explanation": "The passage concludes that 'Adjani et Chéreau composent le portrait d'une femme libre,' and describes her as 'courageuse et maîtresse de ses désirs.' The other options misrepresent her character as presented in the film."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "fiévreux",
+        "definition": "feverish, hectic, intense with excitement or urgency",
+        "sentence": "Ce roman d'aventures ___ captive le lecteur du début à la fin."
+      },
+      {
+        "word": "jonchent",
+        "definition": "are scattered or strewn about",
+        "sentence": "Les feuilles mortes ___ le sol de la forêt en automne."
+      },
+      {
+        "word": "exsude",
+        "definition": "oozes or seeps out",
+        "sentence": "La plaie ___ du pus et du sang."
+      },
+      {
+        "word": "vénéneuse",
+        "definition": "poisonous, venomous, toxic",
+        "sentence": "Cette plante ___ ne doit jamais être touchée sans protection."
+      },
+      {
+        "word": "maculée",
+        "definition": "stained or tainted",
+        "sentence": "Sa réputation était ___ par ce scandale."
+      }
+    ],
+    "createdAt": "2026-06-13T09:15:04.076Z"
+  },
+  {
+    "id": 1781341490336,
+    "topic": "Le cinéma français",
+    "title": "« La Reine Margot » avec Isabelle Adjani : sous les dentelles, l’enfer",
+    "passage": "« La Reine Margot » est autant un récit d'aventures fiévreux, qui ne lâche jamais le spectateur, qu'une évocation terriblement actuelle des guerres de Religion. Suivant le mariage de Marguerite de Valois et d'Henri de Navarre, qualifié de « noces vermeilles », la Saint-Barthélemy trouve une représentation effroyablement réaliste.\n\nLes cadavres de protestants jonchent par milliers les rues de Paris avant d'être déversés dans des charniers. Le chef opérateur Philippe Rousselot peint, avec les couleurs de Goya et de Géricault, ces amoncellements de corps qui préfigurent les crimes de masse des Etats totalitaires. Cette nature vampirique d'un pouvoir égorgeant son propre peuple trouve son allégorie lorsque Charles IX, empoisonné, exsude du sang par tous les pores. Chéreau représente un monde corrompu et dominé par la mort, faisant basculer le film du côté du cinéma d'horreur. Pas plus que Dumas, Chéreau n'a cure de l'exactitude historique. Ainsi, on ne trouvera pas les fameuses « fraises » d'Henri III ni ses « mignons ». Le cinéaste fait de ses jeunes nobles des versions XVIe siècle de Mick Jagger et Jim Morrison, cheveux longs et chemises blanches lacérées. Couverts de sang et de boue, plein de panache, décadents ou cruels, Pascal Greggory, Jean-Hugues Anglade et Vincent Perez sont irrésistibles de beauté vénéneuse. Même Daniel Auteuil, en Henri de Navarre, est mis au diapason de cette vision très sensuelle de la cour de France.\n\nAu milieu de ces figures maléfiques trône Marguerite, dont la peau d'albâtre est elle aussi maculée du sang de ses frères et de ses amants. Qui d'autre pour l'incarner qu'Isabelle Adjani, la reine écarlate du cinéma français ? Après « l'Histoire d'Adèle H. », « Nosferatu » et « Possession », elle s'inscrit dans une lignée de personnages tourmentés par l'amour et les créatures démoniaques. Pourtant, c'est l'époque qui est chaotique, et Marguerite apparaît surtout comme courageuse et maîtresse de ses désirs. Alors que les hommes s'entretuent pour le pouvoir, Adjani et Chéreau composent le portrait d'une femme libre.",
+    "source": "L'Obs",
+    "author": "Stéphane du Mesnildot",
+    "date": "Thu, 11 Jun 2026 18:00:02 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260611.OBS115724/la-reine-margot-avec-isabelle-adjani-sous-les-dentelles-l-enfer.html",
+    "questions": [
+      {
+        "question": "Quel événement historique est au cœur du film « La Reine Margot » ?",
+        "options": [
+          "Le mariage de Marguerite de Valois et d'Henri de Navarre suivi de la Saint-Barthélemy",
+          "L'empoisonnement de Charles IX par ses courtisans",
+          "La révolte des protestants contre la couronne française",
+          "L'abdication d'Henri III et l'arrivée au pouvoir d'Henri IV"
+        ],
+        "answer": "A",
+        "explanation": "The passage explicitly states that the film follows 'the marriage of Marguerite de Valois and Henri of Navarre' and that 'Saint-Barthélemy finds a horrifyingly realistic representation'; the other options are either secondary details or not mentioned in the text."
+      },
+      {
+        "question": "Selon le texte, à quels peintres le chef opérateur Philippe Rousselot rend-il hommage dans sa vision de la Saint-Barthélemy ?",
+        "options": [
+          "Delacroix et Courbet",
+          "Goya et Géricault",
+          "Rembrandt et Caravage",
+          "Picasso et Matisse"
+        ],
+        "answer": "B",
+        "explanation": "The passage specifically states that Philippe Rousselot 'paints, with the colors of Goya and Géricault, these heaps of bodies'; the other painters are not mentioned in the text."
+      },
+      {
+        "question": "Pourquoi le cinéaste Chéreau ne reproduit-il pas l'exactitude historique ?",
+        "options": [
+          "Parce qu'il manquait de documentation historique",
+          "Parce qu'il voulait faire une comédie légère",
+          "Le texte indique qu'il ne s'en préoccupe pas, tout comme Dumas",
+          "Parce que les acteurs refusaient les costumes historiques"
+        ],
+        "answer": "C",
+        "explanation": "The passage clearly states 'Pas plus que Dumas, Chéreau n'a cure de l'exactitude historique' (Neither Dumas nor Chéreau care about historical accuracy); this is presented as a deliberate choice by the filmmaker, not due to documentation issues or other constraints."
+      },
+      {
+        "question": "Quel style de coiffure et de vêtements Chéreau donne-t-il à ses jeunes nobles du XVIe siècle ?",
+        "options": [
+          "Des costumes rigoureusement historiques du Moyen Âge",
+          "Des vêtements modernes des années 1980",
+          "Des versions XVIe siècle de rockeurs avec cheveux longs et chemises lacérées",
+          "Des uniformes militaires rouges et or"
+        ],
+        "answer": "C",
+        "explanation": "The text explicitly states that Chéreau makes his young nobles into '16th century versions of Mick Jagger and Jim Morrison, long hair and tattered white shirts'; the other options don't match this description."
+      },
+      {
+        "question": "Quels films antérieurs sont mentionnés pour montrer la lignée de personnages incarnés par Isabelle Adjani ?",
+        "options": [
+          "« Camille Claudel », « Subway » et « La Reine Margot »",
+          "« L'Histoire d'Adèle H. », « Nosferatu » et « Possession »",
+          "« French Lieutenant's Woman », « Ishtar » et « La Reine Margot »",
+          "« Barocco », « Clara et les Choses » et « La Reine Margot »"
+        ],
+        "answer": "B",
+        "explanation": "The passage specifically mentions these three films—'L'Histoire d'Adèle H.', 'Nosferatu' and 'Possession'—as examples of Adjani playing tormented characters; the other options either contain incorrect film titles or incorrect attributions to her."
+      },
+      {
+        "question": "Quel contraste le texte établit-il entre Marguerite et les autres figures de la cour ?",
+        "options": [
+          "Marguerite est méchante tandis que les autres sont vertueux",
+          "Marguerite apparaît courageuse et libre tandis que les hommes s'entretuent pour le pouvoir",
+          "Marguerite est une victime passive tandis que les hommes sont des héros",
+          "Marguerite refuse le sang tandis que les autres en sont couverts"
+        ],
+        "answer": "B",
+        "explanation": "The passage states 'Alors que les hommes s'entretuent pour le pouvoir, Adjani et Chéreau composent le portrait d'une femme libre' (While the men kill each other for power, Adjani and Chéreau create the portrait of a free woman); the other options misrepresent or contradict what the text says about her character."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "fiévreux",
+        "definition": "feverish, frantic, intense",
+        "sentence": "Ce roman d'aventures ___ captive le lecteur du début à la fin."
+      },
+      {
+        "word": "joncher",
+        "definition": "to strew, to cover, to litter",
+        "sentence": "Les feuilles mortes ___ le sol de la forêt en automne."
+      },
+      {
+        "word": "amoncellements",
+        "definition": "heaps, piles, accumulations",
+        "sentence": "Les ___ de neige bloquaient les routes après la tempête."
+      },
+      {
+        "word": "vampirique",
+        "definition": "vampiric, parasitic, blood-draining",
+        "sentence": "Cette organisation a une nature ___ qui dévore les ressources de ses membres."
+      },
+      {
+        "word": "vénéneuse",
+        "definition": "poisonous, venomous, toxic",
+        "sentence": "La beauté ___ de cette actrice fascine et trouble le spectateur."
+      }
+    ],
+    "createdAt": "2026-06-13T09:04:50.336Z"
+  },
+  {
     "id": 1781335815732,
     "topic": "sport",
     "title": "Des centaines d’enfants déshabillés par l’IA ? Le double visage de Michel A., le photographe de Pauillac",
