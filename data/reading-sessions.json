@@ -1,5 +1,323 @@
 [
   {
+    "id": 1781371345486,
+    "topic": "French media news vocabulary B2",
+    "title": "« The Hack » : au cœur du scandale des écoutes téléphoniques au Royaume-Uni",
+    "passage": "S'il est un art dans lequel les créateurs de séries britanniques excellent, c'est bien dans celui de « briser le quatrième mur », procédé qui permet à un personnage de s'adresser directement aux téléspectateurs. Sans atteindre la virtuosité avec laquelle Phoebe Waller-Bridge l'employait dans « Fleabag », ce nouveau programme inspiré d'un véritable scandale ayant secoué l'Angleterre dans les années 2000 l'utilise à tour de bras. Et cette petite touche relève considérablement l'ensemble.\n\nOn découvre ainsi un certain Nick Davies, journaliste d'investigation free-lance pour « The Guardian », pas au mieux de sa forme après la publication d'un livre-enquête. Grâce à un informateur, il soulève un lièvre de premier ordre. Selon sa source, « News of the World », fleuron du groupe de presse créé par le magnat Rupert Murdoch, pratique des écoutes téléphoniques afin d'espionner des célébrités. C'est peu dire que ces révélations sont mal accueillies par les intéressés, la concurrence et la police.\n\nDavid Tennant, dans le rôle du journaliste obstiné, ainsi que le précieux Toby Jones, qui incarne son rédacteur en chef, en font juste assez pour nous tenir en haleine. Jack Thorne, le brillant scénariste de la série « Adolescence », n'hésite pas à montrer à quel point une certaine presse britannique est devenue un poison pour la vie publique. En 2011, l'affaire a abouti à 40 condamnations et à la disparition du tabloïd le plus juteux de l'empire Murdoch.",
+    "source": "L'Obs",
+    "author": "Arnaud Sagnard",
+    "date": "Fri, 12 Jun 2026 17:45:07 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260612.OBS115751/the-hack-au-c-ur-du-scandale-des-ecoutes-telephoniques-au-royaume-uni.html",
+    "questions": [
+      {
+        "question": "Quel procédé narratif les créateurs de séries britanniques utilisent-ils particulièrement bien selon le passage ?",
+        "options": [
+          "Le flash-back et la narration non-linéaire",
+          "Briser le quatrième mur pour s'adresser directement aux téléspectateurs",
+          "L'utilisation de voix off omnisciente",
+          "Les dialogues poétiques et symboliques"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly states that British TV creators excel in 'briser le quatrième mur' (breaking the fourth wall), a technique that allows characters to address viewers directly. The other options are not mentioned as particular strengths of British series creators in the text."
+      },
+      {
+        "question": "Quel est le journal qui aurait pratiqué des écoutes téléphoniques selon l'informateur de Nick Davies ?",
+        "options": [
+          "The Guardian",
+          "News of the World",
+          "The Daily Mail",
+          "The Telegraph"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly states that 'News of the World,' the flagship publication of Rupert Murdoch's press group, allegedly practiced telephone eavesdropping to spy on celebrities. The Guardian is where Nick Davies worked as a journalist, not the subject of the scandal."
+      },
+      {
+        "question": "Qui joue le rôle de Nick Davies, le journaliste d'investigation, dans cette série ?",
+        "options": [
+          "Toby Jones",
+          "Jack Thorne",
+          "David Tennant",
+          "Rupert Murdoch"
+        ],
+        "answer": "C",
+        "explanation": "The passage clearly states 'David Tennant, dans le rôle du journaliste obstiné' (David Tennant, in the role of the obstinate journalist). Toby Jones plays the editor-in-chief, Jack Thorne is the screenwriter, and Rupert Murdoch is a real person involved in the scandal."
+      },
+      {
+        "question": "En quelle année l'affaire des écoutes téléphoniques a-t-elle abouti à des condamnations ?",
+        "options": [
+          "2000",
+          "2005",
+          "2011",
+          "2015"
+        ],
+        "answer": "C",
+        "explanation": "The passage states 'En 2011, l'affaire a abouti à 40 condamnations' (In 2011, the case resulted in 40 convictions). This date is explicitly mentioned at the end of the passage as when the legal consequences were finalized."
+      },
+      {
+        "question": "Qui a créé la série « Adolescence » selon le passage ?",
+        "options": [
+          "Phoebe Waller-Bridge",
+          "Jack Thorne",
+          "David Tennant",
+          "Rupert Murdoch"
+        ],
+        "answer": "B",
+        "explanation": "The passage identifies Jack Thorne as 'le brillant scénariste de la série « Adolescence »' (the brilliant screenwriter of the series 'Adolescence'). The passage notes he is the screenwriter for the News of the World scandal series being discussed, and credits him with creating Adolescence."
+      },
+      {
+        "question": "Quel événement a précédé la découverte de Nick Davies à propos des écoutes téléphoniques ?",
+        "options": [
+          "La création du journal News of the World",
+          "La publication d'un livre-enquête de sa part",
+          "Son embauche à The Guardian",
+          "Le scandale médiatique de 2011"
+        ],
+        "answer": "B",
+        "explanation": "The passage states that Nick Davies was 'pas au mieux de sa forme après la publication d'un livre-enquête' (not in great shape after the publication of an investigative book) before he discovered the phone-hacking scandal through an informant. This book publication is the event that preceded his investigation."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "briser le quatrième mur",
+        "definition": "to break the fourth wall (a theatrical device where a character addresses the audience directly)",
+        "sentence": "Les acteurs de cette pièce ___ plusieurs fois pendant la représentation."
+      },
+      {
+        "word": "virtuosité",
+        "definition": "mastery, skill, or technical excellence",
+        "sentence": "Le pianiste a joué avec une ___ remarquable qui a impressionné tout le public."
+      },
+      {
+        "word": "soulever un lièvre",
+        "definition": "to uncover or raise a significant issue (literally: to start a hare)",
+        "sentence": "Le rapport d'audit a ___ de premier ordre concernant la gestion des fonds."
+      },
+      {
+        "word": "mal accueillies",
+        "definition": "poorly received, not well-received",
+        "sentence": "Ses propositions ont été ___ par la direction de l'entreprise."
+      },
+      {
+        "word": "juteux",
+        "definition": "lucrative, profitable (literally: juicy)",
+        "sentence": "Ce contrat représente une opportunité commerciale très ___ pour notre entreprise."
+      }
+    ],
+    "createdAt": "2026-06-13T17:22:25.486Z"
+  },
+  {
+    "id": 1781371127120,
+    "topic": "French travel transport Paris vocabulary",
+    "title": "Insaisissable JR : mais qui est vraiment l’homme qui se cache derrière un chapeau et des lunettes ?",
+    "passage": "Alors que l'ouverture de sa « Caverne » sur le Pont-Neuf à Paris – prévue le 6 juin mais reportée le temps de procéder à des réparations – attise les curiosités, le maître du trompe‑l'œil et des tirages XXL entretient le mystère sur son identité et son parcours.\n\nAu pied du Pont-Neuf, JR assure l'autopromotion de sa nouvelle performance visuelle : « Combien de fois dans une vie peut-on voir un pont de Paris s'effacer du paysage ? » Au cœur de la nuit, l'illusionniste de 43 ans s'apprête à soulever une montagne sur la plus vieille passerelle de la capitale. Cette « Caverne », installation gonflable immersive de 120 mètres de long et jusqu'à 18 mètres de haut, se présente comme un hommage à l'emballage du Pont-Neuf par Christo et Jeanne-Claude en 1985 (endommagé le 2 juin par des intempéries, le dispositif ne sera pas inauguré le 6 juin. La date d'ouverture au public n'a pas encore été communiquée.)\n\nConnu pour ses tirages noir et blanc XXL, déployés de la cité des Bosquets de Montfermeil (Seine-Saint-Denis) à la favela Morro da Providência de Rio de Janeiro, JR tisse sa toile depuis plus de vingt ans. L' « artiviste » , comme il aime se définir, attire dans ses filets foules anonymes et VIP.",
+    "source": "L'Obs",
+    "author": "Julien Bordier",
+    "date": "Sun, 07 Jun 2026 17:03:41 +0200",
+    "link": "https://www.nouvelobs.com/culture/20260607.OBS115589/insaisissable-jr-mais-qui-est-vraiment-l-homme-qui-se-cache-derriere-un-chapeau-et-des-lunettes.html",
+    "questions": [
+      {
+        "question": "Quelle était la date initialement prévue pour l'ouverture de la « Caverne » sur le Pont-Neuf ?",
+        "options": [
+          "Le 2 juin",
+          "Le 6 juin",
+          "Le 18 juin",
+          "Le 20 juin"
+        ],
+        "answer": "Le 6 juin",
+        "explanation": "The text explicitly states 'prévue le 6 juin mais reportée le temps de procéder à des réparations' (planned for June 6 but postponed). The other dates are either when it was damaged (June 2) or not mentioned in the passage."
+      },
+      {
+        "question": "Quel est l'âge de JR mentionné dans le texte ?",
+        "options": [
+          "40 ans",
+          "42 ans",
+          "43 ans",
+          "45 ans"
+        ],
+        "answer": "43 ans",
+        "explanation": "The passage explicitly refers to 'l'illusionniste de 43 ans' (the 43-year-old illusionist). The other ages are not mentioned anywhere in the text."
+      },
+      {
+        "question": "Quelle est la longueur approximative de l'installation « Caverne » ?",
+        "options": [
+          "80 mètres",
+          "100 mètres",
+          "120 mètres",
+          "140 mètres"
+        ],
+        "answer": "120 mètres",
+        "explanation": "The text states that the installation is 'une installation gonflable immersive de 120 mètres de long' (an immersive inflatable installation 120 meters long). The other measurements are not mentioned in the passage."
+      },
+      {
+        "question": "À quel événement artistique antérieur la « Caverne » rend-elle hommage ?",
+        "options": [
+          "À l'emballage du Louvre par Christo en 1995",
+          "À l'emballage du Pont-Neuf par Christo et Jeanne-Claude en 1985",
+          "À une exposition de JR en 2000",
+          "À la décoration de la Tour Eiffel par des artistes"
+        ],
+        "answer": "À l'emballage du Pont-Neuf par Christo et Jeanne-Claude en 1985",
+        "explanation": "The passage explicitly states that the 'Caverne' 'se présente comme un hommage à l'emballage du Pont-Neuf par Christo et Jeanne-Claude en 1985' (presents itself as a tribute to the wrapping of the Pont-Neuf by Christo and Jeanne-Claude in 1985). All other options contain incorrect details about artists, locations, or dates."
+      },
+      {
+        "question": "Depuis combien de temps JR développe-t-il son art ?",
+        "options": [
+          "Depuis dix ans",
+          "Depuis quinze ans",
+          "Depuis plus de vingt ans",
+          "Depuis trente ans"
+        ],
+        "answer": "Depuis plus de vingt ans",
+        "explanation": "The text states that JR 'tisse sa toile depuis plus de vingt ans' (has been weaving his art for more than twenty years). The other timeframes are not supported by the passage."
+      },
+      {
+        "question": "Comment JR aime-t-il se définir lui-même ?",
+        "options": [
+          "Comme un illusionniste",
+          "Comme un emballeur",
+          "Comme un 'artiviste'",
+          "Comme un photographe"
+        ],
+        "answer": "Comme un 'artiviste'",
+        "explanation": "The passage directly states that JR, 'comme il aime se définir, attire dans ses filets' is an 'artiviste' (artist-activist). While he is indeed an illusionist, this is a descriptive term used by the author, not how JR chooses to define himself according to the text."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "attise",
+        "definition": "stokes, kindles, or arouses (interest, curiosity, etc.)",
+        "sentence": "Alors que l'ouverture de sa « Caverne » sur le Pont-Neuf à Paris ___ les curiosités, le maître du trompe‑l'œil entretient le mystère sur son identité."
+      },
+      {
+        "word": "trompe-l'œil",
+        "definition": "a visual illusion or deceptive art technique that deceives the eye",
+        "sentence": "Le maître du ___ et des tirages XXL est connu pour ses installations créatives."
+      },
+      {
+        "word": "passerelle",
+        "definition": "a footbridge or pedestrian bridge",
+        "sentence": "L'artiste s'apprête à soulever une montagne sur la plus vieille ___ de la capitale."
+      },
+      {
+        "word": "intempéries",
+        "definition": "inclement weather or bad weather conditions",
+        "sentence": "Le dispositif a été endommagé le 2 juin par des ___ et n'a pas pu être inauguré comme prévu."
+      },
+      {
+        "word": "artiviste",
+        "definition": "an artist-activist who uses art as a form of social or political activism",
+        "sentence": "JR, qui aime se définir comme ___, attire dans ses filets foules anonymes et VIP à travers le monde."
+      }
+    ],
+    "createdAt": "2026-06-13T17:18:47.120Z"
+  },
+  {
+    "id": 1781371050367,
+    "topic": "L'actualité culturelle",
+    "title": "Coupe du Monde aux Etats-Unis, la revanche du « sport des immigrés » : « C’est pour moi une question d’identité culturelle »",
+    "passage": "C'est plus fort que lui. Lorsqu'il se retrouve sur le bord du terrain, Fernando Cuneo hurle ses directives en espagnol. « Mateo, dale la pelota ! » (« Mateo, passe le ballon ! ») Au point que tous les enfants qu'il entraîne finissent par maîtriser les fondamentaux dans la langue de Lionel Messi. Car c'est pour lui, tout simplement, la langue du foot. Silhouette trapue en survêtement, Fernando vient d'Argentine. « Le pays où tu nais un ballon au pied , comme il dit. Enfant, je n'ai pas passé un seul jour sans jouer au foot dans la rue ou à l'école. Le reste, le football américain, le base- ball, le basket-ball, là-bas, ça n'existe pas. » Il fait partie de cette génération d'immigrés latinos qui ont emporté leur ballon dans leurs bagages pour venir façonner ce qu'est aujourd'hui le « soccer » aux Etats-Unis : le quatrième sport le plus populaire, des stades ultramodernes partout en construction, une ligue professionnelle active.\n\nAprès avoir été longtemps marginalisé aux Etats-Unis, le soccer s'impose avec cette Coupe du Monde de Football. Même Donald Trump, le président le plus anti-immigration depuis un siècle, s'y est converti. Pour Fernando et pour beaucoup d'autres comme lui, cette Coupe du Monde représente bien plus qu'une simple compétition sportive. C'est pour eux une question d'identité culturelle, une reconnaissance de la place que leur communauté a progressivement conquise dans le paysage américain.",
+    "source": "L'Obs",
+    "author": "Sarah Halifa-Legrand",
+    "date": "Fri, 12 Jun 2026 16:48:38 +0200",
+    "link": "https://www.nouvelobs.com/monde/20260611.OBS115706/coupe-du-monde-aux-etats-unis-la-revanche-du-sport-des-immigres-c-est-pour-moi-une-question-d-identite-culturelle.html",
+    "questions": [
+      {
+        "question": "Pourquoi Fernando crie-t-il ses directives en espagnol lorsqu'il entraîne les enfants ?",
+        "options": [
+          "Parce que c'est sa langue maternelle et c'est pour lui la langue du football",
+          "Parce que les enfants ne comprennent pas l'anglais",
+          "Parce qu'il veut punir les enfants en utilisant une langue étrangère",
+          "Parce que le football américain se joue en espagnol"
+        ],
+        "answer": "A",
+        "explanation": "The text states that for Fernando, Spanish is 'la langue du foot' (the language of football) because of his Argentine background and passion for the sport; the other options contradict the passage or make unfounded claims about punishment or language requirements."
+      },
+      {
+        "question": "D'où vient Fernando Cuneo ?",
+        "options": [
+          "Du Mexique",
+          "D'Argentine",
+          "De Colombie",
+          "D'Espagne"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly states 'Fernando vient d'Argentine' (Fernando comes from Argentina); all other options are incorrect countries."
+      },
+      {
+        "question": "Selon Fernando, quel est le sport dominant en Argentine ?",
+        "options": [
+          "Le football américain",
+          "Le base-ball",
+          "Le basket-ball",
+          "Le football"
+        ],
+        "answer": "D",
+        "explanation": "Fernando explains that in Argentina children are born with a ball at their feet and play football every day, while American football, baseball, and basketball don't exist there; this clearly indicates football is the dominant sport."
+      },
+      {
+        "question": "Quel est le classement du soccer parmi les sports populaires aux États-Unis aujourd'hui ?",
+        "options": [
+          "Le sport le plus populaire",
+          "Le deuxième sport le plus populaire",
+          "Le troisième sport le plus populaire",
+          "Le quatrième sport le plus populaire"
+        ],
+        "answer": "D",
+        "explanation": "The passage states that soccer is now 'le quatrième sport le plus populaire' (the fourth most popular sport); the other rankings are incorrect."
+      },
+      {
+        "question": "Pourquoi la Coupe du Monde de Football représente-t-elle plus qu'une simple compétition sportive pour Fernando ?",
+        "options": [
+          "Parce qu'elle lui permet de gagner de l'argent",
+          "Parce qu'elle représente une question d'identité culturelle et une reconnaissance de la place de sa communauté",
+          "Parce qu'elle est plus importante que le football américain",
+          "Parce qu'elle se joue en espagnol"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly explains that for Fernando the World Cup represents 'une question d'identité culturelle, une reconnaissance de la place que leur communauté a progressivement conquise' (a matter of cultural identity and recognition of his community's place); the other options are either not mentioned or incorrect."
+      },
+      {
+        "question": "Quel commentaire inattendu le texte mentionne-t-il au sujet du président Donald Trump ?",
+        "options": [
+          "Il s'oppose au soccer et à l'immigration",
+          "Il a créé une équipe de soccer",
+          "Il s'est converti au soccer malgré ses positions anti-immigration",
+          "Il préfère le football américain au soccer"
+        ],
+        "answer": "C",
+        "explanation": "The text states that 'Même Donald Trump, le président le plus anti-immigration depuis un siècle, s'y est converti' (Even Donald Trump, the most anti-immigration president in a century, converted to it), highlighting the unexpected nature of his support for soccer."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "trapue",
+        "definition": "short and stocky; thickset",
+        "sentence": "Fernando a une silhouette ___ en survêtement."
+      },
+      {
+        "word": "façonner",
+        "definition": "to shape; to form; to mold",
+        "sentence": "Les immigrés latinos ont emporté leur ballon pour venir ___ ce qu'est aujourd'hui le soccer aux États-Unis."
+      },
+      {
+        "word": "marginalisé",
+        "definition": "marginalized; pushed to the edges; excluded from mainstream",
+        "sentence": "Après avoir été longtemps ___ aux États-Unis, le soccer s'impose avec cette Coupe du Monde."
+      },
+      {
+        "word": "converti",
+        "definition": "converted; won over; changed one's stance",
+        "sentence": "Même Donald Trump s'y est ___ et soutient maintenant le soccer."
+      },
+      {
+        "word": "progressivement",
+        "definition": "progressively; gradually; step by step",
+        "sentence": "La communauté latino a ___ conquis sa place dans le paysage américain."
+      }
+    ],
+    "createdAt": "2026-06-13T17:17:30.367Z"
+  },
+  {
     "id": 1781370268900,
     "topic": "French media news vocabulary B2",
     "title": "« The Hack » : au cœur du scandale des écoutes téléphoniques au Royaume-Uni",
