@@ -1283,6 +1283,24 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
             CACHE_LOG.push({ ts: Date.now(), endpoint: 'listening', source: 'database', level, title: row.title, fields: { text: !!row.transcript, audio: !!row.audio_url, questions: (row.questions||[]).length, vocab: (row.vocab||[]).length, grammar: (row.grammar||[]).length } });
             if (CACHE_LOG.length > 1000) CACHE_LOG.shift();
             persistDevCosts();
+            // Backfill exercise types missing from older cached episodes so EVERY
+            // tab (grammaire + conjugaison especially) always has content.
+            let row_grammar = row.grammar || [];
+            let row_conjugation = row.conjugation || [];
+            const backfillTxt = (row.transcript || '').slice(0, 2000);
+            const backfills = [];
+            if (row_conjugation.length === 0 && backfillTxt) {
+              backfills.push(openrouterCall('listening/conjugation-backfill', openrouterKey, { max_tokens: 800, system: CONJUGATION_PROMPT, messages: [{ role: 'user', content: backfillTxt }] })
+                .then((d) => { try { row_conjugation = JSON.parse((d.content?.[0]?.text||'{}').replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'').trim()).conjugation || []; } catch {} }));
+            }
+            if (row_grammar.length === 0 && backfillTxt) {
+              backfills.push(openrouterCall('listening/grammar-backfill', openrouterKey, { max_tokens: 2200, system: LISTENING_GRAMMAR_PROMPT(level), messages: [{ role: 'user', content: backfillTxt }] })
+                .then((d) => { try { row_grammar = JSON.parse((d.content?.[0]?.text||'{}').replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'').trim()).grammar || []; } catch {} }));
+            }
+            if (backfills.length) {
+              await Promise.all(backfills);
+              if (supabase) supabase.from('listening_episodes').update({ grammar: row_grammar, conjugation: row_conjugation }).eq('id', row.id).then(() => {});
+            }
             res.end(JSON.stringify({
               title: row.title,
               audioUrl: clipAudioUrl,
@@ -1294,7 +1312,8 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
               contentLevel: row.content_level || row.level || 'B1',
               questions: row.questions || [],
               vocab: row.vocab || [],
-              grammar: row.grammar || [],
+              grammar: row_grammar,
+              conjugation: row_conjugation,
             }));
             // Background restock: keep LISTENING_TARGET episodes per level.
             // Self-call so the full generation pipeline runs without blocking.
