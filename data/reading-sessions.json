@@ -1,5 +1,429 @@
 [
   {
+    "id": 1781333317348,
+    "topic": "Le cinéma français",
+    "title": "« La Reine Margot » avec Isabelle Adjani : sous les dentelles, l’enfer",
+    "passage": "« La Reine Margot » est autant un récit d'aventures fiévreux, qui ne lâche jamais le spectateur, qu'une évocation terriblement actuelle des guerres de Religion. Suivant le mariage de Marguerite de Valois et d'Henri de Navarre, qualifié de « noces vermeilles », la Saint-Barthélemy trouve une représentation effroyablement réaliste. Les cadavres de protestants jonchent par milliers les rues de Paris avant d'être déversés dans des charniers.\n\nLe chef opérateur Philippe Rousselot peint, avec les couleurs de Goya et de Géricault, ces amoncellements de corps qui préfigurent les crimes de masse des États totalitaires. Cette nature vampirique d'un pouvoir égorgeant son propre peuple trouve son allégorie lorsque Charles IX, empoisonné, exsude du sang par tous les pores. Chéreau représente un monde corrompu et dominé par la mort, faisant basculer le film du côté du cinéma d'horreur. Pas plus que Dumas, Chéreau n'a cure de l'exactitude historique. Ainsi, on ne trouvera pas les fameuses « fraises » d'Henri III ni ses « mignons ». Le cinéaste fait de ses jeunes nobles des versions XVIe siècle de Mick Jagger et Jim Morrison, cheveux longs et chemises blanches lacérées. Couverts de sang et de boue, plein de panache, décadents ou cruels, Pascal Greggory, Jean-Hugues Anglade et Vincent Perez sont irrésistibles de beauté vénéneuse.\n\nAu milieu de ces figures maléfiques trône Marguerite, dont la peau d'albâtre est elle aussi maculée du sang de ses frères et de ses amants. Qui d'autre pour l'incarner qu'Isabelle Adjani, la reine écarlate du cinéma français ? Après « l'Histoire d'Adèle H. », « Nosferatu » et « Possession », elle s'inscrit dans une lignée de personnages tourmentés par l'amour et les créatures démoniaques. Pourtant, c'est l'époque qui est chaotique, et Marguerite apparaît surtout comme courageuse et maîtresse de ses désirs. Alors que les hommes s'entretuent pour le pouvoir, Adjani et Chéreau composent le portrait d'une femme libre.",
+    "source": "L'Obs",
+    "author": "Stéphane du Mesnildot",
+    "date": "Thu, 11 Jun 2026 18:00:02 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260611.OBS115724/la-reine-margot-avec-isabelle-adjani-sous-les-dentelles-l-enfer.html",
+    "questions": [
+      {
+        "question": "Quel événement historique majeur est représenté dans le film « La Reine Margot » ?",
+        "options": [
+          "Le mariage de Marguerite de Valois et d'Henri de Navarre suivi de la Saint-Barthélemy",
+          "L'épidémie de peste à Paris au XVIe siècle",
+          "La révolution française et la chute de la royauté",
+          "La guerre de Cent Ans entre la France et l'Angleterre"
+        ],
+        "answer": "A",
+        "explanation": "The passage explicitly states that the film follows 'the marriage of Marguerite de Valois and Henri of Navarre' and depicts the Saint-Barthélemy massacre; the other options are not mentioned or are historically incorrect for this film."
+      },
+      {
+        "question": "Quels peintres classiques ont inspiré le chef opérateur Philippe Rousselot pour sa direction artistique ?",
+        "options": [
+          "Monet et Renoir",
+          "Goya et Géricault",
+          "Picasso et Matisse",
+          "Delacroix et Courbet"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states that Philippe Rousselot 'paints with the colors of Goya and Géricault'; the other painters are not mentioned in connection with the film's visual style."
+      },
+      {
+        "question": "Pourquoi le cinéaste Chéreau ne reproduit-il pas l'exactitude historique du XVIe siècle ?",
+        "options": [
+          "Parce qu'il manquait de documents historiques fiables",
+          "Parce qu'il voulait transformer les jeunes nobles en figures ressemblant à des rockstars modernes comme Mick Jagger et Jim Morrison",
+          "Parce que c'était trop difficile de trouver des costumes historiques authentiques",
+          "Parce que le studio de production l'y a obligé pour attirer un public plus jeune"
+        ],
+        "answer": "B",
+        "explanation": "The passage states that Chéreau made young nobles 'versions of 16th century Mick Jagger and Jim Morrison, with long hair and tattered white shirts'; the other reasons are not supported by the text."
+      },
+      {
+        "question": "Quelle actrice incarne Marguerite de Valois dans ce film ?",
+        "options": [
+          "Marion Cotillard",
+          "Cécile de France",
+          "Isabelle Adjani",
+          "Audrey Tautou"
+        ],
+        "answer": "C",
+        "explanation": "The text explicitly identifies 'Isabelle Adjani' as the actress playing Marguerite, describing her as 'the scarlet queen of French cinema'; the other actresses are not mentioned."
+      },
+      {
+        "question": "Comment est caractérisée la personnalité de Marguerite dans ce film selon le texte ?",
+        "options": [
+          "Elle est faible et victime des hommes autour d'elle",
+          "Elle est courageuse et maîtresse de ses désirs, une femme libre",
+          "Elle est complètement folle et dominée par les créatures démoniaques",
+          "Elle est soumise aux ordres de ses frères et cherche avant tout le pouvoir"
+        ],
+        "answer": "B",
+        "explanation": "The passage states that 'Marguerite appears above all as courageous and mistress of her desires' and describes her as 'a free woman'; the other characterizations contradict what the text says about her."
+      },
+      {
+        "question": "Quel est l'effet cinématographique créé par la représentation du roi Charles IX ?",
+        "options": [
+          "Un personnage comique et ridicule",
+          "Un héros admirable et juste",
+          "Une allégorie du pouvoir corrompu qui exsude du sang, basculant le film vers le cinéma d'horreur",
+          "Un personnage dramatique mais moralement bon"
+        ],
+        "answer": "C",
+        "explanation": "The text explicitly states that Charles IX, poisoned, 'exudes blood from every pore' and represents 'a world corrupted and dominated by death,' making the film shift toward horror cinema; the other options mischaracterize the portrayal."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "fiévreux",
+        "definition": "feverish; marked by intense, anxious, or restless activity",
+        "sentence": "Le cinéma d'action moderne crée une atmosphère ___ qui maintient les spectateurs en haleine."
+      },
+      {
+        "word": "joncher",
+        "definition": "to strew; to scatter or cover (a place) with something",
+        "sentence": "Après la bataille, les feuilles mortes ___ le sol de la forêt."
+      },
+      {
+        "word": "vampirique",
+        "definition": "vampiric; relating to or resembling a vampire; parasitic or draining",
+        "sentence": "La nature ___ de cette créature la pousse à sucer l'énergie de ceux qui l'entourent."
+      },
+      {
+        "word": "maculé",
+        "definition": "stained; spotted or marked with dirt, blood, or other substances",
+        "sentence": "Ses vêtements blancs étaient ___ de boue après sa chute dans le jardin."
+      },
+      {
+        "word": "vénéneux",
+        "definition": "poisonous; venomous; containing or producing poison",
+        "sheet": "Les plantes ___ du jardin tropical doivent être manipulées avec extrême prudence."
+      }
+    ],
+    "createdAt": "2026-06-13T06:48:37.348Z"
+  },
+  {
+    "id": 1781332637113,
+    "topic": "L'environnement",
+    "title": "Edouard Philippe souhaite réviser la Charte de l’environnement : « La manœuvre est électoraliste de manière flagrante »",
+    "passage": "En campagne, auprès des agriculteurs. Mercredi 3 juin, en déplacement dans une exploitation de volailles dans l'Ain, Edouard Philippe a dévoilé une première proposition en matière agricole. Avec un texte en ligne de mire : la Charte de l'environnement, qu'il souhaite « compléter (…) en indiquant que l'agriculture est un objectif légitime qu'il faut impérativement prendre en compte ». Une manière d'accélérer dans la course à l'Elysée pour l'ex-Premier ministre et de donner des gages à un électorat jadis acquis à la droite, et désormais tenté par l'extrême droite, alors qu'il était attendu au congrès des Jeunes Agriculteurs (JA) dans la soirée.\n\nLa Charte de l'environnement – texte qui définit des droits et devoirs en matière d'environnement – a été intégrée à la Constitution française en 2005, sous l'impulsion de Jacques Chirac. Elle introduit notamment les principes de prévention, de précaution et de pollueur-payeur. Le candidat Horizons à l'Elysée veut compléter le texte constitutionnel en y intégrant la préservation de l'agriculture. Une annonce qui s'inscrit dans le sillage des réclamations de simplification des normes émises par les syndicats agricoles.",
+    "source": "L'Obs",
+    "author": "Aglaée Marchand",
+    "date": "Sat, 06 Jun 2026 15:00:49 +0200",
+    "link": "https://www.nouvelobs.com/politique/20260606.OBS115565/edouard-philippe-souhaite-reviser-la-charte-de-l-environnement-la-man-uvre-est-electoraliste-de-maniere-flagrante.html",
+    "questions": [
+      {
+        "question": "Quel jour Édouard Philippe a-t-il dévoilé sa première proposition en matière agricole ?",
+        "options": [
+          "Mardi 2 juin",
+          "Mercredi 3 juin",
+          "Jeudi 4 juin",
+          "Vendredi 5 juin"
+        ],
+        "answer": "Mercredi 3 juin",
+        "explanation": "The text explicitly states 'Mercredi 3 juin, en déplacement dans une exploitation de volailles dans l'Ain, Edouard Philippe a dévoilé une première proposition en matière agricole.' The other dates are incorrect."
+      },
+      {
+        "question": "Où Édouard Philippe a-t-il présenté sa proposition agricole ?",
+        "options": [
+          "Dans une exploitation de céréales en Bourgogne",
+          "Dans une exploitation de volailles dans l'Ain",
+          "Dans une exploitation viticole en Alsace",
+          "Dans une exploitation laitière en Normandie"
+        ],
+        "answer": "Dans une exploitation de volailles dans l'Ain",
+        "explanation": "The text clearly states 'en déplacement dans une exploitation de volailles dans l'Ain.' The other locations are not mentioned in the passage."
+      },
+      {
+        "question": "Qu'est-ce qu'Édouard Philippe souhaite faire avec la Charte de l'environnement ?",
+        "options": [
+          "L'abroger complètement",
+          "La compléter en indiquant que l'agriculture est un objectif légitime",
+          "La rendre moins stricte pour l'industrie",
+          "L'éliminer de la Constitution"
+        ],
+        "answer": "La compléter en indiquant que l'agriculture est un objectif légitime",
+        "explanation": "The text states that Philippe wishes to 'compléter (…) en indiquant que l'agriculture est un objectif légitime qu'il faut impérativement prendre en compte.' The other options misrepresent his position."
+      },
+      {
+        "question": "En quelle année la Charte de l'environnement a-t-elle été intégrée à la Constitution française ?",
+        "options": [
+          "2000",
+          "2003",
+          "2005",
+          "2007"
+        ],
+        "answer": "2005",
+        "explanation": "The passage explicitly states 'La Charte de l'environnement (…) a été intégrée à la Constitution française en 2005, sous l'impulsion de Jacques Chirac.' The other dates are incorrect."
+      },
+      {
+        "question": "Lequel des principes suivants n'est PAS mentionné comme étant introduit par la Charte de l'environnement ?",
+        "options": [
+          "Le principe de prévention",
+          "Le principe de précaution",
+          "Le principe de solidarité intergénérationnelle",
+          "Le principe pollueur-payeur"
+        ],
+        "answer": "Le principe de solidarité intergénérationnelle",
+        "explanation": "The text specifies that the Charte introduces 'notamment les principes de prévention, de précaution et de pollueur-payeur.' The principle of intergenerational solidarity is not mentioned in the passage."
+      },
+      {
+        "question": "Pourquoi Édouard Philippe fait-il cette proposition agricole à ce moment de sa campagne ?",
+        "options": [
+          "Pour augmenter les exportations agricoles",
+          "Pour réduire les impôts des agriculteurs",
+          "Pour accélérer dans la course à l'Élysée et donner des gages à un électorat tenté par l'extrême droite",
+          "Pour améliorer les relations avec l'Union européenne"
+        ],
+        "answer": "Pour accélérer dans la course à l'Élysée et donner des gages à un électorat tenté par l'extrême droite",
+        "explanation": "The text explains that this is 'Une manière d'accélérer dans la course à l'Elysée pour l'ex-Premier ministre et de donner des gages à un électorat jadis acquis à la droite, et désormais tenté par l'extrême droite.' The other options are not supported by the passage."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "en ligne de mire",
+        "definition": "in one's sights; as a target or objective",
+        "sentence": "Le gouvernement a plusieurs réformes ___ pour cette année."
+      },
+      {
+        "word": "gages",
+        "definition": "pledges; signs of commitment or goodwill",
+        "sentence": "Le candidat a donné des ___ aux électeurs en promettant des réductions d'impôts."
+      },
+      {
+        "word": "jadis",
+        "definition": "formerly; in the past",
+        "sentence": "Cette région était ___ un centre industriel important."
+      },
+      {
+        "word": "sillage",
+        "definition": "wake; trail; in the wake of",
+        "sentence": "Les nouvelles réformes s'inscrivent dans le ___ des demandes syndicales."
+      },
+      {
+        "word": "émises",
+        "definition": "issued; put forth; expressed",
+        "sentence": "Les critiques ___ par l'opposition ont été prises au sérieux."
+      }
+    ],
+    "createdAt": "2026-06-13T06:37:17.113Z"
+  },
+  {
+    "id": 1781286739564,
+    "topic": "La technologie au quotidien",
+    "title": "Faciliter l’acompte sur salaire : une proposition pour « réduire des coûts inutiles et améliorer le quotidien »",
+    "passage": "Il existe, dans notre organisation du travail, des héritages que nous ne questionnons plus. La mensualisation du salaire en fait partie. Elle s'est imposée comme une conquête sociale, un progrès incontestable, une évidence presque naturelle. Elle a structuré notre rapport au travail, au temps, à l'argent. Elle a aussi façonné une certaine idée de la protection : attendre, pour être payé, la fin du mois. Mais toute organisation du temps est aussi une organisation du pouvoir. Et, à bien y regarder, cette évidence n'en est plus tout à fait une.\n\nCar enfin, que dit notre système actuel ? Il dit qu'un salarié peut travailler, produire, créer de la valeur et ne pas pouvoir disposer immédiatement de ce qu'il a déjà gagné. Il dit qu'entre le moment où le travail est accompli et celui où il est rémunéré, il existe un délai imposé, intangible, hérité d'un autre temps. Or ce temps n'est plus le nôtre. Nous vivons dans une économie de l'instantanéité. Les paiements sont immédiats, les flux circulent en temps réel, les usages ont basculé. Tout, ou presque, est devenu accessible sans délai. Tout, sauf le salaire. Ce décalage, longtemps toléré, devient aujourd'hui une friction. Et parfois, une violence silencieuse. Et ce décalage n'est plus seulement théorique. Il est massivement ressenti : selon une étude OpinionWay pour Stairwage [avril 2026, NDLR] , 73 % des Français se disent favorables à la possibilité d'accéder, en cas de besoin, au salaire qu'ils ont déjà gagné. Car derrière cette rigidité apparente, il y a des situations très concrètes : un imprévu, une dépense de santé, une réparation urgente. Et face à cela, une alternative trop souvent unique : le découvert bancaire. Autrement dit, payer, parfois cher, pour compenser l'impossibilité d'accéder à son propre revenu. En France, près d'un Français sur deux se retrouve à découvert au moins une fois par an. Un quart d'entre eux y ont recours chaque mois, basculant dans le rouge en moyenne dès le 18 du mois, pour un coût total estimé à près de 7 milliards d'euros d'agios [frais bancaires, NDLR] versés chaque année aux banques.\n\nPourquoi un salarié hésite-t-il à demander une partie de son salaire ? Pourquoi ce geste est-il encore chargé d'une dimension symbolique, parfois même d'une forme de honte ? Pourquoi ce droit reste-t-il, dans bien des cas, théorique ? C'est cela, au fond, qu'il faut interroger. Et la réponse tient autant aux représentations qu'aux procédures. Voilà le sens de la loi relative aux acomptes sur salaire que nous proposons : rendre effectif un droit existant, en le simplifiant et en l'inscrivant dans les usages. Non pas remettre en cause la mensualisation, mais bien l'adapter en cohérence avec son temps. Concrètement, il s'agit de permettre aux salariés d'accéder, dans un cadre défini, à une part de leur salaire déjà acquis, de manière simple et sans justification. Le dispositif doit être asso",
+    "source": "L'Obs",
+    "author": "",
+    "date": "Thu, 11 Jun 2026 11:17:05 +0200",
+    "link": "https://www.nouvelobs.com/economie/20260609.OBS115651/faciliter-l-acompte-sur-salaire-une-proposition-pour-reduire-des-couts-inutiles-et-ameliorer-le-quotidien.html",
+    "questions": [
+      {
+        "question": "Selon le texte, pourquoi la mensualisation du salaire est-elle remise en question aujourd'hui ?",
+        "options": [
+          "Parce qu'elle n'a jamais été une véritable conquête sociale",
+          "Parce que le décalage entre le travail accompli et la rémunération crée une friction dans une économie de l'instantanéité",
+          "Parce que les salariés français refusent massivement ce système",
+          "Parce qu'elle coûte trop cher aux entreprises"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states that 'tout est devenu accessible sans délai. Tout, sauf le salaire. Ce décalage...devient aujourd'hui une friction' in an economy of instantaneity. The other options contradict the text's argument that mensualisation was indeed a social progress but is now outdated."
+      },
+      {
+        "question": "Quel pourcentage de Français serait favorable à l'accès immédiat au salaire déjà gagné ?",
+        "options": [
+          "50%",
+          "25%",
+          "73%",
+          "18%"
+        ],
+        "answer": "C",
+        "explanation": "The text directly cites an OpinionWay study stating '73 % des Français se disent favorables à la possibilité d'accéder, en cas de besoin, au salaire qu'ils ont déjà gagné.' The other numbers refer to different statistics mentioned in the passage (25% monthly overdrafts, 50% annual overdrafts, 18th as average overdraft date)."
+      },
+      {
+        "question": "Quel problème concret du système actuel est illustré par le découvert bancaire ?",
+        "options": [
+          "Les banques obligent les salariés à avoir un découvert chaque mois",
+          "Les salariés doivent payer des frais importants (agios) pour compenser l'impossibilité d'accéder à leur salaire déjà gagné",
+          "Le découvert bancaire est obligatoire en France",
+          "Les impôts sont prélevés avant le salaire du mois"
+        ],
+        "answer": "B",
+        "explanation": "The text explains that faced with unexpected expenses, employees resort to overdrafts to 'compenser l'impossibilité d'accéder à son propre revenu' and notes that nearly 7 billion euros in banking fees are paid annually to banks. The other options misrepresent or oversimplify the situation described."
+      },
+      {
+        "question": "Quel est l'objectif principal de la loi proposée sur les acomptes sur salaire ?",
+        "options": [
+          "Supprimer complètement la mensualisation du salaire",
+          "Permettre aux salariés d'accéder simplement à une part de leur salaire déjà acquis sans justification",
+          "Obliger les banques à réduire leurs frais",
+          "Augmenter le salaire de tous les Français"
+        ],
+        "answer": "B",
+        "explanation": "The text states the law aims to 'rendre effectif un droit existant, en le simplifiant et l'inscrivant dans les usages' and 'permettre aux salariés d'accéder...à une part de leur salaire déjà acquis, de manière simple et sans justification.' The other options either contradict the proposal or are unrelated to it."
+      },
+      {
+        "question": "Selon le texte, pourquoi les salariés hésitent-ils à demander une partie de leur salaire ?",
+        "options": [
+          "Parce que c'est illégal en France",
+          "Parce que les entreprises l'interdisent formellement",
+          "À cause de représentations symboliques et parfois d'une forme de honte, bien que ce droit existe",
+          "Parce qu'il n'existe pas de cadre légal pour le faire"
+        ],
+        "answer": "C",
+        "explanation": "The passage explicitly asks 'Pourquoi ce geste est-il encore chargé d'une dimension symbolique, parfois même d'une forme de honte ?' and notes that 'ce droit reste-t-il...théorique' due to 'représentations' and 'procédures.' This indicates the right exists but is underused due to symbolic and psychological factors, not legal prohibition."
+      },
+      {
+        "question": "Quel lien le texte établit-il entre l'organisation du temps et le pouvoir ?",
+        "options": [
+          "Le pouvoir des travailleurs augmente avec la flexibilité des horaires",
+          "Toute organisation du temps est aussi une organisation du pouvoir",
+          "Les banques ont plus de pouvoir que les salariés",
+          "Le temps n'a aucun lien avec le pouvoir dans l'organisation du travail"
+        ],
+        "answer": "B",
+        "explanation": "The text states directly: 'Mais toute organisation du temps est aussi une organisation du pouvoir.' This is presented as a fundamental principle explaining why the current salary structure represents a power dynamic. The other options either contradict this statement or oversimplify it."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "incontestable",
+        "definition": "indisputable, undeniable, beyond question",
+        "sentence": "Cette théorie était autrefois ___, mais les nouvelles découvertes scientifiques l'ont remise en cause."
+      },
+      {
+        "word": "façonné",
+        "definition": "shaped, molded, formed",
+        "sentence": "Les expériences de notre enfance ont ___ notre personnalité et nos valeurs."
+      },
+      {
+        "word": "intangible",
+        "definition": "intangible, cannot be touched or changed, inviolable",
+        "sentence": "Le respect des droits humains est un principe ___ sur lequel repose notre société."
+      },
+      {
+        "word": "friction",
+        "definition": "friction, conflict, tension, resistance",
+        "sentence": "Il existe une certaine ___ entre les générations concernant l'utilisation des nouvelles technologies."
+      },
+      {
+        "word": "agios",
+        "definition": "bank fees, overdraft charges, interest penalties",
+        "sentence": "Les ___ bancaires représentent une charge financière importante pour les ménages en difficulté."
+      }
+    ],
+    "createdAt": "2026-06-12T17:52:19.564Z"
+  },
+  {
+    "id": 1781286427457,
+    "topic": "La technologie au quotidien",
+    "title": "« Le Village de Madeleine » : carnets de campagne au cœur de la mémoire rurale",
+    "passage": "Si le destin existe, il se présenta à Madeleine de Sinéty (1934-2011) le 1er juillet 1972 non loin de Rennes alors qu'elle remontait vers Paris, et prit la forme du gigantesque embouteillage qui lui dictait de quitter la nationale pour rouler sur une petite route de l'Ille-et-Vilaine. Si le destin a de la suite dans les idées, alors il la guida vers la sortie qui menait au bourg de Poilley, où elle trouva une chambre pour la nuit. Réveillée à l'aube par le chant d'un coq et une bonne odeur d'herbes, elle prit la bicyclette dans sa voiture et pédala, avec l'appareil photo en bandoulière qu'elle ne quittait jamais, jusqu'à trouver une ferme. Sa première photographie fut la cour. Son enfance, elle l'avait passée dans un château du Val de Loire, avec la stricte interdiction d'entrer dans la ferme d'à côté. A Poilley, l'heure était venue de rencontrer ceux dont on l'avait privée.\n\nLa jeune étrangère avait des manières simples ; elle fut bien accueillie. C'est à peine si on s'étonna de la voir actionner sans cesse le petit œil curieux de son appareil. Le séjour dura huit ans. Elle trouva ici une famille de cœur, et ce fut un déchirement de part et d'autre lorsqu'elle annonça son départ pour l'Amérique avec un fiancé. Aujourd'hui, les milliers de photos prises à Poilley sont un trésor. La grande fille timide avait un talent de photographe et des dispositions d'ethnologue. Cinq enfants grimpés sur un chargement de pommes à cidre avec leur chien. Les mêmes dans la classe derrière des pupitres de bois. Un homme à vélo sur une route déserte, la gitane au bec, menant par une corde un cheval de labour. Une femme en robe à fleurs et bottes de caoutchouc trayant sa vache. Toute une famille de fermiers assise, à la veillée, sur la pierre d'une cheminée coiffée de dentelle. Une mère lavant son fils dans une bassine.\n\nL'œuvre de Madeleine, tantôt noir et blanc, tantôt couleurs, raconte les choses de la vie. Le film de Julie Bertuccelli semble inspiré d'un roman de Modiano ou de Jaenada pour la grâce furtive de la nostalgie et la résurrection d'un monde. Un demi-siècle plus tard, l'hommage est double : les photos de Madeleine de Sinéty sont exposées au Jeu de paume, à Paris (jusqu'au 27 septembre).",
+    "source": "L'Obs",
+    "author": "Anne Crignon",
+    "date": "Fri, 12 Jun 2026 18:00:24 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260612.OBS115755/le-village-de-madeleine-carnets-de-campagne-au-c-ur-de-la-memoire-rurale.html",
+    "questions": [
+      {
+        "question": "En quelle année Madeleine de Sinéty a-t-elle découvert Poilley ?",
+        "options": [
+          "1934",
+          "1972",
+          "1980",
+          "2011"
+        ],
+        "answer": "1972",
+        "explanation": "The text explicitly states 'le 1er juillet 1972' as the date when Madeleine arrived near Rennes and subsequently found her way to Poilley. The other dates refer to her birth year (1934), a year during her stay, or her death year (2011)."
+      },
+      {
+        "question": "Pourquoi Madeleine a-t-elle quitté la nationale pour prendre une petite route ?",
+        "options": [
+          "Elle cherchait Poilley intentionnellement",
+          "Un embouteillage gigantesque l'y a obligée",
+          "Elle voulait éviter un accident",
+          "Elle suivait les indications d'un panneau"
+        ],
+        "answer": "Un embouteillage gigantesque l'y a obligée",
+        "explanation": "The passage states that destiny presented itself through 'le gigantesque embouteillage qui lui dictait de quitter la nationale pour rouler sur une petite route'. The other options misrepresent her motivation for leaving the main road."
+      },
+      {
+        "question": "Quel était le sujet de la première photographie de Madeleine à Poilley ?",
+        "options": [
+          "Une bicyclette",
+          "Un coq",
+          "La cour de la ferme",
+          "Les enfants de la ferme"
+        ],
+        "answer": "La cour de la ferme",
+        "explanation": "The text explicitly states 'Sa première photographie fut la cour.' The other options mention things she encountered but were not the subject of her first photograph."
+      },
+      {
+        "question": "Pendant combien de temps Madeleine est-elle restée à Poilley ?",
+        "options": [
+          "Quelques mois",
+          "Deux ans",
+          "Huit ans",
+          "Demi-siècle"
+        ],
+        "answer": "Huit ans",
+        "explanation": "The passage clearly states 'Le séjour dura huit ans.' The other options are either too short or misrepresent the duration mentioned in the text."
+      },
+      {
+        "question": "Pourquoi Madeleine n'avait-elle pas pu visiter la ferme pendant son enfance ?",
+        "options": [
+          "La ferme était trop loin de son château",
+          "On lui avait strictement interdit d'y entrer",
+          "La ferme n'existait pas encore",
+          "Elle avait peur des animaux de la ferme"
+        ],
+        "answer": "On lui avait strictement interdit d'y entrer",
+        "explanation": "The text states 'Son enfance, elle l'avait passée dans un château du Val de Loire, avec la stricte interdiction d'entrer dans la ferme d'à côté.' This directly explains the restriction placed on her, not any of the other suggested reasons."
+      },
+      {
+        "question": "Où sont exposées les photographies de Madeleine de Sinéty mentionnées dans le texte ?",
+        "options": [
+          "Dans un château du Val de Loire",
+          "Au musée de Rennes",
+          "Au Jeu de paume à Paris",
+          "En Amérique"
+        ],
+        "answer": "Au Jeu de paume à Paris",
+        "explanation": "The final paragraph explicitly states that 'les photos de Madeleine de Sinéty sont exposées au Jeu de paume, à Paris (jusqu'au 27 septembre).' The other locations are mentioned in the text but are not where her photographs are currently displayed."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "embouteillage",
+        "definition": "traffic jam",
+        "sentence": "Le ___ sur l'autoroute a retardé notre arrivée de plusieurs heures."
+      },
+      {
+        "word": "bandoulière",
+        "definition": "shoulder strap",
+        "sentence": "Il portait son sac en ___ pour avoir les mains libres."
+      },
+      {
+        "word": "déchirement",
+        "definition": "heartbreak; painful separation",
+        "sentence": "Le ___ de quitter sa famille adoptive était insoutenable."
+      },
+      {
+        "word": "gitane",
+        "definition": "a type of French cigarette",
+        "sentence": "L'ouvrier fumait une ___ pendant sa pause."
+      },
+      {
+        "word": "furtive",
+        "definition": "fleeting; passing quickly",
+        "sentence": "Un sourire ___ traversa son visage avant de disparaître."
+      }
+    ],
+    "createdAt": "2026-06-12T17:47:07.457Z"
+  },
+  {
     "id": 1781198110372,
     "topic": "La vie parisienne",
     "title": "Près de 400 drones ukrainiens interceptés en Russie, dont 86 dans la région de Saint-Pétersbourg",
