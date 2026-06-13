@@ -1110,10 +1110,14 @@ export function AudioDemoCard({
   // otherwise a new reaction renders below the fold and the learner only hears it.
   React.useEffect(() => {
     const sc = writeThreadScrollRef.current;
+    window.__wtDebug = { ran: true, hasRef: !!sc, stage: writeReview.stage };
     if (!sc) return;
     // Instant scroll — smooth behavior is unreliable here over large distances.
-    const id = requestAnimationFrame(() => { sc.scrollTop = sc.scrollHeight; });
-    return () => cancelAnimationFrame(id);
+    const t = setTimeout(() => {
+      sc.scrollTop = sc.scrollHeight;
+      window.__wtDebug = { ...window.__wtDebug, applied: true, sh: sc.scrollHeight, st: sc.scrollTop, ch: sc.clientHeight };
+    }, 80);
+    return () => clearTimeout(t);
   }, [writeReview.stage, writeReview.reaction, writeReview.corrected, writeReview.explanation, writeReviewHistory.length, writeReviewExample, writeReviewExampleLoading]);
   const writeTextareaRef = React.useRef(null);
   const writeBoxRef = React.useRef(null);
