@@ -75,28 +75,38 @@ export function ButtonPrimary({ children, className = '', to, showArrow = true, 
   );
 }
 
-/** Animated hint pointing at a CTA (e.g. How to reach B2). */
-export function ParisianExperienceHint({ className = '', showBadge = false }) {
+/** Animated hint pointing at a CTA (e.g. How to reach B2).
+ *  placement="top" sits above the button (default); "bottom" hangs below it —
+ *  use "bottom" when the button is at the very top of the page (e.g. the nav),
+ *  where there's no room above. Right-aligned either way so it never runs off
+ *  the right edge of the screen. */
+export function ParisianExperienceHint({ className = '', placement = 'top' }) {
+  const below = placement === 'bottom';
+  const text = (
+    <span className="font-display text-[15px] sm:text-[16px] italic text-wine leading-[1.25] text-right whitespace-nowrap">
+      Click here to gain
+      <br />
+      Parisian experience
+    </span>
+  );
+  const arrow = (
+    <svg width="9" height="7" viewBox="0 0 10 8" fill="none" className={`shrink-0 mr-8 ${below ? 'rotate-180' : ''}`}>
+      <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6" />
+    </svg>
+  );
   return (
     <motion.div
-      initial={{ opacity: 0, y: -4 }}
-      animate={{ opacity: 1, y: [0, 2, 0] }}
+      initial={{ opacity: 0, y: below ? 4 : -4 }}
+      animate={{ opacity: 1, y: [0, below ? -2 : 2, 0] }}
       transition={{
         delay: 0.6,
         duration: 0.5,
         y: { repeat: Infinity, duration: 1.8, ease: 'easeInOut', delay: 1.1 },
       }}
-      className={`absolute bottom-full right-0 mb-1.5 hidden sm:flex flex-col items-end gap-0.5 pointer-events-none ${className}`.trim()}
+      className={`absolute right-0 hidden sm:flex flex-col items-end gap-0.5 pointer-events-none ${below ? 'top-full mt-1.5' : 'bottom-full mb-1.5'} ${className}`.trim()}
       aria-hidden
     >
-      <span className="font-display text-[15px] sm:text-[16px] italic text-wine leading-[1.25] text-right whitespace-nowrap">
-        Click here to gain
-        <br />
-        Parisian experience
-      </span>
-      <svg width="9" height="7" viewBox="0 0 10 8" fill="none" className="shrink-0 mr-8">
-        <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6" />
-      </svg>
+      {below ? <>{arrow}{text}</> : <>{text}{arrow}</>}
     </motion.div>
   );
 }
