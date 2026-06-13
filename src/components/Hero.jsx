@@ -5625,11 +5625,11 @@ function WritingReviewThread({ review, frozen = false, question, onQuestionChang
         <div className="flex flex-col gap-2">
           <div className="flex items-baseline gap-2 flex-wrap">
             <p className="font-display text-[16px] text-navy leading-snug whitespace-pre-wrap">{original}</p>
-            {reached('judged') && (
+            {reached('judged') && (!frozen || corrected) && (
               <button
                 type="button"
                 onClick={() => {
-                  if (!reached('correcting')) onCorriger();
+                  if (!frozen && !reached('correcting')) onCorriger();
                   setCorrectionOpen(o => !o);
                 }}
                 className="shrink-0 inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-wine/70 border border-wine/30 rounded-full px-2 py-0.5 hover:bg-wine/10 hover:text-wine transition-colors"
