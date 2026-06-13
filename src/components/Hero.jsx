@@ -972,10 +972,11 @@ function ComprehensionItem({ q, qi, firePointsDelta, narratorId = 'lea', onAnswe
   );
 }
 
-function VocabItem({ v, vi, firePointsDelta, narratorId = 'lea' }) {
+function VocabItem({ v, vi, firePointsDelta, narratorId = 'lea', onAnswered = null }) {
   const [ans, setAns] = React.useState('');
   const [submitted, setSubmitted] = React.useState(false);
   const correct = submitted && ans.trim().toLowerCase() === (v.word || '').toLowerCase();
+  const submit = () => { if (!submitted && ans.trim()) { const ok = ans.trim().toLowerCase() === v.word.toLowerCase(); setSubmitted(true); firePointsDelta(ok ? 2 : -1); onAnswered?.(ok); } };
   return (
     <div className={`p-2.5 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
       <p className="font-display text-[13px] leading-snug text-navy mb-1.5">
