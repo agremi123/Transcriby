@@ -2670,20 +2670,19 @@ export function AudioDemoCard({
   };
 
   // Défi speaking: when the learner stops talking, the Parisian pops up with the
-  // correction automatically (no "Make it Parisien" button), then a fresh défi
-  // (same theme, new words) is loaded.
+  // correction automatically (no "Make it Parisien" button). The correction then
+  // stays on screen — the learner moves on with the "Nouvelle question" button.
   const speakingAutoCorrectRef = React.useRef(false);
   React.useEffect(() => {
     const justStopped = speakingAutoCorrectRef.current && !isRecording;
     speakingAutoCorrectRef.current = isRecording;
     if (!justStopped || activeTab !== 'speaking') return;
+    // A repeat attempt is handled by its own flow (checkRepeatAttempt) — don't
+    // fire a second full correction over it, and don't re-correct mid-correction.
+    if (isRepeatRecordingRef.current || awaitingRepeatRef.current || manualCorrecting) return;
     const text = getLatestSpeakText();
     if (!text) return;
-    (async () => {
-      await correctNow(speakingNarratorId);
-      // Load the next challenge (same topic → new question + new target words)
-      setTimeout(() => onNewSpeakingChallenge?.(), 1500);
-    })();
+    correctNow(speakingNarratorId);
   }, [isRecording]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const resetTranscript = () => {
