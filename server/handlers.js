@@ -214,6 +214,7 @@ export async function handleCorrect(body) {
   const dimensionBreakdown = !!body?.dimensionBreakdown;
   const claimedLevel = body?.claimedLevel || '';
   const requireGrammar = body?.requireGrammar || '';
+  const task = body?.task || '';
   const learnerLevel = normalizeLearnerLevel(body?.learnerLevel || claimedLevel || 'A2');
   const levelCtx = learnerLevelContext(learnerLevel);
 
