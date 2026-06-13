@@ -59,6 +59,9 @@ async function claudeCall(label, apiKey, body) {
   return data;
 }
 
+// Shared prompt: 4 conjugation fill-in-the-blank exercises from a French text.
+const CONJUGATION_PROMPT = `From the given French text, create exactly 4 conjugation fill-in-the-blank exercises using verbs from the text. One blank marked "___" per sentence; "hint" = the pronoun/subject context (je/tu/il...). Return ONLY raw JSON: {"conjugation":[{"verb":"infinitive","tense":"présent/passé composé/...","sentence":"...___...","answer":"conjugated form","hint":"je/tu/il..."}]}`;
+
 // OpenRouter — OpenAI-compatible, supports DeepSeek + Perplexity + others
 const DEEPSEEK_MODEL = 'deepseek/deepseek-chat-v3-0324';
 const PERPLEXITY_IN_PER_M  = 0.20;
