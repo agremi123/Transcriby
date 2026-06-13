@@ -2484,7 +2484,6 @@ export function AudioDemoCard({
       });
       const data = await r.json();
       const corrected = data.corrected?.trim() || original;
-      window.__wc = { original, corrected, equal: original === corrected };
       setWriteReview((rv) => ({ ...rv, stage: 'corrected', corrected, translation: data.translation?.trim() || null }));
     } catch {
       setWriteReview((rv) => ({ ...rv, stage: 'corrected', corrected: original }));
