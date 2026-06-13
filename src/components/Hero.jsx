@@ -6511,6 +6511,8 @@ export default function Hero() {
                 topicLabel={speakingTopicLabel}
                 targetGrammar={speakingTargetGrammar}
                 targetVocab={speakingTargetVocab}
+                usedVocab={speakingUsedVocab}
+                usedGrammar={speakingUsedGrammar}
               />
             )}
             {heroActiveTab === 'writing' && writingActive && (
