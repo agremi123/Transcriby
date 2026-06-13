@@ -1743,12 +1743,17 @@ function writingReviewMiddleware(apiKey) {
         const tipList = ['vocab', 'expressions', 'grammar', 'conjugation', 'connecteurs']
           .map(k => (tips?.[k]?.length ? `${k}: ${tips[k].join(', ')}` : null)).filter(Boolean).join(' | ');
         const d = await claudeCall('writing-review/feedback', apiKey, {
-          model: 'claude-haiku-4-5-20251001', max_tokens: 280,
-          system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte par rapport au défi : longueur atteinte, vocabulaire / expressions / grammaire / connecteurs suggérés utilisés ? Sois chaleureux(se), précis(e), encourageant(e). 2-3 phrases en français.\nTermine TOUJOURS par une relance : une question ou un mini-défi concret qui le pousse à réessayer en utilisant 2-3 mots ou expressions PRÉCIS des conseils qu'il n'a pas encore utilisés (cite-les entre « »). N'utilise JAMAIS de markdown ni d'astérisques — texte brut uniquement.\nJSON: {"reaction":"..."}`,
+          model: 'claude-haiku-4-5-20251001', max_tokens: 360,
+          system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte par rapport au défi : longueur atteinte, vocabulaire / expressions / grammaire / connecteurs suggérés utilisés ? Sois chaleureux(se), précis(e), encourageant(e). 2-3 phrases en français.\nTermine TOUJOURS par une relance : une question ou un mini-défi concret qui le pousse à réessayer en utilisant 2-3 mots ou expressions PRÉCIS des conseils qu'il n'a pas encore utilisés (cite-les entre « »). N'utilise JAMAIS de markdown ni d'astérisques — texte brut uniquement.\nDonne aussi usedTips : pour chaque catégorie, la liste EXACTE (reprise à l'identique de la liste donnée) des conseils que l'étudiant a réellement employés dans son texte. Liste vide si aucun.\nJSON: {"reaction":"...","usedTips":{"vocab":[],"expressions":[],"grammar":[],"conjugation":[],"connecteurs":[]}}`,
           messages: [{ role: 'user', content: `Texte de l'étudiant :\n"${text}"` }],
         });
         const parsed = parseJson(d);
-        res.end(JSON.stringify({ reaction: parsed.reaction || '' }));
+        const ut = parsed.usedTips || {};
+        const usedTips = {};
+        for (const k of ['vocab', 'expressions', 'grammar', 'conjugation', 'connecteurs']) {
+          usedTips[k] = Array.isArray(ut[k]) ? ut[k].filter(Boolean).map(String) : [];
+        }
+        res.end(JSON.stringify({ reaction: parsed.reaction || '', usedTips }));
         return;
       }
       if (step === 'example') {
