@@ -6154,20 +6154,31 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
                       <p className="text-[9px] tracking-widest uppercase text-navy/30 font-mono mb-1.5">{icon} {label}</p>
                       {pill ? (
                         <div className="flex flex-wrap gap-1.5">
-                          {items.map((item, i) => (
-                            <span key={i} className="inline-flex items-center border border-navy/15 bg-ivory/80 px-2 py-0.5 text-[12px] font-display text-navy/70 rounded-sm">
-                              <TranslatableText text={item} context={prompt} />
-                            </span>
-                          ))}
+                          {items.map((item, i) => {
+                            const used = isVocabUsed(item, usedTips[key]);
+                            return (
+                              <span key={i} className={`inline-flex items-center gap-1 border px-2 py-0.5 text-[12px] font-display rounded-sm transition-colors duration-300 ${used ? 'border-navy/30 bg-navy/10 text-navy' : 'border-navy/15 bg-ivory/80 text-navy/70'}`}>
+                                {used && (
+                                  <svg width="11" height="11" viewBox="0 0 48 48" fill="none" stroke="#1A2340" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden><path d="M42 12L18 36l-12-12" /></svg>
+                                )}
+                                <TranslatableText text={item} context={prompt} />
+                              </span>
+                            );
+                          })}
                         </div>
                       ) : (
                         <ul className="space-y-1">
-                          {items.map((item, i) => (
-                            <li key={i} className="flex items-start gap-1.5 text-[12px] font-display text-navy/65 leading-snug">
-                              <span className="text-wine/35 shrink-0 mt-0.5">—</span>
-                              <TranslatableText text={item} context={prompt} />
-                            </li>
-                          ))}
+                          {items.map((item, i) => {
+                            const used = isVocabUsed(item, usedTips[key]);
+                            return (
+                              <li key={i} className={`flex items-start gap-1.5 text-[12px] font-display leading-snug transition-colors duration-300 ${used ? 'text-navy' : 'text-navy/65'}`}>
+                                {used
+                                  ? <svg width="12" height="12" viewBox="0 0 48 48" fill="none" stroke="#1A2340" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5" aria-hidden><path d="M42 12L18 36l-12-12" /></svg>
+                                  : <span className="text-wine/35 shrink-0 mt-0.5">—</span>}
+                                <TranslatableText text={item} context={prompt} />
+                              </li>
+                            );
+                          })}
                         </ul>
                       )}
                     </div>
