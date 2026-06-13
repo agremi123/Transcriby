@@ -3917,14 +3917,39 @@ export function AudioDemoCard({
                   <p className="mt-2 font-display text-[13px] italic text-wine/70">Not quite — try again.</p>
                 )}
 
-                {/* Défi réussi: the learner used the target grammar + vocab — a fresh
-                    question loads automatically right after. */}
-                {activeTab === 'speaking' && defiComplete && (
-                  <div className="mt-4 flex items-center gap-2 text-green-700">
-                    <svg width="20" height="20" viewBox="0 0 48 48" fill="none" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden>
-                      <path d="M42 12L18 36l-12-12" />
-                    </svg>
-                    <span className="font-display text-[15px] italic">Défi réussi ! Question suivante…</span>
+                {/* Défi réussi: the learner used every target — earn the level badge
+                    (progress toward levelling up) and choose to do the next défi. */}
+                {activeTab === 'speaking' && defiComplete && defiBadge && (
+                  <div className="mt-4 flex flex-col items-start gap-3 rounded-xl border border-navy/15 bg-navy/[0.04] px-4 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={getLevelBadgeSrc(defiBadge.level)}
+                        alt={`Badge ${defiBadge.level}`}
+                        className="w-14 h-14 object-contain shrink-0 defi-badge-pop"
+                      />
+                      <div className="min-w-0">
+                        <p className="font-display text-[16px] text-navy font-medium leading-snug">
+                          {defiBadge.leveledUp
+                            ? `Niveau atteint : ${defiBadge.level} !`
+                            : 'Défi réussi !'}
+                        </p>
+                        <p className="text-[12px] text-navy/55 leading-snug">
+                          {defiBadge.leveledUp
+                            ? 'Nouveau badge débloqué — visible dans ta progression parisienne.'
+                            : `+${DEFI_COMPLETE_XP} % vers ton prochain niveau (${defiBadge.level}).`}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => { resetTranscript(); onNewSpeakingChallenge?.(); }}
+                      className="inline-flex items-center gap-1.5 font-display text-[15px] italic px-4 h-9 rounded-full bg-navy text-ivory hover:bg-navy2 shadow-sm transition-colors"
+                    >
+                      Prochain exercice
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+                        <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
                   </div>
                 )}
 
