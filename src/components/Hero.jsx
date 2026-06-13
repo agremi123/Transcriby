@@ -35,6 +35,10 @@ import {
   pickNarratorReaction,
 } from '../lib/narratorLevelAdapt';
 
+// Parisian-meter progress awarded for completing a speaking défi (≈7 défis to
+// fill the meter and level up to the next CEFR level).
+const DEFI_COMPLETE_XP = 15;
+
 // Small TTS play button for corrections
 function TtsPlayButton({ text }) {
   const [playing, setPlaying] = React.useState(false);
