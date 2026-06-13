@@ -1064,6 +1064,7 @@ export async function handleWritingReview(body) {
         .replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/, '')
         .replace(/^\s*["«»]\s*/, '').replace(/\s*["«»]\s*$/, '')
         .trim();
+      if (example) saveWritingExample({ prompt, tips, wordTarget, level, example });
       return { statusCode: 200, body: { example } };
     }
 
