@@ -3079,12 +3079,25 @@ export function AudioDemoCard({
                   { id: 'vocabulary',    label: 'Vocabulaire' },
                   { id: 'grammar',       label: 'Grammaire' },
                   { id: 'conjugation',   label: 'Conjugaison' },
-                ].map((t) => (
-                  <button key={t.id} type="button" onClick={() => setExerciseSubTab(t.id)}
-                    className={`text-[9px] tracking-widest uppercase px-3 py-2.5 border-b-2 transition-colors whitespace-nowrap shrink-0 ${exerciseSubTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
-                    {t.label}
-                  </button>
-                ))}
+                ].map((t) => {
+                  // Compréhension doubles as a progress bar (correct answers / 6).
+                  const isComp = t.id === 'comprehension';
+                  const compPct = Math.round((Math.min(comprehensionCorrect, COMPREHENSION_GOAL) / COMPREHENSION_GOAL) * 100);
+                  return (
+                    <button key={t.id} type="button" onClick={() => setExerciseSubTab(t.id)}
+                      className={`relative overflow-hidden text-[9px] tracking-widest uppercase px-3 py-2.5 border-b-2 transition-colors whitespace-nowrap shrink-0 ${exerciseSubTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
+                      {isComp && (
+                        <span className="absolute inset-y-0 left-0 bg-wine/15 transition-all duration-500" style={{ width: `${compPct}%` }} aria-hidden />
+                      )}
+                      <span className="relative z-10 inline-flex items-center gap-1">
+                        {t.label}
+                        {isComp && (comprehensionDone
+                          ? <span className="text-green-600 text-[10px]" aria-hidden>✓</span>
+                          : <span className="font-mono tabular-nums text-wine/60">{comprehensionCorrect}/{COMPREHENSION_GOAL}</span>)}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
               {/* Exercise content */}
               <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3">
