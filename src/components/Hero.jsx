@@ -6858,6 +6858,7 @@ export default function Hero() {
               writingPrompt={writingPrompt}
               writingTips={writingTips}
               writingWordTarget={writingWordTarget}
+              onWritingProgress={handleWritingProgress}
               onNewWritingChallenge={loadNewWritingChallenge}
             />
             </div>
