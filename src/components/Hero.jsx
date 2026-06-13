@@ -6188,6 +6188,23 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
             </div>
           )}
 
+          {/* All conseils used → level badge earned (progress toward levelling up) */}
+          {badge && (
+            <div className="mt-4 shrink-0 flex items-center gap-3 rounded-xl border border-navy/15 bg-navy/[0.04] px-4 py-3.5">
+              <img src={getLevelBadgeSrc(badge.level)} alt={`Badge ${badge.level}`} className="w-12 h-12 object-contain shrink-0 defi-badge-pop" />
+              <div className="min-w-0">
+                <p className="font-display text-[15px] text-navy font-medium leading-snug">
+                  {badge.leveledUp ? `Niveau atteint : ${badge.level} !` : 'Tous les conseils utilisés !'}
+                </p>
+                <p className="text-[12px] text-navy/55 leading-snug">
+                  {badge.leveledUp
+                    ? 'Nouveau badge débloqué — visible dans ta progression parisienne.'
+                    : `+${DEFI_COMPLETE_XP} % vers ton prochain niveau (${badge.level}).`}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="flex-1 min-h-[16px]" />
           <p className="text-[11px] text-navy/30 font-display italic mt-3 shrink-0">
             Écris dans la zone de texte à droite, puis clique sur <em>Make it Parisien!</em> pour une correction.
