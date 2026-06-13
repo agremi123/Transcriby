@@ -1,5 +1,217 @@
 [
   {
+    "id": 1781370268900,
+    "topic": "French media news vocabulary B2",
+    "title": "« The Hack » : au cœur du scandale des écoutes téléphoniques au Royaume-Uni",
+    "passage": "S'il est un art dans lequel les créateurs de séries britanniques excellent, c'est bien dans celui de « briser le quatrième mur », procédé qui permet à un personnage de s'adresser directement aux téléspectateurs. Sans atteindre la virtuosité avec laquelle Phoebe Waller-Bridge l'employait dans « Fleabag » , ce nouveau programme inspiré d'un véritable scandale ayant secoué l'Angleterre dans les années 2000 l'utilise à tour de bras. Et cette petite touche relève considérablement l'ensemble.\n\nOn découvre ainsi un certain Nick Davies, journaliste d'investigation free-lance pour « The Guardian », pas au mieux de sa forme après la publication d'un livre-enquête. Grâce à un informateur, il soulève un lièvre de premier ordre. Selon sa source, « News of the World », fleuron du groupe de presse créé par le magnat Rupert Murdoch, pratique des écoutes téléphoniques afin d'espionner des célébrités. C'est peu dire que ces révélations sont mal accueillies par les intéressés, la concurrence et la police.\n\nDavid Tennant, dans le rôle du journaliste obstiné, ainsi que le précieux Toby Jones, qui incarne son rédacteur en chef, en font juste assez pour nous tenir en haleine. Jack Thorne, le brillant scénariste de la série « Adolescence », n'hésite pas à montrer à quel point une certaine presse britannique est devenue un poison pour la vie publique. En 2011, l'affaire a abouti à 40 condamnations et à la disparition du tabloïd le plus juteux de l'empire Murdoch.",
+    "source": "L'Obs",
+    "author": "Arnaud Sagnard",
+    "date": "Fri, 12 Jun 2026 17:45:07 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260612.OBS115751/the-hack-au-c-ur-du-scandale-des-ecoutes-telephoniques-au-royaume-uni.html",
+    "questions": [
+      {
+        "question": "Quel procédé narratif les créateurs de séries britanniques utilisent-ils particulièrement bien selon le texte ?",
+        "options": [
+          "Le monologue intérieur des personnages",
+          "Briser le quatrième mur pour s'adresser aux téléspectateurs",
+          "Les flashbacks et retours en arrière",
+          "L'utilisation d'un narrateur externe"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states that British series creators excel at 'briser le quatrième mur' (breaking the fourth wall), a technique that allows a character to address viewers directly. This is mentioned in the opening sentence as the main point of the passage."
+      },
+      {
+        "question": "Quel est le nom du journaliste d'investigation qui découvre le scandale ?",
+        "options": [
+          "David Tennant",
+          "Toby Jones",
+          "Nick Davies",
+          "Jack Thorne"
+        ],
+        "answer": "C",
+        "explanation": "The text clearly states 'On découvre ainsi un certain Nick Davies, journaliste d'investigation free-lance pour The Guardian.' The other names refer to the actor (Tennant), the editor actor (Jones), and the screenwriter (Thorne)."
+      },
+      {
+        "question": "Quel groupe de presse est accusé de pratiquer des écoutes téléphoniques ?",
+        "options": [
+          "The Guardian",
+          "News of the World",
+          "L'empire Murdoch",
+          "La concurrence britannique"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly states that 'News of the World,' which is described as 'le fleuron du groupe de presse créé par le magnat Rupert Murdoch,' practiced telephone wiretapping. While Murdoch created the group, News of the World is specifically named as the publication engaged in the illegal activity."
+      },
+      {
+        "question": "Qui incarne le rôle du journaliste obstiné Nick Davies dans cette série ?",
+        "options": [
+          "Toby Jones",
+          "Jack Thorne",
+          "David Tennant",
+          "Rupert Murdoch"
+        ],
+        "answer": "C",
+        "explanation": "The text states 'David Tennant, dans le rôle du journaliste obstiné,' clearly identifying him as the actor playing the investigative journalist Nick Davies. Toby Jones plays his editor, Jack Thorne is the screenwriter, and Rupert Murdoch is a real person."
+      },
+      {
+        "question": "En quelle année l'affaire a-t-elle abouti à des condamnations ?",
+        "options": [
+          "2000",
+          "2005",
+          "2011",
+          "2015"
+        ],
+        "answer": "C",
+        "explanation": "The final sentence explicitly states 'En 2011, l'affaire a abouti à 40 condamnations et à la disparition du tabloïd le plus juteux de l'empire Murdoch.' This is the only year mentioned as the conclusion date of the scandal."
+      },
+      {
+        "question": "Combien de condamnations ont résulté de cette affaire de scandale ?",
+        "options": [
+          "20 condamnations",
+          "30 condamnations",
+          "40 condamnations",
+          "50 condamnations"
+        ],
+        "answer": "C",
+        "explanation": "The text explicitly states 'En 2011, l'affaire a abouti à 40 condamnations et à la disparition du tabloïd.' This specific number is mentioned in the final sentence and is the only numerical detail about convictions provided."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "briser le quatrième mur",
+        "definition": "to break the fourth wall (a technique where a character addresses the audience directly)",
+        "sentence": "Les acteurs de cette pièce de théâtre ___ pour créer une connexion avec le public."
+      },
+      {
+        "word": "virtuosité",
+        "definition": "virtuosity; great skill or mastery in performing something",
+        "sentence": "Le musicien a joué la sonate avec une ___ remarquable."
+      },
+      {
+        "word": "soulever un lièvre",
+        "definition": "to bring up a difficult or contentious issue; to uncover something troublesome",
+        "sentence": "L'enquêteur a décidé de ___ en révélant les secrets cachés de l'entreprise."
+      },
+      {
+        "word": "fleuron",
+        "definition": "jewel; prized possession; crown jewel (of a collection or group)",
+        "sentence": "Ce musée est le ___ du patrimoine culturel de la région."
+      },
+      {
+        "word": "tabloïd",
+        "definition": "tabloid; a newspaper with sensational news and gossip",
+        "sentence": "Le ___ a publié des scandales sur les célébrités sans vérifier les faits."
+      }
+    ],
+    "createdAt": "2026-06-13T17:04:28.900Z"
+  },
+  {
+    "id": 1781369922974,
+    "topic": "La technologie au quotidien",
+    "title": "Faciliter l’acompte sur salaire : une proposition pour « réduire des coûts inutiles et améliorer le quotidien »",
+    "passage": "Il existe, dans notre organisation du travail, des héritages que nous ne questionnons plus. La mensualisation du salaire en fait partie. Elle s'est imposée comme une conquête sociale, un progrès incontestable, une évidence presque naturelle. Elle a structuré notre rapport au travail, au temps, à l'argent. Elle a aussi façonné une certaine idée de la protection : attendre, pour être payé, la fin du mois. Mais toute organisation du temps est aussi une organisation du pouvoir. Et, à bien y regarder, cette évidence n'en est plus tout à fait une.\n\nCar enfin, que dit notre système actuel ? Il dit qu'un salarié peut travailler, produire, créer de la valeur et ne pas pouvoir disposer immédiatement de ce qu'il a déjà gagné. Il dit qu'entre le moment où le travail est accompli et celui où il est rémunéré, il existe un délai imposé, intangible, hérité d'un autre temps. Or ce temps n'est plus le nôtre. Nous vivons dans une économie de l'instantanéité. Les paiements sont immédiats, les flux circulent en temps réel, les usages ont basculé. Tout, ou presque, est devenu accessible sans délai. Tout, sauf le salaire. Ce décalage, longtemps toléré, devient aujourd'hui une friction. Et parfois, une violence silencieuse. Et ce décalage n'est plus seulement théorique. Il est massivement ressenti : selon une étude OpinionWay pour Stairwage [avril 2026, NDLR] , 73 % des Français se disent favorables à la possibilité d'accéder, en cas de besoin, au salaire qu'ils ont déjà gagné.\n\nCar derrière cette rigidité apparente, il y a des situations très concrètes : un imprévu, une dépense de santé, une réparation urgente. Et face à cela, une alternative trop souvent unique : le découvert bancaire. Autrement dit, payer, parfois cher, pour compenser l'impossibilité d'accéder à son propre revenu. En France, près d'un Français sur deux se retrouve à découvert au moins une fois par an. Un quart d'entre eux y ont recours chaque mois, basculant dans le rouge en moyenne dès le 18 du mois, pour un coût total estimé à près de 7 milliards d'euros d'agios [frais bancaires, NDLR] versés chaque année aux banques. Cette mécanique n'est pas neutre. Elle organise une très coûteuse dépendance.\n\nConcrètement, il s'agit de permettre aux salariés d'accéder, dans un cadre défini, à une part de leur salaire déjà acquis, de manière simple et sans justification. Le dispositif doit être assorti de garanties claires (plafonnement, fréquence limitée, cadre transparent) et viser également à mettre fin à une inégalité persistante entre secteur public et secteur privé, en assurant à tous les travailleurs un accès équitable à ce droit. Pendant longtemps, la protection a consisté à encadrer, à lisser, à uniformiser. Aujourd'hui, il est temps de donner de la souplesse, de reconnaître la diversité des situations, de permettre des ajustements, sans fragmenter le salaire, ni le rendre instable, mais de ponctuellement en moduler l'accès. L'enjeu est profond",
+    "source": "L'Obs",
+    "author": "",
+    "date": "Thu, 11 Jun 2026 11:17:05 +0200",
+    "link": "https://www.nouvelobs.com/economie/20260609.OBS115651/faciliter-l-acompte-sur-salaire-une-proposition-pour-reduire-des-couts-inutiles-et-ameliorer-le-quotidien.html",
+    "questions": [
+      {
+        "question": "Selon le texte, pourquoi la mensualisation du salaire est-elle devenue une évidence naturelle ?",
+        "options": [
+          "Parce qu'elle a été imposée comme une conquête sociale et a structuré notre rapport au travail, au temps et à l'argent",
+          "Parce que les banques l'ont exigée pour organiser les paiements",
+          "Parce que les salariés préfèrent attendre jusqu'à la fin du mois",
+          "Parce qu'elle est la seule manière de verser les salaires"
+        ],
+        "answer": "Parce qu'elle a été imposée comme une conquête sociale et a structuré notre rapport au travail, au temps et à l'argent",
+        "explanation": "The text explicitly states that 'La mensualisation du salaire en fait partie. Elle s'est imposée comme une conquête sociale, un progrès incontestable' and that it has 'structuré notre rapport au travail, au temps, à l'argent.' The other options are not supported by the passage."
+      },
+      {
+        "question": "Quel est le paradoxe principal soulevé par l'auteur concernant le salaire et l'économie moderne ?",
+        "options": [
+          "Les salaires sont trop bas comparés à la valeur créée",
+          "Dans une économie de l'instantanéité, le salaire reste le seul élément non accessible sans délai",
+          "Les paiements bancaires sont trop rapides et désorganisent l'économie",
+          "Les travailleurs préfèrent attendre la fin du mois pour recevoir leur salaire"
+        ],
+        "answer": "Dans une économie de l'instantanéité, le salaire reste le seul élément non accessible sans délai",
+        "explanation": "The author clearly states: 'Nous vivons dans une économie de l'instantanéité... Tout, ou presque, est devenu accessible sans délai. Tout, sauf le salaire.' This contradiction is the core of the argument; the other options misrepresent or contradict the author's thesis."
+      },
+      {
+        "question": "Selon l'étude OpinionWay citée dans le texte, quel pourcentage de Français soutient l'accès au salaire déjà gagné en cas de besoin ?",
+        "options": [
+          "50 %",
+          "18 %",
+          "73 %",
+          "25 %"
+        ],
+        "answer": "73 %",
+        "explanation": "The text explicitly states: 'selon une étude OpinionWay pour Stairwage [avril 2026], 73 % des Français se disent favorables à la possibilité d'accéder, en cas de besoin, au salaire qu'ils ont déjà gagné.' The other percentages refer to different statistics about overdrafts."
+      },
+      {
+        "question": "Quel problème concret résulte de l'impossibilité d'accéder à son salaire avant la fin du mois ?",
+        "options": [
+          "Les salaires deviennent instables et fragmentés",
+          "Les travailleurs doivent utiliser le découvert bancaire, ce qui entraîne des frais d'agios coûteux",
+          "Les banques perdent de l'argent à cause des retards de paiement",
+          "Les employeurs ne peuvent plus verser les salaires à temps"
+        ],
+        "answer": "Les travailleurs doivent utiliser le découvert bancaire, ce qui entraîne des frais d'agios coûteux",
+        "explanation": "The text explains that when faced with unexpected expenses, workers resort to bank overdrafts, paying billions of euros in fees annually: 'près de 7 milliards d'euros d'agios [frais bancaires] versés chaque année aux banques.' The other options are not supported by the passage."
+      },
+      {
+        "question": "Quels sont les trois éléments clés que doit assurer le dispositif proposé par l'auteur ?",
+        "options": [
+          "Augmenter les salaires, réduire les horaires, améliorer les conditions de travail",
+          "Plafonnement, fréquence limitée, cadre transparent",
+          "Paiements instantanés, suppression des banques, égalité totale",
+          "Suppression de la mensualisation, paiements quotidiens, ajustement par secteur"
+        ],
+        "answer": "Plafonnement, fréquence limitée, cadre transparent",
+        "explanation": "The text explicitly states: 'Le dispositif doit être assorti de garanties clares (plafonnement, fréquence limitée, cadre transparent).' The other options either misrepresent the proposal or introduce unrelated measures."
+      },
+      {
+        "question": "Selon le texte, qu'est-ce qui a changé dans la conception de la protection sociale évoquée à la fin du passage ?",
+        "options": [
+          "Elle n'existe plus du tout et doit être supprimée",
+          "Elle doit passer d'un encadrement rigide (lisser, uniformiser) à plus de souplesse et de reconnaissance de la diversité des situations",
+          "Elle doit être renforcée par davantage de contrôles bancaires",
+          "Elle doit être accordée uniquement au secteur public"
+        ],
+        "answer": "Elle doit passer d'un encadrement rigide (lisser, uniformiser) à plus de souplesse et de reconnaissance de la diversité des situations",
+        "explanation": "The author states: 'Pendant longtemps, la protection a consisté à encadrer, à lisser, à uniformiser. Aujourd'hui, il est temps de donner de la souplesse, de reconnaître la diversité des situations...' This shows a fundamental shift in the concept of protection; the other options are not aligned with this argument."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "incontestable",
+        "definition": "indisputable, undeniable, beyond question",
+        "sentence": "La nécessité de protéger l'environnement est ___, personne ne peut la nier."
+      },
+      {
+        "word": "intangible",
+        "definition": "untouchable, inviolable, that cannot be altered or changed",
+        "sentence": "Les droits humains fondamentaux sont ___ et doivent être respectés partout."
+      },
+      {
+        "word": "friction",
+        "definition": "conflict, tension, disagreement or resistance between things",
+        "sentence": "Il y a une ___ croissante entre les attentes des employés et les politiques de l'entreprise."
+      },
+      {
+        "word": "découvert",
+        "definition": "overdraft (when spending exceeds available funds in a bank account)",
+        "sentence": "Après ses dépenses imprévues, il s'est retrouvé en ___ bancaire pour le reste du mois."
+      },
+      {
+        "word": "moduler",
+        "definition": "to adjust, regulate, or vary according to circumstances",
+        "sentence": "On peut ___ les horaires de travail en fonction des besoins des salariés."
+      }
+    ],
+    "createdAt": "2026-06-13T16:58:42.974Z"
+  },
+  {
     "id": 1781369364889,
     "topic": "La technologie au quotidien",
     "title": "« Le Village de Madeleine » : carnets de campagne au cœur de la mémoire rurale",
