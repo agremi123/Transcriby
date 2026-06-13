@@ -2934,7 +2934,7 @@ export function AudioDemoCard({
                 {/* GRAMMAIRE */}
                 {exerciseSubTab === 'grammar' && (
                   exerciseGrammar.length === 0
-                    ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">Chargement de la grammaire…</p>
+                    ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">{exerciseLoading ? 'Chargement de la grammaire…' : "Pas d'exercice de grammaire pour cet article."}</p>
                     : exerciseGrammar.slice(0, 2).map((g, gi) => (
                         <div key={g.point || gi} className="border border-line/50 p-3">
                           <div className="flex items-center gap-2 mb-2">
