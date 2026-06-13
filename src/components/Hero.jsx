@@ -1033,6 +1033,69 @@ function ConjugationItem({ c, ci, firePointsDelta, narratorId = 'lea' }) {
   );
 }
 
+// Each exercise tab is a progress bar: this many correct answers validates it.
+const EXERCISE_GOAL = 6;
+
+// Drives one exercise tab as a progress bar: a recyclable list of items, a count
+// of correct answers, and an onAnswered() that appends another (recycled) item
+// on a wrong answer so the goal stays reachable. Resets when the pool changes.
+function useExerciseProgress(pool, goal = EXERCISE_GOAL) {
+  const [list, setList] = React.useState([]);
+  const [correct, setCorrect] = React.useState(0);
+  const correctRef = React.useRef(0);
+  const appendedRef = React.useRef(0);
+  React.useEffect(() => { correctRef.current = correct; }, [correct]);
+  React.useEffect(() => {
+    setList((pool || []).map((item, i) => ({ item, key: `q-${i}` })));
+    setCorrect(0);
+    correctRef.current = 0;
+    appendedRef.current = 0;
+  }, [pool]);
+  const done = correct >= goal;
+  const onAnswered = React.useCallback((isCorrect) => {
+    if (isCorrect) { setCorrect((c) => Math.min(goal, c + 1)); return; }
+    setList((l) => {
+      if (correctRef.current >= goal) return l;
+      const p = pool || [];
+      if (p.length === 0) return l;
+      const n = appendedRef.current++;
+      return [...l, { item: p[(l.length + n) % p.length], key: `q-extra-${n}` }];
+    });
+  }, [pool, goal]);
+  return { list, correct, done, onAnswered };
+}
+
+// A single grammar fill-in question (one "___"), counted toward the grammar goal.
+function GrammarBlankItem({ ex, firePointsDelta, narratorId = 'lea', onAnswered = null }) {
+  const [ans, setAns] = React.useState('');
+  const [submitted, setSubmitted] = React.useState(false);
+  const ok = ans.trim().toLowerCase() === String(ex.answer || '').trim().toLowerCase();
+  const correct = submitted && ok;
+  const parts = String(ex.sentence || '').split('___');
+  const submit = () => { if (!submitted && ans.trim()) { setSubmitted(true); firePointsDelta(ok ? 2 : -1); onAnswered?.(ok); } };
+  return (
+    <div className={`p-2.5 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
+      {ex.point && <div className="mb-1"><span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 bg-wine/8 px-1.5 py-0.5">{ex.point}</span></div>}
+      <p className="font-display text-[13px] text-navy leading-snug mb-1.5">
+        {parts[0]}<span className="text-navy/40">______</span>{parts[1]}
+        {ex.hint && !submitted && <span className="text-[10px] text-navy/35 ml-1.5">({ex.hint})</span>}
+      </p>
+      <div className="flex items-center gap-2">
+        {submitted ? (
+          <span className={`font-display text-[13px] font-medium ${correct ? 'text-green-600' : 'text-wine'}`}>{ans} {correct ? '✓' : `✗ → ${ex.answer}`}</span>
+        ) : (
+          <input type="text" value={ans} onChange={e => setAns(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') submit(); }}
+            placeholder="Votre réponse…"
+            className="flex-1 border border-navy/20 px-2 py-0.5 text-[12px] font-display text-navy focus:outline-none focus:border-wine/50 bg-transparent" />
+        )}
+        {!submitted && ans.trim() && (
+          <button type="button" onClick={submit} className="px-2 py-0.5 text-[10px] font-mono bg-wine text-ivory hover:bg-wine/80 transition-colors">OK</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function AudioDemoCard({
   fullscreen = false,
   onClose,
