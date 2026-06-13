@@ -2172,6 +2172,7 @@ export function AudioDemoCard({
     setTime(0);
     setPlaybackTime(null);
     setIsPlaying(false);
+    isRepeatRecordingRef.current = false;
     setSpeakCorrection(null);
     setPreviewCorrection(null);
     setNarratorReaction(null);
