@@ -2128,6 +2128,7 @@ export function AudioDemoCard({
     setTime(0);
     setPlaybackTime(null);
     setIsPlaying(false);
+    isRepeatRecordingRef.current = awaitingRepeat;
     if (awaitingRepeat) {
       const base = utterancesRef.current.length;
       repeatUtteranceBaseRef.current = base;
