@@ -1269,15 +1269,24 @@ export function AudioDemoCard({
     return () => clearInterval(id);
   }, [isRecording]);
 
-  // Speaking tab: trigger narrator reaction when recording stops
+  // Speaking défi: when the learner stops talking, the Parisian replies in a
+  // guided conversation — rebounding on what they said and nudging them to use
+  // the défi's target grammar + vocab. Each reply is pinned under the learner's
+  // utterance. When every target has been used, the backend returns complete →
+  // defiComplete flips and a fresh question loads. Repeat-after-me is skipped.
   const wasRecordingRef = React.useRef(false);
   React.useEffect(() => {
     const justStopped = wasRecordingRef.current && !isRecording;
     wasRecordingRef.current = isRecording;
     if (!justStopped || activeTab !== 'speaking') return;
-    const latestText = utterances[utterances.length - 1]?.text?.trim();
-    if (!latestText) return;
-    setNarratorReaction(null);
+    if (isRepeatRecordingRef.current) return;
+    const list = utterancesRef.current;
+    const lastUtt = list[list.length - 1];
+    const latestText = lastUtt?.text?.trim();
+    if (!lastUtt || !latestText) return;
+    const uttId = lastUtt.id;
+    setReplyLoadingUttId(uttId);
+    const history = list.map((u) => u.text?.trim()).filter(Boolean);
     fetch('/api/speaking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1287,13 +1296,24 @@ export function AudioDemoCard({
         narratorId: speakingNarratorId,
         topic: speakingTopicLabel,
         openingLine: speakingOpeningLine,
+        targetGrammar: speakingTargetGrammar,
+        targetVocab: speakingTargetVocab,
+        history,
       }),
     })
       .then((r) => r.json())
       .then((data) => {
-        if (data.text) setNarratorReaction({ id: speakingNarratorId, text: data.text, translation: data.translation });
+        setReplyLoadingUttId((cur) => (cur === uttId ? null : cur));
+        if (!data.text) return;
+        const reply = { id: speakingNarratorId, text: data.text, translation: data.translation };
+        setReplyByUtterance((prev) => ({ ...prev, [uttId]: reply }));
+        playNarratorLine(reply);
+        if (data.complete) {
+          gainExperience(1);
+          setDefiComplete(true);
+        }
       })
-      .catch(() => {});
+      .catch(() => setReplyLoadingUttId((cur) => (cur === uttId ? null : cur)));
   }, [isRecording]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const discoverWord = async () => {
