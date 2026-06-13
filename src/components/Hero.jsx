@@ -264,7 +264,7 @@ function GrammarRuleExercises({ rule, onCorrect }) {
       .then((r) => r.json())
       .then((d) => {
         if (cancelled) return;
-        setExercises((d.exercises || []).slice(0, 2));
+        setExercises((d.exercises || []).slice(0, 6));
         setLoading(false);
       })
       .catch(() => { if (!cancelled) { setExercises([]); setLoading(false); } });
