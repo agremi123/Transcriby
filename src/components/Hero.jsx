@@ -5675,8 +5675,8 @@ function WritingReviewThread({ review, frozen = false, question, onQuestionChang
         </WriteBubble>
       ) : null}
 
-      {/* Show example */}
-      {stage === 'judged' && (
+      {/* Show example — only interactive on the active exchange */}
+      {!frozen && stage === 'judged' && (
         <div className="flex flex-col gap-2">
           <button type="button"
             onClick={() => { if (!example && !exampleLoading) onShowExample?.(); }}
