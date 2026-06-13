@@ -553,13 +553,13 @@ async function generateReadingBundle(apiKey) {
       user: passage,
     }),
     claudeJSON({
-      apiKey, maxTokens: 1400,
+      apiKey, maxTokens: 2200,
       system: `French language teacher. From the passage generate:
 1. 4 vocabulary fill-in-the-blank (key words from article)
-2. 1 grammar point with explanation and example
+2. 1 grammar point with explanation, example, and exactly 6 fill-in-the-blank practice exercises (one "___" per sentence; hint = base form of answer)
 3. 4 conjugation fill-in-the-blank (verbs from article)
 Raw JSON only:
-{"vocab":[{"word":"...","definition":"English meaning","sentence":"...___..."}],"grammar":{"point":"...","example":"...","explanation":"...","tip":"..."},"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}`,
+{"vocab":[{"word":"...","definition":"English meaning","sentence":"...___..."}],"grammar":{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}]},"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}`,
       user: passage,
     }),
   ]);
