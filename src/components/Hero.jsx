@@ -6167,25 +6167,27 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
               <div className="flex items-center justify-between gap-2 mb-3">
                 <p className="text-[10px] tracking-widest uppercase text-navy/35 font-mono">Goals</p>
                 <div className="relative group shrink-0 flex flex-col items-end gap-1 w-[130px]">
+                  {/* The button IS the progress bar — its fill grows as goals complete */}
                   <button
                     type="button"
                     onClick={() => { if (goalsDone) onNewChallenge?.(); }}
                     aria-disabled={!goalsDone}
-                    className={`w-full justify-center inline-flex items-center gap-1 text-[11px] font-sans font-semibold rounded-full px-2.5 py-1 border transition-colors ${
+                    className={`relative overflow-hidden w-full justify-center inline-flex items-center gap-1 text-[11px] font-sans font-semibold rounded-full px-2.5 py-1 border transition-colors ${
                       goalsDone
                         ? 'text-ivory bg-navy border-navy hover:bg-navy2 cursor-pointer'
-                        : 'text-navy/30 border-navy/15 bg-navy/[0.03] cursor-not-allowed'
+                        : 'text-navy/70 border-navy/25 bg-navy/[0.05] cursor-not-allowed'
                     }`}
                   >
-                    Next challenge
-                    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
-                      <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
+                    {!goalsDone && (
+                      <span className="absolute inset-y-0 left-0 bg-navy/25 transition-all duration-500" style={{ width: `${goalsPct}%` }} aria-hidden />
+                    )}
+                    <span className="relative z-10 inline-flex items-center gap-1">
+                      Next challenge
+                      <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
+                        <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </span>
                   </button>
-                  {/* Progress bar — fills as each goal is completed (proof of progress) */}
-                  <div className="w-full h-1.5 rounded-full bg-navy/10 overflow-hidden">
-                    <div className="h-full bg-navy rounded-full transition-all duration-500" style={{ width: `${goalsPct}%` }} />
-                  </div>
                   <span className="text-[9px] font-mono text-navy/45 tabular-nums leading-none">{goalsDoneCount} / {goalsTotal}</span>
                   <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-20 w-52 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
                     {goalsDone
