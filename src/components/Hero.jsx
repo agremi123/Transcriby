@@ -6951,6 +6951,9 @@ export default function Hero() {
                 parisianPercent={profile?.parisianPercent ?? 0}
                 dailyParisianPoints={dailyParisianPoints}
                 onSpendExperience={spendExperience}
+                allDone={exercisesAllDone}
+                articleIndex={articleIndex}
+                onNextArticle={loadNextReadingArticle}
               />
             )}
             {heroActiveTab === 'listening' && listeningActive && (
