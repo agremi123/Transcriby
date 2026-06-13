@@ -263,9 +263,11 @@ function GrammarRuleExercises({ rule, onCorrect }) {
     if (!text || prodCorrecting) return;
     setProdCorrecting(true);
     try {
+      // Standard register = fix only real grammar errors (keep the learner's
+      // words). A correct sentence comes back unchanged → green tick.
       const r = await fetch('/api/correct', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, register: 'Parisien' }),
+        body: JSON.stringify({ text, register: 'Standard' }),
       });
       const d = await r.json();
       setProdCorrection({ original: text, corrected: d.corrected?.trim() || text, translation: d.translation?.trim() || null });
