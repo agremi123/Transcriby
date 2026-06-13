@@ -1,5 +1,1172 @@
 [
   {
+    "id": 1781367786922,
+    "topic": "La technologie au quotidien",
+    "title": "Ella Rumpf, Monia Chokri et Noémie Lvovsky brillent dans « Des preuves d’amour »",
+    "passage": "Au lendemain de la promulgation du mariage pour tous, la loi obligeait les mères homosexuelles non porteuses à monter un dossier d'adoption pour être reconnues une fois l'enfant né (aujourd'hui, une reconnaissance anticipée facilite les choses). Pour avoir vécu la situation, Alice Douard sait les failles que celle-ci crée et révèle. Elle en fait la matière de son premier film, d'une légèreté bienvenue, ancré dans le quotidien d'un couple de Parisiennes, l'une, Céline, intermittente du spectacle, et l'autre, Nadia, dentiste.\n\nLe sel de cette comédie mélancolique, trop didactique dans son militantisme mais sociologiquement assez juste, se niche dans les rapports qu'entretient Céline avec Nadia et avec sa maman, pianiste renommée et mère absente, campées par trois actrices aussi différentes que remarquables : Ella Rumpf, Monia Chokri et Noémie Lvovsky.",
+    "source": "L'Obs",
+    "author": "Nicolas Schaller",
+    "date": "Fri, 12 Jun 2026 17:30:04 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260612.OBS115748/ella-rumpf-monia-chokri-et-noemie-lvovsky-brillent-dans-des-preuves-d-amour.html",
+    "questions": [
+      {
+        "question": "Quel était l'obligation légale pour les mères homosexuelles non porteuses après la promulgation du mariage pour tous ?",
+        "options": [
+          "Elles devaient obtenir l'approbation du gouvernement",
+          "Elles devaient monter un dossier d'adoption pour être reconnues une fois l'enfant né",
+          "Elles devaient attendre cinq ans avant d'être reconnues légalement",
+          "Elles devaient passer un examen médical supplémentaire"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states that the law obliged non-biological homosexual mothers to mount an adoption file to be recognized once the child was born; the other options are not mentioned in the passage."
+      },
+      {
+        "question": "Quel est la profession de Nadia dans le film ?",
+        "options": [
+          "Intermittente du spectacle",
+          "Pianiste",
+          "Dentiste",
+          "Avocate"
+        ],
+        "answer": "C",
+        "explanation": "The text states that Nadia is a dentist ('dentiste'), while Céline is an intermittent performer in the entertainment industry and the mother is a renowned pianist."
+      },
+      {
+        "question": "Qui a réalisé ce premier film ?",
+        "options": [
+          "Ella Rumpf",
+          "Monia Chokri",
+          "Alice Douard",
+          "Noémie Lvovsky"
+        ],
+        "answer": "C",
+        "explanation": "The passage clearly identifies Alice Douard as the director ('Elle en fait la matière de son premier film'), while the other three names refer to the actresses in the film."
+      },
+      {
+        "question": "Quelle profession exerce la mère de Céline ?",
+        "options": [
+          "Dentiste",
+          "Pianiste renommée",
+          "Avocate",
+          "Professeure d'université"
+        ],
+        "answer": "B",
+        "explanation": "The text describes Céline's mother as a renowned pianist ('pianiste renommée') who was absent as a mother; the other professions are not associated with her character."
+      },
+      {
+        "question": "Selon le texte, quel est un défaut du film mentionné par le critique ?",
+        "options": [
+          "Les actrices ne sont pas bonnes",
+          "Le film manque d'ancrage dans le quotidien",
+          "Le film est trop didactique dans son militantisme",
+          "Les rapports entre les personnages ne sont pas développés"
+        ],
+        "answer": "C",
+        "explanation": "The text explicitly criticizes the film for being 'trop didactique dans son militantisme' (too didactic in its activism), while also praising other aspects like the actresses and the daily life portrayal."
+      },
+      {
+        "question": "Quel type de film est décrit comme 'une comédie mélancolique' ?",
+        "options": [
+          "Un film d'action",
+          "Un film d'horreur",
+          "Le premier film d'Alice Douard sur un couple de Parisiennes",
+          "Un film de science-fiction"
+        ],
+        "answer": "C",
+        "explanation": "The text describes the film as a melancholic comedy centered on the daily life of a couple of Parisian women (Céline and Nadia), which is Alice Douard's first film; the other genres are not mentioned."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "promulgation",
+        "definition": "official announcement or enactment of a law",
+        "sentence": "Au lendemain de la ___ du mariage pour tous, la loi obligeait les mères homosexuelles non porteuses à monter un dossier d'adoption."
+      },
+      {
+        "word": "porteur",
+        "definition": "carrier; one who bears or carries",
+        "sentence": "La loi obligeait les mères homosexuelles non ___ à monter un dossier d'adoption pour être reconnues une fois l'enfant né."
+      },
+      {
+        "word": "failles",
+        "definition": "gaps, flaws, or weaknesses",
+        "sentence": "Alice Douard sait les ___ que celle-ci crée et révèle."
+      },
+      {
+        "word": "intermittente",
+        "definition": "temporary; sporadic; freelance worker (especially in entertainment)",
+        "sentence": "Céline est ___ du spectacle, tandis que l'autre, Nadia, est dentiste."
+      },
+      {
+        "word": "didactique",
+        "definition": "didactic; educational; instructive in tone",
+        "sentence": "Cette comédie mélancolique est trop ___ dans son militantisme mais sociologiquement assez juste."
+      }
+    ],
+    "createdAt": "2026-06-13T16:23:06.922Z"
+  },
+  {
+    "id": 1781367555941,
+    "topic": "La technologie au quotidien",
+    "title": "Faciliter l’acompte sur salaire : une proposition pour « réduire des coûts inutiles et améliorer le quotidien »",
+    "passage": "Il existe, dans notre organisation du travail, des héritages que nous ne questionnons plus. La mensualisation du salaire en fait partie. Elle s'est imposée comme une conquête sociale, un progrès incontestable, une évidence presque naturelle. Elle a structuré notre rapport au travail, au temps, à l'argent. Elle a aussi façonné une certaine idée de la protection : attendre, pour être payé, la fin du mois. Mais toute organisation du temps est aussi une organisation du pouvoir. Et, à bien y regarder, cette évidence n'en est plus tout à fait une.\n\nCar enfin, que dit notre système actuel ? Il dit qu'un salarié peut travailler, produire, créer de la valeur et ne pas pouvoir disposer immédiatement de ce qu'il a déjà gagné. Il dit qu'entre le moment où le travail est accompli et celui où il est rémunéré, il existe un délai imposé, intangible, hérité d'un autre temps. Or ce temps n'est plus le nôtre. Nous vivons dans une économie de l'instantanéité. Les paiements sont immédiats, les flux circulent en temps réel, les usages ont basculé. Tout, ou presque, est devenu accessible sans délai. Tout, sauf le salaire. Ce décalage, longtemps toléré, devient aujourd'hui une friction. Et parfois, une violence silencieuse. Et ce décalage n'est plus seulement théorique. Il est massivement ressenti : selon une étude OpinionWay pour Stairwage [avril 2026, NDLR], 73 % des Français se disent favorables à la possibilité d'accéder, en cas de besoin, au salaire qu'ils ont déjà gagné. Car derrière cette rigidité apparente, il y a des situations très concrètes : un imprévu, une dépense de santé, une réparation urgente. Et face à cela, une alternative trop souvent unique : le découvert bancaire. Autrement dit, payer, parfois cher, pour compenser l'impossibilité d'accéder à son propre revenu. En France, près d'un Français sur deux se retrouve à découvert au moins une fois par an. Un quart d'entre eux y ont recours chaque mois, basculant dans le rouge en moyenne dès le 18 du mois, pour un coût total estimé à près de 7 milliards d'euros d'agios [frais bancaires, NDLR] versés chaque année aux banques.\n\nCar il existe déjà, dans notre droit, une possibilité : celle de demander un acompte sur salaire. Un mécanisme simple en apparence, mais qui, dans les faits, reste marginal. Mal connu, peu utilisé. Comme si demander l'accès à ce que l'on a déjà gagné relevait d'une forme d'anomalie. Pourquoi un salarié hésite-t-il à demander une partie de son salaire ? Pourquoi ce geste est-il encore chargé d'une dimension symbolique, parfois même d'une forme de honte ? Pourquoi ce droit reste-t-il, dans bien des cas, théorique ? C'est cela, au fond, qu'il faut interroger. Et la réponse tient autant aux représentations qu'aux procédures. Voilà le sens de la loi relative aux acomptes sur salaire que nous proposons : rendre effectif un droit existant, en le simplifiant et en l'inscrivant dans",
+    "source": "L'Obs",
+    "author": "",
+    "date": "Thu, 11 Jun 2026 11:17:05 +0200",
+    "link": "https://www.nouvelobs.com/economie/20260609.OBS115651/faciliter-l-acompte-sur-salaire-une-proposition-pour-reduire-des-couts-inutiles-et-ameliorer-le-quotidien.html",
+    "questions": [
+      {
+        "question": "Selon le texte, qu'est-ce que la mensualisation du salaire a structuré dans notre rapport au travail ?",
+        "options": [
+          "Notre rapport au travail, au temps et à l'argent",
+          "Uniquement notre rapport à l'argent",
+          "Notre rapport à la productivité uniquement",
+          "Notre rapport aux horaires de travail"
+        ],
+        "answer": "Notre rapport au travail, au temps et à l'argent",
+        "explanation": "The text explicitly states that monthly salary 'has structured our relationship to work, time, and money.' The other options are too limited and do not capture the full scope mentioned in the passage."
+      },
+      {
+        "question": "Quel pourcentage de Français se disent favorables à l'accès immédiat au salaire déjà gagné selon l'étude citée ?",
+        "options": [
+          "50%",
+          "73%",
+          "25%",
+          "18%"
+        ],
+        "answer": "73%",
+        "explanation": "The text explicitly states 'selon une étude OpinionWay pour Stairwage, 73 % des Français se disent favorables à la possibilité d'accéder, en cas de besoin, au salaire qu'ils ont déjà gagné.' The other percentages refer to different statistics in the passage."
+      },
+      {
+        "question": "Quel est le principal problème soulevé par le délai entre le travail accompli et sa rémunération ?",
+        "options": [
+          "Il crée une situation d'attente inutile",
+          "Il force les salariés à recourir au découvert bancaire et à payer des agios",
+          "Il ralentit les paiements bancaires",
+          "Il complique les calculs de paie"
+        ],
+        "answer": "Il force les salariés à recourir au découvert bancaire et à payer des agios",
+        "explanation": "The text explains that facing urgent needs, the only alternative is often bank overdraft, which costs money in fees. The passage cites that nearly half of French people are in overdraft at least once per year, paying approximately 7 billion euros in fees annually."
+      },
+      {
+        "question": "Pourquoi le mécanisme de l'acompte sur salaire reste-t-il marginal en France ?",
+        "options": [
+          "Parce qu'il est illégal",
+          "Parce qu'il est mal connu, peu utilisé, et chargé d'une dimension symbolique négative",
+          "Parce que les banques l'interdisent",
+          "Parce qu'il est trop coûteux pour les entreprises"
+        ],
+        "answer": "Parce qu'il est mal connu, peu utilisé, et chargé d'une dimension symbolique négative",
+        "explanation": "The text states that the advance mechanism is 'Mal connu, peu utilisé' and questions why salary requests carry 'une dimension symbolique, parfois même d'une forme de honte.' The other options are not supported by the passage."
+      },
+      {
+        "question": "Quel contraste le texte établit-il entre notre époque et le système de mensualisation ?",
+        "options": [
+          "Les paiements mensuels sont plus sûrs que les paiements immédiats",
+          "Nous vivons dans une économie de l'instantanéité où tout est accessible sans délai, sauf le salaire",
+          "Les salaires mensuels coûtent moins cher aux entreprises",
+          "Les workers préfèrent attendre leur salaire à la fin du mois"
+        ],
+        "answer": "Nous vivons dans une économie de l'instantanéité où tout est accessible sans délai, sauf le salaire",
+        "explanation": "The text explicitly states 'Nous vivons dans une économie de l'instantanéité. Les paiements sont immédiats... Tout, ou presque, est devenu accessible sans délai. Tout, sauf le salaire.' This contrast highlights the anachronism of delayed salary payments."
+      },
+      {
+        "question": "Quel est l'objectif principal de la loi proposée concernant les acomptes sur salaire ?",
+        "options": [
+          "Créer un nouveau droit d'accès au salaire",
+          "Rendre effectif un droit existant en le simplifiant",
+          "Abolir la mensualisation du salaire",
+          "Interdire le découvert bancaire"
+        ],
+        "answer": "Rendre effectif un droit existant en le simplifiant",
+        "explanation": "The text concludes that the proposed law aims to 'rendre effectif un droit existant, en le simplifiant.' This is about making an already-legal right more practical and accessible, not creating a new right or abolishing monthly pay."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "incontestable",
+        "definition": "indisputable; beyond question",
+        "sentence": "Cette mesure gouvernementale était un progrès ___."
+      },
+      {
+        "word": "intangible",
+        "definition": "unable to be touched or grasped; unchangeable",
+        "sentence": "Le délai de paiement semblait être une règle ___ depuis des décennies."
+      },
+      {
+        "word": "instantanéité",
+        "definition": "the quality of happening immediately or without delay",
+        "sentence": "Les consommateurs s'attendent à l'___ dans tous leurs achats."
+      },
+      {
+        "word": "friction",
+        "definition": "conflict or tension between parties",
+        "sentence": "Ce décalage crée une ___ majeure entre les employeurs et les salariés."
+      },
+      {
+        "word": "marginal",
+        "definition": "relating to the edge or border; of minor importance",
+        "sentence": "L'utilisation de cette possibilité légale reste encore ___ dans les entreprises."
+      }
+    ],
+    "createdAt": "2026-06-13T16:19:15.941Z"
+  },
+  {
+    "id": 1781367502460,
+    "topic": "La technologie au quotidien",
+    "title": "Faciliter l’acompte sur salaire : une proposition pour « réduire des coûts inutiles et améliorer le quotidien »",
+    "passage": "Il existe, dans notre organisation du travail, des héritages que nous ne questionnons plus. La mensualisation du salaire en fait partie. Elle s'est imposée comme une conquête sociale, un progrès incontestable, une évidence presque naturelle. Elle a structuré notre rapport au travail, au temps, à l'argent. Elle a aussi façonné une certaine idée de la protection : attendre, pour être payé, la fin du mois. Mais toute organisation du temps est aussi une organisation du pouvoir.\n\nCar enfin, que dit notre système actuel ? Il dit qu'un salarié peut travailler, produire, créer de la valeur et ne pas pouvoir disposer immédiatement de ce qu'il a déjà gagné. Il dit qu'entre le moment où le travail est accompli et celui où il est rémunéré, il existe un délai imposé, intangible, hérité d'un autre temps. Or ce temps n'est plus le nôtre. Nous vivons dans une économie de l'instantanéité. Les paiements sont immédiats, les flux circulent en temps réel, les usages ont basculé. Tout, ou presque, est devenu accessible sans délai. Tout, sauf le salaire. Ce décalage, longtemps toléré, devient aujourd'hui une friction. Et parfois, une violence silencieuse. Et ce décalage n'est plus seulement théorique. Il est massivement ressenti : selon une étude OpinionWay pour Stairwage [avril 2026, NDLR] , 73 % des Français se disent favorables à la possibilité d'accéder, en cas de besoin, au salaire qu'ils ont déjà gagné. Car derrière cette rigidité apparente, il y a des situations très concrètes : un imprévu, une dépense de santé, une réparation urgente. Et face à cela, une alternative trop souvent unique : le découvert bancaire. Autrement dit, payer, parfois cher, pour compenser l'impossibilité d'accéder à son propre revenu. En France, près d'un Français sur deux se retrouve à découvert au moins une fois par an. Un quart d'entre eux y ont recours chaque mois, basculant dans le rouge en moyenne dès le 18 du mois, pour un coût total estimé à près de 7 milliards d'euros d'agios [frais bancaires, NDLR] versés chaque année aux banques.\n\nNon pas remettre en cause la mensualisation, mais bien l'adapter en cohérence avec son temps. Concrètement, il s'agit de permettre aux salariés d'accéder, dans un cadre défini, à une part de leur salaire déjà acquis, de manière simple et sans justification. Le dispositif doit être assorti de garanties claires (plafonnement, fréquence limitée, cadre transparent) et viser également à mettre fin à une inégalité persistante entre secteur public et secteur privé, en assurant à tous les travailleurs un accès équitable à ce droit. Pendant longtemps, la protection a consisté à encadrer, à lisser, à uniformiser. Aujourd'hui, il est temps de donner de la souplesse, de reconnaître la diversité des situations, de permettre des ajustements, sans fragmenter le salaire, ni le rendre instable, mais de ponctuellement en moduler l'accès. L'enjeu est profond. Il touche à notre rapport au travail et à la rémunération. Dans une société où",
+    "source": "L'Obs",
+    "author": "",
+    "date": "Thu, 11 Jun 2026 11:17:05 +0200",
+    "link": "https://www.nouvelobs.com/economie/20260609.OBS115651/faciliter-l-acompte-sur-salaire-une-proposition-pour-reduire-des-couts-inutiles-et-ameliorer-le-quotidien.html",
+    "questions": [
+      {
+        "question": "Selon le passage, la mensualisation du salaire a été considérée comme quoi à l'origine ?",
+        "options": [
+          "Une conquête sociale et un progrès incontestable",
+          "Une mesure temporaire et provisoire",
+          "Une organisation du pouvoir exploiteur",
+          "Une restriction des droits des travailleurs"
+        ],
+        "answer": "Une conquête sociale et un progrès incontestable",
+        "explanation": "The passage explicitly states that monthly salary 's'est imposée comme une conquête sociale, un progrès incontestable' (imposed itself as a social conquest, an undeniable progress). The other options contradict the text's description of how this system was originally viewed."
+      },
+      {
+        "question": "Quel pourcentage de Français seraient favorables à l'accès au salaire déjà gagné selon l'étude citée ?",
+        "options": [
+          "50%",
+          "73%",
+          "25%",
+          "18%"
+        ],
+        "answer": "73%",
+        "explanation": "The passage directly cites an OpinionWay study stating 'selon une étude OpinionWay pour Stairwage [avril 2026, NDLR], 73 % des Français se disent favorables à la possibilité d'accéder, en cas de besoin, au salaire qu'ils ont déjà gagné.' The other percentages refer to different statistics in the text."
+      },
+      {
+        "question": "Quel est le problème principal soulevé par le décalage entre le travail accompli et sa rémunération ?",
+        "options": [
+          "Les salaires deviennent trop élevés",
+          "Les travailleurs doivent recourir au découvert bancaire et payer des frais élevés",
+          "Les entreprises ne peuvent pas gérer leur trésorerie",
+          "La mensualisation disparaît progressivement"
+        ],
+        "answer": "Les travailleurs doivent recourir au découvert bancaire et payer des frais élevés",
+        "explanation": "The passage explains that due to the inability to access earned salary immediately, workers often resort to overdrafts and pay significant bank fees; it estimates 7 billion euros in annual overdraft fees. The other options are not presented as consequences of this delay."
+      },
+      {
+        "question": "Que propose concrètement le passage pour moderniser la mensualisation ?",
+        "options": [
+          "Supprimer complètement la mensualisation du salaire",
+          "Augmenter automatiquement les salaires chaque mois",
+          "Permettre aux salariés d'accéder à une partie de leur salaire déjà acquis dans un cadre défini",
+          "Rendre les paiements entièrement numériques et instantanés"
+        ],
+        "answer": "Permettre aux salariés d'accéder à une partie de leur salaire déjà acquis dans un cadre défini",
+        "explanation": "The text clearly states the proposal is 'de permettre aux salariés d'accéder, dans un cadre défini, à une part de leur salaire déjà acquis.' It explicitly notes this is about adapting rather than abolishing monthly salary. The other options misrepresent the actual proposal."
+      },
+      {
+        "question": "Quel est le statut du dispositif proposé selon le passage ?",
+        "options": [
+          "Il doit être sans aucune limitation",
+          "Il doit être assorti de garanties claires (plafonnement, fréquence limitée, cadre transparent)",
+          "Il ne concerne que le secteur privé",
+          "Il doit remplacer complètement le découvert bancaire"
+        ],
+        "answer": "Il doit être assorti de garanties claires (plafonnement, fréquence limitée, cadre transparent)",
+        "explanation": "The passage explicitly states 'Le dispositif doit être assorti de garanties claires (plafonnement, fréquence limitée, cadre transparent).' The first option contradicts this requirement for safeguards, while the third ignores the text's mention of ensuring equity between public and private sectors."
+      },
+      {
+        "question": "Comment le passage caractérise-t-il le rôle historique de la protection sociale concernant le salaire ?",
+        "options": [
+          "Elle a toujours favorisé l'accès immédiat aux revenus",
+          "Elle consistait à encadrer, lisser et uniformiser, mais aujourd'hui il faut donner de la souplesse",
+          "Elle était trop restrictive et devrait être abolie",
+          "Elle n'a jamais eu d'importance pour les travailleurs"
+        ],
+        "answer": "Elle consistait à encadrer, lisser et uniformiser, mais aujourd'hui il faut donner de la souplesse",
+        "explanation": "The passage states 'Pendant longtemps, la protection a consisté à encadrer, à lisser, à uniformiser. Aujourd'hui, il est temps de donner de la souplesse.' This accurately summarizes the evolution the text proposes. The other options either contradict the passage or oversimplify its argument."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "intangible",
+        "definition": "unable to be touched or physically grasped; abstract or difficult to define precisely",
+        "sentence": "Ce délai imposé, ___, hérité d'un autre temps, structure encore notre rapport au salaire."
+      },
+      {
+        "word": "friction",
+        "definition": "conflict or tension between people or groups; resistance or disagreement",
+        "sentence": "Ce décalage, longtemps toléré, devient aujourd'hui une ___ entre les attentes des salariés et la réalité."
+      },
+      {
+        "word": "assorti",
+        "definition": "accompanied by; paired with; supplied with matching items",
+        "sentence": "Le dispositif doit être ___ de garanties claires et de règles transparentes."
+      },
+      {
+        "word": "lisser",
+        "definition": "to smooth out; to make even or uniform; to soften differences",
+        "sentence": "Pendant longtemps, la protection a consisté à encadrer, à ___, à uniformiser les pratiques."
+      },
+      {
+        "word": "moduler",
+        "definition": "to regulate or adjust; to vary the level or intensity of something",
+        "sentence": "Il s'agit de ponctuellement ___ l'accès au salaire sans le fragmenter ni le rendre instable."
+      }
+    ],
+    "createdAt": "2026-06-13T16:18:22.460Z"
+  },
+  {
+    "id": 1781366302392,
+    "topic": "Le sport en France",
+    "title": "Coupe du Monde 2026 et paris sportifs : le gouvernement accusé de bloquer une campagne de prévention",
+    "passage": "A la veille du Mondial de football, un collectif s'inquiète de voir une campagne de prévention sur l'addiction aux paris sportifs déprogrammée. Evènement festif planétaire, la Coupe du monde de foot, qui démarre jeudi 10 juin en Amérique du Nord, est une période à hauts risques d'addiction aux paris sportifs pour les jeunes et les joueurs excessifs, cibles du puissant marketing des opérateurs tels que Winamax ou Unibet, estiment des associations et experts.\n\nEn France, les parieurs au jeu excessif, caractérisé par une perte de contrôle – l'incapacité à s'arrêter de jouer ou à jouer moins malgré des conséquences négatives, financières, psychologiques, familiales ou sociales – sont évalués à 15 % des parieurs, soit trois fois plus que sur l'ensemble des jeux d'argent. Or ceux-ci « peuvent se retrouver particulièrement ciblés » par le marketing des opérateurs sportifs, qui dépenseront cette année 785 millions d'euros de publicité, pour moitié sur le digital, un « montant en hausse de 25 % », a déclaré Isabelle Falque-Pierrotin, présidente du gendarme des jeux, l'Autorité nationale des jeux (ANJ), jeudi dernier au « Parisien ». La Coupe du monde de foot est une « période à risques », avec une « promotion des paris de plus en plus efficace » mêlant influenceurs, publicités, conseillers en paris, bonus…, a-t-elle souligné.\n\nLe collectif « Santé publique en danger » s'est dit ce mercredi « consterné » de voir une campagne de prévention sur l'addiction aux paris sportifs « bloquée » par le gouvernement, la troisième d'affilée, selon ces agents de Santé publique France et ces syndicats, à ne pas être diffusée. « Le gouvernement joue avec la santé des Français », estime ce collectif dans un communiqué : « Cette fois-ci, c'est la campagne de prévention sur les paris sportifs » de l'agence sanitaire « qui est bloquée en raison des décisions du Gouvernement ». « Après le blocage récent de la campagne de prévention sur les fortes chaleurs et l'absence de campagne de prévention du tabagisme lors de la journée mondiale sans tabac du 31 mai, c'est la campagne \"Parier, c'est pas rien\" qui ne sera pas rediffusée à l'occasion de la Coupe du Monde de football », déplorent ces agents de SpF et l'intersyndicale.\n\nCette campagne qui « alerte sur les dangers des paris sportifs devait être diffusée dès mi-mai » en amont du Mondial, « avant que les opérateurs de jeux ne déploient leur arsenal publicitaire avec des moyens bien plus importants que ceux de la santé publique », poursuivent-ils. Elle aurait « permis d'exposer plus efficacement les parieurs aux messages de prévention et de les orienter vers le dispositif d'aide à distance \"Joueurs info service\" », détaillent-ils. Pour Myriam Savy, responsable du plaidoyer chez Addictions France, il faut interdire la publicité entre « une heure avant et une heure après » les matchs sur les réseaux sociaux et à la télévision. « Il faut aussi interdire le sponsoring, qui n'est pas considéré comme de la publicité par l'Arcom, avec le",
+    "source": "L'Obs",
+    "author": "Service Actu",
+    "date": "Wed, 10 Jun 2026 18:03:02 +0200",
+    "link": "https://www.nouvelobs.com/sport/20260610.OBS115697/coupe-du-monde-2026-et-paris-sportifs-le-gouvernement-accuse-de-bloquer-une-campagne-de-prevention.html",
+    "questions": [
+      {
+        "question": "Quel pourcentage des parieurs en France sont caractérisés par un jeu excessif ?",
+        "options": [
+          "5 % des parieurs",
+          "15 % des parieurs",
+          "25 % des parieurs",
+          "30 % des parieurs"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly states 'les parieurs au jeu excessif...sont évalués à 15 % des parieurs.' The other percentages are not mentioned in the text."
+      },
+      {
+        "question": "Quel est le montant de la hausse des dépenses publicitaires des opérateurs sportifs cette année ?",
+        "options": [
+          "15 % de hausse",
+          "20 % de hausse",
+          "25 % de hausse",
+          "30 % de hausse"
+        ],
+        "answer": "C",
+        "explanation": "The text states that advertising spending will be 785 million euros with 'un montant en hausse de 25 %.' The other percentages are incorrect and not mentioned."
+      },
+      {
+        "question": "Combien de campagnes de prévention ont été bloquées selon le collectif \"Santé publique en danger\" ?",
+        "options": [
+          "Une campagne",
+          "Deux campagnes",
+          "Trois campagnes",
+          "Quatre campagnes"
+        ],
+        "answer": "C",
+        "explanation": "The passage mentions 'la troisième d'affilée' when referring to blocked prevention campaigns, including those on heat waves, tobacco prevention, and sports betting. The other numbers do not match the text."
+      },
+      {
+        "question": "Quel est le nom de la campagne de prévention sur les paris sportifs qui ne sera pas diffusée ?",
+        "options": [
+          "\"Jouer, c'est risqué\"",
+          "\"Parier, c'est pas rien\"",
+          "\"Attention aux paris\"",
+          "\"Santé d'abord\""
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly names the campaign as 'Parier, c'est pas rien' when stating it will not be rebroadcast during the World Cup. The other names are not mentioned in the passage."
+      },
+      {
+        "question": "Selon le texte, quel est le service d'aide auquel les parieurs en difficulté pourraient être orientés ?",
+        "options": [
+          "\"Addiction Control\"",
+          "\"Joueurs info service\"",
+          "\"Santé publique France\"",
+          "\"Parrieurs anonymes\""
+        ],
+        "answer": "B",
+        "explanation": "The passage specifies 'les orienter vers le dispositif d'aide à distance \"Joueurs info service\"' as the help service for problem gamblers. The other services are either invented or not mentioned as aid services."
+      },
+      {
+        "question": "Selon Myriam Savy d'Addictions France, pendant quelles périodes la publicité devrait-elle être interdite sur les réseaux sociaux et la télévision ?",
+        "options": [
+          "Deux heures avant et après les matchs",
+          "Une heure avant et après les matchs",
+          "Trois heures avant et après les matchs",
+          "Pendant toute la durée de la Coupe du monde"
+        ],
+        "answer": "B",
+        "explanation": "The text states Myriam Savy advocates for banning advertising between 'une heure avant et une heure après' matches on social media and television. The other time periods are not mentioned in the passage."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "déprogrammée",
+        "definition": "cancelled or removed from the schedule",
+        "sentence": "La campagne de prévention a été ___."
+      },
+      {
+        "word": "consterné",
+        "definition": "dismayed or shocked",
+        "sentence": "Le collectif s'est dit ___ de voir cette décision du gouvernement."
+      },
+      {
+        "word": "d'affilée",
+        "definition": "in a row or consecutively",
+        "sentence": "Trois campagnes de prévention ont été bloquées ___."
+      },
+      {
+        "word": "déploient",
+        "definition": "deploy or unfold",
+        "sentence": "Les opérateurs ___ leur arsenal publicitaire pendant le Mondial."
+      },
+      {
+        "word": "plaidoyer",
+        "definition": "advocacy or plea",
+        "sentence": "Le ___ pour l'interdiction de la publicité est nécessaire pour protéger les jeunes."
+      }
+    ],
+    "createdAt": "2026-06-13T15:58:22.392Z"
+  },
+  {
+    "id": 1781366103797,
+    "topic": "La technologie au quotidien",
+    "title": "Faciliter l’acompte sur salaire : une proposition pour « réduire des coûts inutiles et améliorer le quotidien »",
+    "passage": "Il existe, dans notre organisation du travail, des héritages que nous ne questionnons plus. La mensualisation du salaire en fait partie. Elle s'est imposée comme une conquête sociale, un progrès incontestable, une évidence presque naturelle. Elle a structuré notre rapport au travail, au temps, à l'argent. Elle a aussi façonné une certaine idée de la protection : attendre, pour être payé, la fin du mois. Mais toute organisation du temps est aussi une organisation du pouvoir. Et, à bien y regarder, cette évidence n'en est plus tout à fait une.\n\nCar enfin, que dit notre système actuel ? Il dit qu'un salarié peut travailler, produire, créer de la valeur et ne pas pouvoir disposer immédiatement de ce qu'il a déjà gagné. Il dit qu'entre le moment où le travail est accompli et celui où il est rémunéré, il existe un délai imposé, intangible, hérité d'un autre temps. Or ce temps n'est plus le nôtre. Nous vivons dans une économie de l'instantanéité. Les paiements sont immédiats, les flux circulent en temps réel, les usages ont basculé. Tout, ou presque, est devenu accessible sans délai. Tout, sauf le salaire. Ce décalage, longtemps toléré, devient aujourd'hui une friction. Et parfois, une violence silencieuse. Et ce décalage n'est plus seulement théorique. Il est massivement ressenti : selon une étude OpinionWay pour Stairwage [avril 2026, NDLR] , 73 % des Français se disent favorables à la possibilité d'accéder, en cas de besoin, au salaire qu'ils ont déjà gagné. Car derrière cette rigidité apparente, il y a des situations très concrètes : un imprévu, une dépense de santé, une réparation urgente. Et face à cela, une alternative trop souvent unique : le découvert bancaire. Autrement dit, payer, parfois cher, pour compenser l'impossibilité d'accéder à son propre revenu. En France, près d'un Français sur deux se retrouve à découvert au moins une fois par an. Un quart d'entre eux y ont recours chaque mois, basculant dans le rouge en moyenne dès le 18 du mois, pour un coût total estimé à près de 7 milliards d'euros d'agios [frais bancaires, NDLR] versés chaque année aux banques.\n\nCar il existe déjà, dans notre droit, une possibilité : celle de demander un acompte sur salaire. Un mécanisme simple en apparence, mais qui, dans les faits, reste marginal. Mal connu, peu utilisé. Comme si demander l'accès à ce que l'on a déjà gagné relevait d'une forme d'anomalie. Pourquoi un salarié hésite-t-il à demander une partie de son salaire ? Pourquoi ce geste est-il encore chargé d'une dimension symbolique, parfois même d'une forme de honte ? Pourquoi ce droit reste-t-il, dans bien des cas, théorique ? C'est cela, au fond, qu'il faut interroger. Et la réponse tient autant aux représentations qu'aux procédures. Voilà le sens de la loi relative aux acomptes sur salaire que nous proposons : rendre effectif un droit existant, en le simplifiant et en l'inscrivant",
+    "source": "L'Obs",
+    "author": "",
+    "date": "Thu, 11 Jun 2026 11:17:05 +0200",
+    "link": "https://www.nouvelobs.com/economie/20260609.OBS115651/faciliter-l-acompte-sur-salaire-une-proposition-pour-reduire-des-couts-inutiles-et-ameliorer-le-quotidien.html",
+    "questions": [
+      {
+        "question": "Selon le texte, pourquoi la mensualisation du salaire est-elle remise en question aujourd'hui ?",
+        "options": [
+          "Parce qu'elle n'a jamais été une véritable conquête sociale",
+          "Parce que nous vivons dans une économie de l'instantanéité où tout est accessible sans délai, sauf le salaire",
+          "Parce que les banques françaises refusent de proposer des découverts",
+          "Parce que les salariés ne veulent plus travailler à la fin du mois"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states that we now live in an economy of immediacy where payments are instant and flows circulate in real-time, making the delay for salary payment an anachronistic 'friction.' The other options misrepresent the author's argument or are factually unsupported by the passage."
+      },
+      {
+        "question": "Quel pourcentage de Français seraient favorables à l'accès immédiat au salaire gagné selon l'étude mentionnée ?",
+        "options": [
+          "50 %",
+          "25 %",
+          "73 %",
+          "18 %"
+        ],
+        "answer": "C",
+        "explanation": "The text explicitly cites an OpinionWay survey for Stairwage from April 2026 showing that 73% of French people support the possibility of accessing their already-earned salary if needed. The other percentages refer to different statistics in the passage."
+      },
+      {
+        "question": "Quel est le coût annuel total des agios (frais bancaires) payés par les Français selon le texte ?",
+        "options": [
+          "Environ 1 milliard d'euros",
+          "Environ 7 milliards d'euros",
+          "Environ 25 milliards d'euros",
+          "Environ 18 milliards d'euros"
+        ],
+        "answer": "B",
+        "explanation": "The passage states that the total cost of bank fees (agios) paid annually to banks is estimated at nearly 7 billion euros. This statistic illustrates the financial burden of the current system on French workers."
+      },
+      {
+        "question": "Selon le texte, qu'est-ce qui explique le faible utilisation de l'acompte sur salaire ?",
+        "options": [
+          "C'est une procédure trop complexe et illégale",
+          "Les salariés ne connaissent pas bien ce droit et le demander semble chargé d'une dimension symbolique ou de honte",
+          "Les entreprises françaises l'interdisent formellement",
+          "Cela n'existe que dans quelques pays européens"
+        ],
+        "answer": "B",
+        "explanation": "The text asks rhetorical questions about why employees hesitate to request advance pay: the answer involves both representations and procedures, suggesting that the right remains theoretical due to lack of knowledge and symbolic/shame-related barriers. The other options contradict the passage's claim that this mechanism exists in French law."
+      },
+      {
+        "question": "À quel moment du mois les Français qui utilisent régulièrement le découvert y ont-ils recours en moyenne ?",
+        "options": [
+          "Au début du mois",
+          "Au 25 du mois",
+          "Dès le 18 du mois",
+          "À la fin du mois seulement"
+        ],
+        "answer": "C",
+        "explanation": "The text specifically states that a quarter of French people resort to overdrafts each month, falling into the red on average by the 18th of the month. This detail illustrates the timing of financial pressure experienced by many workers."
+      },
+      {
+        "question": "Quel est l'objectif principal de la loi sur les acomptes sur salaire proposée par l'auteur ?",
+        "options": [
+          "Créer un nouveau droit pour les salariés",
+          "Interdire les découverts bancaires en France",
+          "Rendre effectif un droit existant en le simplifiant et en l'inscrivant dans la loi",
+          "Augmenter les salaires de tous les Français"
+        ],
+        "answer": "C",
+        "explanation": "The text concludes by explaining that the purpose of the proposed law is to make an existing right effective by simplifying it and legally establishing it. This is not about creating a new right but making an existing one truly accessible in practice."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "incontestable",
+        "definition": "undeniable, beyond dispute",
+        "sentence": "Cette découverte scientifique est ___ et reconnue par tous les experts."
+      },
+      {
+        "word": "intangible",
+        "definition": "cannot be touched or changed, immutable",
+        "sentence": "Les droits humains sont ___ et doivent être respectés universellement."
+      },
+      {
+        "word": "instantanéité",
+        "definition": "the quality of being immediate or instantaneous",
+        "sentence": "L'___ des communications modernes a transformé nos relations sociales."
+      },
+      {
+        "word": "friction",
+        "definition": "conflict, tension, or resistance",
+        "sentence": "Il existe une ___ entre les générations concernant l'utilisation de la technologie."
+      },
+      {
+        "word": "marginal",
+        "definition": "of minor importance, limited in scope or usage",
+        "definition_alt": "peripheral, relating to the margin",
+        "sentence": "Le nombre de personnes utilisant ce service reste ___ malgré ses avantages."
+      }
+    ],
+    "createdAt": "2026-06-13T15:55:03.797Z"
+  },
+  {
+    "id": 1781365554038,
+    "topic": "Le sport en France",
+    "title": "Coupe du Monde 2026 et paris sportifs : le gouvernement accusé de bloquer une campagne de prévention",
+    "passage": "A la veille du Mondial de football, un collectif s'inquiète de voir une campagne de prévention sur l'addiction aux paris sportifs déprogrammée. Evènement festif planétaire, la Coupe du monde de foot, qui démarre jeudi 10 juin en Amérique du Nord, est une période à hauts risques d'addiction aux paris sportifs pour les jeunes et les joueurs excessifs, cibles du puissant marketing des opérateurs tels que Winamax ou Unibet, estiment des associations et experts.\n\nEn France, les parieurs au jeu excessif, caractérisé par une perte de contrôle – l'incapacité à s'arrêter de jouer ou à jouer moins malgré des conséquences négatives, financières, psychologiques, familiales ou sociales – sont évalués à 15 % des parieurs, soit trois fois plus que sur l'ensemble des jeux d'argent. Or ceux-ci « peuvent se retrouver particulièrement ciblés » par le marketing des opérateurs sportifs, qui dépenseront cette année 785 millions d'euros de publicité, pour moitié sur le digital, un « montant en hausse de 25 % » , a déclaré Isabelle Falque-Pierrotin, présidente du gendarme des jeux, l'Autorité nationale des jeux (ANJ), jeudi dernier au « Parisien » . La Coupe du monde de foot est une « période à risques » , avec une « promotion des paris de plus en plus efficace » mêlant influenceurs, publicités, conseillers en paris, bonus…, a-t-elle souligné. Et de souhaiter, comme au Royaume-Uni, une interdiction de la publicité « dans une période allant de cinq minutes avant à cinq minutes après » la fin d'un match pour protéger les mineurs.\n\nUne mesure insuffisante, juge le collectif « Santé publique en danger » . Ce dernier s'est dit ce mercredi « consterné » de voir une campagne de prévention sur l'addiction aux paris sportifs « bloquée » par le gouvernement, la troisième d'affilée, selon ces agents de Santé publique France et ces syndicats, à ne pas être diffusée. « Le gouvernement joue avec la santé des Français » , estime ce collectif dans un communiqué : « Cette fois-ci, c'est la campagne de prévention sur les paris sportifs » de l'agence sanitaire « qui est bloquée en raison des décisions du Gouvernement » . « Après le blocage récent de la campagne de prévention sur les fortes chaleurs et l'absence de campagne de prévention du tabagisme lors de la journée mondiale sans tabac du 31 mai, c'est la campagne \"Parier, c'est pas rien\" qui ne sera pas rediffusée à l'occasion de la Coupe du Monde de football » , déplorent ces agents de SpF et l'intersyndicale.\n\nCette campagne qui « alerte sur les dangers des paris sportifs devait être diffusée dès mi-mai » en amont du Mondial, « avant que les opérateurs de jeux ne déploient leur arsenal publicitaire avec des moyens bien plus importants que ceux de la santé publique » , poursuivent-ils. Elle aurait « permis d'exposer plus efficacement les parieurs aux messages de prévention et de les orienter vers le dispositif d'aide à distance \"Joueurs info service\" » , détaillent-ils. Pour Myriam Savy, responsable du plaidoyer chez Addictions France",
+    "source": "L'Obs",
+    "author": "Service Actu",
+    "date": "Wed, 10 Jun 2026 18:03:02 +0200",
+    "link": "https://www.nouvelobs.com/sport/20260610.OBS115697/coupe-du-monde-2026-et-paris-sportifs-le-gouvernement-accuse-de-bloquer-une-campagne-de-prevention.html",
+    "questions": [
+      {
+        "question": "Quel est le pourcentage de parieurs au jeu excessif en France selon le texte ?",
+        "options": [
+          "5% des parieurs",
+          "15% des parieurs",
+          "25% des parieurs",
+          "10% des parieurs"
+        ],
+        "answer": "15% des parieurs",
+        "explanation": "The text explicitly states 'les parieurs au jeu excessif... sont évalués à 15 % des parieurs' and clarifies this is three times higher than for all gambling games combined. The other percentages are not mentioned in the passage."
+      },
+      {
+        "question": "Combien d'euros les opérateurs sportifs dépenseront-ils en publicité cette année ?",
+        "options": [
+          "500 millions d'euros",
+          "625 millions d'euros",
+          "785 millions d'euros",
+          "900 millions d'euros"
+        ],
+        "answer": "785 millions d'euros",
+        "explanation": "Isabelle Falque-Pierrotin, president of the ANJ, stated that sports operators 'dépenseront cette année 785 millions d'euros de publicité.' The other amounts are not supported by the text."
+      },
+      {
+        "question": "Quel collectif s'inquiète du blocage de la campagne de prévention ?",
+        "options": [
+          "Addictions France",
+          "Santé publique en danger",
+          "Joueurs info service",
+          "L'Autorité nationale des jeux"
+        ],
+        "answer": "Santé publique en danger",
+        "explanation": "The text clearly states 'Le collectif \"Santé publique en danger\" s'est dit ce mercredi \"consterné\"' about the blocked prevention campaign. While Addictions France is mentioned at the end, it is not identified as the main collective raising the concern."
+      },
+      {
+        "question": "Combien de campagnes de prévention ont été bloquées selon le collectif ?",
+        "options": [
+          "Une campagne",
+          "Deux campagnes",
+          "Trois campagnes",
+          "Quatre campagnes"
+        ],
+        "answer": "Trois campagnes",
+        "explanation": "The text states this is 'la troisième d'affilée' (the third in a row) and lists three blocked campaigns: heat prevention, tobacco prevention, and sports betting prevention. The other numbers do not match the information provided."
+      },
+      {
+        "question": "Quel est le nom de la campagne de prévention sur les paris sportifs mentionnée ?",
+        "options": [
+          "\"Parier c'est bien\"",
+          "\"Parier, c'est pas rien\"",
+          "\"Parier sans risque\"",
+          "\"Parier avec prudence\""
+        ],
+        "answer": "\"Parier, c'est pas rien\"",
+        "explanation": "The text explicitly mentions '\"Parier, c'est pas rien\" qui ne sera pas rediffusée à l'occasion de la Coupe du Monde de football.' The other campaign names are not mentioned in the passage."
+      },
+      {
+        "question": "Selon le texte, quand cette campagne de prévention aurait dû être diffusée ?",
+        "options": [
+          "Après la fin du Mondial",
+          "Dès mi-mai en amont du Mondial",
+          "Le jour du début du Mondial",
+          "Pendant les finales seulement"
+        ],
+        "answer": "Dès mi-mai en amont du Mondial",
+        "explanation": "The text states the campaign 'devait être diffusée dès mi-mai' en amont du Mondial' (starting mid-May ahead of the World Cup). This timing was important to expose betting messages before operators deployed their advertising. The other options do not match the information provided."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "déprogrammée",
+        "definition": "cancelled or removed from a schedule",
+        "sentence": "La campagne de prévention a été ___ par le gouvernement avant le Mondial."
+      },
+      {
+        "word": "excessifs",
+        "definition": "excessive or immoderate",
+        "sentence": "Les joueurs ___ aux paris sportifs sont particulièrement vulnérables au marketing."
+      },
+      {
+        "word": "consterné",
+        "definition": "dismayed or shocked",
+        "sentence": "Le collectif s'est dit ___ par les décisions du gouvernement."
+      },
+      {
+        "word": "arsenal",
+        "definition": "arsenal or array (of weapons/tools/means)",
+        "sentence": "Les opérateurs de jeux déploient leur ___ publicitaire avec des moyens considérables."
+      },
+      {
+        "word": "intersyndicale",
+        "definition": "inter-union or cross-union (representing multiple unions)",
+        "sentence": "L'___ a exprimé son désaccord face à ces blocages successifs."
+      }
+    ],
+    "createdAt": "2026-06-13T15:45:54.038Z"
+  },
+  {
+    "id": 1781365463528,
+    "topic": "cinema",
+    "title": "Israël refoule une journaliste française, Radio France dénonce une « entrave à la liberté de la presse »",
+    "passage": "Les autorités israéliennes ont annoncé ce jeudi 11 juin avoir refoulé une journaliste française, Alice Froussard, couvrant depuis plusieurs années le conflit israélo-palestinien pour Radio France et Radio France Internationale (RFI). La journaliste s'est vue refuser l'entrée du territoire israélien à son arrivée mercredi après-midi à l'aéroport international Ben-Gourion, près de Tel-Aviv où elle a été contrainte à passer la nuit avant d'être renvoyée vers Paris dans un avion ayant décollé jeudi matin.\n\nSon refoulement a été annoncé par le ministre de la Diaspora et de la Lutte contre l'antisémitisme, Amichaï Chikli. Alice Froussard « a tenté d'entrer en Israël et de reprendre son travail ici de manière permanente, mais la recommandation du ministère a été acceptée, et la journaliste a été expulsée et remise dans un avion pour la France », écrit Amichaï Chikli dans un communiqué accusant la journaliste d'être un soutien du mouvement islamiste palestinien Hamas. La journaliste était arrivée mercredi à l'aéroport de Tel-Aviv et « devait rejoindre la Cisjordanie pour un reportage », rapporte Reporters sans frontières. Selon l'organisation, « trente minutes » après son arrivée à l'aéroport Ben Gurion en Israël, elle a été interpellée, interrogée puis expulsée du pays par la police israélienne. L'interdiction officielle, consultée par RSF, invoque comme motifs du refus « des considérations de sécurité publique, de sûreté publique ou d'ordre public » et « des considérations liées à la prévention de l'immigration clandestine ». La journaliste disposait pourtant de toutes les pièces requises, d'un visa et d'un contrat officiel avec RFI, rapporte l'organisme.\n\nRFI, qui fait partie du pôle extérieur de l'audiovisuel public français, a dénoncé une « entrave à la liberté de la presse » et affiché son soutien à la journaliste. « La journaliste de RFI Alice Froussard s'est vue refuser l'entrée sur le territoire israélien […] alors qu'elle disposait de l'autorisation de voyage requise et d'une demande de visa de presse en bonne et due forme pour travailler en Cisjordanie », a réagi RFI dans un communiqué. « Les autorités israéliennes n'ont pas transmis à RFI de justification de cette décision », poursuit la radio dans ce texte, ajoutant que « la direction de RFI apporte tout son soutien à Alice Froussard et proteste contre cette expulsion qui constitue une entrave à la liberté de la presse et qui intervient dans un contexte de difficultés croissantes rencontrées par les journalistes pour couvrir l'actualité de la région ». Dans un communiqué, Radio France s'est joint à RFI pour exprimer « son indignation et son inquiétude ». Agnès Vahramian, directrice de l'information de Radio France et directrice de Franceinfo a dénoncé « une entrave » à la liberté de la presse, dans un contexte où l'accès au terrain est « déjà considérablement restreint ». « Informer avec rigueur et indépendance est une condition essentielle du débat démocratique. Les",
+    "source": "L'Obs",
+    "author": "Service Actu",
+    "date": "Thu, 11 Jun 2026 14:40:07 +0200",
+    "link": "https://www.nouvelobs.com/medias/20260611.OBS115715/israel-refoule-une-journaliste-francaise-radio-france-denonce-une-entrave-a-la-liberte-de-la-presse.html",
+    "questions": [
+      {
+        "question": "Quel jour Alice Froussard a-t-elle été refoulée à l'aéroport Ben-Gourion ?",
+        "options": [
+          "Mercredi 10 juin",
+          "Jeudi 11 juin",
+          "Mardi 9 juin",
+          "Vendredi 12 juin"
+        ],
+        "answer": "Mercredi 10 juin",
+        "explanation": "The text states she was denied entry 'mercredi après-midi' (Wednesday afternoon) and the announcement of her refusal came 'ce jeudi 11 juin' (this Thursday June 11); therefore she arrived and was refused on Wednesday, not Thursday, which was when the announcement was made."
+      },
+      {
+        "question": "Pour quelles organisations Alice Froussard travaille-t-elle ?",
+        "options": [
+          "France 2 et France 3",
+          "Radio France et Radio France Internationale",
+          "Reporters sans frontières et RFI",
+          "Franceinfo et TF1"
+        ],
+        "answer": "Radio France et Radio France Internationale",
+        "explanation": "The text explicitly states at the beginning that she covers the conflict 'pour Radio France et Radio France Internationale (RFI)'; the other options mention different organizations or partially correct information."
+      },
+      {
+        "question": "Qui a annoncé le refoulement d'Alice Froussard ?",
+        "options": [
+          "Le ministère de la Défense israélien",
+          "Le ministre de la Diaspora et de la Lutte contre l'antisémitisme, Amichaï Chikli",
+          "La police de l'aéroport Ben-Gourion",
+          "Le gouvernement français"
+        ],
+        "answer": "Le ministre de la Diaspora et de la Lutte contre l'antisémitisme, Amichaï Chikli",
+        "explanation": "The text clearly states 'Son refoulement a été annoncé par le ministre de la Diaspora et de la Lutte contre l'antisémitisme, Amichaï Chikli'; the other options are either incorrect officials or organizations."
+      },
+      {
+        "question": "Quel motif officiel les autorités israéliennes ont-elles donné pour le refus d'entrée ?",
+        "options": [
+          "Des accusations de sympathie envers le Hamas",
+          "Des considérations de sécurité publique, de sûreté publique ou d'ordre public",
+          "Un problème avec son visa de presse",
+          "Elle n'avait pas de contrat valide avec RFI"
+        ],
+        "answer": "Des considérations de sécurité publique, de sûreté publique ou d'ordre public",
+        "explanation": "The text states that the official ban document 'invoque comme motifs du refus « des considérations de sécurité publique, de sûreté publique ou d'ordre public »'; while Chikli accused her of supporting Hamas, that is not the official motif given in the ban document, and the other options contradict information in the text."
+      },
+      {
+        "question": "Combien de temps après son arrivée à l'aéroport Alice Froussard a-t-elle été interpellée ?",
+        "options": [
+          "Cinq minutes",
+          "Trente minutes",
+          "Une heure",
+          "Deux heures"
+        ],
+        "answer": "Trente minutes",
+        "explanation": "According to Reporters sans frontières quoted in the text, 'trente minutes' (thirty minutes) after her arrival at Ben Gurion airport, she was stopped, questioned, and then expelled."
+      },
+      {
+        "question": "Pourquoi RFI a-t-elle protesté contre cette expulsion ?",
+        "options": [
+          "Parce que la journaliste n'avait pas assez d'expérience",
+          "Parce qu'elle constitue une entrave à la liberté de la presse et que la journaliste avait toutes les autorisations requises",
+          "Parce que les autorités israéliennes n'avaient pas informé RFI à l'avance",
+          "Parce que Alice Froussard n'était pas accréditée en Cisjordanie"
+        ],
+        "answer": "Parce qu'elle constitue une entrave à la liberté de la presse et que la journaliste avait toutes les autorisations requises",
+        "explanation": "RFI's statement denounces the expulsion as 'une entrave à la liberté de la presse' and emphasizes that 'la journaliste disposait de l'autorisation de voyage requise et d'une demande de visa de presse en bonne et due forme'; the other options misrepresent or contradict RFI's stated reasons."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "refoulé",
+        "definition": "turned back, refused entry, expelled",
+        "sentence": "Les autorités ont ___ la journaliste à la frontière sans explication."
+      },
+      {
+        "word": "entrave",
+        "definition": "obstacle, hindrance, impediment",
+        "sentence": "Cette décision constitue une ___ à la liberté de la presse."
+      },
+      {
+        "word": "Diaspora",
+        "definition": "dispersion of people from their homeland, scattered community",
+        "sentence": "Le ministre de la ___ a annoncé cette expulsion."
+      },
+      {
+        "word": "interpellé",
+        "definition": "questioned, challenged, stopped and questioned by authorities",
+        "sentence": "La journaliste a été ___ par la police à son arrivée."
+      },
+      {
+        "word": "pièces requises",
+        "definition": "required documents, necessary paperwork",
+        "sentence": "Elle disposait de toutes les ___ pour entrer légalement dans le pays."
+      }
+    ],
+    "createdAt": "2026-06-13T15:44:23.528Z"
+  },
+  {
+    "id": 1781365227666,
+    "topic": "La technologie au quotidien",
+    "title": "Faciliter l’acompte sur salaire : une proposition pour « réduire des coûts inutiles et améliorer le quotidien »",
+    "passage": "Il existe, dans notre organisation du travail, des héritages que nous ne questionnons plus. La mensualisation du salaire en fait partie. Elle s'est imposée comme une conquête sociale, un progrès incontestable, une évidence presque naturelle. Elle a structuré notre rapport au travail, au temps, à l'argent. Elle a aussi façonné une certaine idée de la protection : attendre, pour être payé, la fin du mois. Mais toute organisation du temps est aussi une organisation du pouvoir. Et, à bien y regarder, cette évidence n'en est plus tout à fait une.\n\nCar enfin, que dit notre système actuel ? Il dit qu'un salarié peut travailler, produire, créer de la valeur et ne pas pouvoir disposer immédiatement de ce qu'il a déjà gagné. Il dit qu'entre le moment où le travail est accompli et celui où il est rémunéré, il existe un délai imposé, intangible, hérité d'un autre temps. Or ce temps n'est plus le nôtre. Nous vivons dans une économie de l'instantanéité. Les paiements sont immédiats, les flux circulent en temps réel, les usages ont basculé. Tout, ou presque, est devenu accessible sans délai. Tout, sauf le salaire. Ce décalage, longtemps toléré, devient aujourd'hui une friction. Et parfois, une violence silencieuse. Et ce décalage n'est plus seulement théorique. Il est massivement ressenti : selon une étude OpinionWay pour Stairwage [avril 2026, NDLR] , 73 % des Français se disent favorables à la possibilité d'accéder, en cas de besoin, au salaire qu'ils ont déjà gagné. Car derrière cette rigidité apparente, il y a des situations très concrètes : un imprévu, une dépense de santé, une réparation urgente. Et face à cela, une alternative trop souvent unique : le découvert bancaire.\n\nAutrement dit, payer, parfois cher, pour compenser l'impossibilité d'accéder à son propre revenu. En France, près d'un Français sur deux se retrouve à découvert au moins une fois par an. Un quart d'entre eux y ont recours chaque mois, basculant dans le rouge en moyenne dès le 18 du mois, pour un coût total estimé à près de 7 milliards d'euros d'agios [frais bancaires, NDLR] versés chaque année aux banques. Cette mécanique n'est pas neutre. Elle organise une très coûteuse dépendance. A partir de novembre 2026, cette situation va évoluer. Le découvert bancaire, jusqu'ici perçu comme une facilité, sera davantage encadré, rapproché du crédit consommation, soumis à des règles plus strictes. C'est une évolution nécessaire. Mais elle révèle, en creux, une fragilité plus profonde : celle d'un modèle qui ne correspond plus aux rythmes de la vie réelle. C'est à cet endroit précis que le débat doit se situer. Non pas dans une remise en cause de la mensualisation, qui demeure un socle, mais dans la capacité à l'aménager, à l'assouplir, à la rendre compatible avec les usages contemporains.\n\nCar il existe déjà, dans notre droit, une possibilité : celle de demander un acompte sur salaire. Un mécanisme simple en apparence, mais qui",
+    "source": "L'Obs",
+    "author": "",
+    "date": "Thu, 11 Jun 2026 11:17:05 +0200",
+    "link": "https://www.nouvelobs.com/economie/20260609.OBS115651/faciliter-l-acompte-sur-salaire-une-proposition-pour-reduire-des-couts-inutiles-et-ameliorer-le-quotidien.html",
+    "questions": [
+      {
+        "question": "Selon le passage, pourquoi la mensualisation du salaire est-elle devenue une évidence ?",
+        "options": [
+          "Parce qu'elle a été imposée par les banques",
+          "Parce qu'elle s'est imposée comme une conquête sociale et un progrès incontestable",
+          "Parce qu'elle garantit la protection maximale des employeurs",
+          "Parce qu'elle permet aux salariés d'accéder immédiatement à leur salaire"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly states that monthly salary payments 'imposed itself as a social conquest, an indisputable progress, an almost natural obviousness.' The other options contradict the text: banks didn't impose it, it protects workers not employers, and it actually prevents immediate access to wages."
+      },
+      {
+        "question": "Quel paradoxe l'auteur soulève-t-il dans le système actuel ?",
+        "options": [
+          "Les salariés reçoivent leur salaire trop rapidement",
+          "Les paiements bancaires sont instantanés, mais le salaire ne peut pas être accessible immédiatement",
+          "La protection sociale a disparu avec la mensualisation",
+          "Les dépenses de santé sont remboursées plus rapidement que le salaire"
+        ],
+        "answer": "B",
+        "explanation": "The author describes a contradiction: we live in an economy of immediacy where payments are instant and most things are accessible without delay, yet salaries have a mandatory delay between work completion and payment. The other options either contradict the text or are not discussed as the main paradox."
+      },
+      {
+        "question": "Selon l'étude OpinionWay citée, quel pourcentage de Français souhaite pouvoir accéder à son salaire en cas de besoin ?",
+        "options": [
+          "50%",
+          "25%",
+          "73%",
+          "18%"
+        ],
+        "answer": "C",
+        "explanation": "The passage explicitly states: 'according to an OpinionWay study for Stairwage, 73% of French people are in favor of the possibility to access, if needed, the salary they have already earned.' The other percentages refer to different statistics in the text."
+      },
+      {
+        "question": "Quel est le coût total estimé des agios versés aux banques chaque année en France ?",
+        "options": [
+          "Environ 1 milliard d'euros",
+          "Environ 7 milliards d'euros",
+          "Environ 18 milliards d'euros",
+          "Environ 50 milliards d'euros"
+        ],
+        "answer": "B",
+        "explanation": "The text states: 'for a total cost estimated at nearly 7 billion euros in overdraft fees paid each year to banks.' This figure illustrates the financial burden of bank overdrafts. The other amounts are not mentioned in the passage."
+      },
+      {
+        "question": "À partir de quelle date le cadre réglementaire du découvert bancaire va-t-il évoluer en France ?",
+        "options": [
+          "Janvier 2025",
+          "Avril 2026",
+          "Novembre 2026",
+          "Décembre 2027"
+        ],
+        "answer": "C",
+        "explanation": "The passage clearly states: 'From November 2026 onwards, this situation will evolve. The bank overdraft will be more regulated.' The date April 2026 refers to the opinion poll, not the regulatory change. The other dates are not mentioned."
+      },
+      {
+        "question": "Que propose l'auteur comme solution au problème soulevé ?",
+        "options": [
+          "Abolir complètement la mensualisation du salaire",
+          "Aménager et assouplir la mensualisation pour la rendre compatible avec les usages contemporains",
+          "Augmenter les agios bancaires",
+          "Interdire l'accès au découvert bancaire"
+        ],
+        "answer": "B",
+        "explanation": "The author explicitly states the debate should focus on 'the ability to arrange it, to make it more flexible, to make it compatible with contemporary uses,' not to eliminate monthly salaries but to adapt them. The other options either contradict the text or are not proposed solutions."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "incontestable",
+        "definition": "indisputable, undeniable",
+        "sentence": "Elle s'est imposée comme une conquête sociale, un progrès ___, une évidence presque naturelle."
+      },
+      {
+        "word": "intangible",
+        "definition": "unchangeable, inviolable",
+        "sentence": "Il existe un délai imposé, ___, hérité d'un autre temps."
+      },
+      {
+        "word": "friction",
+        "definition": "conflict, tension, resistance",
+        "sentence": "Ce décalage, longtemps toléré, devient aujourd'hui une ___."
+      },
+      {
+        "word": "assouplir",
+        "definition": "to make more flexible, to ease",
+        "sentence": "Le débat doit se situer dans la capacité à l'aménager, à l'___, à la rendre compatible avec les usages contemporains."
+      },
+      {
+        "word": "acompte",
+        "definition": "advance payment, partial payment",
+        "sentence": "Il existe déjà, dans notre droit, une possibilité : celle de demander un ___ sur salaire."
+      }
+    ],
+    "createdAt": "2026-06-13T15:40:27.666Z"
+  },
+  {
+    "id": 1781365166059,
+    "topic": "La technologie au quotidien",
+    "title": "Faciliter l’acompte sur salaire : une proposition pour « réduire des coûts inutiles et améliorer le quotidien »",
+    "passage": "Toucher une partie de sa rémunération avant la fin du mois, c'est ce que propose une loi transpartisane d'initiative socialiste. Les députés PS Océane Godard et Romain Eskenazi s'en expliquent dans cette tribune, cosignée par de nombreux élus et organisations.\n\nIl existe, dans notre organisation du travail, des héritages que nous ne questionnons plus. La mensualisation du salaire en fait partie. Elle s'est imposée comme une conquête sociale, un progrès incontestable, une évidence presque naturelle. Elle a structuré notre rapport au travail, au temps, à l'argent. Elle a aussi façonné une certaine idée de la protection : attendre, pour être payé, la fin du mois. Mais toute organisation du temps est aussi une organisation du pouvoir. Et, à bien y regarder, cette évidence n'en est plus tout à fait une. Car enfin, que dit notre système actuel ? Il dit qu'un salarié peut travailler, produire, créer de la valeur et ne pas pouvoir disposer immédiatement de ce qu'il a déjà gagné. Il dit qu'entre le moment où le travail est accompli et celui où il est rémunéré, il existe un délai imposé, intangible, hérité d'un autre temps. Or ce temps n'est plus le nôtre. Nous vivons dans une économie de l'instantanéité. Les paiements sont immédiats, les flux circulent en temps réel, les usages ont basculé. Tout, ou presque, est devenu accessible sans délai. Tout, sauf le salaire.\n\nCe décalage, longtemps toléré, devient aujourd'hui une friction. Et parfois, une violence silencieuse. Et ce décalage n'est plus seulement théorique. Il est massivement ressenti : selon une étude OpinionWay pour Stairwage [avril 2026, NDLR], 73 % des Français se disent favorables à la possibilité d'accéder, en cas de besoin, au salaire qu'ils ont déjà gagné. Car derrière cette rigidité apparente, il y a des situations très concrètes : un imprévu, une dépense de santé, une réparation urgente. Et face à cela, une alternative trop souvent unique : le découvert bancaire. Autrement dit, payer, parfois cher, pour compenser l'impossibilité d'accéder à son propre revenu. En France, près d'un Français sur deux se retrouve à découvert au moins une fois par an. Un quart d'entre eux y ont recours chaque mois, basculant dans le rouge en moyenne dès le 18 du mois, pour un coût total estimé à près de 7 milliards d'euros d'agios [frais bancaires, NDLR] versés chaque année aux banques. Cette mécanique n'est pas neutre. Elle organise une très coûteuse dépendance.\n\nCar il existe déjà, dans notre droit, une possibilité : celle de demander un acompte sur salaire. Un mécanisme simple en apparence, mais qui, dans les faits, reste marginal. Mal connu, peu utilisé. Comme si demander l'accès à ce que l'on a déjà gagné relevait d'une forme d'anomalie. Pourquoi un salarié hésite-t-il à demander une partie de son salaire ? Pourquoi ce geste est-il encore chargé d'une dimension symbolique, parfois même d'une forme de honte ? Pour",
+    "source": "L'Obs",
+    "author": "",
+    "date": "Thu, 11 Jun 2026 11:17:05 +0200",
+    "link": "https://www.nouvelobs.com/economie/20260609.OBS115651/faciliter-l-acompte-sur-salaire-une-proposition-pour-reduire-des-couts-inutiles-et-ameliorer-le-quotidien.html",
+    "questions": [
+      {
+        "question": "Selon le texte, quel pourcentage de Français sont favorables à l'accès au salaire déjà gagné en cas de besoin ?",
+        "options": [
+          "53%",
+          "73%",
+          "82%",
+          "91%"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states that according to an OpinionWay study, '73 % des Français se disent favorables à la possibilité d'accéder, en cas de besoin, au salaire qu'ils ont déjà gagné.' The other percentages are not mentioned in the passage."
+      },
+      {
+        "question": "Quel problème concret force les Français à utiliser le découvert bancaire ?",
+        "options": [
+          "Des dépenses de loisirs et de vacances",
+          "Un imprévu, une dépense de santé, ou une réparation urgente",
+          "Des frais d'assurance automobile",
+          "Des achats de vêtements et d'accessoires"
+        ],
+        "answer": "B",
+        "explanation": "The text clearly lists the concrete situations that lead to overdrafts: 'un imprévu, une dépense de santé, une réparation urgente.' The other options are not mentioned as reasons for using overdrafts in the passage."
+      },
+      {
+        "question": "À quel moment du mois, en moyenne, les Français se retrouvent-ils à découvert selon le texte ?",
+        "options": [
+          "Le 10 du mois",
+          "Le 15 du mois",
+          "Le 18 du mois",
+          "Le 25 du mois"
+        ],
+        "answer": "C",
+        "explanation": "The text states that people 'basculant dans le rouge en moyenne dès le 18 du mois.' This is the only date mentioned for average overdraft timing, while the other dates are not referenced in the passage."
+      },
+      {
+        "question": "Quel montant total d'agios est estimé être versé chaque année aux banques en France ?",
+        "options": [
+          "Environ 3 milliards d'euros",
+          "Environ 5 milliards d'euros",
+          "Environ 7 milliards d'euros",
+          "Environ 10 milliards d'euros"
+        ],
+        "answer": "C",
+        "explanation": "The text explicitly mentions 'un coût total estimé à près de 7 milliards d'euros d'agios versés chaque année aux banques.' The other amounts are not stated in the passage."
+      },
+      {
+        "question": "Quel mécanisme existe déjà dans le droit français pour obtenir une partie de son salaire avant la fin du mois ?",
+        "options": [
+          "L'avance sur salaire",
+          "L'acompte sur salaire",
+          "Le crédit salarial",
+          "La prime anticipée"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states 'Il existe déjà, dans notre droit, une possibilité : celle de demander un acompte sur salaire.' This is the correct legal mechanism mentioned; the other options are not referenced in the passage."
+      },
+      {
+        "question": "Selon les auteurs, pourquoi la mensualisation du salaire était-elle considérée comme une conquête sociale ?",
+        "options": [
+          "Parce qu'elle permettait de payer les salaires à tout moment",
+          "Parce qu'elle offrait une protection et structurait le rapport au travail, au temps et à l'argent",
+          "Parce qu'elle augmentait les salaires des travailleurs",
+          "Parce qu'elle réduisait les heures de travail"
+        ],
+        "answer": "B",
+        "explanation": "The text explains that the monthly payment 's'est imposée comme une conquête sociale, un progrès incontestable' and that 'Elle a structuré notre rapport au travail, au temps, à l'argent. Elle a aussi façonné une certaine idée de la protection.' The other options are not supported by the passage."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "rémunération",
+        "definition": "compensation or payment for work; salary or wages",
+        "sentence": "Les employés reçoivent leur ___ chaque mois pour les services qu'ils ont rendus à l'entreprise."
+      },
+      {
+        "word": "intangible",
+        "definition": "not able to be touched or grasped; abstract or intangible",
+        "sentence": "Le délai entre le travail et le paiement est devenu un principe ___ dans notre système économique."
+      },
+      {
+        "word": "friction",
+        "definition": "conflict or tension between two things or parties",
+        "sentence": "La ___ entre les attentes modernes et les anciennes règles crée des problèmes pour les travailleurs."
+      },
+      {
+        "word": "découvert",
+        "definition": "overdraft; a negative balance in a bank account",
+        "sentence": "Beaucoup de Français se retrouvent en ___ bancaire avant la fin du mois à cause de leurs dépenses."
+      },
+      {
+        "word": "acompte",
+        "definition": "advance payment; a partial payment made before the full amount is due",
+        "sentence": "Un salarié peut demander un ___ sur son salaire si il a besoin d'argent avant la fin du mois."
+      }
+    ],
+    "createdAt": "2026-06-13T15:39:26.059Z"
+  },
+  {
+    "id": 1781364603269,
+    "topic": "Le cinéma français",
+    "title": "« La Reine Margot » avec Isabelle Adjani : sous les dentelles, l’enfer",
+    "passage": "Alors qu'Alexandre Dumas devient la manne providentielle du cinéma français, il faut revoir cette adaptation flamboyante s'autorisant toutes les audaces. Ce soir à 20h50 sur Ciné+ Émotion.\n\n« La Reine Margot » est autant un récit d'aventures fiévreux, qui ne lâche jamais le spectateur, qu'une évocation terriblement actuelle des guerres de Religion. Suivant le mariage de Marguerite de Valois et d'Henri de Navarre, qualifié de « noces vermeilles », la Saint-Barthélemy trouve une représentation effroyablement réaliste. Les cadavres de protestants jonchent par milliers les rues de Paris avant d'être déversés dans des charniers. Le chef opérateur Philippe Rousselot peint, avec les couleurs de Goya et de Géricault, ces amoncellements de corps qui préfigurent les crimes de masse des Etats totalitaires. Cette nature vampirique d'un pouvoir égorgeant son propre peuple trouve son allégorie lorsque Charles IX, empoisonné, exsude du sang par tous les pores. Chéreau représente un monde corrompu et dominé par la mort, faisant basculer le film du côté du cinéma d'horreur.\n\nPas plus que Dumas, Chéreau n'a cure de l'exactitude historique. Ainsi, on ne trouvera pas les fameuses « fraises » d'Henri III ni ses « mignons ». Le cinéaste fait de ses jeunes nobles des versions XVIe siècle de Mick Jagger et Jim Morrison, cheveux longs et chemises blanches lacérées. Couverts de sang et de boue, plein de panache, décadents ou cruels, Pascal Greggory, Jean-Hugues Anglade et Vincent Perez sont irrésistibles de beauté vénéneuse. Même Daniel Auteuil, en Henri de Navarre, est mis au diapason de cette vision très sensuelle de la cour de France. Au milieu de ces figures maléfiques trône Marguerite, dont la peau d'albâtre est elle aussi maculée du sang de ses frères et de ses amants.\n\nQui d'autre pour l'incarner qu'Isabelle Adjani, la reine écarlate du cinéma français ? Après « l'Histoire d'Adèle H. », « Nosferatu » et « Possession », elle s'inscrit dans une lignée de personnages tourmentés par l'amour et les créatures démoniaques. Pourtant, c'est l'époque qui est chaotique, et Marguerite apparaît surtout comme courageuse et maîtresse de ses désirs. Alors que les hommes s'entretuent pour le pouvoir, Adjani et Chéreau composent le portrait d'une femme libre.",
+    "source": "L'Obs",
+    "author": "Stéphane du Mesnildot",
+    "date": "Thu, 11 Jun 2026 18:00:02 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260611.OBS115724/la-reine-margot-avec-isabelle-adjani-sous-les-dentelles-l-enfer.html",
+    "questions": [
+      {
+        "question": "À quelle heure le film « La Reine Margot » est-il diffusé ce soir ?",
+        "options": [
+          "19h30 sur Ciné+ Émotion",
+          "20h50 sur Ciné+ Émotion",
+          "21h15 sur Ciné+ Émotion",
+          "20h30 sur Ciné+ Émotion"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly states 'Ce soir à 20h50 sur Ciné+ Émotion' at the beginning. The other options provide incorrect times or channels."
+      },
+      {
+        "question": "Quel événement historique majeur est représenté dans le film « La Reine Margot » ?",
+        "options": [
+          "Le couronnement de Charles IX",
+          "La Révolution française",
+          "La Saint-Barthélemy",
+          "La mort d'Henri III"
+        ],
+        "answer": "C",
+        "explanation": "The passage states 'Suivant le mariage de Marguerite de Valois et d'Henri de Navarre, qualifié de « noces vermeilles », la Saint-Barthélemy trouve une représentation effroyablement réaliste.' The other options are not the central historical event depicted in the film."
+      },
+      {
+        "question": "Selon le texte, comment le chef opérateur Philippe Rousselot peint-il les scènes de massacre ?",
+        "options": [
+          "Avec les couleurs de Rembrandt et Caravage",
+          "Avec les couleurs de Goya et de Géricault",
+          "Avec les couleurs de Delacroix et Ingres",
+          "Avec un style minimaliste et épuré"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states 'Le chef opérateur Philippe Rousselot peint, avec les couleurs de Goya et de Géricault, ces amoncellements de corps.' The other painters mentioned are not referenced in the passage."
+      },
+      {
+        "question": "À quels artistes modernes le cinéaste compare-t-il les jeunes nobles du film ?",
+        "options": [
+          "À des musiciens de jazz classique",
+          "À des versions XVIe siècle de Mick Jagger et Jim Morrison",
+          "À des acteurs de cinéma hollywoodien",
+          "À des peintres impressionnistes"
+        ],
+        "answer": "B",
+        "explanation": "The passage states 'Le cinéaste fait de ses jeunes nobles des versions XVIe siècle de Mick Jagger et Jim Morrison, cheveux longs et chemises blanches lacérées.' The other options do not correspond to the comparison made in the text."
+      },
+      {
+        "question": "Quels rôles Isabelle Adjani a-t-elle joués avant « La Reine Margot » selon le texte ?",
+        "options": [
+          "« Dona Sol », « Camille » et « Jeanne d'Arc »",
+          "« L'Histoire d'Adèle H. », « Nosferatu » et « Possession »",
+          "« Camille » « Jeanne d'Arc » et « Lourdes »",
+          "« Marie-Antoinette », « la Comtesse de Monsoreau » et « Pauline »"
+        ],
+        "answer": "B",
+        "explanation": "The passage explicitly lists these three films: 'Après « l'Histoire d'Adèle H. », « Nosferatu » et « Possession ».' The other options contain incorrect film titles."
+      },
+      {
+        "question": "Comment le texte caractérise-t-il le personnage de Marguerite tel qu'interprété par Adjani et Chéreau ?",
+        "options": [
+          "Comme une femme victime et soumise aux hommes",
+          "Comme une reine cruelle et assoiffée de pouvoir",
+          "Comme une femme libre, courageuse et maîtresse de ses désirs",
+          "Comme une héroïne patriotique et religieuse"
+        ],
+        "answer": "C",
+        "explanation": "The passage states 'Adjani et Chéreau composent le portrait d'une femme libre' and notes that 'Marguerite apparaît surtout comme courageuse et maîtresse de ses désirs.' The other characterizations contradict what the text describes."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "manne providentielle",
+        "definition": "a fortunate and unexpected source of benefit or supply; a godsend",
+        "sentence": "Ce roman est devenu la ___ pour tous les réalisateurs contemporains."
+      },
+      {
+        "word": "fiévreux",
+        "definition": "feverish; frantic; intense with excitement or activity",
+        "sentence": "Le rythme ___ du film ne permet pas au spectateur de détourner son attention."
+      },
+      {
+        "word": "joncher",
+        "definition": "to strew; to scatter or litter (objects or bodies) across a surface",
+        "sentence": "Les débris ___ le sol après l'explosion."
+      },
+      {
+        "word": "vampirique",
+        "definition": "vampire-like; parasitic; sucking the life force from something",
+        "sentence": "La nature ___ du régime totalitaire dévore toutes les ressources du pays."
+      },
+      {
+        "word": "vénéneuse",
+        "definition": "poisonous; toxic; seductively dangerous or harmful",
+        "sentence": "Cette beauté ___ cache une personnalité cruelle et manipulatrice."
+      }
+    ],
+    "createdAt": "2026-06-13T15:30:03.269Z"
+  },
+  {
+    "id": 1781362298020,
+    "topic": "Le cinéma français",
+    "title": "« La Reine Margot » avec Isabelle Adjani : sous les dentelles, l’enfer",
+    "passage": "Alors qu'Alexandre Dumas devient la manne providentielle du cinéma français, il faut revoir cette adaptation flamboyante s'autorisant toutes les audaces. Ce soir à 20h50 sur Ciné+ Émotion.\n\n« La Reine Margot » est autant un récit d'aventures fiévreux, qui ne lâche jamais le spectateur, qu'une évocation terriblement actuelle des guerres de Religion. Suivant le mariage de Marguerite de Valois et d'Henri de Navarre, qualifié de « noces vermeilles », la Saint-Barthélemy trouve une représentation effroyablement réaliste. Les cadavres de protestants jonchent par milliers les rues de Paris avant d'être déversés dans des charniers. Le chef opérateur Philippe Rousselot peint, avec les couleurs de Goya et de Géricault, ces amoncellements de corps qui préfigurent les crimes de masse des Etats totalitaires. Cette nature vampirique d'un pouvoir égorgeant son propre peuple trouve son allégorie lorsque Charles IX, empoisonné, exsude du sang par tous les pores. Chéreau représente un monde corrompu et dominé par la mort, faisant basculer le film du côté du cinéma d'horreur.\n\nPas plus que Dumas, Chéreau n'a cure de l'exactitude historique. Ainsi, on ne trouvera pas les fameuses « fraises » d'Henri III ni ses « mignons ». Le cinéaste fait de ses jeunes nobles des versions XVIe siècle de Mick Jagger et Jim Morrison, cheveux longs et chemises blanches lacérées. Couverts de sang et de boue, plein de panache, décadents ou cruels, Pascal Greggory, Jean-Hugues Anglade et Vincent Perez sont irrésistibles de beauté vénéneuse. Même Daniel Auteuil, en Henri de Navarre, est mis au diapason de cette vision très sensuelle de la cour de France. Au milieu de ces figures maléfiques trône Marguerite, dont la peau d'albâtre est elle aussi maculée du sang de ses frères et de ses amants.\n\nQui d'autre pour l'incarner qu'Isabelle Adjani, la reine écarlate du cinéma français ? Après « l'Histoire d'Adèle H. », « Nosferatu » et « Possession », elle s'inscrit dans une lignée de personnages tourmentés par l'amour et les créatures démoniaques. Pourtant, c'est l'époque qui est chaotique, et Marguerite apparaît surtout comme courageuse et maîtresse de ses désirs. Alors que les hommes s'entretuent pour le pouvoir, Adjani et Chéreau composent le portrait d'une femme libre.",
+    "source": "L'Obs",
+    "author": "Stéphane du Mesnildot",
+    "date": "Thu, 11 Jun 2026 18:00:02 +0200",
+    "link": "https://www.nouvelobs.com/teleobs/20260611.OBS115724/la-reine-margot-avec-isabelle-adjani-sous-les-dentelles-l-enfer.html",
+    "questions": [
+      {
+        "question": "À quelle heure le film « La Reine Margot » est-il diffusé ce soir ?",
+        "options": [
+          "À 19h50 sur Ciné+ Émotion",
+          "À 20h50 sur Ciné+ Émotion",
+          "À 21h50 sur Ciné+ Émotion",
+          "À 20h50 sur France 2"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly states 'Ce soir à 20h50 sur Ciné+ Émotion.' The other options either have the wrong time or wrong channel."
+      },
+      {
+        "question": "Quel événement historique est représenté de manière réaliste dans le film ?",
+        "options": [
+          "Le couronnement de Charles IX",
+          "La Saint-Barthélemy",
+          "Le mariage secret d'Henri III",
+          "La bataille de Lepante"
+        ],
+        "answer": "B",
+        "explanation": "The passage states 'la Saint-Barthélemy trouve une représentation effroyablement réaliste' with graphic descriptions of Protestant bodies in the streets of Paris. The other options are not mentioned as major themes in the film."
+      },
+      {
+        "question": "Selon le texte, comment le chef opérateur Philippe Rousselot peint-il les scènes de massacre ?",
+        "options": [
+          "Avec les couleurs de Monet et Renoir",
+          "Avec un style documentaire et neutre",
+          "Avec les couleurs de Goya et de Géricault",
+          "Avec des tons pastel et romantiques"
+        ],
+        "answer": "C",
+        "explanation": "The text explicitly states 'Le chef opérateur Philippe Rousselot peint, avec les couleurs de Goya et de Géricault, ces amoncellements de corps.' The other options are either incorrect references or misrepresent the artistic style used."
+      },
+      {
+        "question": "Pourquoi Chéreau ne respecte-t-il pas l'exactitude historique dans ce film ?",
+        "options": [
+          "Parce qu'il manquait de documents historiques",
+          "Parce qu'il voulait moderniser l'histoire avec une vision personnelle et artistique",
+          "Parce que c'était trop coûteux de respecter la vérité historique",
+          "La question n'est pas abordée dans le texte"
+        ],
+        "answer": "D",
+        "explanation": "The text explains what Chéreau does differently (omitting historical details like Henri III's 'fraises' and 'mignons', styling young nobles like rock stars), but it does not explicitly state why he makes these choices. The other options are not supported by the passage."
+      },
+      {
+        "question": "Quels acteurs incarnent les jeunes nobles du film, décrits comme ayant une « beauté vénéneuse » ?",
+        "options": [
+          "Gérard Depardieu, Michel Serrault et Alain Delon",
+          "Pascal Greggory, Jean-Hugues Anglade et Vincent Perez",
+          "Daniel Auteuil, Christophe Malavoy et Benoît Magimel",
+          "Olivier Marchal, Éric Caravaca et Cédric Kahn"
+        ],
+        "answer": "B",
+        "explanation": "The text explicitly lists 'Pascal Greggory, Jean-Hugues Anglade et Vincent Perez' as the actors who are 'irrésistibles de beauté vénéneuse.' The other options list different actors not mentioned in the passage."
+      },
+      {
+        "question": "Comment Isabelle Adjani représente-t-elle Marguerite de Valois dans ce film ?",
+        "options": [
+          "Comme une femme faible dominée par les hommes de la cour",
+          "Comme une victime passive des guerres de Religion",
+          "Comme une femme libre, courageuse et maîtresse de ses désirs",
+          "Comme une intrigante sans scrupules assoiffée de pouvoir"
+        ],
+        "answer": "C",
+        "explanation": "The text states 'Marguerite apparaît surtout comme courageuse et maîtresse de ses désirs' and describes Adjani and Chéreau as composing 'le portrait d'une femme libre.' The other interpretations contradict what the passage explicitly says about her character."
+      }
+    ],
+    "vocab": [
+      {
+        "word": "manne",
+        "definition": "a source of unexpected good fortune or benefit; a windfall",
+        "sentence": "Alexandre Dumas devient la ___ providentielle du cinéma français."
+      },
+      {
+        "word": "fiévreux",
+        "definition": "feverish; intense and fast-paced",
+        "sentence": "« La Reine Margot » est un récit d'aventures ___ qui ne lâche jamais le spectateur."
+      },
+      {
+        "word": "joncher",
+        "definition": "to strew; to cover or litter a place with",
+        "sentence": "Les cadavres de protestants ___ par milliers les rues de Paris."
+      },
+      {
+        "word": "vénéneux",
+        "definition": "poisonous; having a dangerous or seductive quality",
+        "sentence": "Pascal Greggory, Jean-Hugues Anglade et Vincent Perez sont irrésistibles de beauté ___."
+      },
+      {
+        "word": "maculé",
+        "definition": "stained; soiled or spotted with marks",
+        "sentence": "La peau d'albâtre de Marguerite est elle aussi ___ du sang de ses frères et de ses amants."
+      }
+    ],
+    "createdAt": "2026-06-13T14:51:38.020Z"
+  },
+  {
     "id": 1781342316711,
     "topic": "Le sport en France",
     "title": "Coupe du Monde 2026 et paris sportifs : le gouvernement accusé de bloquer une campagne de prévention",
