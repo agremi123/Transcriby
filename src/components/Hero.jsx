@@ -307,8 +307,10 @@ function ProductionExercise({ instruction, requireGrammar = '' }) {
           </div>
         ) : (
           <div className="bg-paper border border-line/50 rounded-lg px-3 py-2">
+            <p className="text-[9px] font-mono uppercase tracking-widest text-navy/35 mb-1">Ta phrase</p>
+            <p className="font-display text-[13px] text-navy/45 leading-snug line-through decoration-wine/40 select-text mb-2">{correction.original}</p>
             <p className="text-[9px] font-mono uppercase tracking-widest text-wine/50 mb-1">Correction</p>
-            <CorrectionBlock original={correction.original} corrected={correction.corrected} className="font-display text-[13px] text-navy/80 leading-snug select-text" />
+            <p className="font-display text-[14px] text-wine leading-snug select-text">{correction.corrected}</p>
             {correction.translation && (
               <p className="text-[11px] text-navy/45 italic mt-1.5">{correction.translation}</p>
             )}
