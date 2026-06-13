@@ -1325,6 +1325,11 @@ export function AudioDemoCard({
       .catch(() => setReplyLoadingUttId((cur) => (cur === uttId ? null : cur)));
   }, [isRecording]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Report défi progress up so the "Ton défi" card can tick off used items.
+  React.useEffect(() => {
+    onDefiProgress?.({ usedVocab: defiUsedVocab, usedGrammar: defiUsedGrammar });
+  }, [defiUsedVocab, defiUsedGrammar]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const discoverWord = async () => {
     setWordLoading(true);
     setWordData(null);
