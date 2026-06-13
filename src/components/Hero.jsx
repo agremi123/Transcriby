@@ -6154,12 +6154,12 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
             <div className="border border-line/40 bg-paper/60 px-4 py-3 shrink-0">
               <div className="flex items-center justify-between gap-2 mb-3">
                 <p className="text-[10px] tracking-widest uppercase text-navy/35 font-mono">Goals</p>
-                <div className="relative group shrink-0">
+                <div className="relative group shrink-0 flex flex-col items-end gap-1 w-[130px]">
                   <button
                     type="button"
                     onClick={() => { if (goalsDone) onNewChallenge?.(); }}
                     aria-disabled={!goalsDone}
-                    className={`inline-flex items-center gap-1 text-[11px] font-sans font-semibold rounded-full px-2.5 py-1 border transition-colors ${
+                    className={`w-full justify-center inline-flex items-center gap-1 text-[11px] font-sans font-semibold rounded-full px-2.5 py-1 border transition-colors ${
                       goalsDone
                         ? 'text-ivory bg-navy border-navy hover:bg-navy2 cursor-pointer'
                         : 'text-navy/30 border-navy/15 bg-navy/[0.03] cursor-not-allowed'
@@ -6170,6 +6170,11 @@ function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 8
                       <path d="M3 8h9M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </button>
+                  {/* Progress bar — fills as each goal is completed (proof of progress) */}
+                  <div className="w-full h-1.5 rounded-full bg-navy/10 overflow-hidden">
+                    <div className="h-full bg-navy rounded-full transition-all duration-500" style={{ width: `${goalsPct}%` }} />
+                  </div>
+                  <span className="text-[9px] font-mono text-navy/45 tabular-nums leading-none">{goalsDoneCount} / {goalsTotal}</span>
                   <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-20 w-52 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
                     {goalsDone
                       ? 'Tous les goals sont validés — charge un nouveau défi !'
