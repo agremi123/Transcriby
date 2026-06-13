@@ -6690,6 +6690,7 @@ export default function Hero() {
               speakingOpeningLine={speakingOpeningLine}
               speakingTargetGrammar={speakingTargetGrammar}
               speakingTargetVocab={speakingTargetVocab}
+              onDefiProgress={({ usedVocab, usedGrammar }) => { setSpeakingUsedVocab(usedVocab); setSpeakingUsedGrammar(usedGrammar); }}
               onNewSpeakingChallenge={loadNewSpeakingChallenge}
               writingNarratorId={writingNarrator}
               writingPrompt={writingPrompt}
