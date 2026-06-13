@@ -2731,16 +2731,8 @@ export function AudioDemoCard({
   // Défi speaking is now a guided conversation (see the reaction effect above):
   // the Parisian replies and relances; there is no automatic correction here.
 
-  // Défi réussi → after the Parisian's closing line has played, load a fresh
-  // question on the same theme.
-  React.useEffect(() => {
-    if (!defiComplete) return;
-    const t = setTimeout(() => {
-      resetTranscript();
-      onNewSpeakingChallenge?.();
-    }, 4200);
-    return () => clearTimeout(t);
-  }, [defiComplete]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Défi réussi: the badge + "Prochain exercice" button now appear (see render).
+  // The learner advances on their own with that button — no auto-reset.
 
   const resetTranscript = () => {
     stopRecordingSessionRef.current += 1;
