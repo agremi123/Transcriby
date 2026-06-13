@@ -2926,7 +2926,7 @@ export function AudioDemoCard({
                 {/* VOCABULAIRE */}
                 {exerciseSubTab === 'vocabulary' && (
                   exerciseVocab.length === 0
-                    ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">Chargement du vocabulaire…</p>
+                    ? <p className="text-[13px] text-navy/40 italic mt-4 text-center">{exerciseLoading ? 'Chargement du vocabulaire…' : "Pas de vocabulaire pour cet article."}</p>
                     : exerciseVocab.map((v, vi) => (
                         <VocabItem key={vi} v={v} vi={vi} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} />
                       ))
