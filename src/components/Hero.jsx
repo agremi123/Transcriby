@@ -6033,8 +6033,9 @@ const TIPS_SECTIONS = [
   { key: 'connecteurs', label: 'Connecteurs',  icon: '🔗', pill: true  },
 ];
 
-function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 80, narratorId = 'lea', usedTips = {}, badge = null }) {
+function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 80, narratorId = 'lea', usedTips = {}, badge = null, onNewChallenge = null }) {
   const hasTips = TIPS_SECTIONS.some(s => (tips[s.key] || []).length > 0);
+  const goalsDone = allTipsFulfilled(tips, usedTips);
   const name = narratorId === 'jules' ? 'Jules' : 'Léa';
 
   const [speaking, setSpeaking] = React.useState(false);
