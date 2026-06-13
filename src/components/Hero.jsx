@@ -252,10 +252,28 @@ function GrammarRuleExercises({ rule, onCorrect }) {
   const [answers, setAnswers] = React.useState({});
   const [revealed, setRevealed] = React.useState({});
   const rewardedRef = React.useRef({});
-  // Production exercise: learner writes their own sentence, then reveals a model answer.
+  // Production exercise: learner writes their own sentence, AI corrects it.
   const [prodAnswer, setProdAnswer] = React.useState('');
-  const [prodRevealed, setProdRevealed] = React.useState(false);
-  React.useEffect(() => { setProdAnswer(''); setProdRevealed(false); }, [rule]);
+  const [prodCorrection, setProdCorrection] = React.useState(null); // { original, corrected, translation }
+  const [prodCorrecting, setProdCorrecting] = React.useState(false);
+  React.useEffect(() => { setProdAnswer(''); setProdCorrection(null); setProdCorrecting(false); }, [rule]);
+
+  const correctProduction = async () => {
+    const text = prodAnswer.trim();
+    if (!text || prodCorrecting) return;
+    setProdCorrecting(true);
+    try {
+      const r = await fetch('/api/correct', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, register: 'Parisien' }),
+      });
+      const d = await r.json();
+      setProdCorrection({ original: text, corrected: d.corrected?.trim() || text, translation: d.translation?.trim() || null });
+    } catch {
+      setProdCorrection({ original: text, corrected: text, translation: null });
+    }
+    setProdCorrecting(false);
+  };
 
   React.useEffect(() => {
     if (stored) return;
