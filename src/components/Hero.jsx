@@ -252,6 +252,10 @@ function GrammarRuleExercises({ rule, onCorrect }) {
   const [answers, setAnswers] = React.useState({});
   const [revealed, setRevealed] = React.useState({});
   const rewardedRef = React.useRef({});
+  // Production exercise: learner writes their own sentence, then reveals a model answer.
+  const [prodAnswer, setProdAnswer] = React.useState('');
+  const [prodRevealed, setProdRevealed] = React.useState(false);
+  React.useEffect(() => { setProdAnswer(''); setProdRevealed(false); }, [rule]);
 
   React.useEffect(() => {
     if (stored) return;
