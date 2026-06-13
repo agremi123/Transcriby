@@ -1321,8 +1321,12 @@ export function AudioDemoCard({
           setDefiUsedVocab((prev) => Array.from(new Set([...prev, ...data.usedVocab])));
         }
         if (data.usedGrammar) setDefiUsedGrammar(true);
-        if (data.complete) {
-          gainExperience(1);
+        if (data.complete && !defiComplete) {
+          // Completing a défi is a big chunk of progress toward the next level.
+          const before = effectiveLevel;
+          const updated = gainExperience(DEFI_COMPLETE_XP);
+          const after = getEffectiveLevel(updated);
+          setDefiBadge({ level: after, leveledUp: after !== before });
           setDefiComplete(true);
         }
       })
