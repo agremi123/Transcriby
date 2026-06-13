@@ -397,8 +397,13 @@ function GrammarRuleExercises({ rule, onCorrect }) {
         );
       })}
 
-      {/* Write-your-own-sentence task using this grammar point */}
-      {rule.production?.instruction && <ProductionExercise instruction={rule.production.instruction} />}
+      {/* Write-your-own-sentence task using this grammar point — always shown.
+          Uses the generated instruction when present, otherwise builds one from
+          the grammar point name so older content (no `production` field) still
+          gets a production exercise. */}
+      <ProductionExercise
+        instruction={rule.production?.instruction || (rule.point ? `À ton tour : écris ta propre phrase en utilisant « ${rule.point} ».` : 'Écris ta propre phrase en utilisant ce point de grammaire.')}
+      />}
     </div>
   );
 }
