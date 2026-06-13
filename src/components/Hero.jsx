@@ -6453,6 +6453,8 @@ export default function Hero() {
   const [writingUsedTips, setWritingUsedTips] = React.useState({});
   const [writingBadge, setWritingBadge] = React.useState(null);
   const writingAwardedRef = React.useRef(false);
+  // Which challenge of the current theme we're on (1..THEME_CHALLENGE_TOTAL).
+  const [writingChallengeIndex, setWritingChallengeIndex] = React.useState(1);
 
   const handleWritingProgress = React.useCallback((usedTips) => {
     setWritingUsedTips(usedTips || {});
