@@ -37,33 +37,49 @@ function LandingPage() {
 }
 
 function GoogleAuthHandler() {
-  const { completeOnboarding, profile } = useLearnerProfile();
+  const { completeOnboarding } = useLearnerProfile();
   const handledRef = React.useRef(false);
 
   React.useEffect(() => {
-    // Strip the leftover # from Supabase's implicit auth redirect
-    if (window.location.hash) {
-      window.history.replaceState(null, '', window.location.pathname);
-    }
-    if (handledRef.current) return;
-    import('./lib/supabaseClient').then(({ supabase }) => {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user && !isProfileSetupComplete(profile)) {
-          handledRef.current = true;
-          const user = session.user;
-          const name = user.user_metadata?.full_name?.split(' ')[0]
-            || user.user_metadata?.name?.split(' ')[0]
-            || user.email?.split('@')[0]
-            || 'Ami';
-          completeOnboarding(profile.claimedLevel || 'B1', {
-            authMethod: 'google',
-            email: user.email,
-            name,
-          });
-        }
+    let subscription;
+    // Do NOT strip the hash up front — Supabase needs to read the
+    // #access_token from the OAuth redirect to establish the session first.
+    const stripHash = () => {
+      if (window.location.hash) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    };
+
+    const handleSession = (session) => {
+      if (handledRef.current || !session?.user) return;
+      // Read the freshest profile from storage (closure value may be stale).
+      const profile = loadLearnerProfile();
+      if (isProfileSetupComplete(profile)) { stripHash(); return; }
+      handledRef.current = true;
+      const user = session.user;
+      const name = user.user_metadata?.full_name?.split(' ')[0]
+        || user.user_metadata?.name?.split(' ')[0]
+        || user.email?.split('@')[0]
+        || 'Ami';
+      completeOnboarding(profile.claimedLevel || 'B1', {
+        authMethod: 'google',
+        email: user.email,
+        name,
       });
+      stripHash();
+    };
+
+    import('./lib/supabaseClient').then(({ supabase }) => {
+      // Fires once Supabase has parsed the OAuth redirect (SIGNED_IN /
+      // INITIAL_SESSION) — avoids the race where getSession() runs too early.
+      const { data } = supabase.auth.onAuthStateChange((_event, session) => handleSession(session));
+      subscription = data?.subscription;
+      // Also handle an already-established session.
+      supabase.auth.getSession().then(({ data: { session } }) => handleSession(session));
     });
-  }, []);
+
+    return () => { try { subscription?.unsubscribe(); } catch {} };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return null;
 }
