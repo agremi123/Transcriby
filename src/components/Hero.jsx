@@ -245,6 +245,77 @@ function PracticeExercise({ exercise, skillPct, onCorrect }) {
 // Fill-in-the-blank exercises attached to one grammar rule. Uses the exercises
 // stored with the rule when present; otherwise generates them on the fly via
 // /api/practice so older DB content still always has something to practice.
+// Write-your-own-sentence task: learner writes a sentence applying the rule /
+// tense, then the AI checks it. Correct → green tick; otherwise → correction.
+// Used by both the grammar and conjugation exercise sections.
+function ProductionExercise({ instruction }) {
+  const [answer, setAnswer] = React.useState('');
+  const [correction, setCorrection] = React.useState(null); // { original, corrected, translation }
+  const [correcting, setCorrecting] = React.useState(false);
+  React.useEffect(() => { setAnswer(''); setCorrection(null); setCorrecting(false); }, [instruction]);
+
+  const runCorrection = async () => {
+    const text = answer.trim();
+    if (!text || correcting) return;
+    setCorrecting(true);
+    try {
+      // Standard register = fix only real grammar errors (keep the learner's
+      // words). A correct sentence comes back unchanged → green tick.
+      const r = await fetch('/api/correct', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, register: 'Standard' }),
+      });
+      const d = await r.json();
+      setCorrection({ original: text, corrected: d.corrected?.trim() || text, translation: d.translation?.trim() || null });
+    } catch {
+      setCorrection({ original: text, corrected: text, translation: null });
+    }
+    setCorrecting(false);
+  };
+
+  if (!instruction) return null;
+  return (
+    <div className="flex flex-col gap-1.5 mt-1 pt-2.5 border-t border-line/40">
+      <span className="text-[9px] font-mono tracking-widest uppercase text-navy/35">À ton tour d'écrire</span>
+      <p className="font-display text-[13px] text-navy/80 leading-snug">{instruction}</p>
+      <textarea
+        value={answer}
+        onChange={(e) => { setAnswer(e.target.value); setCorrection(null); }}
+        rows={2}
+        placeholder="Écris ta phrase…"
+        className="w-full border border-wine/20 rounded px-2 py-1.5 bg-transparent text-navy text-[13px] font-display outline-none focus:border-wine/50 resize-none"
+      />
+      {!correction ? (
+        <button type="button" onClick={runCorrection}
+          disabled={!answer.trim() || correcting}
+          className="self-start px-3 py-0.5 rounded-full bg-wine text-ivory text-[10px] font-display hover:bg-wine/85 transition-colors disabled:opacity-40">
+          {correcting ? 'Correction…' : 'Corriger ma phrase'}
+        </button>
+      ) : (() => {
+        const norm = (s) => (s || '').trim().replace(/\s+/g, ' ').replace(/[.!?…]+$/, '').toLowerCase();
+        const isCorrect = norm(correction.original) === norm(correction.corrected);
+        return isCorrect ? (
+          <div className="flex items-center gap-1.5 text-[12px] font-display text-green-600">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
+              <circle cx="7" cy="7" r="6.4" stroke="currentColor" strokeWidth="1.2" opacity="0.5"/>
+              <path d="M4 7.2l2 2 4-4.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Parfait, c'est correct&nbsp;! Bien joué.
+          </div>
+        ) : (
+          <div className="bg-paper border border-line/50 rounded-lg px-3 py-2">
+            <p className="text-[9px] font-mono uppercase tracking-widest text-wine/50 mb-1">Correction</p>
+            <CorrectionBlock original={correction.original} corrected={correction.corrected} className="font-display text-[13px] text-navy/80 leading-snug select-text" />
+            {correction.translation && (
+              <p className="text-[11px] text-navy/45 italic mt-1.5">{correction.translation}</p>
+            )}
+          </div>
+        );
+      })()}
+    </div>
+  );
+}
+
 function GrammarRuleExercises({ rule, onCorrect }) {
   const stored = Array.isArray(rule.exercises) && rule.exercises.length > 0 ? rule.exercises.slice(0, 6) : null;
   const [exercises, setExercises] = React.useState(stored);
