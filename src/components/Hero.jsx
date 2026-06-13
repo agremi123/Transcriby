@@ -355,22 +355,26 @@ function GrammarRuleExercises({ rule, onCorrect }) {
           <p className="font-display text-[13px] text-navy/80 leading-snug">{rule.production.instruction}</p>
           <textarea
             value={prodAnswer}
-            onChange={(e) => setProdAnswer(e.target.value)}
+            onChange={(e) => { setProdAnswer(e.target.value); setProdCorrection(null); }}
             rows={2}
             placeholder="Écris ta phrase…"
             className="w-full border border-wine/20 rounded px-2 py-1.5 bg-transparent text-navy text-[13px] font-display outline-none focus:border-wine/50 resize-none"
           />
-          {!prodRevealed ? (
-            <button type="button" onClick={() => setProdRevealed(true)}
-              className="self-start px-3 py-0.5 rounded-full bg-wine text-ivory text-[10px] font-display hover:bg-wine/85 transition-colors">
-              Voir un exemple
+          {!prodCorrection ? (
+            <button type="button" onClick={correctProduction}
+              disabled={!prodAnswer.trim() || prodCorrecting}
+              className="self-start px-3 py-0.5 rounded-full bg-wine text-ivory text-[10px] font-display hover:bg-wine/85 transition-colors disabled:opacity-40">
+              {prodCorrecting ? 'Correction…' : 'Corriger ma phrase'}
             </button>
-          ) : rule.production.example ? (
+          ) : (
             <div className="bg-paper border border-line/50 rounded-lg px-3 py-2">
-              <p className="text-[9px] font-mono uppercase tracking-widest text-wine/50 mb-1">Exemple</p>
-              <p className="font-display text-[13px] italic text-navy/80 leading-snug">{rule.production.example}</p>
+              <p className="text-[9px] font-mono uppercase tracking-widest text-wine/50 mb-1">Correction</p>
+              <CorrectionBlock original={prodCorrection.original} corrected={prodCorrection.corrected} className="font-display text-[13px] text-navy/80 leading-snug select-text" />
+              {prodCorrection.translation && (
+                <p className="text-[11px] text-navy/45 italic mt-1.5">{prodCorrection.translation}</p>
+              )}
             </div>
-          ) : null}
+          )}
         </div>
       )}
     </div>
