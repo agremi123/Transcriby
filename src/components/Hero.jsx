@@ -3717,6 +3717,10 @@ export function AudioDemoCard({
                     const isLastUtt = utt === mainUtterances[mainUtterances.length - 1];
                     const showCorrBtn = isLastUtt && hasSpeakCorrection;
                     const repeatSucceeded = repeatFeedback === 'success';
+                    // Défi: per-sentence correctness — blue tick if correct, else a
+                    // "Correct my sentence" button that reveals the fix.
+                    const defiCorr = correctionByUtterance[utt.id];
+                    const defiNeedsFix = defiCorr && !defiCorr.correct && !!defiCorr.corrected;
                     return (
                       <React.Fragment key={utt.id}>
                         <TranscriptSentenceRow
