@@ -182,9 +182,22 @@ export function bumpParisianPercent(currentPercent, assessedLevel) {
 
 export function gainParisianExperience(profile, amount = 1) {
   const bump = Math.max(0, Number(amount) || 0);
+  let percent = (Number(profile.parisianPercent) || 0) + bump;
+  let level = getEffectiveLevel(profile);
+  let assessedLevel = normalizeLevel(profile.assessedLevel);
+  // Each time the meter fills, the learner levels up to the next CEFR level and
+  // the overflow carries into the new level. At C2 the meter just caps at 100.
+  while (percent >= 100) {
+    const idx = LEVEL_INDEX[level] ?? 2;
+    if (idx >= CEFR_LEVELS.length - 1) { percent = 100; break; }
+    level = CEFR_LEVELS[idx + 1];
+    assessedLevel = level;
+    percent -= 100;
+  }
   return saveLearnerProfile({
     ...profile,
-    parisianPercent: Math.min(100, (Number(profile.parisianPercent) || 0) + bump),
+    assessedLevel,
+    parisianPercent: Math.max(0, Math.min(100, percent)),
   });
 }
 
