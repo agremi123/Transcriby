@@ -5241,6 +5241,34 @@ function NextArticleButton({ doneTabs = 0, totalTabs = 4, articleIndex = 1, onNe
   );
 }
 
+// Theme-completion badge: greyed/locked until the learner finishes all the
+// items of a theme (e.g. 3 articles / 3 podcasts), then lit up + a pop.
+function ThemeBadge({ achieved = false, total = THEME_ARTICLE_TOTAL, label = 'article' }) {
+  return (
+    <div className="relative group shrink-0">
+      <div
+        className={`w-9 h-9 rounded-full flex items-center justify-center border transition-all duration-300 ${
+          achieved
+            ? 'bg-wine border-wine text-ivory shadow-[0_4px_12px_-4px_rgba(139,30,45,0.5)] defi-badge-pop'
+            : 'bg-navy/[0.06] border-navy/15 text-navy/25'
+        }`}
+        aria-label={achieved ? 'Theme badge earned' : 'Theme badge locked'}
+      >
+        {/* medal icon */}
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <circle cx="12" cy="9" r="6" />
+          <path d="M8.5 14L7 22l5-3 5 3-1.5-8" />
+        </svg>
+      </div>
+      <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-30 w-48 text-right rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+        {achieved
+          ? 'Theme complete — badge earned!'
+          : `Finish all ${total} ${label}s of this theme to earn this badge.`}
+      </span>
+    </div>
+  );
+}
+
 function ReadingArticlePanel({
   loading,
   title,
