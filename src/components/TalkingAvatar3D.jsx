@@ -65,9 +65,36 @@ function setMorph(found, value) {
   });
 }
 
-function AvatarModel({ src, amplitudeRef }) {
+function AvatarModel({ src, amplitudeRef, targetRef }) {
   const { scene } = useGLTF(src);
   const groupRef = React.useRef();
+  const { camera } = useThree();
+
+  // Frame the camera on the HEAD (so a full-body model reads as a talking head).
+  // Robust across models: prefer a bone named "Head", else use the top of the
+  // bounding box. Runs once when the scene is ready.
+  React.useEffect(() => {
+    let headPos = null;
+    scene.traverse((o) => {
+      if (!headPos && o.name && /head/i.test(o.name) && o.isBone !== false) {
+        headPos = o.getWorldPosition(new THREE.Vector3());
+      }
+    });
+    const box = new THREE.Box3().setFromObject(scene);
+    const size = new THREE.Vector3(); box.getSize(size);
+    const center = new THREE.Vector3(); box.getCenter(center);
+    if (!headPos) {
+      // No head bone: aim near the top of the model (~top 13% of its height).
+      headPos = new THREE.Vector3(center.x, box.max.y - size.y * 0.13, center.z);
+    } else {
+      headPos.y += size.y * 0.04; // nudge up from the neck/head joint to the face
+    }
+    const dist = Math.max(0.45, size.y * 0.62);
+    camera.position.set(headPos.x, headPos.y, headPos.z + dist);
+    camera.lookAt(headPos);
+    camera.updateProjectionMatrix();
+    if (targetRef) targetRef.current.copy(headPos);
+  }, [scene, camera, targetRef]);
 
   const morphMeshes = React.useMemo(() => {
     const arr = [];
