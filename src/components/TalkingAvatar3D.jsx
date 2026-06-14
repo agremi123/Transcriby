@@ -152,10 +152,31 @@ function AvatarModel({ src, amplitudeRef, targetRef }) {
   return <group ref={groupRef}><primitive object={scene} /></group>;
 }
 
+// Keeps OrbitControls pointed at the head once the model reports its position.
+function HeadControls({ targetRef }) {
+  const ref = React.useRef();
+  useFrame(() => {
+    if (ref.current && targetRef.current) {
+      ref.current.target.copy(targetRef.current);
+      ref.current.update();
+    }
+  });
+  return (
+    <OrbitControls
+      ref={ref}
+      enablePan={false}
+      enableZoom={false}
+      minPolarAngle={1.2}
+      maxPolarAngle={1.75}
+    />
+  );
+}
+
 export default function TalkingAvatar3D({ src, amplitudeRef }) {
+  const targetRef = React.useRef(new THREE.Vector3(0, 1.6, 0));
   return (
     <Canvas
-      camera={{ position: [0, 0, 2], fov: 22 }}
+      camera={{ position: [0, 1.6, 0.6], fov: 18 }}
       dpr={[1, 2]}
       gl={{ antialias: true, preserveDrawingBuffer: true }}
       style={{ width: '100%', height: '100%' }}
@@ -165,12 +186,10 @@ export default function TalkingAvatar3D({ src, amplitudeRef }) {
       <directionalLight position={[-3, 1, 2]} intensity={0.4} />
       <ModelErrorBoundary fallback={<PlaceholderHead />}>
         <React.Suspense fallback={null}>
-          <Bounds fit clip observe margin={1.15}>
-            <AvatarModel src={src} amplitudeRef={amplitudeRef} />
-          </Bounds>
+          <AvatarModel src={src} amplitudeRef={amplitudeRef} targetRef={targetRef} />
         </React.Suspense>
       </ModelErrorBoundary>
-      <OrbitControls enablePan={false} enableZoom={false} minPolarAngle={1.1} maxPolarAngle={1.9} />
+      <HeadControls targetRef={targetRef} />
     </Canvas>
   );
 }
