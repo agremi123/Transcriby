@@ -13,7 +13,7 @@ const TESTIS = [
   },
   {
     quote:
-      'The corrections feel incredibly natural and have helped me so much with my TCF prep. I recommend it 100%!',
+      'The corrections feel incredibly natural and have helped me so much with my spoken French. I recommend it 100%!',
     name: 'Lucas M.',
     loc: 'Lyon, France',
     rating: 4,
