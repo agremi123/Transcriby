@@ -3070,6 +3070,41 @@ export function AudioDemoCard({
     </div>
   ) : null;
 
+  // Mobile-only mic/pen mode toggle that replaces the points + mic cluster.
+  // Mic = Speak (tap to switch to speak; tap again to record). Pen = Write
+  // (tap to switch to write; tap again to submit).
+  const mobileModeToggle = (
+    <div className="relative flex items-center rounded-full p-0.5 bg-wine/10 shrink-0">
+      <div className="relative">
+        {isRecording && inputMode === 'speak' && (
+          <span className="absolute inset-0 m-auto w-9 h-9 rounded-full bg-wine/25 animate-ping pointer-events-none" style={{ animationDuration: '1.1s' }} />
+        )}
+        <button type="button"
+          onClick={() => { if (inputMode !== 'speak') activateSpeakMode(); else toggleRecording(); }}
+          disabled={status === 'connecting' || manualCorrecting || stoppingRecording}
+          className={`relative z-10 w-9 h-9 rounded-full inline-flex items-center justify-center transition-colors disabled:opacity-60 ${inputMode === 'speak' ? 'bg-wine text-ivory' : 'text-navy/45'}`}
+          aria-label={inputMode === 'speak' ? (isRecording ? 'Stop recording' : 'Record') : 'Switch to speak'}>
+          {inputMode === 'speak' && isRecording ? (
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden><rect x="1" y="1" width="10" height="10" rx="2" fill="currentColor" /></svg>
+          ) : (
+            <svg width="12" height="15" viewBox="0 0 16 20" fill="none" aria-hidden>
+              <rect x="5" y="1" width="6" height="11" rx="3" fill="currentColor" />
+              <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            </svg>
+          )}
+        </button>
+      </div>
+      <button type="button"
+        onClick={() => { if (inputMode !== 'write') activateWriteMode(); else if (writeText.trim()) finishWriteInput(); }}
+        className={`relative z-10 w-9 h-9 rounded-full inline-flex items-center justify-center transition-colors ${inputMode === 'write' ? 'bg-wine text-ivory' : 'text-navy/45'}`}
+        aria-label={inputMode === 'write' ? 'Submit writing' : 'Switch to write'}>
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden>
+          <path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+    </div>
+  );
+
   return (
     <>
     {fullscreen && <div className="fixed inset-0 bg-navy/40 backdrop-blur-sm z-40" onClick={onClose} />}
