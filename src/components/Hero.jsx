@@ -4246,6 +4246,10 @@ export function AudioDemoCard({
                     {chatIntroLine?.text ?? 'Bonjour ! Ask me anything in French — I\'ll help you improve. 🗼'}
                   </p>
                 </div>
+              ) : activeTab === 'speaking' ? (
+                <p className="font-display text-[16px] italic text-navy/40 leading-snug pt-1">
+                  Make a little speech based on the instructions and the goals.
+                </p>
               ) : null
             )}
 
