@@ -6773,7 +6773,7 @@ export default function Hero() {
 
   const goToDashboard = (topic) => {
     const url = topic ? `/dashboard?topic=${encodeURIComponent(topic)}` : '/dashboard';
-    window.open(url, '_blank');
+    navigate(url); // in-app navigation — same tab, no new browser tab
   };
 
   const stopIntroAudio = React.useCallback(() => {
