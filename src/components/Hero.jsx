@@ -7191,6 +7191,7 @@ export default function Hero() {
               <WritingChallengePanel
                 loading={writingLoading}
                 prompt={writingPrompt}
+                theme={practiceTopic || ''}
                 tips={writingTips}
                 wordTarget={writingWordTarget}
                 narratorId={writingNarrator}
