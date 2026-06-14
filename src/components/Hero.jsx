@@ -2981,7 +2981,7 @@ export function AudioDemoCard({
   }, [writingPrompt]);
 
   const speakActionControls = inputMode === 'speak' ? (
-    <div className="flex items-center gap-3 shrink-0">
+    <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
       {utterances.length > 0 && (
         hasRecordedAudio && !isLive ? (
           <button type="button" onClick={resetTranscript}
