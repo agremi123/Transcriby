@@ -213,11 +213,18 @@ export function useNarratorDialogue() {
     setSpeechText(line.text);
     setSpeechTimings(buildWordTimings(line.text, decoded.duration));
     setSpeechPlaybackTime(0);
-    await playBuffer(ctx, sourceRef, decoded, line.narrator, (t) => {
-      if (!isActive()) return;
-      setSpeechPlaybackTime(t);
-      if (t == null) clearSpeechHighlight();
-    }, siteSession);
+    // Drive the 3D avatar's mouth shapes from this line (no-op if no avatar mounted).
+    startLine(line.text, decoded.duration);
+    try {
+      await playBuffer(ctx, sourceRef, decoded, line.narrator, (t) => {
+        if (!isActive()) return;
+        setSpeechPlaybackTime(t);
+        setPlaybackTime(t);
+        if (t == null) clearSpeechHighlight();
+      }, siteSession);
+    } finally {
+      stopLine();
+    }
   }, [clearSpeechHighlight]);
 
   const playLines = React.useCallback(async (scriptLines) => {
