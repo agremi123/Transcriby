@@ -2990,7 +2990,7 @@ export function AudioDemoCard({
             <span className="text-[9px] tracking-widest uppercase leading-none">Reset</span>
           </button>
         ) : (
-          <span className="w-11 h-11 shrink-0 inline-block" aria-hidden />
+          <span className="w-9 sm:w-11 h-9 sm:h-11 shrink-0 inline-block" aria-hidden />
         )
       )}
       <div className="flex flex-row items-center gap-2">
