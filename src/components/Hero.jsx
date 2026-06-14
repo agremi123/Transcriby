@@ -5892,9 +5892,32 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
               <div className="border border-wine/25 bg-wine/[0.04] px-4 py-3 space-y-3" style={{ borderRadius: 4 }}>
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-[10px] tracking-widest uppercase text-wine/60 font-mono">Ton défi</p>
-                  <p className="text-[10px] tracking-widest uppercase text-wine/45 font-mono">
-                    next challenge <span className="tabular-nums text-wine/70">{Math.min(challengeIndex, THEME_CHALLENGE_TOTAL)}/{THEME_CHALLENGE_TOTAL}</span>
-                  </p>
+                  <div className="relative group shrink-0 flex flex-col items-end gap-1 w-[130px]">
+                    {/* The button IS the progress bar — fills as targets are used */}
+                    <button
+                      type="button"
+                      onClick={() => { if (defiDone) onNextChallenge?.(); }}
+                      aria-disabled={!defiDone}
+                      className={`relative overflow-hidden w-full justify-center inline-flex items-center gap-1 text-[11px] font-sans font-semibold rounded-full px-2.5 py-1 border transition-colors ${
+                        defiDone
+                          ? 'text-ivory bg-wine border-wine hover:bg-wine2 cursor-pointer'
+                          : 'text-wine/70 border-wine/25 bg-wine/[0.05] cursor-not-allowed'
+                      }`}
+                    >
+                      {!defiDone && (
+                        <span className="absolute inset-y-0 left-0 bg-wine/20 transition-all duration-500" style={{ width: `${defiPct}%` }} aria-hidden />
+                      )}
+                      <span className="relative z-10 inline-flex items-center gap-1.5">
+                        Next challenge
+                        <span className="font-mono tabular-nums opacity-80">{Math.min(challengeIndex, THEME_CHALLENGE_TOTAL)}/{THEME_CHALLENGE_TOTAL}</span>
+                      </span>
+                    </button>
+                    <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-20 w-52 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                      {defiDone
+                        ? 'Challenge complete — start a new speaking défi!'
+                        : 'Use the target grammar + all the vocab (they turn blue ✓) to unlock the next challenge.'}
+                    </span>
+                  </div>
                 </div>
 
                 {targetGrammar && (targetGrammar.point || targetGrammar.hint) && (
