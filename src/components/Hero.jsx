@@ -5333,6 +5333,10 @@ function ReadingArticlePanel({
 
           {/* Byline, daily points circle, translate */}
           <div className="mt-4 shrink-0 border-t pt-3 pl-4 pr-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
+            {/* Next article — sits right under the article's dividing line */}
+            <div className="flex justify-end mb-3">
+              <NextArticleButton doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} />
+            </div>
             {byline ? (
               <p className="text-[10px] font-mono tracking-[0.12em] mb-3 truncate" style={{ color: '#8b1e2d' }}>
                 {byline}
