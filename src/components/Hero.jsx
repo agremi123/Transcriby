@@ -5636,7 +5636,7 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
   // comprehension / vocabulary / grammar are in the AudioDemoCard speech box.
 
   return (
-    <div className="flex flex-col pr-4" style={{ height: 520 }}>
+    <div className="flex flex-col pr-4 h-[calc(100svh-6.5rem)] sm:h-[520px]">
       {loading ? (
         <div className="flex flex-col gap-4 pt-2">
           <div className="h-8 bg-navy/8 rounded w-3/4 animate-pulse" />
@@ -5899,7 +5899,7 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
   };
 
   return (
-    <div className="flex flex-col pr-4" style={{ height: 520 }}>
+    <div className="flex flex-col pr-4 h-[calc(100svh-6.5rem)] sm:h-[520px]">
       {loading ? (
         <div className="flex items-center gap-3 mt-auto mb-auto">
           <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
