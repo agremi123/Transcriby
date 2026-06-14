@@ -1319,6 +1319,7 @@ function AnswerInput({
   headerRightAction = null,
   showAnswerSuccess = false,
   parisianPointsAward = CORRECT_ANSWER_PARISIAN_PTS,
+  rightInfo = null,
   compact = false,
 }) {
   const hasSpeakContent = getSpeakText(utterances, settledText, partialTranscript).length > 0;
