@@ -1535,10 +1535,7 @@ export function AudioDemoCard({
     })
       .then(r => r.json())
       .then(data => {
-        const { feedback, isCorrect, corrected, examples, nextTopic } = data;
-
-        // Reward a correct use of the word with points (triggers the flip animation)
-        if (isCorrect) firePointsDelta(3);
+        const { feedback, isCorrect, corrected, examples } = data;
 
         // Green tick ONLY when the Parisian judge approved the sentence.
         // If wrong: attach the grammar correction when we have one, otherwise
@@ -1553,65 +1550,75 @@ export function AudioDemoCard({
           );
         }
 
-        // Build Léa's feedback message — never vanish silently: fall back to a
-        // generic line if the API returned empty feedback.
-        const retryLines = isCorrect
-          ? [
-              `Bien joué, tu as utilisé « ${challenge.word} » ! Allez, tente une autre phrase !`,
-              `Nickel, « ${challenge.word} » est bien placé ! Vas-y, refais-m'en une !`,
-              `Parfait ! Encore une phrase avec « ${challenge.word} », pour voir ?`,
-            ]
-          : [
-              `Hmm, essaie encore d'utiliser « ${challenge.word} » dans une phrase !`,
-              `Pas tout à fait… Retente une phrase avec « ${challenge.word} » !`,
-              `Presque ! Vas-y, refais-moi une phrase avec « ${challenge.word} ».`,
-            ];
+        // Ends the word challenge and relances the chat on a random subject.
+        const relanceOnRandomTopic = (afterText) => {
+          setParisianWordChallenge(null);
+          parisianWordChallengeRef.current = null;
+          setParisianChallengeAttempt(0);
+          parisianChallengeAttemptRef.current = 0;
+          const topic = pickRelanceTopic();
+          const restartDelay = (afterText.length / 12) * 1000 + 1500; // wait for TTS
+          setTimeout(() => {
+            fetch('/api/speaking', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ topic }),
+            })
+              .then(r => r.json())
+              .then(openerData => {
+                if (!openerData.openingLine) return;
+                const opId = `lea-restart-${Date.now()}`;
+                const withRestart = [
+                  ...chatHistoryRef.current,
+                  { id: opId, role: 'lea', text: openerData.openingLine, narratorId: openerData.narratorId || challenge.narratorId },
+                ];
+                chatHistoryRef.current = withRestart;
+                setChatHistory(withRestart);
+                playNarratorLine({ id: openerData.narratorId || challenge.narratorId, text: openerData.openingLine });
+              })
+              .catch(() => {});
+          }, restartDelay);
+        };
+
+        if (isCorrect) {
+          // Using the word correctly earns one Parisian point…
+          firePointsDelta(1);
+          // …and the Parisian immediately relances the chat on a random subject.
+          const successLines = [
+            `Bien joué, tu as super bien utilisé « ${challenge.word} » ! Allez, on continue sur autre chose…`,
+            `Nickel, « ${challenge.word} » est parfaitement placé ! Tiens, parlons d'autre chose…`,
+            `Parfait, c'est exactement ça ! Allez, on change de sujet…`,
+          ];
+          const fullFeedback = successLines[Math.floor(Math.random() * successLines.length)];
+          chatHistoryRef.current = chatHistoryRef.current.map(m =>
+            m.id === leaId ? { ...m, loading: false, text: fullFeedback } : m
+          );
+          setChatHistory([...chatHistoryRef.current]);
+          playNarratorLine({ id: challenge.narratorId, text: fullFeedback });
+          relanceOnRandomTopic(fullFeedback);
+          return;
+        }
+
+        // Wrong: encourage a retry; on the last attempt show examples then move on.
+        const retryLines = [
+          `Hmm, essaie encore d'utiliser « ${challenge.word} » dans une phrase !`,
+          `Pas tout à fait… Retente une phrase avec « ${challenge.word} » !`,
+          `Presque ! Vas-y, refais-moi une phrase avec « ${challenge.word} ».`,
+        ];
         let fullFeedback = feedback
           || retryLines[Math.floor(Math.random() * retryLines.length)];
-
-        // On final attempt: append 2 example sentences
         if (isFinal && examples?.length) {
           const exBlock = examples.map(ex => `• ${ex}`).join('\n');
           fullFeedback += `\n\nVoici deux phrases avec « ${challenge.word} » :\n${exBlock}`;
         }
-
         chatHistoryRef.current = chatHistoryRef.current.map(m =>
           m.id === leaId ? { ...m, loading: false, text: fullFeedback } : m
         );
         setChatHistory([...chatHistoryRef.current]);
         playNarratorLine({ id: challenge.narratorId, text: fullFeedback });
 
-        // On final attempt: end challenge, restart conversation on new topic
-        if (isFinal) {
-          setParisianWordChallenge(null);
-          parisianWordChallengeRef.current = null;
-          setParisianChallengeAttempt(0);
-          parisianChallengeAttemptRef.current = 0;
-
-          if (nextTopic) {
-            const restartDelay = (fullFeedback.length / 12) * 1000 + 1500; // wait for TTS
-            setTimeout(() => {
-              fetch('/api/speaking', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ topic: nextTopic }),
-              })
-                .then(r => r.json())
-                .then(openerData => {
-                  if (!openerData.openingLine) return;
-                  const opId = `lea-restart-${Date.now()}`;
-                  const withRestart = [
-                    ...chatHistoryRef.current,
-                    { id: opId, role: 'lea', text: openerData.openingLine, narratorId: openerData.narratorId || challenge.narratorId },
-                  ];
-                  chatHistoryRef.current = withRestart;
-                  setChatHistory(withRestart);
-                  playNarratorLine({ id: openerData.narratorId || challenge.narratorId, text: openerData.openingLine });
-                })
-                .catch(() => {});
-            }, restartDelay);
-          }
-        }
+        // Out of attempts — relance on a random subject rather than dead-ending.
+        if (isFinal) relanceOnRandomTopic(fullFeedback);
       })
       .catch(() => {
         // Show a retry line rather than silently removing the bubble
