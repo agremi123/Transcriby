@@ -11,8 +11,9 @@
 // we can see exactly what a given model offers.
 
 import React from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF, Bounds, OrbitControls } from '@react-three/drei';
+import * as THREE from 'three';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { useGLTF, OrbitControls } from '@react-three/drei';
 
 // Catches a failed/missing model load (e.g. wrong path, or a COMPRESSED glb that
 // needs extra decoders) and shows a placeholder instead of crash-looping the canvas.
