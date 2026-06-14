@@ -3041,7 +3041,7 @@ export function AudioDemoCard({
             </>
           )}
           <button type="button" onClick={toggleRecording} disabled={status === 'connecting' || manualCorrecting || stoppingRecording || (isRecording && (source === 'tab' || source === 'system')) || (wordPlaying && !isRecording)}
-            className={`relative w-11 h-11 rounded-full bg-wine disabled:opacity-60 inline-flex items-center justify-center transition-all ${
+            className={`relative w-9 sm:w-11 h-9 sm:h-11 rounded-full bg-wine disabled:opacity-60 inline-flex items-center justify-center transition-all ${
               isRecording ? 'shadow-[0_0_0_3px_rgba(139,30,45,0.3)]' :
               (highlightMic || showRepeatHint) ? 'hover:bg-wine2 hover:scale-105 shadow-md ring-2 ring-wine/35' : 'hover:bg-wine2 hover:scale-105'
             }`}
