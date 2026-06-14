@@ -1717,7 +1717,7 @@ function NarratorPair({
             <motion.div
               className={`relative shrink-0 overflow-visible ${
                 isSoloHero
-                  ? 'pt-7 sm:pt-8'
+                  ? 'pt-3 sm:pt-8'
                   : duoProminent
                     ? 'pt-6 sm:pt-7'
                     : isFeatured
