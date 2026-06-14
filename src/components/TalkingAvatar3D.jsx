@@ -14,6 +14,7 @@ import React from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, OrbitControls } from '@react-three/drei';
+import { readMouth, VISEME_IDS, CLOSED_VISEMES, ROUNDED_VISEMES } from '../lib/lipSync';
 
 // Catches a failed/missing model load (e.g. wrong path, or a COMPRESSED glb that
 // needs extra decoders) and shows a placeholder instead of crash-looping the canvas.
