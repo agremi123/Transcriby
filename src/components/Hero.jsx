@@ -2163,6 +2163,53 @@ export function AudioDemoCard({
     setTimeout(() => setPointsDelta(null), 1400);
   }, [gainDailyParisianPoints]);
 
+  // Discover-a-Parisian-word flow. Extracted so it can also be triggered from
+  // outside the card (the mobile button next to the points, in the Hero avatar
+  // block) via discoverWordRef.
+  const handleDiscoverWord = React.useCallback(async () => {
+    if (dailyParisianPoints < DISCOVER_WORD_COST) return; // not enough points to discover a word
+    setHighlightDiscover(false);
+    // Switch to Chat tab + speak mode
+    setActiveTab('transcript');
+    setInputMode('speak');
+    setLastSpeakWriteMode('speak');
+    if (parisianWordChallengeLoading) return;
+    setParisianWordChallengeLoading(true);
+    setParisianWordChallenge(null);
+    try {
+      const res = await fetch('/api/word', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+      const data = await res.json();
+      if (!data?.word) { setParisianWordChallengeLoading(false); return; }
+      firePointsDelta(-DISCOVER_WORD_COST); // discovering a word costs Parisian points
+      // Narrator + explanation come from the DB so the pre-generated
+      // audio in the narrator-audio bucket matches exactly (no TTS wait)
+      const narratorId = data.narratorId || (Math.random() < 0.5 ? 'lea' : 'jules');
+      const intro = data.explanation || `Voici ton mot parisien du jour : « ${data.word} ». Ça veut dire "${data.meaning}". Par exemple : "${data.example}". Essaie maintenant de l'utiliser dans une phrase !`;
+      const challenge = { word: data.word, meaning: data.meaning, example: data.example, exampleTranslation: data.exampleTranslation, narratorId };
+      setParisianWordChallenge(challenge);
+      parisianWordChallengeRef.current = challenge;
+      setParisianChallengeAttempt(0);
+      parisianChallengeAttemptRef.current = 0;
+      // Append the word card + Léa's intro inline, below existing chat
+      const cardId = `word-card-${Date.now()}`;
+      const introId = `lea-intro-${Date.now()}`;
+      const withCard = [
+        ...chatHistoryRef.current,
+        { id: cardId, role: 'word-card', word: data.word, meaning: data.meaning, example: data.example },
+        { id: introId, role: 'lea', text: intro, narratorId },
+      ];
+      chatHistoryRef.current = withCard;
+      setChatHistory(withCard);
+      playNarratorLine({ id: narratorId, text: intro });
+    } catch {}
+    setParisianWordChallengeLoading(false);
+  }, [dailyParisianPoints, parisianWordChallengeLoading, firePointsDelta, setActiveTab, playNarratorLine]);
+
+  // Expose the discover action to the Hero avatar block (mobile button).
+  React.useEffect(() => {
+    if (discoverWordRef) discoverWordRef.current = handleDiscoverWord;
+  }, [discoverWordRef, handleDiscoverWord]);
+
   const loadPractice = async (topic, { openFullscreen = false } = {}) => {
     const t = topic || overallWeakness;
     if (!t) return;
