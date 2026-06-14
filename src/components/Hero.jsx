@@ -5350,6 +5350,13 @@ function ReadingArticlePanel({
           {/* Title — auto-shrinks to fit 2 lines, never truncated */}
           {title && (
             <div className="mb-5 shrink-0 mr-3 px-4 py-3 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
+              {/* Theme of the reading challenge (left) + completion badge (right) */}
+              <div className="flex items-center justify-between gap-2 mb-1.5">
+                <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-wine/60 truncate min-w-0">
+                  {theme || 'Reading challenge'}
+                </p>
+                <ThemeBadge achieved={themeAchieved} total={THEME_ARTICLE_TOTAL} label="article" />
+              </div>
               <AutoFitTitle title={title} />
             </div>
           )}
