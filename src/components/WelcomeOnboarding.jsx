@@ -11,7 +11,13 @@ import { fetchNarratorAudio, connectNarratorSource, NARRATORS } from '../lib/nar
 import { buildWordTimings, playDecodedBuffer } from '../lib/speechHighlight';
 import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from '../lib/siteAudio';
 import { NarratorHoverText } from '../lib/NarratorHoverText';
+import { startLine, setPlaybackTime, stopLine } from '../lib/lipSync';
 import { Logo, NAV_CTA_CLASS } from './atoms';
+
+// Lazy so the 3D libraries load only when the welcome avatar actually mounts,
+// never weighing down the main app bundle.
+const TalkingAvatar3D = React.lazy(() => import('./TalkingAvatar3D'));
+const LEA_AVATAR_SRC = '/avatars/avaturn.glb';
 
 const BADGE_IMG_CLASS =
   'w-[140px] h-[140px] sm:w-[168px] sm:h-[168px] object-contain object-center pointer-events-none';
