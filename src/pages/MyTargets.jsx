@@ -508,9 +508,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                 {themeName}
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {isAuto && studyCheck && (
-                  <span style={{ color: 'rgba(251,191,36,0.9)', fontSize: 10, fontFamily: "'SF Mono','Fira Mono',monospace", fontWeight: 700, marginRight: 'auto', animation: 'checkPop 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards' }}>+10 pts Parisian</span>
-                )}
                 <button
                   style={{
                     background: '#8B1E2D',
@@ -522,6 +519,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                     fontStyle: 'italic',
                     cursor: 'pointer',
                     pointerEvents: 'all',
+                    marginRight: isAuto && studyCheck ? 'auto' : undefined,
                     marginLeft: isAuto && studyCheck ? undefined : 'auto',
                     ...(isAuto && studyHl ? { animation: 'studyHlPulse 0.4s ease-in-out infinite alternate', boxShadow: '0 0 0 2px rgba(139,30,45,0.5)' } : {}),
                   }}
@@ -530,7 +528,29 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                   Study →
                 </button>
                 {isAuto && studyCheck && (
-                  <span style={{ color: '#16a34a', fontSize: 15, fontWeight: 700, animation: 'checkPop 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards' }}>✓</span>
+                  // Badge earned — a small medal pops in to the right of "Study"
+                  // (replaces the old "+10 pts Parisian" / green-check indicators).
+                  <span
+                    title="Theme badge earned"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 26,
+                      height: 26,
+                      borderRadius: '50%',
+                      background: '#8B1E2D',
+                      color: '#F6F1E8',
+                      boxShadow: '0 4px 12px -3px rgba(139,30,45,0.6)',
+                      flexShrink: 0,
+                      animation: 'checkPop 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards',
+                    }}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <circle cx="12" cy="9" r="6" />
+                      <path d="M8.5 14L7 22l5-3 5 3-1.5-8" />
+                    </svg>
+                  </span>
                 )}
               </div>
             </div>
