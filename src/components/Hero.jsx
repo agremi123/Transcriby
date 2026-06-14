@@ -3161,7 +3161,7 @@ export function AudioDemoCard({
             ))}
           </div>
 
-          <span className="text-[12px] sm:text-[14px] text-navy/40 font-display italic">or</span>
+          <span className="hidden sm:inline text-[12px] sm:text-[14px] text-navy/40 font-display italic">or</span>
 
           <div className="relative group">
           <button type="button" disabled={dailyParisianPoints < DISCOVER_WORD_COST} onClick={async () => {
