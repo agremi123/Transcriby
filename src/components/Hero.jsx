@@ -7116,6 +7116,7 @@ export default function Hero() {
               <ListeningPanel
                 loading={listeningLoading}
                 title={listeningTitle}
+                theme={practiceTopic || ''}
                 audioUrl={listeningAudioUrl}
                 clipStart={listeningClipStart}
                 clipEnd={listeningClipEnd}
