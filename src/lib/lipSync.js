@@ -141,6 +141,9 @@ export function readMouth() {
 /** All viseme ids we may emit — the avatar uses this to find matching morphs. */
 export const VISEME_IDS = ['PP', 'FF', 'TH', 'DD', 'kk', 'CH', 'SS', 'nn', 'RR', 'aa', 'E', 'I', 'O', 'U'];
 
+// TEMP dev probe — lets the preview sample the live mouth signal. Remove after verifying.
+if (typeof window !== 'undefined') window.__readMouth = readMouth;
+
 /** Visemes made with the lips together/forward — the avatar closes the jaw for these. */
 export const CLOSED_VISEMES = new Set(['PP']);
 export const ROUNDED_VISEMES = new Set(['O', 'U']);
