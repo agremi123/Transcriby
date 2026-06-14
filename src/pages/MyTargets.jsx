@@ -835,8 +835,8 @@ function ThemeBadgesSection() {
         Badges to <span className="text-wine italic">attain</span>
       </h2>
       <p className="text-[12px] text-navy/45 mb-4 max-w-xl">
-        Complete a whole theme to earn its badge. You collect one for every reading
-        or listening theme you finish.
+        Complete a whole theme to earn its badge — one for every reading, listening,
+        speaking, or writing theme you finish.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {tiles.map(({ cat, blurb }) => {
