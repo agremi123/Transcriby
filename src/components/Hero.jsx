@@ -1173,6 +1173,7 @@ export function AudioDemoCard({
   writingWordTarget = 80,
   onWritingProgress = null,
   onNewWritingChallenge = null,
+  discoverWordRef = null,
 }) {
   const { effectiveLevel, gainExperience, gainDailyParisianPoints } = useLearnerProfile();
   const {
