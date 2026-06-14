@@ -3608,7 +3608,7 @@ export function AudioDemoCard({
                   <textarea
                     ref={writeTextareaRef}
                     className="flex-1 w-full px-4 pt-4 pb-4 bg-transparent resize-none outline-none font-display text-[17px] leading-snug text-navy placeholder:text-navy/30 scroll-premium relative z-[1]"
-                    placeholder="Write in French…"
+                    placeholder={activeTab === 'writing' ? 'Write a little text based on the instructions and the goals' : 'Write in French…'}
                     spellCheck={false}
                     value={writeText}
                     onChange={(e) => {
