@@ -139,24 +139,6 @@ export function Features() {
               to speak French with <span className="italic text-wine">ease.</span>
             </h2>
           </div>
-          <a href="#" className="group inline-flex items-center gap-2 text-wine text-[14px] font-medium">
-            Explore all features
-            <svg
-              className="transition-transform duration-300 group-hover:translate-x-1"
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              aria-hidden
-            >
-              <path
-                d="M1 7h12m0 0L8 2m5 5l-5 5"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-              />
-            </svg>
-          </a>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
