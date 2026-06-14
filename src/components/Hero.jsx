@@ -7279,8 +7279,8 @@ export default function Hero() {
                 {narrators.filter((n) => n.id === 'lea').map((n) => {
                   const isPlaying = introPlaying === n.id;
                   return (
+                  <div key={n.id} className="flex items-center gap-3 w-full px-2 sm:contents">
                   <button
-                    key={n.id}
                     type="button"
                     onClick={() => playNarratorIntro(n)}
                     className="group relative flex flex-col items-center gap-2"
