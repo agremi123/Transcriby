@@ -110,11 +110,18 @@ export default function TalkingAvatar3D({ src, amplitudeRef }) {
       <ambientLight intensity={0.9} />
       <directionalLight position={[2, 3, 4]} intensity={1.3} />
       <directionalLight position={[-3, 1, 2]} intensity={0.4} />
-      <React.Suspense fallback={null}>
-        <Bounds fit clip observe margin={1.15}>
-          <AvatarModel src={src} amplitudeRef={amplitudeRef} />
-        </Bounds>
-      </React.Suspense>
+      {/* DIAGNOSTIC: plain box to confirm R3F renders in this environment. */}
+      <mesh rotation={[0.4, 0.4, 0]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="#8B1E2D" />
+      </mesh>
+      {false && (
+        <React.Suspense fallback={null}>
+          <Bounds fit clip observe margin={1.15}>
+            <AvatarModel src={src} amplitudeRef={amplitudeRef} />
+          </Bounds>
+        </React.Suspense>
+      )}
       <OrbitControls enablePan={false} enableZoom={false} minPolarAngle={1.1} maxPolarAngle={1.9} />
     </Canvas>
   );
