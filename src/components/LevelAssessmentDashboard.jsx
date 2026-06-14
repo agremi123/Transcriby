@@ -1717,7 +1717,7 @@ function NarratorPair({
             <motion.div
               className={`relative shrink-0 overflow-visible ${
                 isSoloHero
-                  ? 'pt-7 sm:pt-8'
+                  ? 'pt-3 sm:pt-8'
                   : duoProminent
                     ? 'pt-6 sm:pt-7'
                     : isFeatured
@@ -1738,7 +1738,7 @@ function NarratorPair({
               <div
                 className={`rounded-full overflow-hidden transition-shadow duration-500 ${
                   isSoloHero
-                    ? 'w-40 h-40 sm:w-48 sm:h-48 shadow-[0_16px_40px_-10px_rgba(122,31,46,0.32)]'
+                    ? 'w-24 h-24 sm:w-48 sm:h-48 shadow-[0_16px_40px_-10px_rgba(122,31,46,0.32)]'
                     : duoProminent
                     ? 'w-32 h-32 sm:w-40 sm:h-40 shadow-[0_14px_36px_-10px_rgba(122,31,46,0.3)]'
                     : isFeatured

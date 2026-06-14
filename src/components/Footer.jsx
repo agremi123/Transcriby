@@ -101,7 +101,7 @@ export function Footer() {
 
         <div className="border-t border-line pt-10 overflow-hidden">
           <div className="font-display text-[clamp(80px,18vw,260px)] leading-[0.85] text-navy/90 tracking-[-0.02em] select-none">
-            Transcrib<span className="text-wine italic">y.</span>
+            Parisl<span className="text-wine italic">y.</span>
           </div>
         </div>
 
