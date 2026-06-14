@@ -5727,7 +5727,7 @@ function allTipsFulfilled(tips, usedTips) {
   return total > 0 && done === total;
 }
 
-function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null, usedVocab = [], usedGrammar = false }) {
+function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null, usedVocab = [], usedGrammar = false, challengeIndex = 1 }) {
   const name = narratorId === 'lea' ? 'Léa' : 'Jules';
 
   const [speaking, setSpeaking] = React.useState(false);
