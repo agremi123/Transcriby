@@ -3164,7 +3164,7 @@ export function AudioDemoCard({
                         {t.label}
                         {prog.done
                           ? <span className="text-green-600 text-[10px]" aria-hidden>✓</span>
-                          : <span className="font-mono tabular-nums text-wine/60">{prog.correct}/{EXERCISE_GOAL}</span>}
+                          : <span className={`font-mono tabular-nums ${exerciseSubTab === t.id ? 'text-wine/60' : 'text-navy/30'}`}>{prog.correct}/{EXERCISE_GOAL}</span>}
                       </span>
                     </button>
                   );
