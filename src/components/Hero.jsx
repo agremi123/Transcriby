@@ -5644,6 +5644,13 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
           {/* Title */}
           {title && (
             <div className="mb-2 shrink-0 px-3 py-2 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
+              {/* Theme of the listening challenge (left) + completion badge (right) */}
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-wine/60 truncate min-w-0">
+                  {theme || 'Listening challenge'}
+                </p>
+                <ThemeBadge achieved={themeAchieved} total={THEME_ARTICLE_TOTAL} label="podcast" />
+              </div>
               <div className="flex items-start gap-2">
                 <h2 className="font-display text-[16px] sm:text-[18px] leading-[1.25] tracking-[-0.01em] line-clamp-2 text-navy flex-1">{title}</h2>
                 {contentLevel && CEFR_BADGE[contentLevel] && (
@@ -5652,7 +5659,6 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
                     {CEFR_BADGE[contentLevel].label}
                   </span>
                 )}
-                <NextArticleButton doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} />
               </div>
               {vocabTheme && <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 mt-0.5 block">{vocabTheme}</span>}
             </div>
