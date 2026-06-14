@@ -2985,7 +2985,7 @@ export function AudioDemoCard({
       {utterances.length > 0 && (
         hasRecordedAudio && !isLive ? (
           <button type="button" onClick={resetTranscript}
-            className="relative w-11 h-11 rounded-full border border-navy/20 text-navy/50 hover:border-wine/40 hover:text-wine/70 inline-flex items-center justify-center transition-colors shrink-0"
+            className="relative w-9 sm:w-11 h-9 sm:h-11 rounded-full border border-navy/20 text-navy/50 hover:border-wine/40 hover:text-wine/70 inline-flex items-center justify-center transition-colors shrink-0"
             aria-label="Reset recording">
             <span className="text-[9px] tracking-widest uppercase leading-none">Reset</span>
           </button>
@@ -4683,7 +4683,7 @@ export function AudioDemoCard({
           <div className="shrink-0 flex items-center gap-2 pr-3 py-1">
             {writeText.trim().length > 0 && (
               <button type="button" onClick={resetTranscript}
-                className="relative w-11 h-11 rounded-full border border-navy/20 text-navy/50 hover:border-wine/40 hover:text-wine/70 inline-flex items-center justify-center transition-colors shrink-0"
+                className="relative w-9 sm:w-11 h-9 sm:h-11 rounded-full border border-navy/20 text-navy/50 hover:border-wine/40 hover:text-wine/70 inline-flex items-center justify-center transition-colors shrink-0"
                 aria-label="Reset">
                 <span className="text-[9px] tracking-widest uppercase leading-none">Reset</span>
               </button>
