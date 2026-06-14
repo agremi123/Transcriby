@@ -110,14 +110,17 @@ function buildVisemeTimeline(text, durationSec) {
 
 export function startLine(text, durationSec) {
   timeline = buildVisemeTimeline(text, durationSec);
-  playbackTime = 0;
+  lineDuration = durationSec || 0;
+  lineStartMs = nowMs();
   lineActive = timeline.length > 0;
 }
 
-/** Fed from the audio playback tick (seconds elapsed; null when the line ends). */
+/** Optional tight-sync correction from the audio playback tick (seconds elapsed;
+ *  null when the line ends). The timeline self-clocks without it, but if the tick
+ *  fires we re-anchor to the true audio position to kill any drift. */
 export function setPlaybackTime(t) {
   if (t == null) { lineActive = false; return; }
-  playbackTime = t;
+  lineStartMs = nowMs() - t * 1000;
 }
 
 export function stopLine() {
@@ -127,7 +130,8 @@ export function stopLine() {
 
 function currentViseme() {
   if (!lineActive || !timeline.length) return null;
-  const t = playbackTime;
+  const t = (nowMs() - lineStartMs) / 1000;
+  if (lineDuration && t >= lineDuration) { lineActive = false; return null; }
   // Timeline is ordered; a short linear scan is fine for one sentence.
   for (let i = 0; i < timeline.length; i++) {
     if (t >= timeline[i].start && t < timeline[i].end) return timeline[i].viseme;
