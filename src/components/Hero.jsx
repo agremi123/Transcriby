@@ -3094,7 +3094,9 @@ export function AudioDemoCard({
 
           <span className="text-[14px] text-navy/40 font-display italic">or</span>
 
-          <button type="button" onClick={async () => {
+          <div className="relative group">
+          <button type="button" disabled={dailyParisianPoints < DISCOVER_WORD_COST} onClick={async () => {
+            if (dailyParisianPoints < DISCOVER_WORD_COST) return; // not enough points to discover a word
             setHighlightDiscover(false);
             // Switch to Chat tab + speak mode
             setActiveTab('transcript');
@@ -3106,7 +3108,8 @@ export function AudioDemoCard({
             try {
               const res = await fetch('/api/word', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
               const data = await res.json();
-              if (!data?.word) return;
+              if (!data?.word) { setParisianWordChallengeLoading(false); return; }
+              firePointsDelta(-DISCOVER_WORD_COST); // discovering a word costs Parisian points
               // Narrator + explanation come from the DB so the pre-generated
               // audio in the narrator-audio bucket matches exactly (no TTS wait)
               const narratorId = data.narratorId || (Math.random() < 0.5 ? 'lea' : 'jules');
