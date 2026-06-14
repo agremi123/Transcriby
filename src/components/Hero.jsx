@@ -6467,8 +6467,12 @@ function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wo
       ) : (
         <>
           {/* Challenge — read aloud by the narrator */}
-          <div className="mb-4 shrink-0 px-4 py-3 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
-            <p className="text-[10px] tracking-widest uppercase text-wine/60 mb-1.5 font-mono">Writing Challenge</p>
+          <div className="relative mb-4 shrink-0 px-4 py-3 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
+            {/* Completion badge — absolute overlay so it never pushes the prompt down */}
+            <div className="absolute top-2 right-2 z-10">
+              <ThemeBadge achieved={themeAchieved} total={THEME_CHALLENGE_TOTAL} label="challenge" />
+            </div>
+            <p className="text-[10px] tracking-widest uppercase text-wine/60 mb-1.5 font-mono pr-8">Writing Challenge</p>
             <div className="flex items-start gap-3">
               <div className="relative shrink-0">
                 <button type="button" onClick={playPrompt} aria-label={`Listen to ${name}`}
