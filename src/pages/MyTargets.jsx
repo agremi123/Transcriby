@@ -507,7 +507,7 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
               <p style={{ color: 'rgba(246,241,232,0.95)', fontSize: 14, fontFamily: "Georgia,'Times New Roman',serif", fontStyle: 'italic', marginBottom: 6 }}>
                 {themeName}
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                 <button
                   style={{
                     background: '#8B1E2D',
@@ -519,8 +519,6 @@ function ArcPathMap({ grouped, progressMap, currentLevel, nextLevel }) {
                     fontStyle: 'italic',
                     cursor: 'pointer',
                     pointerEvents: 'all',
-                    marginRight: isAuto && studyCheck ? 'auto' : undefined,
-                    marginLeft: isAuto && studyCheck ? undefined : 'auto',
                     ...(isAuto && studyHl ? { animation: 'studyHlPulse 0.4s ease-in-out infinite alternate', boxShadow: '0 0 0 2px rgba(139,30,45,0.5)' } : {}),
                   }}
                   onMouseDown={() => navigate(practiceUrl(t.topic, themeInfo, themeInfo?.cat ?? t.category))}
