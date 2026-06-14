@@ -4729,7 +4729,8 @@ export function AudioDemoCard({
           {/* Parisian reaction + correction now render inline in the transcript
               above (no separate bottom bar). */}
         </div>{/* end left column */}
-        {/* Right controls */}
+        {/* Right controls — desktop: per-mode points + action button */}
+        <div className="hidden sm:block shrink-0">
         {inputMode === 'write' ? (
           <div className="shrink-0 flex items-center gap-1 sm:gap-2 pr-2 sm:pr-3 py-1">
             {writeText.trim().length > 0 && (
