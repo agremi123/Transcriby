@@ -14,6 +14,31 @@ import React from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, Bounds, OrbitControls } from '@react-three/drei';
 
+// Catches a failed/missing model load (e.g. wrong path, or a COMPRESSED glb that
+// needs extra decoders) and shows a placeholder instead of crash-looping the canvas.
+class ModelErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { failed: false }; }
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(err) {
+    console.warn(
+      '[TalkingAvatar3D] Could not load the 3D model — showing a placeholder. ' +
+      'Drop an UNCOMPRESSED .glb (e.g. an Avaturn export) at the configured path. Details:',
+      err?.message || err,
+    );
+  }
+  render() { return this.state.failed ? this.props.fallback : this.props.children; }
+}
+
+// Simple stand-in head shown until a real avatar model is provided.
+function PlaceholderHead() {
+  return (
+    <mesh>
+      <sphereGeometry args={[0.8, 48, 48]} />
+      <meshStandardMaterial color="#C9A0A8" roughness={0.65} />
+    </mesh>
+  );
+}
+
 // Candidate blendshape names, in priority order (ARKit + a few fallbacks).
 const JAW_CANDIDATES = ['jawOpen', 'mouthOpen', 'viseme_aa', 'viseme_AA', 'mouthFunnel'];
 const BLINK_BOTH = ['eyesClosed', 'blink'];
