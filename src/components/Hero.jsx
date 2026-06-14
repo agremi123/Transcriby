@@ -2993,7 +2993,7 @@ export function AudioDemoCard({
           <span className="w-9 sm:w-11 h-9 sm:h-11 shrink-0 inline-block" aria-hidden />
         )
       )}
-      <div className="flex flex-row items-center gap-2">
+      <div className="flex flex-row items-center gap-1 sm:gap-2">
         {/* Parisian Points display */}
         <PointsBurst points={dailyParisianPoints} className="mr-1">
           <div className="relative flex items-center justify-center w-9 sm:w-11 h-9 sm:h-11 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
