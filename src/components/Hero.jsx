@@ -1663,6 +1663,7 @@ export function AudioDemoCard({
           chatHistoryRef.current = resolved;
           setChatHistory(resolved);
           playNarratorLine({ id: 'lea', text: data.text });
+          firePointsDelta(1); // chatting with a Parisian earns a Parisian point
         } else {
           const filtered = chatHistoryRef.current.filter(m => m.id !== leaId);
           chatHistoryRef.current = filtered;
