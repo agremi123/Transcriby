@@ -4271,7 +4271,7 @@ export function AudioDemoCard({
                   {source === 'tab' ? 'Listening to tab audio…' : source === 'system' ? 'Listening to system audio…' : 'Start speaking…'}
                 </p>
               ) : status !== 'connecting' && activeTab !== 'speaking' && activeTab !== 'writing' ? (
-                <div className="flex items-start gap-3 py-1">
+                <div className="hidden sm:flex items-start gap-3 py-1">
                   <button
                     type="button"
                     onClick={() => chatIntroLine && playNarratorLine({ id: 'lea', text: chatIntroLine.text })}
