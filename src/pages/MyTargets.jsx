@@ -825,6 +825,8 @@ function ThemeBadgesSection() {
   const tiles = [
     { cat: 'Reading',   blurb: 'Finish all 3 articles of a theme — every exercise tab done.' },
     { cat: 'Listening', blurb: 'Finish all 3 podcasts of a theme — every exercise tab done.' },
+    { cat: 'Speaking',  blurb: 'Finish all 5 défis of a theme — every target used.' },
+    { cat: 'Writing',   blurb: 'Finish all 5 writing challenges of a theme — every goal met.' },
   ];
 
   return (
