@@ -5579,7 +5579,7 @@ function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180
           {/* Title */}
           {title && (
             <div className="mb-2 shrink-0 px-3 py-2 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
-              <div className="flex items-center gap-2">
+              <div className="flex items-start gap-2">
                 <h2 className="font-display text-[16px] sm:text-[18px] leading-[1.25] tracking-[-0.01em] line-clamp-2 text-navy flex-1">{title}</h2>
                 {contentLevel && CEFR_BADGE[contentLevel] && (
                   <span className="shrink-0 mt-0.5 px-2 py-1 rounded text-[13px] font-mono font-bold text-white leading-none"
