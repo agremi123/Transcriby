@@ -174,6 +174,14 @@ function HeadControls({ targetRef }) {
 
 export default function TalkingAvatar3D({ src, amplitudeRef }) {
   const targetRef = React.useRef(new THREE.Vector3(0, 1.6, 0));
+
+  // Belt-and-suspenders: nudge a resize after mount so the WebGL canvas always
+  // measures its container, even if the ResizeObserver doesn't fire on mount.
+  React.useEffect(() => {
+    const id = requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
   return (
     <Canvas
       camera={{ position: [0, 1.6, 0.6], fov: 18 }}
