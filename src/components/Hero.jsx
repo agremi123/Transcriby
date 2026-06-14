@@ -5765,8 +5765,18 @@ function allTipsFulfilled(tips, usedTips) {
   return total > 0 && done === total;
 }
 
-function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null, usedVocab = [], usedGrammar = false, challengeIndex = 1 }) {
+function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null, usedVocab = [], usedGrammar = false, challengeIndex = 1, onNextChallenge = null }) {
   const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+
+  // Défi progress drives the "Next challenge" button (a progress bar, like the
+  // other tabs): it fills as the learner uses each target, and only becomes
+  // clickable once every target vocab word + the target grammar are used.
+  const hasGrammarTarget = !!(targetGrammar && (targetGrammar.point || targetGrammar.hint));
+  const defiVocab = targetVocab || [];
+  const defiTotal = defiVocab.length + (hasGrammarTarget ? 1 : 0);
+  const defiDoneCount = defiVocab.filter(v => isVocabUsed(v.word, usedVocab)).length + (hasGrammarTarget && usedGrammar ? 1 : 0);
+  const defiDone = defiTotal > 0 && defiDoneCount === defiTotal;
+  const defiPct = defiTotal ? Math.round((defiDoneCount / defiTotal) * 100) : 0;
 
   const [speaking, setSpeaking] = React.useState(false);
   const [playbackTime, setPlaybackTime] = React.useState(null);
