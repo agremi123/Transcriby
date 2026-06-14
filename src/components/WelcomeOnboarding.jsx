@@ -323,9 +323,14 @@ export default function WelcomeOnboarding() {
                   <div className={`relative w-[150px] h-[150px] sm:w-[190px] sm:h-[190px] rounded-full overflow-hidden shadow-lg bg-ivory2 transition-all duration-300 ${
                     isSpeaking ? 'ring-4 ring-wine scale-[1.04] shadow-xl' : 'ring-2 ring-line/60'
                   }`}>
-                    <React.Suspense fallback={<img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />}>
-                      <TalkingAvatar3D src={LEA_AVATAR_SRC} controls={false} />
-                    </React.Suspense>
+                    {import.meta.env.DEV ? (
+                      /* 3D disabled on the local dev server — show the photo instead */
+                      <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
+                    ) : (
+                      <React.Suspense fallback={<img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />}>
+                        <TalkingAvatar3D src={LEA_AVATAR_SRC} controls={false} />
+                      </React.Suspense>
+                    )}
                     {isSpeaking && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-25 pointer-events-none" />}
                   </div>
                   <span className={`text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${isSpeaking ? 'text-wine' : 'text-navy/60'}`}>
