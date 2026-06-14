@@ -2624,12 +2624,6 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
               }
             />
 
-            {/* Parisian points — earned each time you speak */}
-            <div className={`shrink-0 flex items-center justify-center gap-2 ${embedded ? 'mt-2' : 'mt-3'}`}>
-              <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-wine/55">Parisian points</span>
-              <span className="font-display text-[16px] font-bold text-wine tabular-nums leading-none">{dailyParisianPoints}</span>
-            </div>
-
             {phase === 'feedback' && feedbackReady && !lastFeedback?.hasMistake && (
               <p className={`shrink-0 text-[12px] text-navy/50 italic text-center ${embedded ? 'mt-1' : 'mt-2'}`}>
                 {playing
