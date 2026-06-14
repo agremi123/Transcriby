@@ -5842,6 +5842,12 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
   const defiDone = defiTotal > 0 && defiDoneCount === defiTotal;
   const defiPct = defiTotal ? Math.round((defiDoneCount / defiTotal) * 100) : 0;
 
+  // Theme badge unlocks once all défis of the theme are complete.
+  const themeAchieved = challengeIndex >= THEME_CHALLENGE_TOTAL && defiDone;
+  React.useEffect(() => {
+    if (themeAchieved && topicLabel) awardThemeBadge('Speaking', topicLabel);
+  }, [themeAchieved, topicLabel]);
+
   const [speaking, setSpeaking] = React.useState(false);
   const [playbackTime, setPlaybackTime] = React.useState(null);
   const [timings, setTimings] = React.useState([]);
