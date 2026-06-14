@@ -6708,6 +6708,9 @@ export default function Hero() {
   const loadedListeningTopicRef = React.useRef(null);
   const loadedSpeakingTopicRef = React.useRef(null);
   const loadedWritingTopicRef = React.useRef(null);
+  // Lets the mobile "Discover a Parisian word" button (rendered next to the points
+  // in the avatar block) trigger the card's discover flow.
+  const discoverWordRef = React.useRef(null);
 
   // Detect reading mode from URL once — store in state so it survives clearPracticeParam
   React.useEffect(() => {
