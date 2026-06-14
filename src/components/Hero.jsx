@@ -3780,7 +3780,7 @@ export function AudioDemoCard({
                           )}
                           {!msg.correction && msg.correctionOk && (
                             <span
-                              className="shrink-0 inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-green-600 text-white text-[11px] leading-none"
+                              className="shrink-0 inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-navy text-white text-[11px] leading-none"
                               title="Ta phrase est correcte !"
                               aria-label="Sentence correct"
                             >✓</span>
