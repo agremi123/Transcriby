@@ -7467,6 +7467,7 @@ export default function Hero() {
               writingWordTarget={writingWordTarget}
               onWritingProgress={handleWritingProgress}
               onNewWritingChallenge={loadNewWritingChallenge}
+              discoverWordRef={discoverWordRef}
             />
             </div>
           </div>
