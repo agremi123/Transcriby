@@ -3171,7 +3171,7 @@ export function AudioDemoCard({
                 })}
                 </div>
                 {/* Next article — a progress bar that fills as each tab is finished */}
-                <div className="shrink-0 flex items-center pl-1.5 pr-1 border-l border-line/40">
+                <div className="shrink-0 flex items-center justify-center px-2 border-l border-line/40">
                   <NextArticleButton compact doneTabs={exerciseTabsDone} articleIndex={articleIndex} onNextArticle={onNextArticle} />
                 </div>
               </div>
