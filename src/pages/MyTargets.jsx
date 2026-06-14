@@ -773,6 +773,88 @@ function Track({ category, targets, progressMap }) {
 }
 
 // ─── Page ───────────────────────────────────────────────────────────────────────
+// ─── Theme badges ("badges to attain") ──────────────────────────────────────────
+function Medal({ lit }) {
+  return (
+    <div className={`shrink-0 w-12 h-12 rounded-full flex items-center justify-center border transition-all duration-300 ${
+      lit
+        ? 'bg-wine border-wine text-ivory shadow-[0_6px_16px_-6px_rgba(139,30,45,0.55)]'
+        : 'bg-navy/[0.05] border-navy/15 text-navy/25'
+    }`}>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <circle cx="12" cy="9" r="6" />
+        <path d="M8.5 14L7 22l5-3 5 3-1.5-8" />
+      </svg>
+    </div>
+  );
+}
+
+function ThemeBadgesSection() {
+  const [v, setV] = React.useState(0);
+  React.useEffect(() => {
+    const refresh = () => setV((x) => x + 1);
+    window.addEventListener('focus', refresh);
+    window.addEventListener(THEME_BADGE_EVENT, refresh);
+    return () => {
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener(THEME_BADGE_EVENT, refresh);
+    };
+  }, []);
+  const badges = React.useMemo(() => loadThemeBadges(), [v]);
+
+  const tiles = [
+    { cat: 'Reading',   blurb: 'Finish all 3 articles of a theme — every exercise tab done.' },
+    { cat: 'Listening', blurb: 'Finish all 3 podcasts of a theme — every exercise tab done.' },
+  ];
+
+  return (
+    <section className="mb-10">
+      <h2 className="font-display text-[18px] sm:text-[20px] text-navy mb-1">
+        Badges to <span className="text-wine italic">attain</span>
+      </h2>
+      <p className="text-[12px] text-navy/45 mb-4 max-w-xl">
+        Complete a whole theme to earn its badge. You collect one for every reading
+        or listening theme you finish.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {tiles.map(({ cat, blurb }) => {
+          const count  = badges.count(cat);
+          const themes = badges.themes(cat);
+          const lit    = count > 0;
+          return (
+            <div key={cat} className="flex items-start gap-4 border border-line/60 bg-ivory/40 p-5">
+              <Medal lit={lit} />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <h3 className="font-display text-[15px] text-navy">{cat} themes</h3>
+                  <span className="font-mono text-[11px] tabular-nums text-wine">{count} earned</span>
+                </div>
+                <p className="text-[11px] text-navy/45 mt-0.5 mb-2">{blurb}</p>
+                {themes.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {themes.map((t) => (
+                      <span key={t} className="inline-flex items-center gap-1 text-[10px] font-mono text-wine bg-wine/[0.08] border border-wine/15 rounded-full px-2 py-0.5">
+                        <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <path d="M2.5 6.5L5 9l4.5-5.5" />
+                        </svg>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-[10.5px] font-mono uppercase tracking-wide text-navy/25">
+                    Locked — your next theme awaits.
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 export default function MyTargets() {
   const { effectiveLevel, profile } = useLearnerProfile();
   const levelInfo = React.useMemo(
