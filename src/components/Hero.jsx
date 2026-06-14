@@ -7287,23 +7287,20 @@ export default function Hero() {
                           ? 'ring-[3px] ring-wine shadow-lg'
                           : 'ring-2 ring-wine/40 group-hover:ring-wine shadow-sm group-hover:shadow-md'
                       }`}>
-                        <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
+                        <React.Suspense fallback={<img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />}>
+                          <TalkingAvatar3D src={LEA_AVATAR_SRC} controls={false} />
+                        </React.Suspense>
                         {isPlaying && (
                           <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-35 pointer-events-none" />
                         )}
-                        <div className={`absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity ${
-                          isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                        }`}>
-                          {isPlaying ? (
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="white" aria-hidden>
-                              <rect x="2" y="2" width="10" height="10" rx="1.5" fill="white" />
-                            </svg>
-                          ) : (
+                        {/* Play affordance only on hover — never covers her face while she's talking */}
+                        {!isPlaying && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                             <svg width="26" height="26" viewBox="0 0 24 24" fill="white" aria-hidden>
                               <path d="M8 5v14l11-7z" fill="white" />
                             </svg>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <span className={`font-display text-[14px] font-medium transition-colors ${
