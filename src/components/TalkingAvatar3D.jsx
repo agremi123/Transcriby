@@ -138,17 +138,19 @@ function AvatarModel({ src, amplitudeRef, targetRef }) {
     // amplitudeRef is a legacy/manual override; the lip-sync bus is the real source.
     const { amp: lipAmp, viseme } = readMouth();
     const amp = Math.max(0, Math.min(1, Math.max(amplitudeRef?.current ?? 0, lipAmp)));
+    const speaking = amp > 0.04;
 
-    // Jaw openness — lips come together for m/b/p (closed visemes).
-    const jawTarget = viseme && CLOSED_VISEMES.has(viseme) ? amp * 0.08 : amp;
+    // The VISEMES carry the distinct mouth shapes (near full strength so "o", "i",
+    // "p" read differently). The jaw is only a supporting opener underneath.
+    const jawTarget = viseme && CLOSED_VISEMES.has(viseme) ? amp * 0.05 : amp * 0.45;
     mouth.current += (jawTarget - mouth.current) * k;
-    setMorph(jaw, mouth.current * 0.82);
+    setMorph(jaw, mouth.current * 0.9);
 
-    // Visemes — blend the active mouth shape in (proportional to volume), rest out.
     for (const id of Object.keys(visemeMorphs)) {
-      const active = id === viseme;
-      const peak = ROUNDED_VISEMES.has(id) ? 0.85 : CLOSED_VISEMES.has(id) ? 0.7 : 0.5;
-      const target = active ? amp * peak : 0;
+      const active = speaking && id === viseme;
+      const peak = ROUNDED_VISEMES.has(id) ? 1.0 : CLOSED_VISEMES.has(id) ? 0.95 : 0.8;
+      // Strong, clearly-visible shape during speech (with a floor so it always reads).
+      const target = active ? Math.min(1, 0.35 + amp * 0.65) * peak : 0;
       const cur = visWeights.current[id] ?? 0;
       const next = cur + (target - cur) * k;
       visWeights.current[id] = next;
