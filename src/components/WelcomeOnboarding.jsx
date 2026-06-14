@@ -88,6 +88,7 @@ export default function WelcomeOnboarding() {
       if (!isActive()) return;
 
       setSpeechTimings(buildWordTimings(line.text, decoded.duration));
+      startLine(line.text, decoded.duration); // drive the 3D avatar's mouth shapes
       await playDecodedBuffer(ctx, {
         buffer: decoded,
         narrator: line.narrator,
@@ -97,6 +98,7 @@ export default function WelcomeOnboarding() {
         onTimeUpdate: (t) => {
           if (!isActive()) return;
           setSpeechPlaybackTime(t);
+          setPlaybackTime(t);
           if (t == null) {
             setSpeechPlaybackTime(null);
             setSpeechTimings([]);
