@@ -5357,9 +5357,7 @@ function ReadingArticlePanel({
                 </motion.div>
               )}
 
-            <div className="flex flex-col items-end gap-1.5 shrink-0">
-              {/* Next article — moved here from the title box, sits on top of Translate */}
-              <NextArticleButton doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} />
+            <div className="flex items-center gap-3 shrink-0">
               {vocab.length > 0 && (
                 <div className="flex flex-col items-end gap-1">
                   <button
