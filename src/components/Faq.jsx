@@ -16,10 +16,6 @@ const QUESTIONS = [
     a: 'Absolutely. Your recordings are end-to-end encrypted, never shared, and automatically deleted after analysis. You stay in full control at all times.',
   },
   {
-    q: 'Can I prepare for the TCF or TEF with Parisly?',
-    a: 'Yes. Pro and Premium plans include full simulations with detailed scoring aligned with the official TCF and TEF Canada marking schemes.',
-  },
-  {
     q: 'How do I cancel my subscription?',
     a: 'At any time from your account settings. No hidden fees, no lock-in period. You keep access until the end of your current billing cycle.',
   },
