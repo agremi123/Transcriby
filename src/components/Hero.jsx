@@ -1024,10 +1024,11 @@ function ConjugationItem({ c, ci, firePointsDelta, narratorId = 'lea', onAnswere
   return (
     <div className={`p-2.5 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
       <div className="flex items-center gap-1.5 mb-1">
+        {/* The verb to conjugate is the only hint — the subject is left for the
+            learner to read from the sentence (no pronoun give-away). */}
         <span className="text-[9px] font-mono text-wine/60 uppercase tracking-wider">{c.verb}</span>
         <span className="text-[9px] text-navy/30">·</span>
         <span className="text-[9px] font-mono text-navy/40">{c.tense}</span>
-        {c.hint && <span className="text-[9px] font-mono text-navy/30 ml-auto">({c.hint})</span>}
       </div>
       <p className="font-display text-[13px] text-navy leading-snug mb-1.5">
         <TranslatableText text={c.sentence?.replace('___', '______') || '___'} narratorId={narratorId} />
