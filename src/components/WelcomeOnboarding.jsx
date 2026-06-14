@@ -55,6 +55,7 @@ export default function WelcomeOnboarding() {
     sessionRef.current += 1;
     try { sourceRef.current?.stop(); } catch {}
     sourceRef.current = null;
+    stopLine(); // reset the avatar mouth
     setPlaying(false);
     setActiveSpeakingNarrator(null);
     setSpeechPlaybackTime(null);
