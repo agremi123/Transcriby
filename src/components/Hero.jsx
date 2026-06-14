@@ -5842,7 +5842,12 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
             {/* Your challenge — grammar + vocab targets the opening question elicits */}
             {(targetGrammar || (targetVocab && targetVocab.length > 0)) ? (
               <div className="border border-wine/25 bg-wine/[0.04] px-4 py-3 space-y-3" style={{ borderRadius: 4 }}>
-                <p className="text-[10px] tracking-widest uppercase text-wine/60 font-mono">Ton défi</p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[10px] tracking-widest uppercase text-wine/60 font-mono">Ton défi</p>
+                  <p className="text-[10px] tracking-widest uppercase text-wine/45 font-mono">
+                    next challenge <span className="tabular-nums text-wine/70">{Math.min(challengeIndex, THEME_CHALLENGE_TOTAL)}/{THEME_CHALLENGE_TOTAL}</span>
+                  </p>
+                </div>
 
                 {targetGrammar && (targetGrammar.point || targetGrammar.hint) && (
                   <div className="flex items-start gap-2">
