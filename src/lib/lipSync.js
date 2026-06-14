@@ -75,8 +75,11 @@ function charToViseme(c) {
 }
 
 let timeline = [];      // [{ start, end, viseme }]
-let playbackTime = 0;   // seconds, fed from the audio tick
 let lineActive = false;
+let lineStartMs = 0;    // wall-clock anchor for the current line
+let lineDuration = 0;
+
+const nowMs = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
 
 /** Build a per-character viseme timeline scaled to the clip's real duration.
  *  Vowels are held a touch longer than consonants so the mouth reads naturally. */
