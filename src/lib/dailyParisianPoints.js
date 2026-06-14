@@ -2,6 +2,8 @@ const STORAGE_KEY = 'nativa-daily-parisian-points';
 
 export const DAILY_PARISIAN_POINTS_EVENT = 'nativa-daily-parisian-points';
 export const DAILY_PARISIAN_POINTS_PER_CORRECT = 3;
+// Everyone starts the day with a small balance so they can afford one word discovery.
+export const DAILY_PARISIAN_POINTS_START = 5;
 
 function todayKey() {
   return new Date().toISOString().slice(0, 10);
@@ -10,15 +12,15 @@ function todayKey() {
 export function loadDailyParisianPoints() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { date: todayKey(), points: 0 };
+    if (!raw) return { date: todayKey(), points: DAILY_PARISIAN_POINTS_START };
     const parsed = JSON.parse(raw);
-    if (parsed?.date !== todayKey()) return { date: todayKey(), points: 0 };
+    if (parsed?.date !== todayKey()) return { date: todayKey(), points: DAILY_PARISIAN_POINTS_START };
     return {
       date: parsed.date,
       points: Math.max(0, Number(parsed.points) || 0),
     };
   } catch {
-    return { date: todayKey(), points: 0 };
+    return { date: todayKey(), points: DAILY_PARISIAN_POINTS_START };
   }
 }
 
