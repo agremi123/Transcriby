@@ -5653,7 +5653,7 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
               <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-wine/60 truncate mb-1 pr-8">
                 {theme || 'Listening challenge'}
               </p>
-              <div className="flex items-start gap-2">
+              <div className="flex items-start gap-2 pr-7">
                 <h2 className="font-display text-[16px] sm:text-[18px] leading-[1.25] tracking-[-0.01em] line-clamp-2 text-navy flex-1">{title}</h2>
                 {contentLevel && CEFR_BADGE[contentLevel] && (
                   <span className="shrink-0 mt-0.5 px-2 py-1 rounded text-[13px] font-mono font-bold text-white leading-none"
