@@ -141,7 +141,7 @@ export function Features() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
           {cards.map((c, i) => (
             <FeatureCard key={c.title} {...c} delay={i * 0.07} />
           ))}
