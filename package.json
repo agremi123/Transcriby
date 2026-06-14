@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "@speechmatics/auth": "^0.1.0",
     "@speechmatics/browser-audio-input-react": "^2.0.3",
     "@speechmatics/real-time-client": "^8.3.2",
@@ -17,7 +19,8 @@
     "posthog-js": "^1.386.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.16.0"
+    "react-router-dom": "^7.16.0",
+    "three": "^0.169.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
