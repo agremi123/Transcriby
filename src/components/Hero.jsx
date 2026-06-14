@@ -3622,7 +3622,7 @@ export function AudioDemoCard({
                     <span key={`border-${writeHintKey}`} className="absolute top-3 left-3 right-3 bottom-3 rounded-lg border-2 border-wine/30 animate-pulse pointer-events-none" aria-hidden />
                   )}
                   {activeTab !== 'writing' && (
-                    <div className="flex items-start gap-3 px-4 pt-4 pb-2 shrink-0">
+                    <div className="hidden sm:flex items-start gap-3 px-4 pt-4 pb-2 shrink-0">
                       <button
                         type="button"
                         onClick={() => chatIntroLine && playNarratorLine({ id: 'lea', text: chatIntroLine.text })}
