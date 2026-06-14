@@ -1317,7 +1317,7 @@ export async function handleWord() {
     if (!parsed.word) throw new Error('No word generated');
 
     // Strip any non-French characters (CJK etc.) that Haiku sometimes injects
-    const stripGarble = (s) => (s || '').replace(/[^ -ɏ\s«»'"''""!?.,;:()\-–—]/g, '').replace(/\s+/g, ' ').trim();
+    const stripGarble = (s) => (s || '').replace(/[^\u0000-ɏ\s«»'"''""!?.,;:()\-–—]/g, '').replace(/\s+/g, ' ').trim();
     parsed.word = stripGarble(parsed.word);
     parsed.meaning = stripGarble(parsed.meaning);
     parsed.example = stripGarble(parsed.example);
