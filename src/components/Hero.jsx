@@ -36,6 +36,11 @@ import {
   pickNarratorReaction,
 } from '../lib/narratorLevelAdapt';
 
+// Lazy so the 3D libraries load only when the avatar mounts, never weighing
+// down the main landing-page bundle.
+const TalkingAvatar3D = React.lazy(() => import('./TalkingAvatar3D'));
+const LEA_AVATAR_SRC = '/avatars/avaturn.glb';
+
 // Parisian-meter progress awarded for completing a speaking défi (≈7 défis to
 // fill the meter and level up to the next CEFR level).
 const DEFI_COMPLETE_XP = 15;
