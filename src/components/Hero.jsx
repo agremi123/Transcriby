@@ -48,6 +48,15 @@ const THEME_ARTICLE_TOTAL = 3;
 // Parisian points it costs to discover a new Parisian word.
 const DISCOVER_WORD_COST = 5;
 
+// Random conversation subjects the Parisian uses to "relance" the chat once a
+// word challenge is done (success → move on to a fresh, random topic).
+const RELANCE_TOPICS = [
+  'la vie parisienne', 'les voyages', 'la cuisine et les restos', 'le cinéma français',
+  'la musique', 'les week-ends parfaits', 'le travail et les études', 'la mode à Paris',
+  'les cafés parisiens', "la famille et l'amitié", 'le sport', 'les vacances en France',
+];
+const pickRelanceTopic = () => RELANCE_TOPICS[Math.floor(Math.random() * RELANCE_TOPICS.length)];
+
 // Small TTS play button for corrections
 function TtsPlayButton({ text }) {
   const [playing, setPlaying] = React.useState(false);
