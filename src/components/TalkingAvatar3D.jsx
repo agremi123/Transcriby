@@ -209,7 +209,7 @@ function HeadControls({ targetRef }) {
   );
 }
 
-export default function TalkingAvatar3D({ src, amplitudeRef }) {
+export default function TalkingAvatar3D({ src, amplitudeRef, controls = true }) {
   const targetRef = React.useRef(new THREE.Vector3(0, 1.6, 0));
 
   // Belt-and-suspenders: nudge a resize after mount so the WebGL canvas always
