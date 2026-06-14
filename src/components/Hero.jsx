@@ -3145,7 +3145,7 @@ export function AudioDemoCard({
       {/* Mode controls + speech box */}
       <div className="px-3 sm:px-7 pt-3 flex flex-col gap-2 flex-1 min-h-0">
         <div className="flex items-center justify-center gap-1.5 sm:gap-3 shrink-0 flex-wrap">
-          <div className="relative flex items-center rounded-full p-0.5 bg-wine/10">
+          <div className="relative hidden sm:flex items-center rounded-full p-0.5 bg-wine/10">
             <div
               className="absolute top-0.5 bottom-0.5 rounded-full bg-wine transition-all duration-200"
               style={(activeTab === 'writing' || activeTab === 'speaking') ? { width: 'calc(100% - 4px)', left: '2px' } : { width: 'calc((100% - 4px) / 2)', left: lastSpeakWriteMode === 'write' ? 'calc(2px + (100% - 4px) / 2)' : '2px' }}
