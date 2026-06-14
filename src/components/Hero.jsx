@@ -6673,6 +6673,7 @@ export default function Hero() {
     setSpeakingLoading(true);
     setSpeakingUsedVocab([]);
     setSpeakingUsedGrammar(false);
+    setSpeakingChallengeIndex((n) => Math.min(THEME_CHALLENGE_TOTAL, n + 1)); // next défi in the theme
     fetch('/api/speaking', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ topic: practiceTopic || speakingTopicLabel || 'la vie parisienne' }),
