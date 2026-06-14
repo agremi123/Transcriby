@@ -6640,12 +6640,15 @@ export default function Hero() {
   // Live défi progress reported by the recording card (which targets are used).
   const [speakingUsedVocab, setSpeakingUsedVocab] = React.useState([]);
   const [speakingUsedGrammar, setSpeakingUsedGrammar] = React.useState(false);
+  // Which défi of the current theme we're on (1..THEME_CHALLENGE_TOTAL).
+  const [speakingChallengeIndex, setSpeakingChallengeIndex] = React.useState(1);
 
   React.useEffect(() => {
     if (practiceType === 'speaking' && practiceTopic && loadedSpeakingTopicRef.current !== practiceTopic) {
       loadedSpeakingTopicRef.current = practiceTopic;
       setSpeakingActive(true);
       setSpeakingLoading(true);
+      setSpeakingChallengeIndex(1); // new theme → back to défi 1
       fetch('/api/speaking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
