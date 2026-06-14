@@ -893,6 +893,8 @@ export default function MyTargets() {
           </Link>
 
           <LevelBanner levelInfo={levelInfo} grouped={grouped} progressMap={progressMap} />
+
+          <ThemeBadgesSection />
         </Container>
       </main>
     </div>
