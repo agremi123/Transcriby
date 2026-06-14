@@ -234,7 +234,7 @@ export default function TalkingAvatar3D({ src, amplitudeRef, controls = true }) 
           <AvatarModel src={src} amplitudeRef={amplitudeRef} targetRef={targetRef} />
         </React.Suspense>
       </ModelErrorBoundary>
-      <HeadControls targetRef={targetRef} />
+      {controls && <HeadControls targetRef={targetRef} />}
     </Canvas>
   );
 }
