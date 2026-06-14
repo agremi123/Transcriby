@@ -3179,9 +3179,10 @@ export function AudioDemoCard({
 
       {/* Main content column (2/3) */}
       <div className={fullscreen ? 'flex-[2] flex flex-col overflow-y-auto min-w-0' : 'flex flex-col flex-1 min-h-0'}>
-      {/* Mode controls + speech box — extra top padding on mobile so the floating
-          avatar / dialogue / points (which overlap the card's top edge) clear the controls */}
-      <div className="px-3 sm:px-7 pt-[60px] sm:pt-3 flex flex-col gap-2 flex-1 min-h-0">
+      {/* Mode controls + speech box — small top padding on mobile so the speech
+          box sits just under the floating points / Discover row that overlaps the
+          card's top edge (the Speak/Write + Discover controls are hidden on mobile). */}
+      <div className="px-3 sm:px-7 pt-2 sm:pt-3 flex flex-col gap-2 flex-1 min-h-0">
         <div className="hidden sm:flex items-center justify-center gap-1.5 sm:gap-3 shrink-0 flex-wrap">
           <div className="relative hidden sm:flex items-center rounded-full p-0.5 bg-wine/10">
             <div
