@@ -7341,9 +7341,14 @@ export default function Hero() {
                           ? 'ring-[3px] ring-wine shadow-lg'
                           : 'ring-2 ring-wine/40 group-hover:ring-wine shadow-sm group-hover:shadow-md'
                       }`}>
-                        <React.Suspense fallback={<img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />}>
-                          <TalkingAvatar3D src={LEA_AVATAR_SRC} controls={false} />
-                        </React.Suspense>
+                        {import.meta.env.DEV ? (
+                          /* 3D disabled on the local dev server — show the photo instead */
+                          <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
+                        ) : (
+                          <React.Suspense fallback={<img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />}>
+                            <TalkingAvatar3D src={LEA_AVATAR_SRC} controls={false} />
+                          </React.Suspense>
+                        )}
                         {isPlaying && (
                           <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-35 pointer-events-none" />
                         )}
