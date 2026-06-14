@@ -7222,7 +7222,7 @@ export default function Hero() {
             {!['speaking','listening','reading','writing'].includes(heroActiveTab) && (
             <Reveal delay={0.25} className="overflow-visible">
               <div className="mt-6 flex items-center justify-center gap-8 sm:gap-10 relative z-20 overflow-visible">
-                {narrators.map((n) => {
+                {narrators.filter((n) => n.id === 'lea').map((n) => {
                   const isPlaying = introPlaying === n.id;
                   return (
                   <button
