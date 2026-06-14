@@ -5907,9 +5907,13 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
         </div>
       ) : (
         <>
-          <div className="mb-6 shrink-0 px-4 py-3 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
-            <p className="text-[10px] tracking-widest uppercase text-wine/60 mb-1 font-mono">Speaking Challenge</p>
-            <h2 className="font-display text-[24px] leading-snug text-navy">{topicLabel}</h2>
+          <div className="relative mb-6 shrink-0 px-4 py-3 border-l-4 border-wine bg-wine/5" style={{ borderRadius: '0 4px 4px 0' }}>
+            {/* Completion badge — absolute overlay so it never pushes the title down */}
+            <div className="absolute top-2 right-2 z-10">
+              <ThemeBadge achieved={themeAchieved} total={THEME_CHALLENGE_TOTAL} label="défi" />
+            </div>
+            <p className="text-[10px] tracking-widest uppercase text-wine/60 mb-1 font-mono pr-8">Speaking Challenge</p>
+            <h2 className="font-display text-[24px] leading-snug text-navy pr-8">{topicLabel}</h2>
           </div>
 
           <div className="flex gap-4 items-start mb-6 shrink-0">
