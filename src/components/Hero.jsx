@@ -7085,6 +7085,7 @@ export default function Hero() {
               <ReadingArticlePanel
                 loading={readingLoading}
                 title={readingTitle}
+                theme={readingTopic || practiceTopic || ''}
                 passage={readingPassage}
                 source={readingSource}
                 author={readingAuthor}
