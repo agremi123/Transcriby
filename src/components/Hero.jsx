@@ -6387,12 +6387,18 @@ const TIPS_SECTIONS = [
   { key: 'connecteurs', label: 'Connecteurs',  icon: '🔗', pill: true  },
 ];
 
-function WritingChallengePanel({ loading, prompt = '', tips = {}, wordTarget = 80, narratorId = 'lea', usedTips = {}, badge = null, onNewChallenge = null, challengeIndex = 1 }) {
+function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wordTarget = 80, narratorId = 'lea', usedTips = {}, badge = null, onNewChallenge = null, challengeIndex = 1 }) {
   const hasTips = TIPS_SECTIONS.some(s => (tips[s.key] || []).length > 0);
   const { done: goalsDoneCount, total: goalsTotal } = tipsProgress(tips, usedTips);
   const goalsDone = goalsTotal > 0 && goalsDoneCount === goalsTotal;
   const goalsPct = goalsTotal ? Math.round((goalsDoneCount / goalsTotal) * 100) : 0;
   const name = narratorId === 'jules' ? 'Jules' : 'Léa';
+
+  // Theme badge unlocks once all writing challenges of the theme are complete.
+  const themeAchieved = challengeIndex >= THEME_CHALLENGE_TOTAL && goalsDone;
+  React.useEffect(() => {
+    if (themeAchieved && theme) awardThemeBadge('Writing', theme);
+  }, [themeAchieved, theme]);
 
   const [speaking, setSpeaking] = React.useState(false);
   const [playbackTime, setPlaybackTime] = React.useState(null);
