@@ -132,11 +132,28 @@ function AvatarModel({ src, amplitudeRef, targetRef }) {
 
   useFrame((state, delta) => {
     const d = Math.min(delta, 0.05); // clamp to avoid jumps on slow frames
+    const k = Math.min(1, d * 18);   // smoothing toward targets
 
-    // Mouth: smoothly chase the amplitude the parent is writing.
-    const target = Math.max(0, Math.min(1, amplitudeRef?.current ?? 0));
-    mouth.current += (target - mouth.current) * Math.min(1, d * 16);
-    setMorph(jaw, mouth.current * 0.85);
+    // Live mouth signal: volume (openness) + current viseme (shape).
+    // amplitudeRef is a legacy/manual override; the lip-sync bus is the real source.
+    const { amp: lipAmp, viseme } = readMouth();
+    const amp = Math.max(0, Math.min(1, Math.max(amplitudeRef?.current ?? 0, lipAmp)));
+
+    // Jaw openness — lips come together for m/b/p (closed visemes).
+    const jawTarget = viseme && CLOSED_VISEMES.has(viseme) ? amp * 0.08 : amp;
+    mouth.current += (jawTarget - mouth.current) * k;
+    setMorph(jaw, mouth.current * 0.82);
+
+    // Visemes — blend the active mouth shape in (proportional to volume), rest out.
+    for (const id of Object.keys(visemeMorphs)) {
+      const active = id === viseme;
+      const peak = ROUNDED_VISEMES.has(id) ? 0.85 : CLOSED_VISEMES.has(id) ? 0.7 : 0.5;
+      const target = active ? amp * peak : 0;
+      const cur = visWeights.current[id] ?? 0;
+      const next = cur + (target - cur) * k;
+      visWeights.current[id] = next;
+      setMorph(visemeMorphs[id], next);
+    }
 
     // Blink: simple close→open state machine on a random timer.
     const b = blink.current;
