@@ -3202,44 +3202,7 @@ export function AudioDemoCard({
           <span className="hidden sm:inline text-[12px] sm:text-[14px] text-navy/40 font-display italic">or</span>
 
           <div className="relative group">
-          <button type="button" disabled={dailyParisianPoints < DISCOVER_WORD_COST} onClick={async () => {
-            if (dailyParisianPoints < DISCOVER_WORD_COST) return; // not enough points to discover a word
-            setHighlightDiscover(false);
-            // Switch to Chat tab + speak mode
-            setActiveTab('transcript');
-            setInputMode('speak');
-            setLastSpeakWriteMode('speak');
-            if (parisianWordChallengeLoading) return;
-            setParisianWordChallengeLoading(true);
-            setParisianWordChallenge(null);
-            try {
-              const res = await fetch('/api/word', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-              const data = await res.json();
-              if (!data?.word) { setParisianWordChallengeLoading(false); return; }
-              firePointsDelta(-DISCOVER_WORD_COST); // discovering a word costs Parisian points
-              // Narrator + explanation come from the DB so the pre-generated
-              // audio in the narrator-audio bucket matches exactly (no TTS wait)
-              const narratorId = data.narratorId || (Math.random() < 0.5 ? 'lea' : 'jules');
-              const intro = data.explanation || `Voici ton mot parisien du jour : « ${data.word} ». Ça veut dire "${data.meaning}". Par exemple : "${data.example}". Essaie maintenant de l'utiliser dans une phrase !`;
-              const challenge = { word: data.word, meaning: data.meaning, example: data.example, exampleTranslation: data.exampleTranslation, narratorId };
-              setParisianWordChallenge(challenge);
-              parisianWordChallengeRef.current = challenge;
-              setParisianChallengeAttempt(0);
-              parisianChallengeAttemptRef.current = 0;
-              // Append the word card + Léa's intro inline, below existing chat
-              const cardId = `word-card-${Date.now()}`;
-              const introId = `lea-intro-${Date.now()}`;
-              const withCard = [
-                ...chatHistoryRef.current,
-                { id: cardId, role: 'word-card', word: data.word, meaning: data.meaning, example: data.example },
-                { id: introId, role: 'lea', text: intro, narratorId },
-              ];
-              chatHistoryRef.current = withCard;
-              setChatHistory(withCard);
-              playNarratorLine({ id: narratorId, text: intro });
-            } catch {}
-            setParisianWordChallengeLoading(false);
-          }}
+          <button type="button" disabled={dailyParisianPoints < DISCOVER_WORD_COST} onClick={handleDiscoverWord}
             className={`relative inline-flex items-center px-2.5 sm:px-4 py-1 sm:py-1.5 font-display text-[12px] sm:text-[15px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap ${
               dailyParisianPoints < DISCOVER_WORD_COST
                 ? 'bg-wine/30 text-ivory/70 cursor-not-allowed'
