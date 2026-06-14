@@ -5272,6 +5272,7 @@ function ThemeBadge({ achieved = false, total = THEME_ARTICLE_TOTAL, label = 'ar
 function ReadingArticlePanel({
   loading,
   title,
+  theme = '',
   passage,
   source,
   author,
@@ -5284,6 +5285,9 @@ function ReadingArticlePanel({
   articleIndex = 1,
   onNextArticle = null,
 }) {
+  // The theme badge unlocks once all THEME_ARTICLE_TOTAL articles are complete
+  // (i.e. on the last article with all four exercise tabs validated).
+  const themeAchieved = articleIndex >= THEME_ARTICLE_TOTAL && doneTabs >= 4;
   const [revealedBatchCount, setRevealedBatchCount] = React.useState(0);
   const [translateActive, setTranslateActive] = React.useState(false);
 
