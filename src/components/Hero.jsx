@@ -4772,6 +4772,13 @@ export function AudioDemoCard({
             {speakActionControls}
           </div>
         ) : null}
+        </div>
+        {/* Mobile: mic/pen mode toggle replaces the points + mic cluster */}
+        {(inputMode === 'speak' || inputMode === 'write') && (
+          <div className="sm:hidden shrink-0 pr-2 py-1 self-center">
+            {mobileModeToggle}
+          </div>
+        )}
       </div>{/* end combined row */}
 
       {(error || tabCaptureError) && (
