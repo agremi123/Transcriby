@@ -366,7 +366,6 @@ export default function WelcomeOnboarding() {
             {/* Phase 2: Jules appears with his taunt + badge picker */}
             {(showLevelPicker || levelLocked) && (() => {
               const julesLine = linesByNarrator['jules'] ?? JULES_LEVEL_PICKER_LINE;
-              const n = NARRATORS['jules'];
               const isSpeaking = activeNarrator === 'jules';
               const highlightSpeech = isSpeaking && speechText === julesLine.text && speechPlaybackTime != null;
               return (
