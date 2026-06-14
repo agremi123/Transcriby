@@ -25,6 +25,8 @@ export function connectNarratorSource(ctx, source, narrator) {
   gain.gain.value = getNarratorVolume(narrator);
   source.connect(gain);
   gain.connect(ctx.destination);
+  // Feed the 3D avatar's mouth from the live voice (no-op if no avatar mounted).
+  tapSource(ctx, source);
   return gain;
 }
 
