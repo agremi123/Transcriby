@@ -5289,6 +5289,11 @@ function ReadingArticlePanel({
   // The theme badge unlocks once all THEME_ARTICLE_TOTAL articles are complete
   // (i.e. on the last article with all four exercise tabs validated).
   const themeAchieved = articleIndex >= THEME_ARTICLE_TOTAL && doneTabs >= 4;
+  // Persist the badge the first time a whole reading theme is completed so it
+  // also lights up on the "My Parisian Progress" page.
+  React.useEffect(() => {
+    if (themeAchieved && theme) awardThemeBadge('Reading', theme);
+  }, [themeAchieved, theme]);
   const [revealedBatchCount, setRevealedBatchCount] = React.useState(0);
   const [translateActive, setTranslateActive] = React.useState(false);
 
