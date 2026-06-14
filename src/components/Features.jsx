@@ -82,7 +82,7 @@ export function UniversitiesBar() {
             All your favorite French podcasts, gathered here
           </p>
         </Reveal>
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-8 items-center justify-items-center">
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-3 sm:gap-8 items-center justify-items-center">
           {podcasts.map((p, i) => (
             <motion.div
               key={p.name}
