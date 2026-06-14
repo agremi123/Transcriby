@@ -25,6 +25,7 @@ import { registerCorrectionKeyterms } from '../lib/deepgramKeyterms';
 import { captureTabAudioStream, releaseTabCapture } from '../lib/captureTabAudio';
 import { saveCorrection } from '../lib/correctionsNotebook';
 import { bumpTargetProgressByTopic } from '../lib/targetProgress';
+import { awardThemeBadge } from '../lib/themeBadges';
 import { getEffectiveLevel, getLevelBadgeSrc } from '../lib/learnerProfile';
 import { joinTranscriptSegments, segmentNeedsLeadingSpace } from '../lib/transcriptJoin';
 import {
