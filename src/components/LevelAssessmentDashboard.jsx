@@ -1449,6 +1449,12 @@ function AnswerInput({
             </div>
           ) : null}
 
+          {rightInfo ? (
+            <div className={`absolute right-0 bottom-0 z-10 ${compact ? 'pr-2 pb-1.5' : 'pr-2.5 pb-2'}`}>
+              {rightInfo}
+            </div>
+          ) : null}
+
           {!disabled && (
             <div className="absolute left-1/2 -translate-x-1/2 bottom-0 z-10">
               <button
