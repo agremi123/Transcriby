@@ -46,7 +46,7 @@ export function CTABanner() {
 export function Footer() {
   const cols = [
     { title: 'Product', links: ['Features', 'Pricing', 'Mobile app', "What's new"] },
-    { title: 'Resources', links: ['Blog', 'TCF/TEF Guide', 'Testimonials', 'Help center'] },
+    { title: 'Resources', links: ['Blog', 'Testimonials', 'Help center'] },
     { title: 'Company', links: ['About', 'Manifesto', 'Careers', 'Press'] },
     { title: 'Legal', links: ['Privacy', 'Terms', 'Cookies', 'GDPR'] },
   ];
