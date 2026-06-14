@@ -377,12 +377,6 @@ export default function WelcomeOnboarding() {
                   transition={{ duration: 0.35 }}
                   className="flex flex-col items-center gap-3 mb-5"
                 >
-                  <div className={`relative w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] rounded-full overflow-hidden shadow-md shrink-0 transition-all duration-300 ${
-                    isSpeaking ? 'ring-4 ring-wine scale-[1.04]' : 'ring-2 ring-line/60'
-                  }`}>
-                    <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
-                    {isSpeaking && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-25 pointer-events-none" />}
-                  </div>
                   <div className={`rounded-xl px-4 py-3 border transition-colors duration-300 inline-flex items-start gap-2 ${
                     isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
                   }`}>
