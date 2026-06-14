@@ -5726,7 +5726,7 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
           <div className="relative shrink-0 border-t pt-2" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
             {/* Next article — overlaid on the podcast byline line (no layout space,
                 so nothing else moves), centered over the Translate button. */}
-            <div className="absolute top-[1px] right-[22px] z-10">
+            <div className="absolute top-[1px] right-[11px] z-10">
               <NextArticleButton doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} />
             </div>
             {byline && <p className="text-[10px] font-mono tracking-[0.12em] mb-1.5 truncate" style={{ color: '#8b1e2d' }}>{byline}</p>}
