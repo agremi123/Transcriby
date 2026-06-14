@@ -157,15 +157,6 @@ function AvatarModel({ src, amplitudeRef, targetRef }) {
       setMorph(visemeMorphs[id], next);
     }
 
-    // TEMP debug — expose applied mouth values to verify distinct shapes. Remove after.
-    if (typeof window !== 'undefined') {
-      window.__mouthDebug = {
-        jaw: +(mouth.current).toFixed(2),
-        viseme,
-        vw: +((visWeights.current[viseme] || 0)).toFixed(2),
-      };
-    }
-
     // Blink: simple close→open state machine on a random timer.
     const b = blink.current;
     if (b.phase === 'idle') {
