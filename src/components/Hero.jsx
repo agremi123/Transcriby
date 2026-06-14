@@ -3134,14 +3134,22 @@ export function AudioDemoCard({
             setParisianWordChallengeLoading(false);
           }}
             className={`relative inline-flex items-center px-4 py-1.5 font-display text-[15px] tracking-wide rounded-full transition-all duration-300 ${
-              inputMode === 'discover'
-                ? 'bg-wine text-ivory ring-2 ring-wine/30'
-                : highlightDiscover
-                  ? 'bg-wine text-ivory ring-[3px] ring-wine/45 shadow-md scale-[1.03]'
-                  : 'bg-wine text-ivory hover:bg-wine2'
+              dailyParisianPoints < DISCOVER_WORD_COST
+                ? 'bg-wine/30 text-ivory/70 cursor-not-allowed'
+                : inputMode === 'discover'
+                  ? 'bg-wine text-ivory ring-2 ring-wine/30'
+                  : highlightDiscover
+                    ? 'bg-wine text-ivory ring-[3px] ring-wine/45 shadow-md scale-[1.03]'
+                    : 'bg-wine text-ivory hover:bg-wine2'
             }`}>
             Discover a Parisian word
           </button>
+          <span className="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-1.5 z-30 w-56 text-center rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+            {dailyParisianPoints < DISCOVER_WORD_COST
+              ? `Costs ${DISCOVER_WORD_COST} Parisian points — you have ${dailyParisianPoints}. Earn more by speaking & chatting.`
+              : `Costs ${DISCOVER_WORD_COST} Parisian points.`}
+          </span>
+          </div>
         </div>
 
         <div ref={writeBoxRef} className="relative bg-ivory/60 border border-line/70 overflow-hidden flex-1 flex flex-col min-h-0">
