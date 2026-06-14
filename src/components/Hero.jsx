@@ -7220,7 +7220,7 @@ export default function Hero() {
 
             {/* Jules et Léa — hidden on practice tabs */}
             {!['speaking','listening','reading','writing'].includes(heroActiveTab) && (
-            <Reveal delay={0.25} className="order-last lg:order-none -mb-12 lg:mb-0 relative z-20 overflow-visible">
+            <Reveal delay={0.25} className="order-last lg:order-none -mb-14 lg:mb-0 relative z-20 overflow-visible">
               <div className="mt-6 flex items-center justify-center gap-8 sm:gap-10 relative z-20 overflow-visible">
                 {narrators.filter((n) => n.id === 'lea').map((n) => {
                   const isPlaying = introPlaying === n.id;
