@@ -6652,6 +6652,8 @@ export default function Hero() {
   // Listening mode state
   const [listeningActive, setListeningActive] = React.useState(false);
   const [listeningLoading, setListeningLoading] = React.useState(false);
+  // Captured on load so the theme label survives clearPracticeParam (URL clearing).
+  const [listeningTopic, setListeningTopic] = React.useState('');
   const [listeningTitle, setListeningTitle] = React.useState('');
   const [listeningAudioUrl, setListeningAudioUrl] = React.useState(null);
   const [listeningTranscript, setListeningTranscript] = React.useState('');
