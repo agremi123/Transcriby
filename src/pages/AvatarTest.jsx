@@ -7,9 +7,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import TalkingAvatar3D from '../components/TalkingAvatar3D';
 
+// Look-test options (all eval-only / non-commercial samples). Swap a shippable
+// licensed avatar in later. Bigger file = heavier on mobile — noted per option.
+const AVATARS = [
+  { id: 'sample', label: 'Stylized · 4.5 MB', src: '/avatars/sample.glb' },
+  { id: 'avaturn', label: 'Realistic · 13 MB', src: '/avatars/avaturn.glb' },
+  { id: 'avatarsdk', label: 'Realistic · 12 MB', src: '/avatars/avatarsdk.glb' },
+];
+
 export default function AvatarTest() {
   const amplitudeRef = React.useRef(0);
   const [talking, setTalking] = React.useState(false);
+  const [avatar, setAvatar] = React.useState(AVATARS[0]);
   const rafRef = React.useRef(0);
 
   // For the spike we drive the mouth with a speech-like amplitude envelope
