@@ -3075,7 +3075,7 @@ export function AudioDemoCard({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={fullscreen
         ? 'fixed inset-6 z-50 bg-paper flex overflow-hidden rounded-2xl'
-        : 'relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 h-[600px] sm:h-[500px] sm:min-h-[500px] sm:max-h-[500px]'}
+        : 'relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 h-[500px] sm:min-h-[500px] sm:max-h-[500px]'}
       style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)' }}
     >
       {/* Close button in fullscreen */}
@@ -7340,8 +7340,8 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 h-[600px] sm:h-[500px] sm:min-h-[500px] sm:max-h-[500px]">
-            <div className="relative shrink-0 w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] h-[600px] sm:h-[500px] sm:min-h-[500px] sm:max-h-[500px]">
+          <div className="flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 h-[500px] sm:min-h-[500px] sm:max-h-[500px]">
+            <div className="relative shrink-0 w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] h-[500px] sm:min-h-[500px] sm:max-h-[500px]">
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
               initialTopic={practiceType === 'reading' ? null : practiceTopic}
