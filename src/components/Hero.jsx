@@ -5247,7 +5247,7 @@ function ThemeBadge({ achieved = false, total = THEME_ARTICLE_TOTAL, label = 'ar
   return (
     <div className="relative group shrink-0">
       <div
-        className={`w-9 h-9 rounded-full flex items-center justify-center border transition-all duration-300 ${
+        className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-300 ${
           achieved
             ? 'bg-wine border-wine text-ivory shadow-[0_4px_12px_-4px_rgba(139,30,45,0.5)] defi-badge-pop'
             : 'bg-navy/[0.06] border-navy/15 text-navy/25'
@@ -5255,7 +5255,7 @@ function ThemeBadge({ achieved = false, total = THEME_ARTICLE_TOTAL, label = 'ar
         aria-label={achieved ? 'Theme badge earned' : 'Theme badge locked'}
       >
         {/* medal icon */}
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <circle cx="12" cy="9" r="6" />
           <path d="M8.5 14L7 22l5-3 5 3-1.5-8" />
         </svg>
