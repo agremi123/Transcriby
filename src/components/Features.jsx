@@ -112,13 +112,8 @@ export function Features() {
     },
     {
       icon: 'sparkle',
-      title: 'Natural phrasing',
+      title: 'Parisian phrasing',
       desc: 'Get native-sounding suggestions to express yourself like a true French speaker.',
-    },
-    {
-      icon: 'target',
-      title: 'TCF/TEF prep',
-      desc: 'Practice with real exam simulations and boost your oral score with confidence.',
     },
     {
       icon: 'headphones',
