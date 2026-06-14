@@ -3118,17 +3118,6 @@ export function AudioDemoCard({
         : 'relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 h-[440px] sm:min-h-[500px] sm:max-h-[500px]'}
       style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)' }}
     >
-      {/* Mobile-only Parisian points badge — sits by the 3D avatar at the card's top edge */}
-      {!fullscreen && (
-        <div className="sm:hidden absolute top-3 left-3 z-30 pointer-events-none">
-          <PointsBurst points={dailyParisianPoints}>
-            <div className="flex items-center gap-1 rounded-full bg-wine/[0.08] border-2 border-wine/20 px-2 py-1 shadow-sm">
-              <span className="font-display text-[15px] font-bold text-wine leading-none tabular-nums">{dailyParisianPoints}</span>
-              <span className="text-[7px] font-mono uppercase tracking-wide text-wine/60 leading-none">pts</span>
-            </div>
-          </PointsBurst>
-        </div>
-      )}
       {/* Close button in fullscreen */}
       {fullscreen && (
         <button type="button" onClick={onClose}
