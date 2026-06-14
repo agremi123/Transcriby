@@ -2253,6 +2253,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
     if (isRecording) {
       const text = await stopRecordingForSubmit();
       if (text) {
+        gainDailyParisianPoints(1); // +1 Parisian point each time they speak
         if (hasMinimumAnswerLines(text, utterancesRef.current.length)) {
           await handleDone(text);
         } else {
