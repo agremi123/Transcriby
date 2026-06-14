@@ -7303,7 +7303,7 @@ export default function Hero() {
                         )}
                       </div>
                     </div>
-                    <span className={`font-display text-[14px] font-medium transition-colors ${
+                    <span className={`hidden sm:block font-display text-[14px] font-medium transition-colors ${
                       isPlaying ? 'text-wine italic' : 'text-wine'
                     }`}>{n.name}</span>
                   </button>
