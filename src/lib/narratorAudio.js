@@ -1,7 +1,7 @@
 import React from 'react';
 import { buildWordTimings, playDecodedBuffer } from './speechHighlight';
 import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from './siteAudio';
-import { tapSource } from './lipSync';
+import { tapSource, startLine, setPlaybackTime, stopLine } from './lipSync';
 
 export const NARRATORS = {
   lea: { id: 'lea', name: 'Léa', src: '/assets/lea.png' },
