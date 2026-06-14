@@ -3151,7 +3151,7 @@ export function AudioDemoCard({
             } catch {}
             setParisianWordChallengeLoading(false);
           }}
-            className={`relative inline-flex items-center px-4 py-1.5 font-display text-[15px] tracking-wide rounded-full transition-all duration-300 ${
+            className={`relative inline-flex items-center px-2.5 sm:px-4 py-1 sm:py-1.5 font-display text-[12px] sm:text-[15px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap ${
               dailyParisianPoints < DISCOVER_WORD_COST
                 ? 'bg-wine/30 text-ivory/70 cursor-not-allowed'
                 : inputMode === 'discover'
