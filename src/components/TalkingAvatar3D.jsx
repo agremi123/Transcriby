@@ -108,14 +108,26 @@ function AvatarModel({ src, amplitudeRef, targetRef }) {
   const blinkL = React.useMemo(() => findMorph(morphMeshes, BLINK_LEFT), [morphMeshes]);
   const blinkR = React.useMemo(() => findMorph(morphMeshes, BLINK_RIGHT), [morphMeshes]);
 
+  // Map each lip-sync viseme id to the model's matching mouth-shape morph.
+  const visemeMorphs = React.useMemo(() => {
+    const map = {};
+    for (const id of VISEME_IDS) {
+      const found = findMorph(morphMeshes, [`viseme_${id}`, `viseme_${id.toLowerCase()}`, `viseme_${id.toUpperCase()}`]);
+      if (found) map[id] = found;
+    }
+    return map;
+  }, [morphMeshes]);
+
   React.useEffect(() => {
     const all = morphMeshes.flatMap((m) => Object.keys(m.morphTargetDictionary || {}));
     console.log('[TalkingAvatar3D] morph targets found:', all);
     console.log('[TalkingAvatar3D] using → jaw:', jaw?.name,
-      '| blink:', blinkBoth?.name || `${blinkL?.name} / ${blinkR?.name}`);
-  }, [morphMeshes, jaw, blinkBoth, blinkL, blinkR]);
+      '| blink:', blinkBoth?.name || `${blinkL?.name} / ${blinkR?.name}`,
+      '| visemes:', Object.keys(visemeMorphs).join(',') || 'none');
+  }, [morphMeshes, jaw, blinkBoth, blinkL, blinkR, visemeMorphs]);
 
   const mouth = React.useRef(0);
+  const visWeights = React.useRef({});
   const blink = React.useRef({ phase: 'idle', val: 0, next: 1.5 });
 
   useFrame((state, delta) => {
