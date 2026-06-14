@@ -138,7 +138,7 @@ export function Features() {
         <div className="flex items-end justify-between flex-wrap gap-6 mb-14">
           <div>
             <SectionLabel>Built for your fluency</SectionLabel>
-            <h2 className="font-display text-[27px] sm:text-[44px] md:text-[56px] leading-[1.05] sm:leading-[1.02] text-navy max-w-[640px]">
+            <h2 className="font-display text-[30px] sm:text-[44px] md:text-[56px] leading-[1.05] sm:leading-[1.02] text-navy max-w-[640px]">
               Everything you need
               <br />
               to speak French with <span className="italic text-wine">ease.</span>
