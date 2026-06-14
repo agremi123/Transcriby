@@ -5535,7 +5535,9 @@ const CEFR_BADGE = {
   C2: { bg: '#4a1942', label: 'C2' },
 };
 
-function ListeningPanel({ loading, title, audioUrl, clipStart = 0, clipEnd = 180, transcript, wordTimings = null, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', contentLevel = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience, doneTabs = 0, articleIndex = 1, onNextArticle = null }) {
+function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, clipEnd = 180, transcript, wordTimings = null, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', contentLevel = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience, doneTabs = 0, articleIndex = 1, onNextArticle = null }) {
+  // Badge unlocks once all THEME_ARTICLE_TOTAL podcasts of the theme are done.
+  const themeAchieved = articleIndex >= THEME_ARTICLE_TOTAL && doneTabs >= 4;
   const [playing, setPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
