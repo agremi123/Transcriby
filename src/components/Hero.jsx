@@ -7095,6 +7095,7 @@ export default function Hero() {
                 usedVocab={speakingUsedVocab}
                 usedGrammar={speakingUsedGrammar}
                 challengeIndex={speakingChallengeIndex}
+                onNextChallenge={loadNewSpeakingChallenge}
               />
             )}
             {heroActiveTab === 'writing' && writingActive && (
