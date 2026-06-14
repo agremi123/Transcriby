@@ -140,17 +140,22 @@ function AvatarModel({ src, amplitudeRef, targetRef }) {
     const amp = Math.max(0, Math.min(1, Math.max(amplitudeRef?.current ?? 0, lipAmp)));
     const speaking = amp > 0.04;
 
-    // The VISEMES carry the distinct mouth shapes (near full strength so "o", "i",
-    // "p" read differently). The jaw is only a supporting opener underneath.
-    const jawTarget = viseme && CLOSED_VISEMES.has(viseme) ? amp * 0.05 : amp * 0.45;
+    // SUBTLE mode — the "least noticeable" set: the jaw carries the talking
+    // (so open vowels a/e/i just read as natural openness), and we add ONLY the
+    // two low-risk, high-recognition shapes: lips together for m/b/p, and a gentle
+    // round for o/ou. Every other viseme stays off to avoid the puppet look.
+    const isClosed = viseme && CLOSED_VISEMES.has(viseme);
+    const jawTarget = isClosed ? amp * 0.05 : amp * 0.7;
     mouth.current += (jawTarget - mouth.current) * k;
-    setMorph(jaw, mouth.current * 0.9);
+    setMorph(jaw, mouth.current * 0.85);
 
     for (const id of Object.keys(visemeMorphs)) {
-      const active = speaking && id === viseme;
-      const peak = ROUNDED_VISEMES.has(id) ? 1.0 : CLOSED_VISEMES.has(id) ? 0.95 : 0.8;
-      // Strong, clearly-visible shape during speech (with a floor so it always reads).
-      const target = active ? Math.min(1, 0.35 + amp * 0.65) * peak : 0;
+      let target = 0;
+      if (speaking && id === viseme) {
+        if (CLOSED_VISEMES.has(id)) target = amp * 0.85;      // m/b/p → lips together
+        else if (ROUNDED_VISEMES.has(id)) target = amp * 0.5; // o/ou → gentle rounding
+        // all other visemes stay 0 (the least-noticeable set)
+      }
       const cur = visWeights.current[id] ?? 0;
       const next = cur + (target - cur) * k;
       visWeights.current[id] = next;
