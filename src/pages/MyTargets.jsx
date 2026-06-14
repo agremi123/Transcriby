@@ -5,6 +5,7 @@ import { Container } from '../components/atoms';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
 import { getLevelTargets, groupTargetsByPath, PATH_CATEGORIES } from '../lib/levelTargets';
 import { loadTargetProgress, PARISIAN_XP_EVENT } from '../lib/targetProgress';
+import { loadThemeBadges, THEME_BADGE_EVENT } from '../lib/themeBadges';
 
 function practiceUrl(topic, themeInfo, category) {
   const base = `/?practice=${encodeURIComponent(topic)}`;
