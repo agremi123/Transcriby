@@ -6458,7 +6458,7 @@ function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wo
   }, [prompt, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="flex flex-col pr-4 overflow-y-auto" style={{ height: 520 }}>
+    <div className="flex flex-col pr-4 overflow-y-auto h-[calc(100svh-6.5rem)] sm:h-[520px]">
       {loading ? (
         <div className="flex items-center gap-3 mt-auto mb-auto">
           <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
