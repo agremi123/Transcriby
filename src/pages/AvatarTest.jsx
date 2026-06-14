@@ -73,8 +73,25 @@ export default function AvatarTest() {
         </Link>
       </header>
 
+      <div className="shrink-0 px-4 pb-2 flex gap-2 flex-wrap">
+        {AVATARS.map((a) => (
+          <button
+            key={a.id}
+            type="button"
+            onClick={() => setAvatar(a)}
+            className={`rounded-full px-3 py-1 text-[11px] font-mono uppercase tracking-wide border transition-colors ${
+              avatar.id === a.id
+                ? 'bg-navy text-ivory border-navy'
+                : 'bg-transparent text-navy/60 border-line hover:border-navy'
+            }`}
+          >
+            {a.label}
+          </button>
+        ))}
+      </div>
+
       <div className="flex-1 min-h-0">
-        <TalkingAvatar3D src="/avatars/sample.glb" amplitudeRef={amplitudeRef} />
+        <TalkingAvatar3D key={avatar.id} src={avatar.src} amplitudeRef={amplitudeRef} />
       </div>
 
       <footer className="shrink-0 px-4 pb-6 pt-3 flex justify-center">
