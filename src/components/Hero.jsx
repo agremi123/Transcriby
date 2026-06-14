@@ -7384,13 +7384,25 @@ export default function Hero() {
                       wrapperClassName="relative w-full"
                       tooltipClassName="top-[calc(100%+6px)]"
                     />
-                    <div className="mt-2">
+                    <div className="mt-2 flex items-center gap-2">
                       <PointsBurst points={dailyParisianPoints}>
                         <div className="inline-flex items-center gap-1 rounded-full bg-wine/[0.08] border-2 border-wine/20 px-2 py-1 shadow-sm">
                           <span className="font-display text-[15px] font-bold text-wine leading-none tabular-nums">{dailyParisianPoints}</span>
                           <span className="text-[7px] font-mono uppercase tracking-wide text-wine/60 leading-none">pts</span>
                         </div>
                       </PointsBurst>
+                      <button
+                        type="button"
+                        disabled={dailyParisianPoints < DISCOVER_WORD_COST}
+                        onClick={() => discoverWordRef.current?.()}
+                        className={`inline-flex items-center px-2.5 py-1 font-display text-[11.5px] leading-tight tracking-wide rounded-full transition-all duration-300 ${
+                          dailyParisianPoints < DISCOVER_WORD_COST
+                            ? 'bg-wine/30 text-ivory/70 cursor-not-allowed'
+                            : 'bg-wine text-ivory hover:bg-wine2'
+                        }`}
+                      >
+                        Discover a Parisian word
+                      </button>
                     </div>
                   </div>
                   </div>
