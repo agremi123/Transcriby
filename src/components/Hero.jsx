@@ -4680,7 +4680,7 @@ export function AudioDemoCard({
         </div>{/* end left column */}
         {/* Right controls */}
         {inputMode === 'write' ? (
-          <div className="shrink-0 flex items-center gap-1 sm:gap-2 pr-3 py-1">
+          <div className="shrink-0 flex items-center gap-1 sm:gap-2 pr-2 sm:pr-3 py-1">
             {writeText.trim().length > 0 && (
               <button type="button" onClick={resetTranscript}
                 className="relative w-9 sm:w-11 h-9 sm:h-11 rounded-full border border-navy/20 text-navy/50 hover:border-wine/40 hover:text-wine/70 inline-flex items-center justify-center transition-colors shrink-0"
