@@ -105,7 +105,6 @@ export default function Pricing() {
               features={[
                 'Unlimited minutes',
                 'Advanced native suggestions',
-                'TCF / TEF preparation',
                 'Detailed progress tracking',
                 'Priority support',
               ]}
