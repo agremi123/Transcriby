@@ -851,12 +851,18 @@ function readingMiddleware(apiKey, openrouterKey) {
 
   return async (req, res, next) => {
     if (req.url !== '/api/reading' || req.method !== 'POST') { next(); return; }
-    let topic = '';
+    let topic = '', learnerLevel = null;
     try {
       const body = JSON.parse(await readBody(req));
       topic = body.topic || '';
+      learnerLevel = body.learnerLevel || null;
     } catch {
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
+    }
+    // Local stock first — recyclable passages + exercises. No API call.
+    {
+      const localR = pickReading(learnerLevel);
+      if (localR) { res.statusCode = 200; res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(localR)); return; }
     }
     if (!topic) {
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
