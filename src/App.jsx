@@ -113,14 +113,17 @@ export default function App() {
           <Route path="/expressions" element={<MyExpressions />} />
           <Route path="/targets" element={<MyTargets />} />
           <Route path="/reading" element={<ReadingExercise />} />
-          <Route
-            path="/avatar-test"
-            element={
-              <React.Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-paper text-navy/40 font-display italic">Loading 3D…</div>}>
-                <AvatarTest />
-              </React.Suspense>
-            }
-          />
+          {/* Dev-only 3D avatar test harness — not exposed in production */}
+          {import.meta.env.DEV && (
+            <Route
+              path="/avatar-test"
+              element={
+                <React.Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-paper text-navy/40 font-display italic">Loading 3D…</div>}>
+                  <AvatarTest />
+                </React.Suspense>
+              }
+            />
+          )}
         </Routes>
       </LearnerProfileProvider>
     </BrowserRouter>
