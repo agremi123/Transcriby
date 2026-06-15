@@ -1,0 +1,287 @@
+[
+  {
+    "id": "gram-a1-articles-definis",
+    "level": "A1",
+    "topic": "Les articles définis",
+    "point": "Les articles définis : le, la, l', les",
+    "explanation": "On utilise l'article défini devant un nom connu ou précis. le (masculin), la (féminin), l' (devant voyelle ou h muet), les (pluriel). Ex. : le café, la rue, l'hôtel, les amis.",
+    "example": "Le métro est rapide, mais j'aime aussi les bus.",
+    "exampleTranslation": "The metro is fast, but I also like the buses.",
+    "tip": "Devant une voyelle (a, e, i, o, u) ou un h muet, le et la deviennent l' : l'ami, l'eau, l'heure.",
+    "exercises": [
+      { "sentence": "___ chat dort sur le canapé.", "answer": "Le", "hint": "masculin singulier" },
+      { "sentence": "J'adore ___ cuisine italienne.", "answer": "la", "hint": "féminin singulier" },
+      { "sentence": "___ enfants jouent dans le parc.", "answer": "Les", "hint": "pluriel" },
+      { "sentence": "Il habite près de ___ église.", "answer": "l'", "hint": "féminin + voyelle" },
+      { "sentence": "Ferme ___ porte, s'il te plaît.", "answer": "la", "hint": "féminin singulier" },
+      { "sentence": "___ hôtel est complet ce soir.", "answer": "L'", "hint": "masculin + h muet" }
+    ],
+    "production": { "instruction": "Écris une phrase avec l'article « les ».", "example": "Les fleurs du marché sont magnifiques." }
+  },
+  {
+    "id": "gram-a1-articles-indefinis",
+    "level": "A1",
+    "topic": "Les articles indéfinis",
+    "point": "Les articles indéfinis : un, une, des",
+    "explanation": "On utilise l'article indéfini devant un nom non précisé, qu'on mentionne pour la première fois. un (masculin), une (féminin), des (pluriel). Ex. : un livre, une table, des amis.",
+    "example": "Il y a un café et une boulangerie au coin de la rue.",
+    "exampleTranslation": "There's a café and a bakery on the corner.",
+    "tip": "À la forme négative, un/une/des deviennent souvent « de » : « Je n'ai pas de voiture. »",
+    "exercises": [
+      { "sentence": "Je voudrais ___ croissant, s'il vous plaît.", "answer": "un", "hint": "masculin" },
+      { "sentence": "Elle a ___ idée intéressante.", "answer": "une", "hint": "féminin" },
+      { "sentence": "Il y a ___ touristes devant le musée.", "answer": "des", "hint": "pluriel" },
+      { "sentence": "C'est ___ histoire incroyable.", "answer": "une", "hint": "féminin" },
+      { "sentence": "Tu as ___ stylo à me prêter ?", "answer": "un", "hint": "masculin" },
+      { "sentence": "Nous cherchons ___ appartement à louer.", "answer": "un", "hint": "masculin" }
+    ],
+    "production": { "instruction": "Écris une phrase avec « des » pour parler de plusieurs objets.", "example": "J'achète des fruits et des légumes au marché." }
+  },
+  {
+    "id": "gram-a1-negation",
+    "level": "A1",
+    "topic": "La négation",
+    "point": "La négation : ne... pas",
+    "explanation": "Pour mettre une phrase à la forme négative, on encadre le verbe avec ne (n' devant voyelle) ... pas. Ex. : Je ne mange pas. / Il n'aime pas le café.",
+    "example": "Je ne comprends pas cette phrase.",
+    "exampleTranslation": "I don't understand this sentence.",
+    "tip": "À l'oral familier, le « ne » disparaît souvent : « Je sais pas. » Mais à l'écrit, on garde toujours le « ne ».",
+    "exercises": [
+      { "sentence": "Je ___ parle ___ anglais. (ne... pas)", "answer": "ne parle pas", "hint": "encadrer le verbe" },
+      { "sentence": "Elle n'___ ___ de chien. (aimer)", "answer": "aime pas", "hint": "n' + verbe + pas" },
+      { "sentence": "Nous ___ travaillons ___ le dimanche.", "answer": "ne travaillons pas", "hint": "ne... pas" },
+      { "sentence": "Il ___ ___ pas faim. (avoir : il...)", "answer": "n'a", "hint": "n' devant voyelle" },
+      { "sentence": "Tu ___ viens ___ avec nous ?", "answer": "ne viens pas", "hint": "ne... pas" },
+      { "sentence": "Ils ___ sont ___ contents.", "answer": "ne sont pas", "hint": "ne... pas" }
+    ],
+    "production": { "instruction": "Écris une phrase négative sur ce que tu n'aimes pas.", "example": "Je n'aime pas me lever tôt le matin." }
+  },
+  {
+    "id": "gram-a2-adjectifs-accord",
+    "level": "A2",
+    "topic": "L'accord des adjectifs",
+    "point": "L'accord et la place des adjectifs",
+    "explanation": "L'adjectif s'accorde en genre et en nombre avec le nom : petit / petite / petits / petites. La plupart se placent après le nom (une voiture rouge), mais certains courants se placent avant (beau, grand, petit, jeune, vieux, bon, joli).",
+    "example": "C'est une belle petite rue calme.",
+    "exampleTranslation": "It's a beautiful little quiet street.",
+    "tip": "Quelques adjectifs sont irréguliers au féminin : beau → belle, vieux → vieille, nouveau → nouvelle, blanc → blanche.",
+    "exercises": [
+      { "sentence": "Elle porte une robe ___ . (blanc)", "answer": "blanche", "hint": "féminin de blanc" },
+      { "sentence": "Ce sont de ___ amis. (vieux)", "answer": "vieux", "hint": "masculin pluriel" },
+      { "sentence": "J'aime les ___ fleurs du jardin. (beau)", "answer": "belles", "hint": "féminin pluriel de beau" },
+      { "sentence": "Une ___ idée ! (bon)", "answer": "bonne", "hint": "féminin de bon" },
+      { "sentence": "Ils habitent une ___ maison. (grand)", "answer": "grande", "hint": "féminin de grand" },
+      { "sentence": "Voici les ___ chaussures. (nouveau)", "answer": "nouvelles", "hint": "féminin pluriel" }
+    ],
+    "production": { "instruction": "Décris ta ville avec deux adjectifs accordés.", "example": "Ma ville est petite mais très animée." }
+  },
+  {
+    "id": "gram-a2-pronoms-cod",
+    "level": "A2",
+    "topic": "Les pronoms COD",
+    "point": "Les pronoms compléments d'objet direct (le, la, les)",
+    "explanation": "Le pronom COD remplace un nom complément direct (sans préposition). me, te, le/la, nous, vous, les. Il se place devant le verbe : « Tu vois le film ? — Oui, je le vois. »",
+    "example": "Ce livre ? Je l'ai déjà lu.",
+    "exampleTranslation": "This book? I've already read it.",
+    "tip": "Au passé composé, le participe s'accorde avec le COD placé avant : « Les photos ? Je les ai prises. »",
+    "exercises": [
+      { "sentence": "Tu connais Marie ? — Oui, je ___ connais.", "answer": "la", "hint": "COD féminin" },
+      { "sentence": "Tu as les clés ? — Oui, je ___ ai. ", "answer": "les", "hint": "COD pluriel" },
+      { "sentence": "Tu regardes ce film ? — Non, je ne ___ regarde pas.", "answer": "le", "hint": "COD masculin" },
+      { "sentence": "Il m'invite ? — Oui, il ___ invite. (toi)", "answer": "t'", "hint": "COD 2e personne + voyelle" },
+      { "sentence": "Vous prenez ce gâteau ? — Oui, je ___ prends.", "answer": "le", "hint": "COD masculin" },
+      { "sentence": "Elle aime ces chansons ? — Oui, elle ___ adore.", "answer": "les", "hint": "COD pluriel" }
+    ],
+    "production": { "instruction": "Réponds à la question « Tu regardes la télé ? » en utilisant un pronom COD.", "example": "Oui, je la regarde le soir." }
+  },
+  {
+    "id": "gram-a2-comparatif",
+    "level": "A2",
+    "topic": "Le comparatif",
+    "point": "Le comparatif (plus, moins, aussi... que)",
+    "explanation": "Pour comparer : plus + adjectif + que (supériorité), moins + adjectif + que (infériorité), aussi + adjectif + que (égalité). Ex. : Paris est plus grand que Lyon.",
+    "example": "Le train est plus rapide que le bus mais moins confortable.",
+    "exampleTranslation": "The train is faster than the bus but less comfortable.",
+    "tip": "« bon » a un comparatif irrégulier : meilleur (et non « plus bon »). « bien » → mieux.",
+    "exercises": [
+      { "sentence": "Le métro est ___ rapide ___ la voiture. (supériorité)", "answer": "plus ... que", "hint": "plus... que" },
+      { "sentence": "Cette glace est ___ que l'autre. (bon, supériorité)", "answer": "meilleure", "hint": "comparatif irrégulier de bonne" },
+      { "sentence": "Il est ___ grand ___ son frère. (égalité)", "answer": "aussi ... que", "hint": "aussi... que" },
+      { "sentence": "Aujourd'hui, il fait ___ chaud ___ hier. (infériorité)", "answer": "moins ... qu'", "hint": "moins... qu'" },
+      { "sentence": "Elle chante ___ que moi. (bien, supériorité)", "answer": "mieux", "hint": "comparatif de bien" },
+      { "sentence": "Ce café est ___ cher ___ le restaurant d'à côté. (infériorité)", "answer": "moins ... que", "hint": "moins... que" }
+    ],
+    "production": { "instruction": "Compare deux villes que tu connais.", "example": "Marseille est plus ensoleillée que Paris." }
+  },
+  {
+    "id": "gram-b1-pronoms-relatifs",
+    "level": "B1",
+    "topic": "Les pronoms relatifs",
+    "point": "Les pronoms relatifs : qui, que, où, dont",
+    "explanation": "qui = sujet (la femme qui parle), que = COD (le livre que je lis), où = lieu ou temps (la ville où j'habite), dont = complément avec « de » (le film dont je parle).",
+    "example": "C'est le quartier où j'ai grandi et dont je garde de bons souvenirs.",
+    "exampleTranslation": "It's the neighborhood where I grew up and which I have good memories of.",
+    "tip": "On choisit « dont » quand le verbe ou l'expression se construit avec « de » : parler de, avoir besoin de, être fier de.",
+    "exercises": [
+      { "sentence": "Voici l'ami ___ m'a aidé.", "answer": "qui", "hint": "sujet du verbe" },
+      { "sentence": "Le gâteau ___ tu as fait était délicieux.", "answer": "que", "hint": "COD" },
+      { "sentence": "C'est la rue ___ se trouve mon café préféré.", "answer": "où", "hint": "lieu" },
+      { "sentence": "Le livre ___ je t'ai parlé est en vente.", "answer": "dont", "hint": "parler de" },
+      { "sentence": "Le jour ___ je suis arrivé, il pleuvait.", "answer": "où", "hint": "temps" },
+      { "sentence": "L'outil ___ j'ai besoin est cassé.", "answer": "dont", "hint": "avoir besoin de" }
+    ],
+    "production": { "instruction": "Écris une phrase avec « dont » pour décrire quelque chose dont tu es fier.", "example": "C'est un projet dont je suis très fier." }
+  },
+  {
+    "id": "gram-b1-pronoms-y-en",
+    "level": "B1",
+    "topic": "Les pronoms Y et EN",
+    "point": "Les pronoms Y et EN",
+    "explanation": "Y remplace un complément de lieu ou un groupe introduit par « à » (Je pense à mon travail → J'y pense). EN remplace un groupe introduit par « de » ou une quantité (Je bois du café → J'en bois).",
+    "example": "Tu vas à Paris ? — Oui, j'y vais demain. Tu veux du pain ? — Oui, j'en veux.",
+    "exampleTranslation": "Are you going to Paris? — Yes, I'm going there tomorrow. Do you want bread? — Yes, I want some.",
+    "tip": "EN reprend aussi les quantités : « Combien de frères tu as ? — J'en ai deux. »",
+    "exercises": [
+      { "sentence": "Tu vas au marché ? — Oui, j'___ vais.", "answer": "y", "hint": "lieu (à/au)" },
+      { "sentence": "Tu as besoin d'aide ? — Oui, j'___ ai besoin.", "answer": "en", "hint": "besoin de" },
+      { "sentence": "Vous pensez aux vacances ? — On ___ pense souvent.", "answer": "y", "hint": "penser à" },
+      { "sentence": "Tu veux des fraises ? — Oui, j'___ veux bien.", "answer": "en", "hint": "des (quantité)" },
+      { "sentence": "Elle habite à Lyon ? — Oui, elle ___ habite.", "answer": "y", "hint": "lieu" },
+      { "sentence": "Combien de cafés tu bois ? — J'___ bois trois.", "answer": "en", "hint": "quantité" }
+    ],
+    "production": { "instruction": "Réponds à « Tu joues du piano ? » en utilisant EN.", "example": "Oui, j'en joue depuis l'enfance." }
+  },
+  {
+    "id": "gram-b1-gerondif",
+    "level": "B1",
+    "topic": "Le gérondif",
+    "point": "Le gérondif (en + participe présent)",
+    "explanation": "Le gérondif se forme avec « en » + le participe présent (radical du « nous » + -ant : parlant, finissant). Il exprime la simultanéité (en mangeant), la manière (en travaillant) ou la condition (en cherchant bien).",
+    "example": "Il écoute de la musique en cuisinant.",
+    "exampleTranslation": "He listens to music while cooking.",
+    "tip": "Le gérondif a toujours le même sujet que le verbe principal. Trois participes irréguliers : être → étant, avoir → ayant, savoir → sachant.",
+    "exercises": [
+      { "sentence": "Elle s'est blessée ___ ___ . (tomber)", "answer": "en tombant", "hint": "en + participe présent" },
+      { "sentence": "On apprend beaucoup ___ ___ . (voyager)", "answer": "en voyageant", "hint": "en + participe présent" },
+      { "sentence": "Il répond ___ ___ . (sourire)", "answer": "en souriant", "hint": "manière" },
+      { "sentence": "___ ___ bien, tu trouveras la solution. (chercher)", "answer": "En cherchant", "hint": "condition" },
+      { "sentence": "Je lis le journal ___ ___ mon café. (prendre)", "answer": "en prenant", "hint": "simultanéité" },
+      { "sentence": "___ ___ tôt, tu éviteras les embouteillages. (partir)", "answer": "En partant", "hint": "condition" }
+    ],
+    "production": { "instruction": "Écris une phrase avec un gérondif pour dire ce que tu fais en même temps que manger.", "example": "Je regarde une série en mangeant." }
+  },
+  {
+    "id": "gram-b2-voix-passive",
+    "level": "B2",
+    "topic": "La voix passive",
+    "point": "La voix passive",
+    "explanation": "La voix passive met en valeur l'objet de l'action. Elle se forme avec être (au temps voulu) + participe passé, qui s'accorde avec le sujet. Le complément d'agent est introduit par « par ». Ex. : Le roman a été écrit par Hugo.",
+    "example": "Cette tour a été construite en 1889.",
+    "exampleTranslation": "This tower was built in 1889.",
+    "tip": "On passe de l'actif au passif : « Hugo a écrit ce roman » → « Ce roman a été écrit par Hugo ». L'auxiliaire être prend le temps du verbe actif.",
+    "exercises": [
+      { "sentence": "Le musée ___ ___ tous les jours. (ouvrir, présent passif)", "answer": "est ouvert", "hint": "être au présent + participe" },
+      { "sentence": "Les billets ___ ___ en ligne. (vendre, présent passif)", "answer": "sont vendus", "hint": "accord pluriel" },
+      { "sentence": "La lettre ___ ___ hier. (envoyer, passé composé passif)", "answer": "a été envoyée", "hint": "être au passé composé + accord" },
+      { "sentence": "Ce film ___ ___ par un jeune réalisateur. (réaliser, passé composé passif)", "answer": "a été réalisé", "hint": "a été + participe" },
+      { "sentence": "Les résultats ___ ___ demain. (publier, futur passif)", "answer": "seront publiés", "hint": "être au futur + accord" },
+      { "sentence": "La décision ___ ___ par le directeur. (prendre, présent passif)", "answer": "est prise", "hint": "accord féminin" }
+    ],
+    "production": { "instruction": "Mets cette phrase au passif : « Les Parisiens adorent ce café. »", "example": "Ce café est adoré par les Parisiens." }
+  },
+  {
+    "id": "gram-b2-hypothese-si",
+    "level": "B2",
+    "topic": "Les phrases hypothétiques",
+    "point": "L'hypothèse avec « si » (les trois types)",
+    "explanation": "Type 1 (réel/probable) : Si + présent, futur (Si j'ai le temps, je viendrai). Type 2 (irréel du présent) : Si + imparfait, conditionnel présent (Si j'avais le temps, je viendrais). Type 3 (irréel du passé) : Si + plus-que-parfait, conditionnel passé (Si j'avais eu le temps, je serais venu).",
+    "example": "Si j'étais riche, je vivrais à Paris.",
+    "exampleTranslation": "If I were rich, I would live in Paris.",
+    "tip": "Règle d'or : jamais de futur ni de conditionnel directement après « si ». On dit « si j'avais », pas « si j'aurais ».",
+    "exercises": [
+      { "sentence": "Si tu ___ (venir, présent), on ira au cinéma.", "answer": "viens", "hint": "type 1 : si + présent" },
+      { "sentence": "Si j'avais de l'argent, j'___ (acheter) cette voiture.", "answer": "achèterais", "hint": "type 2 : conditionnel présent" },
+      { "sentence": "Si nous ___ (savoir, plus-que-parfait), nous serions venus.", "answer": "avions su", "hint": "type 3 : plus-que-parfait" },
+      { "sentence": "Si elle ___ (avoir, imparfait) le choix, elle resterait.", "answer": "avait", "hint": "type 2 : imparfait après si" },
+      { "sentence": "Si vous travaillez bien, vous ___ (réussir, futur).", "answer": "réussirez", "hint": "type 1 : futur" },
+      { "sentence": "Si tu m'avais appelé, je t'___ (aider, conditionnel passé).", "answer": "aurais aidé", "hint": "type 3 : conditionnel passé" }
+    ],
+    "production": { "instruction": "Écris une phrase de type 2 (irréel du présent) commençant par « Si j'avais... ».", "example": "Si j'avais plus de temps, j'apprendrais le piano." }
+  },
+  {
+    "id": "gram-b2-pronoms-relatifs-composes",
+    "level": "B2",
+    "topic": "Les pronoms relatifs composés",
+    "point": "Les pronoms relatifs composés (lequel, auquel, duquel...)",
+    "explanation": "Après une préposition (avec, pour, sur, sans...), on utilise lequel, laquelle, lesquels, lesquelles. Avec « à » : auquel, à laquelle, auxquels, auxquelles. Avec « de » : duquel, de laquelle, desquels. Pour une personne, on peut aussi utiliser « qui » : l'ami avec qui je travaille.",
+    "example": "C'est le projet sur lequel je travaille depuis un an.",
+    "exampleTranslation": "It's the project I've been working on for a year.",
+    "tip": "Pour les choses, « lequel » est obligatoire après une préposition ; pour les personnes, « qui » est plus courant.",
+    "exercises": [
+      { "sentence": "La table sur ___ tu écris est ancienne.", "answer": "laquelle", "hint": "féminin singulier" },
+      { "sentence": "Le problème ___ je pense est sérieux. (penser à)", "answer": "auquel", "hint": "à + lequel" },
+      { "sentence": "Les raisons pour ___ il est parti restent floues.", "answer": "lesquelles", "hint": "féminin pluriel" },
+      { "sentence": "L'entreprise pour ___ je travaille est petite.", "answer": "laquelle", "hint": "féminin singulier" },
+      { "sentence": "Le but ___ il aspire est ambitieux. (aspirer à)", "answer": "auquel", "hint": "à + lequel" },
+      { "sentence": "Les outils avec ___ il travaille sont neufs.", "answer": "lesquels", "hint": "masculin pluriel" }
+    ],
+    "production": { "instruction": "Écris une phrase avec « avec lequel » ou « avec laquelle ».", "example": "Voici la personne avec laquelle je partage mon bureau." }
+  },
+  {
+    "id": "gram-c1-mise-en-relief",
+    "level": "C1",
+    "topic": "La mise en relief",
+    "point": "La mise en relief (c'est... qui / ce qui... c'est)",
+    "explanation": "Pour insister sur un élément, on utilise des structures de mise en relief : « C'est... qui/que » (C'est Paul qui a raison) ; « Ce qui/que... c'est » (Ce que j'aime, c'est le calme) ; « Ce dont... c'est » (Ce dont j'ai besoin, c'est de repos).",
+    "example": "Ce qui me plaît dans cette ville, c'est son énergie.",
+    "exampleTranslation": "What I like about this city is its energy.",
+    "tip": "On choisit ce qui (sujet), ce que (COD), ce dont (complément en « de ») selon la fonction dans la proposition.",
+    "exercises": [
+      { "sentence": "___ ___ compte, c'est ta santé. (sujet)", "answer": "Ce qui", "hint": "sujet du verbe compter" },
+      { "sentence": "___ ___ je préfère, c'est le printemps. (COD)", "answer": "Ce que", "hint": "COD de préférer" },
+      { "sentence": "___ ___ j'ai envie, c'est d'un bon café. (envie de)", "answer": "Ce dont", "hint": "avoir envie de" },
+      { "sentence": "C'est toi ___ as proposé cette idée. (sujet)", "answer": "qui", "hint": "c'est... qui" },
+      { "sentence": "C'est ce livre ___ je cherchais. (COD)", "answer": "que", "hint": "c'est... que" },
+      { "sentence": "___ ___ me dérange, c'est le bruit. (sujet)", "answer": "Ce qui", "hint": "sujet" }
+    ],
+    "production": { "instruction": "Mets en relief ce que tu aimes le plus avec « Ce que j'aime, c'est... ».", "example": "Ce que j'aime, c'est me promener au bord de la Seine." }
+  },
+  {
+    "id": "gram-c1-concession-opposition",
+    "level": "C1",
+    "topic": "La concession et l'opposition",
+    "point": "Exprimer la concession et l'opposition",
+    "explanation": "Concession (un obstacle qui n'empêche pas) : bien que / quoique + subjonctif, malgré + nom, avoir beau + infinitif. Opposition (contraste) : alors que / tandis que + indicatif, contrairement à, au contraire.",
+    "example": "Bien qu'il pleuve, nous sortons ; lui, au contraire, préfère rester.",
+    "exampleTranslation": "Although it's raining, we're going out; he, on the other hand, prefers to stay.",
+    "tip": "Après « bien que » et « quoique », il faut le subjonctif. « Malgré » est suivi d'un nom (malgré la pluie), pas d'une proposition.",
+    "exercises": [
+      { "sentence": "___ ___ il soit fatigué, il continue. (concession + subjonctif)", "answer": "Bien qu'", "hint": "+ subjonctif" },
+      { "sentence": "Il a réussi ___ les difficultés. (+ nom)", "answer": "malgré", "hint": "+ nom" },
+      { "sentence": "Tu ___ beau insister, je ne changerai pas d'avis. (avoir beau)", "answer": "as", "hint": "avoir beau + infinitif" },
+      { "sentence": "Elle aime le calme ___ ___ son frère adore les fêtes. (opposition)", "answer": "alors que", "hint": "contraste, + indicatif" },
+      { "sentence": "___ ___ ce soit cher, ça vaut le coup. (concession)", "answer": "Quoique", "hint": "+ subjonctif" },
+      { "sentence": "Le sud est ensoleillé ___ ___ le nord est pluvieux. (opposition)", "answer": "tandis que", "hint": "contraste" }
+    ],
+    "production": { "instruction": "Écris une phrase de concession avec « bien que » + subjonctif.", "example": "Bien que je sois débutant, je comprends déjà beaucoup de choses." }
+  },
+  {
+    "id": "gram-c2-nominalisation",
+    "level": "C2",
+    "topic": "La nominalisation",
+    "point": "La nominalisation (style soutenu et journalistique)",
+    "explanation": "La nominalisation consiste à transformer un verbe ou un adjectif en nom pour condenser l'information, typique du style écrit, administratif et journalistique. Ex. : « Le prix augmente » → « L'augmentation du prix » ; « La ville est belle » → « La beauté de la ville ».",
+    "example": "La fermeture de la ligne a provoqué un mécontentement général.",
+    "exampleTranslation": "The closure of the line caused general discontent.",
+    "tip": "Suffixes fréquents : -tion (augmenter → augmentation), -ment (changer → changement), -té (beau → beauté), -ure (fermer → fermeture).",
+    "exercises": [
+      { "sentence": "Le prix a augmenté → l'___ du prix. (augmenter)", "answer": "augmentation", "hint": "-tion" },
+      { "sentence": "Le gouvernement a décidé → la ___ du gouvernement. (décider)", "answer": "décision", "hint": "-sion" },
+      { "sentence": "Les ouvriers ont construit → la ___ du pont. (construire)", "answer": "construction", "hint": "-tion" },
+      { "sentence": "La situation a évolué → l'___ de la situation. (évoluer)", "answer": "évolution", "hint": "-tion" },
+      { "sentence": "Le magasin a fermé → la ___ du magasin. (fermer)", "answer": "fermeture", "hint": "-ure" },
+      { "sentence": "Le climat se réchauffe → le ___ climatique. (réchauffer)", "answer": "réchauffement", "hint": "-ment" }
+    ],
+    "production": { "instruction": "Transforme « Les habitants protestent » en titre nominalisé.", "example": "Protestation des habitants contre le projet." }
+  }
+]
