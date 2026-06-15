@@ -1688,6 +1688,11 @@ N'utilise JAMAIS de markdown ni d'astérisques. Réponds uniquement en JSON :
 
     // Prompt mode (opening line)
     const topic = body.topic || '';
+    // Local stock first — recyclable openers. No API call (matches production).
+    {
+      const localSP = pickSpeakingPrompt(body.learnerLevel || null);
+      if (localSP) { res.end(JSON.stringify(localSP)); return; }
+    }
     if (!apiKey) { res.end(JSON.stringify({ narratorId: 'lea', openingLine: '', topic })); return; }
     try {
       const narratorId = SPEAKING_NARRATORS[Math.floor(Math.random() * SPEAKING_NARRATORS.length)];
