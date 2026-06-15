@@ -426,9 +426,10 @@ export async function handlePractice(body) {
 // Serves the pre-built A1–C2 lesson corpus (grammar / conjugation / vocabulary)
 // straight from the local stockpile. Never calls the API.
 //   body/query: { type: 'grammar'|'conjugation'|'vocabulary', level?: 'A1'..'C2' }
-export function handleLessons(body) {
-  const type = (body?.type || '').toLowerCase();
-  const level = body?.level || null;
+export function handleLessons(body, req) {
+  const q = req?.query || {};
+  const type = (body?.type || q.type || '').toLowerCase();
+  const level = body?.level || q.level || null;
   if (!['grammar', 'conjugation', 'vocabulary'].includes(type)) {
     return { statusCode: 400, body: { error: "type must be 'grammar', 'conjugation' or 'vocabulary'" } };
   }
