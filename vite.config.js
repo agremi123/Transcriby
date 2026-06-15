@@ -1994,6 +1994,7 @@ export default defineConfig(() => {
           server.middlewares.use(interviewFeedbackMiddleware());
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
           server.middlewares.use(devStatsMiddleware());
+          server.middlewares.use(lessonsMiddleware());
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(audioProxyMiddleware());
@@ -2013,6 +2014,7 @@ export default defineConfig(() => {
           server.middlewares.use(interviewFeedbackMiddleware());
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
           server.middlewares.use(devStatsMiddleware());
+          server.middlewares.use(lessonsMiddleware());
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(audioProxyMiddleware());
