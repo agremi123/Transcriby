@@ -82,6 +82,47 @@ export function pickPractice(topic = '') {
   return row ? row.exercises : [];
 }
 
+/** Reading article bundle. Shape matches handleReading's body. */
+export function pickReading(level = null) {
+  const row = pickAtLevel(reading, level);
+  if (!row) return null;
+  return {
+    passage: row.passage,
+    title: row.title,
+    source: row.source || 'Parisly',
+    author: row.author || null,
+    date: row.date || null,
+    link: row.link || null,
+    vocab: row.vocab || [],
+    questions: row.questions || [],
+    grammar: row.grammar || [],
+    conjugation: row.conjugation || [],
+  };
+}
+
+/** Listening bundle. Shape matches handleListening's body. audioUrl/wordTimings
+ *  may be null (transcript-only) until narration is generated. */
+export function pickListening(level = null) {
+  const row = pickAtLevel(listening, level);
+  if (!row) return null;
+  return {
+    title: row.title,
+    transcript: row.transcript,
+    audioUrl: row.audioUrl || null,
+    wordTimings: row.wordTimings || null,
+    clipStart: row.clipStart ?? 0,
+    clipEnd: row.clipEnd ?? 0,
+    source: row.source || 'Parisly',
+    date: row.date || null,
+    vocabTheme: row.vocabTheme || '',
+    narratorId: row.narratorId || 'lea',
+    questions: row.questions || [],
+    vocab: row.vocab || [],
+    grammar: row.grammar || [],
+    conjugation: row.conjugation || [],
+  };
+}
+
 // ── Lesson corpus (grammar / conjugation / vocabulary, A1–C2) ────────────────
 
 const CORPUS = { grammar, conjugation, vocabulary };
