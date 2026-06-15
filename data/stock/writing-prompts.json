@@ -1,0 +1,142 @@
+[
+  {
+    "id": "wp-a1-presentation",
+    "level": "A1",
+    "topic": "Se présenter",
+    "prompt": "Présente-toi en quelques phrases : ton prénom, ton âge, ta ville et ce que tu aimes faire.",
+    "word_target": 50,
+    "tips": {
+      "vocab": ["s'appeler", "habiter", "avoir ... ans", "aimer", "un loisir"],
+      "expressions": ["Je m'appelle...", "J'ai ... ans", "J'habite à...", "J'aime..."],
+      "grammar": ["Le présent des verbes en -er", "Les articles le/la/les"],
+      "conjugation": ["s'appeler : je m'appelle", "avoir : j'ai", "habiter : j'habite"],
+      "connecteurs": ["et", "aussi", "mais"]
+    }
+  },
+  {
+    "id": "wp-a1-journee",
+    "level": "A1",
+    "topic": "Ma journée typique",
+    "prompt": "Décris une journée typique : ce que tu fais le matin, l'après-midi et le soir.",
+    "word_target": 60,
+    "tips": {
+      "vocab": ["le matin", "l'après-midi", "le soir", "se lever", "manger", "travailler"],
+      "expressions": ["D'habitude...", "Le matin, je...", "À midi..."],
+      "grammar": ["Le présent", "Les expressions de temps"],
+      "conjugation": ["se lever : je me lève", "manger : je mange", "aller : je vais"],
+      "connecteurs": ["d'abord", "ensuite", "puis", "enfin"]
+    }
+  },
+  {
+    "id": "wp-a2-week-end",
+    "level": "A2",
+    "topic": "Mon week-end dernier",
+    "prompt": "Raconte ce que tu as fait le week-end dernier. Utilise le passé composé.",
+    "word_target": 80,
+    "tips": {
+      "vocab": ["le week-end", "sortir", "rencontrer", "se reposer", "un ami"],
+      "expressions": ["Le week-end dernier...", "Samedi, j'ai...", "C'était..."],
+      "grammar": ["Le passé composé avec avoir et être", "Les marqueurs de temps du passé"],
+      "conjugation": ["faire : j'ai fait", "aller : je suis allé(e)", "voir : j'ai vu"],
+      "connecteurs": ["d'abord", "ensuite", "après", "finalement"]
+    }
+  },
+  {
+    "id": "wp-a2-ville",
+    "level": "A2",
+    "topic": "Ma ville",
+    "prompt": "Décris ta ville ou ton quartier : ce qu'on peut y faire, ce que tu aimes et ce que tu n'aimes pas.",
+    "word_target": 80,
+    "tips": {
+      "vocab": ["un quartier", "animé", "calme", "un parc", "un commerce", "les transports"],
+      "expressions": ["Il y a...", "On peut...", "Ce que j'aime, c'est..."],
+      "grammar": ["Il y a / il n'y a pas", "Les adjectifs (accord et place)"],
+      "conjugation": ["pouvoir : on peut", "aimer : j'aime", "être : c'est"],
+      "connecteurs": ["d'une part", "d'autre part", "par contre", "aussi"]
+    }
+  },
+  {
+    "id": "wp-b1-voyage",
+    "level": "B1",
+    "topic": "Un voyage mémorable",
+    "prompt": "Raconte un voyage qui t'a marqué : où tu es allé(e), ce que tu as vu et ressenti. Mélange le passé composé (actions) et l'imparfait (descriptions).",
+    "word_target": 120,
+    "tips": {
+      "vocab": ["un paysage", "découvrir", "une rencontre", "un souvenir", "dépaysant"],
+      "expressions": ["Ce qui m'a marqué, c'est...", "Je me souviens que...", "À ce moment-là..."],
+      "grammar": ["Passé composé vs imparfait", "Les pronoms relatifs qui/que/où"],
+      "conjugation": ["découvrir : j'ai découvert", "être : c'était", "ressentir : j'ai ressenti"],
+      "connecteurs": ["au début", "ensuite", "soudain", "à la fin"]
+    }
+  },
+  {
+    "id": "wp-b1-reseaux",
+    "level": "B1",
+    "topic": "Les réseaux sociaux",
+    "prompt": "Donne ton opinion sur les réseaux sociaux : leurs avantages et leurs inconvénients dans la vie quotidienne.",
+    "word_target": 120,
+    "tips": {
+      "vocab": ["un réseau social", "partager", "se connecter", "la vie privée", "addictif"],
+      "expressions": ["À mon avis...", "D'un côté... de l'autre...", "Il me semble que..."],
+      "grammar": ["L'expression de l'opinion", "Le présent et le conditionnel"],
+      "conjugation": ["penser : je pense", "permettre : ils permettent", "devoir : on devrait"],
+      "connecteurs": ["d'une part", "d'autre part", "cependant", "en conclusion"]
+    }
+  },
+  {
+    "id": "wp-b2-technologie",
+    "level": "B2",
+    "topic": "La technologie et le travail",
+    "prompt": "Selon toi, la technologie améliore-t-elle vraiment notre façon de travailler ? Développe une position nuancée avec des exemples.",
+    "word_target": 160,
+    "tips": {
+      "vocab": ["la productivité", "le télétravail", "l'automatisation", "un outil", "la déconnexion"],
+      "expressions": ["Force est de constater que...", "On pourrait penser que..., or...", "Il convient de nuancer..."],
+      "grammar": ["La concession (bien que + subjonctif)", "La voix passive"],
+      "conjugation": ["permettre : permet", "transformer : a transformé", "falloir : il faudrait"],
+      "connecteurs": ["certes", "néanmoins", "en effet", "par conséquent"]
+    }
+  },
+  {
+    "id": "wp-b2-culture",
+    "level": "B2",
+    "topic": "La culture et l'identité",
+    "prompt": "La culture d'un pays se reflète-t-elle dans sa cuisine, sa langue et ses traditions ? Argumente ton point de vue.",
+    "word_target": 160,
+    "tips": {
+      "vocab": ["le patrimoine", "une tradition", "l'héritage", "la diversité", "transmettre"],
+      "expressions": ["On ne saurait nier que...", "Il est indéniable que...", "Cela dit..."],
+      "grammar": ["Les pronoms relatifs composés", "La mise en relief"],
+      "conjugation": ["refléter : reflète", "transmettre : transmet", "incarner : incarne"],
+      "connecteurs": ["tout d'abord", "en outre", "à l'inverse", "en somme"]
+    }
+  },
+  {
+    "id": "wp-c1-societe",
+    "level": "C1",
+    "topic": "Le rôle de l'art dans la société",
+    "prompt": "Dans quelle mesure l'art a-t-il le pouvoir de transformer la société ? Construis une argumentation structurée avec thèse, antithèse et synthèse.",
+    "word_target": 220,
+    "tips": {
+      "vocab": ["l'engagement", "subversif", "la contestation", "l'esthétique", "interpeller"],
+      "expressions": ["Il serait réducteur de...", "On pourrait objecter que...", "Force est d'admettre..."],
+      "grammar": ["Le subjonctif après les expressions de doute", "La nominalisation"],
+      "conjugation": ["susciter : suscite", "remettre en question : remet", "ébranler : ébranle"],
+      "connecteurs": ["certes... mais", "non seulement... mais encore", "en définitive"]
+    }
+  },
+  {
+    "id": "wp-c2-philosophie",
+    "level": "C2",
+    "topic": "Liberté et responsabilité",
+    "prompt": "« Être libre, c'est aussi être responsable. » Discutez cette affirmation dans un essai argumenté et nuancé, en mobilisant des exemples variés.",
+    "word_target": 280,
+    "tips": {
+      "vocab": ["le libre arbitre", "la contrainte", "l'autonomie", "l'éthique", "l'aliénation"],
+      "expressions": ["Loin de s'opposer, ces deux notions...", "À y regarder de plus près...", "On aurait tort de croire que..."],
+      "grammar": ["La concordance des temps", "Le subjonctif et les nuances modales"],
+      "conjugation": ["impliquer : implique", "présupposer : présuppose", "s'avérer : s'avère"],
+      "connecteurs": ["d'emblée", "en l'occurrence", "partant", "in fine"]
+    }
+  }
+]
