@@ -58,8 +58,11 @@ export function pickSpeakingPrompt(level = null) {
     openingLine: row.opening_line,
     openingLineTranslation: row.opening_line_translation || '',
     topicLabel: row.topic_label || '',
-    targetGrammar: row.target_grammar || null,
-    targetVocab: row.target_vocab || null,
+    // The conversation engine expects rich target shapes ({point,hint} /
+    // [{word,meaning}]); our stockpile stores plain strings as metadata, so we
+    // serve null targets here → a clean free-conversation opener (fully supported).
+    targetGrammar: null,
+    targetVocab: null,
   };
 }
 
