@@ -981,6 +981,11 @@ export async function handleSpeakingPrompt(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
   const empty = { narratorId: 'lea', openingLine: 'Bonjour !', openingLineTranslation: 'Hello!', topicLabel: topic };
+
+  // Local stock first — recyclable speaking openers. No API call.
+  const localSP = pickSpeakingPrompt(body?.learnerLevel || null);
+  if (localSP) return { statusCode: 200, body: localSP };
+
   if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
 
   const supabase = getSupabaseAdmin() || getSupabase();
