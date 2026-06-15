@@ -678,6 +678,20 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
 
   return async (req, res, next) => {
     if (req.url !== '/api/word' || req.method !== 'POST') { next(); return; }
+    // Local stock first — recyclable pool, no API call (matches production).
+    {
+      const localW = pickWord();
+      if (localW) {
+        res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({
+          word: localW.word, meaning: localW.meaning, example: localW.example,
+          exampleTranslation: localW.exampleTranslation, audioUrl: null,
+          explanation: localW.explanation || buildWordIntro(localW),
+          narratorId: localW.narratorId || narratorForWord(localW.word),
+        }));
+        return;
+      }
+    }
     if (!anthropicKey) {
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ word: null })); return;
