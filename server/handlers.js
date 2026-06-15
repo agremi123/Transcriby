@@ -928,6 +928,11 @@ export async function handleWritingPrompt(body) {
   const topic = body?.topic || '';
   const level = body?.learnerLevel || 'B1';
   const empty = { prompt: '', tips: { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] }, wordTarget: 80 };
+
+  // Local stock first — recyclable prompts at the learner's level. No API call.
+  const localWP = pickWritingPrompt(level);
+  if (localWP) return { statusCode: 200, body: localWP };
+
   if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
 
   const supabase = getSupabaseAdmin() || getSupabase();
