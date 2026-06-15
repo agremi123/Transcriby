@@ -6,23 +6,455 @@
     "title": "Le matin de Léa",
     "vocabTheme": "La routine du matin",
     "transcript": "Bonjour ! C'est Léa. Le matin, je me lève à sept heures. D'abord, je prends une douche. Ensuite, je bois un café et je mange une tartine. J'écoute la radio dans la cuisine. À huit heures, je sors de chez moi. Je prends le métro pour aller au travail. Dans le métro, je lis un livre ou je regarde mon téléphone. J'arrive au bureau à neuf heures. J'aime bien le matin, c'est calme et tranquille.",
-    "audioUrl": null,
-    "wordTimings": null,
+    "audioUrl": "/listening-audio/listen-a1-lea-matin.mp3",
+    "wordTimings": [
+      {
+        "word": "Bonjour",
+        "start": 0,
+        "end": 0.766
+      },
+      {
+        "word": "!",
+        "start": 0.789,
+        "end": 0.813
+      },
+      {
+        "word": "C'est",
+        "start": 0.929,
+        "end": 1.184
+      },
+      {
+        "word": "Léa.",
+        "start": 1.207,
+        "end": 1.846
+      },
+      {
+        "word": "Le",
+        "start": 2.229,
+        "end": 2.357
+      },
+      {
+        "word": "matin,",
+        "start": 2.415,
+        "end": 2.798
+      },
+      {
+        "word": "je",
+        "start": 2.821,
+        "end": 2.879
+      },
+      {
+        "word": "me",
+        "start": 2.926,
+        "end": 3.007
+      },
+      {
+        "word": "lève",
+        "start": 3.053,
+        "end": 3.216
+      },
+      {
+        "word": "à",
+        "start": 3.239,
+        "end": 3.262
+      },
+      {
+        "word": "sept",
+        "start": 3.309,
+        "end": 3.506
+      },
+      {
+        "word": "heures.",
+        "start": 3.564,
+        "end": 3.924
+      },
+      {
+        "word": "D'abord,",
+        "start": 4.307,
+        "end": 4.679
+      },
+      {
+        "word": "je",
+        "start": 4.702,
+        "end": 4.783
+      },
+      {
+        "word": "prends",
+        "start": 4.841,
+        "end": 5.027
+      },
+      {
+        "word": "une",
+        "start": 5.05,
+        "end": 5.166
+      },
+      {
+        "word": "douche.",
+        "start": 5.201,
+        "end": 5.677
+      },
+      {
+        "word": "Ensuite,",
+        "start": 6.002,
+        "end": 6.769
+      },
+      {
+        "word": "je",
+        "start": 7.012,
+        "end": 7.117
+      },
+      {
+        "word": "bois",
+        "start": 7.175,
+        "end": 7.338
+      },
+      {
+        "word": "un",
+        "start": 7.372,
+        "end": 7.419
+      },
+      {
+        "word": "café",
+        "start": 7.465,
+        "end": 7.883
+      },
+      {
+        "word": "et",
+        "start": 7.964,
+        "end": 8.092
+      },
+      {
+        "word": "je",
+        "start": 8.139,
+        "end": 8.22
+      },
+      {
+        "word": "mange",
+        "start": 8.278,
+        "end": 8.464
+      },
+      {
+        "word": "une",
+        "start": 8.498,
+        "end": 8.591
+      },
+      {
+        "word": "tartine.",
+        "start": 8.615,
+        "end": 9.218
+      },
+      {
+        "word": "J'écoute",
+        "start": 9.659,
+        "end": 10.031
+      },
+      {
+        "word": "la",
+        "start": 10.054,
+        "end": 10.124
+      },
+      {
+        "word": "radio",
+        "start": 10.17,
+        "end": 10.437
+      },
+      {
+        "word": "dans",
+        "start": 10.472,
+        "end": 10.588
+      },
+      {
+        "word": "la",
+        "start": 10.612,
+        "end": 10.67
+      },
+      {
+        "word": "cuisine.",
+        "start": 10.728,
+        "end": 11.331
+      },
+      {
+        "word": "À",
+        "start": 11.773,
+        "end": 11.854
+      },
+      {
+        "word": "huit",
+        "start": 11.97,
+        "end": 12.144
+      },
+      {
+        "word": "heures,",
+        "start": 12.202,
+        "end": 12.423
+      },
+      {
+        "word": "je",
+        "start": 12.539,
+        "end": 12.643
+      },
+      {
+        "word": "sors",
+        "start": 12.701,
+        "end": 12.852
+      },
+      {
+        "word": "de",
+        "start": 12.887,
+        "end": 12.957
+      },
+      {
+        "word": "chez",
+        "start": 13.003,
+        "end": 13.142
+      },
+      {
+        "word": "moi.",
+        "start": 13.177,
+        "end": 13.479
+      },
+      {
+        "word": "Je",
+        "start": 13.862,
+        "end": 13.978
+      },
+      {
+        "word": "prends",
+        "start": 14.025,
+        "end": 14.199
+      },
+      {
+        "word": "le",
+        "start": 14.222,
+        "end": 14.28
+      },
+      {
+        "word": "métro",
+        "start": 14.327,
+        "end": 14.64
+      },
+      {
+        "word": "pour",
+        "start": 14.698,
+        "end": 14.849
+      },
+      {
+        "word": "aller",
+        "start": 14.896,
+        "end": 15.047
+      },
+      {
+        "word": "au",
+        "start": 15.07,
+        "end": 15.116
+      },
+      {
+        "word": "travail.",
+        "start": 15.163,
+        "end": 15.708
+      },
+      {
+        "word": "Dans",
+        "start": 16.15,
+        "end": 16.347
+      },
+      {
+        "word": "le",
+        "start": 16.37,
+        "end": 16.417
+      },
+      {
+        "word": "métro,",
+        "start": 16.451,
+        "end": 16.962
+      },
+      {
+        "word": "je",
+        "start": 17.078,
+        "end": 17.206
+      },
+      {
+        "word": "lis",
+        "start": 17.264,
+        "end": 17.38
+      },
+      {
+        "word": "un",
+        "start": 17.427,
+        "end": 17.485
+      },
+      {
+        "word": "livre",
+        "start": 17.543,
+        "end": 17.868
+      },
+      {
+        "word": "ou",
+        "start": 17.903,
+        "end": 18.042
+      },
+      {
+        "word": "je",
+        "start": 18.1,
+        "end": 18.17
+      },
+      {
+        "word": "regarde",
+        "start": 18.228,
+        "end": 18.553
+      },
+      {
+        "word": "mon",
+        "start": 18.576,
+        "end": 18.681
+      },
+      {
+        "word": "téléphone.",
+        "start": 18.727,
+        "end": 19.307
+      },
+      {
+        "word": "J'arrive",
+        "start": 19.633,
+        "end": 20.004
+      },
+      {
+        "word": "au",
+        "start": 20.027,
+        "end": 20.074
+      },
+      {
+        "word": "bureau",
+        "start": 20.132,
+        "end": 20.434
+      },
+      {
+        "word": "à",
+        "start": 20.515,
+        "end": 20.538
+      },
+      {
+        "word": "neuf",
+        "start": 20.619,
+        "end": 20.782
+      },
+      {
+        "word": "heures.",
+        "start": 20.84,
+        "end": 21.107
+      },
+      {
+        "word": "J'aime",
+        "start": 21.316,
+        "end": 21.548
+      },
+      {
+        "word": "bien",
+        "start": 21.571,
+        "end": 21.757
+      },
+      {
+        "word": "le",
+        "start": 21.78,
+        "end": 21.827
+      },
+      {
+        "word": "matin,",
+        "start": 21.862,
+        "end": 22.268
+      },
+      {
+        "word": "c'est",
+        "start": 22.291,
+        "end": 22.442
+      },
+      {
+        "word": "calme",
+        "start": 22.465,
+        "end": 22.779
+      },
+      {
+        "word": "et",
+        "start": 22.814,
+        "end": 22.895
+      },
+      {
+        "word": "tranquille.",
+        "start": 22.93,
+        "end": 23.684
+      }
+    ],
     "clipStart": 0,
-    "clipEnd": 30,
+    "clipEnd": 24,
     "source": "Parisly",
     "date": null,
     "questions": [
-      { "question": "À quelle heure Léa se lève-t-elle ?", "options": ["À sept heures", "À huit heures", "À neuf heures", "À six heures"], "answer": "À sept heures", "explanation": "'je me lève à sept heures.'" },
-      { "question": "Que boit-elle le matin ?", "options": ["Un café", "Un thé", "Un jus d'orange", "De l'eau"], "answer": "Un café", "explanation": "'je bois un café et je mange une tartine.'" },
-      { "question": "Comment va-t-elle au travail ?", "options": ["En métro", "En voiture", "à vélo", "à pied"], "answer": "En métro", "explanation": "'Je prends le métro pour aller au travail.'" },
-      { "question": "Pourquoi aime-t-elle le matin ?", "options": ["C'est calme et tranquille", "Il y a beaucoup de monde", "C'est bruyant", "Il fait chaud"], "answer": "C'est calme et tranquille", "explanation": "'J'aime bien le matin, c'est calme et tranquille.'" }
+      {
+        "question": "À quelle heure Léa se lève-t-elle ?",
+        "options": [
+          "À sept heures",
+          "À huit heures",
+          "À neuf heures",
+          "À six heures"
+        ],
+        "answer": "À sept heures",
+        "explanation": "'je me lève à sept heures.'"
+      },
+      {
+        "question": "Que boit-elle le matin ?",
+        "options": [
+          "Un café",
+          "Un thé",
+          "Un jus d'orange",
+          "De l'eau"
+        ],
+        "answer": "Un café",
+        "explanation": "'je bois un café et je mange une tartine.'"
+      },
+      {
+        "question": "Comment va-t-elle au travail ?",
+        "options": [
+          "En métro",
+          "En voiture",
+          "à vélo",
+          "à pied"
+        ],
+        "answer": "En métro",
+        "explanation": "'Je prends le métro pour aller au travail.'"
+      },
+      {
+        "question": "Pourquoi aime-t-elle le matin ?",
+        "options": [
+          "C'est calme et tranquille",
+          "Il y a beaucoup de monde",
+          "C'est bruyant",
+          "Il fait chaud"
+        ],
+        "answer": "C'est calme et tranquille",
+        "explanation": "'J'aime bien le matin, c'est calme et tranquille.'"
+      }
     ],
     "vocab": [
-      { "word": "se lève", "definition": "gets up", "sentence": "Le matin, Léa ___ à sept heures." },
-      { "word": "douche", "definition": "shower", "sentence": "D'abord, je prends une ___ ." },
-      { "word": "tartine", "definition": "slice of bread (with spread)", "sentence": "Je mange une ___ avec mon café." },
-      { "word": "métro", "definition": "subway", "sentence": "Je prends le ___ pour aller au travail." }
+      {
+        "word": "se lève",
+        "definition": "gets up",
+        "sentence": "Le matin, Léa ___ à sept heures."
+      },
+      {
+        "word": "douche",
+        "definition": "shower",
+        "sentence": "D'abord, je prends une ___ ."
+      },
+      {
+        "word": "tartine",
+        "definition": "slice of bread (with spread)",
+        "sentence": "Je mange une ___ avec mon café."
+      },
+      {
+        "word": "métro",
+        "definition": "subway",
+        "sentence": "Je prends le ___ pour aller au travail."
+      }
     ],
     "grammar": [
       {
@@ -31,19 +463,62 @@
         "explanation": "To describe a routine, French uses the present tense with sequence markers: d'abord (first), ensuite/puis (then), enfin (finally). The verbs stay in the present.",
         "tip": "These little words order the actions: d'abord → ensuite → enfin.",
         "exercises": [
-          { "sentence": "___ , je prends une douche. (first)", "answer": "D'abord", "hint": "premier marqueur" },
-          { "sentence": "___ , je bois un café. (then)", "answer": "Ensuite", "hint": "deuxième marqueur" },
-          { "sentence": "Le matin, je me ___ à sept heures. (se lever)", "answer": "lève", "hint": "se lever, je" },
-          { "sentence": "J'___ la radio dans la cuisine. (écouter)", "answer": "écoute", "hint": "écouter, je" }
+          {
+            "sentence": "___ , je prends une douche. (first)",
+            "answer": "D'abord",
+            "hint": "premier marqueur"
+          },
+          {
+            "sentence": "___ , je bois un café. (then)",
+            "answer": "Ensuite",
+            "hint": "deuxième marqueur"
+          },
+          {
+            "sentence": "Le matin, je me ___ à sept heures. (se lever)",
+            "answer": "lève",
+            "hint": "se lever, je"
+          },
+          {
+            "sentence": "J'___ la radio dans la cuisine. (écouter)",
+            "answer": "écoute",
+            "hint": "écouter, je"
+          }
         ],
-        "production": { "instruction": "Décris ton matin en deux phrases avec « d'abord » et « ensuite ».", "example": "D'abord, je prends mon petit-déjeuner. Ensuite, je vais au travail." }
+        "production": {
+          "instruction": "Décris ton matin en deux phrases avec « d'abord » et « ensuite ».",
+          "example": "D'abord, je prends mon petit-déjeuner. Ensuite, je vais au travail."
+        }
       }
     ],
     "conjugation": [
-      { "verb": "se lever", "tense": "présent", "sentence": "Je me ___ à sept heures.", "answer": "lève", "hint": "je" },
-      { "verb": "prendre", "tense": "présent", "sentence": "Je ___ une douche.", "answer": "prends", "hint": "je" },
-      { "verb": "boire", "tense": "présent", "sentence": "Je ___ un café.", "answer": "bois", "hint": "je" },
-      { "verb": "sortir", "tense": "présent", "sentence": "À huit heures, je ___ de chez moi.", "answer": "sors", "hint": "je" }
+      {
+        "verb": "se lever",
+        "tense": "présent",
+        "sentence": "Je me ___ à sept heures.",
+        "answer": "lève",
+        "hint": "je"
+      },
+      {
+        "verb": "prendre",
+        "tense": "présent",
+        "sentence": "Je ___ une douche.",
+        "answer": "prends",
+        "hint": "je"
+      },
+      {
+        "verb": "boire",
+        "tense": "présent",
+        "sentence": "Je ___ un café.",
+        "answer": "bois",
+        "hint": "je"
+      },
+      {
+        "verb": "sortir",
+        "tense": "présent",
+        "sentence": "À huit heures, je ___ de chez moi.",
+        "answer": "sors",
+        "hint": "je"
+      }
     ]
   },
   {
