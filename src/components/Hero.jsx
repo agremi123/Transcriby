@@ -7351,8 +7351,8 @@ export default function Hero() {
                           ? 'ring-[3px] ring-wine shadow-lg'
                           : 'ring-2 ring-wine/40 group-hover:ring-wine shadow-sm group-hover:shadow-md'
                       }`}>
-                        {import.meta.env.DEV ? (
-                          /* 3D disabled on the local dev server — show the photo instead */
+                        {(!SHOW_3D_AVATAR || import.meta.env.DEV) ? (
+                          /* 3D off (flag) or local dev — show the photo instead */
                           <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
                         ) : (
                           <React.Suspense fallback={<img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />}>
