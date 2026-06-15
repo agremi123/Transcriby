@@ -14,6 +14,8 @@ import writingPrompts from '../data/stock/writing-prompts.json';
 import speakingPrompts from '../data/stock/speaking-prompts.json';
 import practice from '../data/stock/practice.json';
 import words from '../data/stock/words.json';
+import reading from '../data/stock/reading.json';
+import listening from '../data/stock/listening.json';
 
 const rnd = (arr) => (arr && arr.length ? arr[Math.floor(Math.random() * arr.length)] : null);
 const atLevel = (arr, level) => (level ? arr.filter((x) => x.level === level) : arr);
