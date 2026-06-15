@@ -1,0 +1,102 @@
+[
+  {
+    "id": "sp-a1-presentation",
+    "level": "A1",
+    "narrator_id": "lea",
+    "topic_label": "Faire connaissance",
+    "opening_line": "Salut ! Moi c'est Léa. Et toi, comment tu t'appelles et tu viens d'où ?",
+    "opening_line_translation": "Hi! I'm Léa. And you, what's your name and where are you from?",
+    "target_grammar": "Le présent de s'appeler, venir, habiter",
+    "target_vocab": "se présenter, le prénom, la ville, le pays"
+  },
+  {
+    "id": "sp-a1-gouts",
+    "level": "A1",
+    "narrator_id": "jules",
+    "topic_label": "Tes goûts",
+    "opening_line": "Dis-moi, qu'est-ce que tu aimes faire pendant ton temps libre ?",
+    "opening_line_translation": "Tell me, what do you like to do in your free time?",
+    "target_grammar": "aimer / adorer / détester + infinitif",
+    "target_vocab": "les loisirs, le sport, la musique, lire"
+  },
+  {
+    "id": "sp-a2-week-end",
+    "level": "A2",
+    "narrator_id": "lea",
+    "topic_label": "Le week-end dernier",
+    "opening_line": "Alors, raconte-moi : qu'est-ce que tu as fait ce week-end ?",
+    "opening_line_translation": "So, tell me: what did you do this weekend?",
+    "target_grammar": "Le passé composé",
+    "target_vocab": "sortir, se reposer, voir des amis, le week-end"
+  },
+  {
+    "id": "sp-a2-quartier",
+    "level": "A2",
+    "narrator_id": "jules",
+    "topic_label": "Ton quartier",
+    "opening_line": "T'habites dans quel genre de quartier ? Décris-moi un peu l'ambiance.",
+    "opening_line_translation": "What kind of neighborhood do you live in? Describe the vibe a bit.",
+    "target_grammar": "Il y a / les adjectifs",
+    "target_vocab": "animé, calme, un commerce, les transports"
+  },
+  {
+    "id": "sp-b1-voyage",
+    "level": "B1",
+    "narrator_id": "lea",
+    "topic_label": "Un voyage marquant",
+    "opening_line": "J'adore voyager ! Parle-moi d'un voyage qui t'a vraiment marqué.",
+    "opening_line_translation": "I love traveling! Tell me about a trip that really left a mark on you.",
+    "target_grammar": "Passé composé vs imparfait",
+    "target_vocab": "découvrir, un paysage, dépaysant, un souvenir"
+  },
+  {
+    "id": "sp-b1-projets",
+    "level": "B1",
+    "narrator_id": "jules",
+    "topic_label": "Tes projets",
+    "opening_line": "Et pour la suite, t'as des projets ? Qu'est-ce que tu aimerais faire ?",
+    "opening_line_translation": "And going forward, do you have any plans? What would you like to do?",
+    "target_grammar": "Le futur simple et le conditionnel présent",
+    "target_vocab": "un projet, espérer, aimerais, dans l'avenir"
+  },
+  {
+    "id": "sp-b2-actualite",
+    "level": "B2",
+    "narrator_id": "lea",
+    "topic_label": "Un sujet d'actualité",
+    "opening_line": "Y a un sujet d'actualité qui te tient à cœur en ce moment ? Donne-moi ton avis dessus.",
+    "opening_line_translation": "Is there a current topic that matters to you right now? Give me your take on it.",
+    "target_grammar": "L'expression de l'opinion et la concession",
+    "target_vocab": "un enjeu, débattre, à mon sens, nuancer"
+  },
+  {
+    "id": "sp-b2-travail",
+    "level": "B2",
+    "narrator_id": "jules",
+    "topic_label": "Le monde du travail",
+    "opening_line": "Le télétravail, le rythme, l'ambiance... Pour toi, c'est quoi un bon environnement de travail ?",
+    "opening_line_translation": "Remote work, the pace, the atmosphere... For you, what makes a good work environment?",
+    "target_grammar": "Le conditionnel et la voix passive",
+    "target_vocab": "le télétravail, l'équilibre, une compétence, épanouissant"
+  },
+  {
+    "id": "sp-c1-debat",
+    "level": "C1",
+    "narrator_id": "lea",
+    "topic_label": "Débat d'idées",
+    "opening_line": "On va débattre un peu : penses-tu que la technologie nous rapproche ou nous isole ? Défends ta position.",
+    "opening_line_translation": "Let's debate a bit: do you think technology brings us closer or isolates us? Defend your position.",
+    "target_grammar": "L'argumentation : subjonctif, concession, mise en relief",
+    "target_vocab": "isoler, le lien social, paradoxalement, l'argument"
+  },
+  {
+    "id": "sp-c2-essai-oral",
+    "level": "C2",
+    "narrator_id": "jules",
+    "topic_label": "Réflexion approfondie",
+    "opening_line": "Question un peu philosophique : selon toi, peut-on vraiment être libre en société ? Développe une réflexion nuancée.",
+    "opening_line_translation": "A slightly philosophical question: in your view, can one truly be free within society? Develop a nuanced reflection.",
+    "target_grammar": "La concordance des temps et les modalisateurs",
+    "target_vocab": "le libre arbitre, la contrainte, l'autonomie, présupposer"
+  }
+]
