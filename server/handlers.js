@@ -1283,6 +1283,25 @@ function narratorForWord(word) {
 
 export async function handleWord() {
   const { ANTHROPIC_API_KEY, ELEVENLABS_API_KEY } = getEnv();
+
+  // Local stock first — recyclable Parisian-word pool. No API call, and works
+  // even without any API key configured (fully offline).
+  const localW = pickWord();
+  if (localW) {
+    return {
+      statusCode: 200,
+      body: {
+        word: localW.word,
+        meaning: localW.meaning,
+        example: localW.example,
+        exampleTranslation: localW.exampleTranslation,
+        audioUrl: null,
+        explanation: localW.explanation || buildWordIntro(localW),
+        narratorId: localW.narratorId || narratorForWord(localW.word),
+      },
+    };
+  }
+
   if (!ANTHROPIC_API_KEY) {
     return { statusCode: 200, body: { word: null } };
   }
