@@ -1469,6 +1469,13 @@ export async function handleListening(body) {
   const topic = body?.topic || '';
 
   const empty = { title: '', audioUrl: null, transcript: '', source: '', date: null, vocabTheme: '', questions: [], vocab: [], grammar: [], conjugation: [] };
+
+  // Local stock first — recyclable transcripts + exercises at the learner's
+  // level. No API call. audioUrl may be null (the player handles that and shows
+  // the transcript + exercises); narration can be generated separately.
+  const localL = pickListening(level);
+  if (localL) return { statusCode: 200, body: localL };
+
   if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
 
   // Service role so the fire-and-forget save can't be blocked by RLS
