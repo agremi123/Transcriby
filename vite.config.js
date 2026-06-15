@@ -1278,6 +1278,12 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
     }
     res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+    // Local stock first — recyclable transcripts + exercises (audio may be null;
+    // the player handles that). No API call.
+    {
+      const localL = pickListening(learnerLevel || null);
+      if (localL) { res.end(JSON.stringify(localL)); return; }
+    }
     if (!anthropicKey) {
       res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: '', questions: [], vocab: [], grammar: [] })); return;
     }
