@@ -991,6 +991,14 @@ function practiceMiddleware(apiKey, openrouterKey) {
     } catch {
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
     }
+    // Local stock first — recyclable MCQ sets matched to the topic. No API call.
+    {
+      const localEx = pickPractice(topic);
+      if (localEx.length) {
+        res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ exercises: localEx })); return;
+      }
+    }
     if (!apiKey || !topic) {
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ exercises: [] })); return;
