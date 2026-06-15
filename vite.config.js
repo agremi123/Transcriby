@@ -12,6 +12,7 @@ import { getStoredWritingExample, saveWritingExample } from './server/writing-ex
 import { sendHandlerResult } from './server/node-response.js';
 import { buildCorrectionSystemPrompts } from './server/correctionPrompts.js';
 import { sanitizeParisianCorrection, parseCorrectionResponse } from './src/lib/correctionFormat.js';
+import { pickWord, pickWritingPrompt, pickSpeakingPrompt, pickPractice, getLessons } from './server/contentStock.js';
 
 // ── Dev token tracker ──────────────────────────────────────────────────────
 const DEV_COSTS_FILE = new URL('./data/dev-costs.json', import.meta.url).pathname;
