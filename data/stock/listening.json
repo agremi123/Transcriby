@@ -1,0 +1,190 @@
+[
+  {
+    "id": "listen-a2-lea-quartier",
+    "level": "A2",
+    "narratorId": "lea",
+    "title": "Léa te parle de son quartier",
+    "vocabTheme": "La vie de quartier",
+    "transcript": "Salut, c'est Léa ! Aujourd'hui, je te parle de mon quartier, dans le 11e. Le matin, je descends acheter du pain à la boulangerie du coin. Le boulanger me connaît, on discute deux minutes, c'est sympa. Après, je prends un café en terrasse et je regarde les gens passer. L'après-midi, s'il fait beau, je me balade le long du canal. Le soir, on retrouve souvent des amis dans un petit bar. Ce que j'aime ici, c'est qu'on se sent comme dans un village, en plein cœur de Paris.",
+    "audioUrl": null,
+    "wordTimings": null,
+    "clipStart": 0,
+    "clipEnd": 38,
+    "source": "Parisly",
+    "date": null,
+    "questions": [
+      { "question": "Dans quel arrondissement habite Léa ?", "options": ["Le 11e", "Le 1er", "Le 16e", "Le 5e"], "answer": "Le 11e", "explanation": "'mon quartier, dans le 11e.'" },
+      { "question": "Que fait-elle le matin ?", "options": ["Elle achète du pain", "Elle va au travail", "Elle fait du sport", "Elle dort"], "answer": "Elle achète du pain", "explanation": "'je descends acheter du pain à la boulangerie du coin.'" },
+      { "question": "Que fait-elle l'après-midi s'il fait beau ?", "options": ["Elle se balade le long du canal", "Elle reste chez elle", "Elle travaille", "Elle cuisine"], "answer": "Elle se balade le long du canal", "explanation": "'s'il fait beau, je me balade le long du canal.'" },
+      { "question": "Pourquoi aime-t-elle son quartier ?", "options": ["On se sent comme dans un village", "Il est très calme la nuit", "Il est près de la gare", "Il y a beaucoup de musées"], "answer": "On se sent comme dans un village", "explanation": "'on se sent comme dans un village, en plein cœur de Paris.'" }
+    ],
+    "vocab": [
+      { "word": "boulangerie", "definition": "bakery", "sentence": "J'achète du pain à la ___ du coin." },
+      { "word": "terrasse", "definition": "café terrace", "sentence": "Je prends un café en ___ ." },
+      { "word": "se balader", "definition": "to stroll", "sentence": "L'après-midi, j'aime me ___ le long du canal." },
+      { "word": "quartier", "definition": "neighborhood", "sentence": "Je te parle de mon ___ dans le 11e." }
+    ],
+    "grammar": [
+      {
+        "point": "Le présent et les habitudes quotidiennes",
+        "example": "Le matin, je descends acheter du pain ; le soir, on retrouve des amis.",
+        "explanation": "To describe daily routines, French uses the present tense with time markers (le matin, l'après-midi, le soir, souvent). Pronominal verbs (se balader, se sentir) take a reflexive pronoun (je me balade).",
+        "tip": "Time markers at the start of the sentence set the routine: 'Le matin, je...'.",
+        "exercises": [
+          { "sentence": "Le matin, je ___ acheter du pain. (descendre)", "answer": "descends", "hint": "descendre, je" },
+          { "sentence": "L'après-midi, je me ___ le long du canal. (se balader)", "answer": "balade", "hint": "se balader, je" },
+          { "sentence": "Le soir, on ___ des amis dans un bar. (retrouver)", "answer": "retrouve", "hint": "retrouver, on" },
+          { "sentence": "Ce que j'aime, c'est qu'on se ___ comme dans un village. (se sentir)", "answer": "sent", "hint": "se sentir, on" }
+        ],
+        "production": { "instruction": "Décris ta routine du matin en deux phrases au présent.", "example": "Le matin, je me lève à sept heures et je prends un café." }
+      }
+    ],
+    "conjugation": [
+      { "verb": "prendre", "tense": "présent", "sentence": "Je ___ un café en terrasse.", "answer": "prends", "hint": "je" },
+      { "verb": "faire", "tense": "présent", "sentence": "S'il ___ beau, je sors.", "answer": "fait", "hint": "il" },
+      { "verb": "connaître", "tense": "présent", "sentence": "Le boulanger me ___ bien.", "answer": "connaît", "hint": "il" },
+      { "verb": "aimer", "tense": "présent", "sentence": "Ce que j'___ ici, c'est l'ambiance.", "answer": "aime", "hint": "je" }
+    ]
+  },
+  {
+    "id": "listen-b1-jules-resto",
+    "level": "B1",
+    "narratorId": "jules",
+    "title": "Jules raconte sa pire soirée resto",
+    "vocabTheme": "Au restaurant",
+    "transcript": "Alors, je vais te raconter un truc. La semaine dernière, j'ai voulu emmener une amie dans un resto soi-disant génial. J'avais réservé une semaine à l'avance, super content. On arrive, et là, catastrophe : ils avaient perdu la réservation. On a attendu quarante minutes debout. Quand on a enfin eu une table, le serveur a oublié notre commande. Bref, on a fini par rigoler, parce que c'était tellement absurde. Au final, on est allés manger un kebab à minuit, et franchement, c'était la meilleure partie de la soirée. Comme quoi, les plans qui tournent mal font parfois les meilleurs souvenirs.",
+    "audioUrl": null,
+    "wordTimings": null,
+    "clipStart": 0,
+    "clipEnd": 42,
+    "source": "Parisly",
+    "date": null,
+    "questions": [
+      { "question": "Pourquoi Jules était-il content au début ?", "options": ["Il avait réservé dans un super resto", "Il avait gagné un prix", "C'était son anniversaire", "Il avait un nouveau travail"], "answer": "Il avait réservé dans un super resto", "explanation": "'j'ai voulu emmener une amie dans un resto soi-disant génial. J'avais réservé... super content.'" },
+      { "question": "Quel a été le premier problème ?", "options": ["Ils avaient perdu la réservation", "Le resto était fermé", "Il pleuvait", "Il avait oublié son portefeuille"], "answer": "Ils avaient perdu la réservation", "explanation": "'ils avaient perdu la réservation.'" },
+      { "question": "Qu'a oublié le serveur ?", "options": ["Leur commande", "L'addition", "Le menu", "Les couverts"], "answer": "Leur commande", "explanation": "'le serveur a oublié notre commande.'" },
+      { "question": "Comment se termine la soirée ?", "options": ["Ils mangent un kebab à minuit", "Ils rentrent fâchés", "Ils retournent au resto", "Ils appellent un ami"], "answer": "Ils mangent un kebab à minuit", "explanation": "'on est allés manger un kebab à minuit... la meilleure partie de la soirée.'" }
+    ],
+    "vocab": [
+      { "word": "réservation", "definition": "reservation", "sentence": "Ils avaient perdu ma ___ ." },
+      { "word": "commande", "definition": "order (food)", "sentence": "Le serveur a oublié notre ___ ." },
+      { "word": "soi-disant", "definition": "supposedly / so-called", "sentence": "Un resto ___ génial." },
+      { "word": "souvenirs", "definition": "memories", "sentence": "Les plans qui tournent mal font les meilleurs ___ ." }
+    ],
+    "grammar": [
+      {
+        "point": "Passé composé et plus-que-parfait dans le récit",
+        "example": "J'avais réservé une semaine à l'avance, mais ils avaient perdu la réservation quand on est arrivés.",
+        "explanation": "In storytelling, the plus-que-parfait (avais réservé) describes what happened BEFORE another past action expressed in the passé composé (on est arrivés). It situates earlier background events.",
+        "tip": "Plus-que-parfait = auxiliary in the imperfect (avais/étais) + past participle.",
+        "exercises": [
+          { "sentence": "J'___ ___ une semaine à l'avance. (réserver — plus-que-parfait)", "answer": "avais réservé", "hint": "je, plus-que-parfait" },
+          { "sentence": "Quand on est arrivés, ils ___ ___ la réservation. (perdre — plus-que-parfait)", "answer": "avaient perdu", "hint": "ils, plus-que-parfait" },
+          { "sentence": "Le serveur ___ ___ notre commande. (oublier — passé composé)", "answer": "a oublié", "hint": "il, passé composé" },
+          { "sentence": "On ___ ___ manger un kebab. (aller — passé composé, être)", "answer": "est allés", "hint": "on/nous, être" }
+        ],
+        "production": { "instruction": "Raconte un plan qui a mal tourné, en utilisant le passé composé.", "example": "J'ai raté mon train, donc je suis arrivé en retard à la fête." }
+      }
+    ],
+    "conjugation": [
+      { "verb": "vouloir", "tense": "passé composé", "sentence": "J'___ ___ l'emmener au resto. (avoir + participe)", "answer": "ai voulu", "hint": "je, avoir" },
+      { "verb": "attendre", "tense": "passé composé", "sentence": "On ___ ___ quarante minutes. (avoir + participe)", "answer": "a attendu", "hint": "on, avoir" },
+      { "verb": "finir", "tense": "passé composé", "sentence": "On ___ ___ par rigoler. (avoir + participe)", "answer": "a fini", "hint": "on, avoir" },
+      { "verb": "être", "tense": "imparfait", "sentence": "C'___ tellement absurde !", "answer": "était", "hint": "il/ce" }
+    ]
+  },
+  {
+    "id": "listen-b2-lea-rythme-ville",
+    "level": "B2",
+    "narratorId": "lea",
+    "title": "Léa : faut-il ralentir en ville ?",
+    "vocabTheme": "Le rythme de vie urbain",
+    "transcript": "Tu sais ce qui me frappe, en ce moment ? C'est cette obsession de tout faire vite. À Paris, on marche vite, on mange vite, on répond aux messages en deux secondes. Et pourtant, j'ai l'impression qu'on n'a jamais le temps de rien. Le week-end dernier, j'ai décidé de tester un truc : pas de téléphone pendant une journée entière. Au début, c'était presque angoissant, j'avais ce réflexe de vérifier mon écran toutes les cinq minutes. Mais petit à petit, quelque chose s'est apaisé. J'ai vraiment regardé les gens, j'ai pris le temps de lire. Bref, je ne dis pas qu'il faut tout abandonner, mais je crois qu'on gagnerait à ralentir, ne serait-ce qu'un peu.",
+    "audioUrl": null,
+    "wordTimings": null,
+    "clipStart": 0,
+    "clipEnd": 46,
+    "source": "Parisly",
+    "date": null,
+    "questions": [
+      { "question": "Qu'est-ce qui frappe Léa en ce moment ?", "options": ["L'obsession de tout faire vite", "Le prix des loyers", "Le bruit des voitures", "Le manque de cafés"], "answer": "L'obsession de tout faire vite", "explanation": "'C'est cette obsession de tout faire vite.'" },
+      { "question": "Quelle expérience a-t-elle tentée ?", "options": ["Une journée sans téléphone", "Un jour sans manger", "Une semaine sans parler", "Un mois sans sortir"], "answer": "Une journée sans téléphone", "explanation": "'pas de téléphone pendant une journée entière.'" },
+      { "question": "Comment se sentait-elle au début ?", "options": ["C'était presque angoissant", "Elle était soulagée", "Elle s'ennuyait", "Elle était en colère"], "answer": "C'était presque angoissant", "explanation": "'Au début, c'était presque angoissant.'" },
+      { "question": "Quelle est sa conclusion ?", "options": ["On gagnerait à ralentir un peu", "Il faut tout abandonner", "Le téléphone est indispensable", "Paris est invivable"], "answer": "On gagnerait à ralentir un peu", "explanation": "'je crois qu'on gagnerait à ralentir, ne serait-ce qu'un peu.'" }
+    ],
+    "vocab": [
+      { "word": "obsession", "definition": "obsession", "sentence": "C'est cette ___ de tout faire vite." },
+      { "word": "angoissant", "definition": "distressing / anxiety-inducing", "sentence": "Au début, c'était presque ___ ." },
+      { "word": "s'est apaisé", "definition": "calmed down", "sentence": "Petit à petit, quelque chose ___ ." },
+      { "word": "ralentir", "definition": "to slow down", "sentence": "On gagnerait à ___ un peu." }
+    ],
+    "grammar": [
+      {
+        "point": "Le conditionnel présent pour nuancer et conseiller",
+        "example": "On gagnerait à ralentir. Je ne dis pas qu'il faut tout abandonner.",
+        "explanation": "The conditionnel présent (gagnerait, devrait, aimerait) softens an assertion and expresses advice or a hypothetical benefit. It's key to sounding nuanced rather than categorical.",
+        "tip": "Formed on the future stem + imperfect endings (-ais, -ais, -ait, -ions, -iez, -aient).",
+        "exercises": [
+          { "sentence": "On ___ à ralentir un peu. (gagner — conditionnel)", "answer": "gagnerait", "hint": "on, conditionnel" },
+          { "sentence": "Tu ___ essayer une journée sans écran. (devoir — conditionnel)", "answer": "devrais", "hint": "tu, conseil" },
+          { "sentence": "J'___ aimer prendre plus de temps pour moi. (aimer — conditionnel : j'aimerais)", "answer": "aimerais", "hint": "je, souhait" },
+          { "sentence": "Ce ___ bien de déconnecter de temps en temps. (être — conditionnel)", "answer": "serait", "hint": "ce/il, conditionnel" }
+        ],
+        "production": { "instruction": "Donne un conseil avec le conditionnel (« tu devrais... » ou « on gagnerait à... »).", "example": "Tu devrais éteindre ton téléphone le soir, ça aide à mieux dormir." }
+      }
+    ],
+    "conjugation": [
+      { "verb": "décider", "tense": "passé composé", "sentence": "J'___ ___ de tester un truc. (avoir + participe)", "answer": "ai décidé", "hint": "je, avoir" },
+      { "verb": "s'apaiser", "tense": "passé composé", "sentence": "Quelque chose ___ ___ . (pronominal : s'est apaisé)", "answer": "s'est apaisé", "hint": "il, pronominal" },
+      { "verb": "gagner", "tense": "conditionnel présent", "sentence": "On ___ à ralentir.", "answer": "gagnerait", "hint": "on" },
+      { "verb": "croire", "tense": "présent", "sentence": "Je ___ qu'on devrait ralentir.", "answer": "crois", "hint": "je" }
+    ]
+  },
+  {
+    "id": "listen-c1-jules-authenticite",
+    "level": "C1",
+    "narratorId": "jules",
+    "title": "Jules : l'authenticité, ça veut dire quoi ?",
+    "vocabTheme": "Société et culture",
+    "transcript": "Il y a un mot qu'on entend partout aujourd'hui, et qui m'agace un peu, je l'avoue : c'est « authentique ». Tout est devenu authentique, le café authentique, le quartier authentique, l'expérience authentique. Mais à force de tout qualifier ainsi, on finit par vider le mot de son sens. Ce qui est paradoxal, c'est que dès qu'un lieu est étiqueté « authentique » par les guides, il attire une foule qui, précisément, en détruit le caractère. L'authenticité, par définition, ne se décrète pas : elle se constate, après coup, et souvent par hasard. À mon sens, les endroits les plus vrais sont ceux dont personne ne parle encore, ceux qu'on découvre sans les chercher. Le jour où un lieu devient une destination, il a déjà commencé à perdre ce pour quoi on l'aimait.",
+    "audioUrl": null,
+    "wordTimings": null,
+    "clipStart": 0,
+    "clipEnd": 50,
+    "source": "Parisly",
+    "date": null,
+    "questions": [
+      { "question": "Quel mot agace Jules ?", "options": ["« authentique »", "« moderne »", "« parisien »", "« tendance »"], "answer": "« authentique »", "explanation": "'c'est « authentique ». Tout est devenu authentique...'" },
+      { "question": "Quel paradoxe relève-t-il ?", "options": ["Étiqueter un lieu « authentique » attire une foule qui en détruit le caractère", "Les lieux authentiques sont les plus chers", "Personne ne visite les lieux authentiques", "L'authenticité se décrète facilement"], "answer": "Étiqueter un lieu « authentique » attire une foule qui en détruit le caractère", "explanation": "'dès qu'un lieu est étiqueté « authentique »... il attire une foule qui... en détruit le caractère.'" },
+      { "question": "Selon Jules, l'authenticité…", "options": ["ne se décrète pas, elle se constate après coup", "se planifie à l'avance", "s'achète", "se mesure en chiffres"], "answer": "ne se décrète pas, elle se constate après coup", "explanation": "'L'authenticité, par définition, ne se décrète pas : elle se constate, après coup.'" },
+      { "question": "Quels sont, pour lui, les endroits les plus vrais ?", "options": ["Ceux dont personne ne parle encore", "Les plus touristiques", "Les plus chers", "Les plus anciens"], "answer": "Ceux dont personne ne parle encore", "explanation": "'les endroits les plus vrais sont ceux dont personne ne parle encore.'" }
+    ],
+    "vocab": [
+      { "word": "m'agace", "definition": "annoys me", "sentence": "C'est un mot qui ___ un peu." },
+      { "word": "étiqueté", "definition": "labelled", "sentence": "Dès qu'un lieu est ___ « authentique »..." },
+      { "word": "se décrète", "definition": "is decreed / declared", "sentence": "L'authenticité ne ___ pas." },
+      { "word": "après coup", "definition": "in hindsight / afterwards", "sentence": "Elle se constate ___ ." }
+    ],
+    "grammar": [
+      {
+        "point": "Les pronoms relatifs « dont » et « ce pour quoi »",
+        "example": "Les endroits dont personne ne parle. Il perd ce pour quoi on l'aimait.",
+        "explanation": "'Dont' replaces a complement introduced by 'de' (parler de → dont on parle). Complex relatives like 'ce pour quoi', 'ce dont', 'ce à quoi' nominalize a whole idea and are typical of formal C1 speech.",
+        "tip": "Choose the relative by the preposition the verb requires: parler DE → dont; penser À → ce à quoi.",
+        "exercises": [
+          { "sentence": "Les endroits ___ personne ne parle sont les plus vrais. (parler de)", "answer": "dont", "hint": "parler de" },
+          { "sentence": "Il perd ___ ___ ___ on l'aimait. (that for which: ce pour quoi)", "answer": "ce pour quoi", "hint": "ce pour quoi" },
+          { "sentence": "C'est exactement ___ ___ je pensais. (that which I was thinking of: ce à quoi)", "answer": "ce à quoi", "hint": "penser à" },
+          { "sentence": "L'endroit ___ je rêve n'existe peut-être pas. (rêver de)", "answer": "dont", "hint": "rêver de" }
+        ],
+        "production": { "instruction": "Écris une phrase avec « dont » à propos d'un lieu que tu aimes.", "example": "C'est un café dont j'apprécie le calme et dont peu de gens connaissent l'existence." }
+      }
+    ],
+    "conjugation": [
+      { "verb": "agacer", "tense": "présent", "sentence": "C'est un mot qui m'___ .", "answer": "agace", "hint": "il/qui" },
+      { "verb": "finir", "tense": "présent", "sentence": "On ___ par vider le mot de son sens.", "answer": "finit", "hint": "on" },
+      { "verb": "attirer", "tense": "présent", "sentence": "Le label ___ une foule.", "answer": "attire", "hint": "il" },
+      { "verb": "découvrir", "tense": "présent", "sentence": "Ce sont des lieux qu'on ___ par hasard.", "answer": "découvre", "hint": "on" }
+    ]
+  }
+]
