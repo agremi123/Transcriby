@@ -875,6 +875,13 @@ export async function handleReading(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
   const empty = { passage: '', source: null, title: '', author: null, date: null, vocab: [], questions: [], grammar: [], conjugation: [] };
+
+  // Local stock first — recyclable original passages + exercises at the
+  // learner's level. No API call, works fully offline. (Topic-agnostic: serves
+  // a leveled reading rather than matching an arbitrary topic.)
+  const localR = pickReading(body?.learnerLevel || null);
+  if (localR) return { statusCode: 200, body: localR };
+
   if (!ANTHROPIC_API_KEY || !topic) return { statusCode: 200, body: empty };
 
   const supabase = getSupabase();
