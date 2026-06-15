@@ -1,28 +1,572 @@
 [
   {
+    "id": "listen-a1-lea-matin",
+    "level": "A1",
+    "narratorId": "lea",
+    "title": "Le matin de Léa",
+    "vocabTheme": "La routine du matin",
+    "transcript": "Bonjour ! C'est Léa. Le matin, je me lève à sept heures. D'abord, je prends une douche. Ensuite, je bois un café et je mange une tartine. J'écoute la radio dans la cuisine. À huit heures, je sors de chez moi. Je prends le métro pour aller au travail. Dans le métro, je lis un livre ou je regarde mon téléphone. J'arrive au bureau à neuf heures. J'aime bien le matin, c'est calme et tranquille.",
+    "audioUrl": null,
+    "wordTimings": null,
+    "clipStart": 0,
+    "clipEnd": 30,
+    "source": "Parisly",
+    "date": null,
+    "questions": [
+      { "question": "À quelle heure Léa se lève-t-elle ?", "options": ["À sept heures", "À huit heures", "À neuf heures", "À six heures"], "answer": "À sept heures", "explanation": "'je me lève à sept heures.'" },
+      { "question": "Que boit-elle le matin ?", "options": ["Un café", "Un thé", "Un jus d'orange", "De l'eau"], "answer": "Un café", "explanation": "'je bois un café et je mange une tartine.'" },
+      { "question": "Comment va-t-elle au travail ?", "options": ["En métro", "En voiture", "à vélo", "à pied"], "answer": "En métro", "explanation": "'Je prends le métro pour aller au travail.'" },
+      { "question": "Pourquoi aime-t-elle le matin ?", "options": ["C'est calme et tranquille", "Il y a beaucoup de monde", "C'est bruyant", "Il fait chaud"], "answer": "C'est calme et tranquille", "explanation": "'J'aime bien le matin, c'est calme et tranquille.'" }
+    ],
+    "vocab": [
+      { "word": "se lève", "definition": "gets up", "sentence": "Le matin, Léa ___ à sept heures." },
+      { "word": "douche", "definition": "shower", "sentence": "D'abord, je prends une ___ ." },
+      { "word": "tartine", "definition": "slice of bread (with spread)", "sentence": "Je mange une ___ avec mon café." },
+      { "word": "métro", "definition": "subway", "sentence": "Je prends le ___ pour aller au travail." }
+    ],
+    "grammar": [
+      {
+        "point": "Les marqueurs de temps et le présent",
+        "example": "D'abord, je prends une douche. Ensuite, je bois un café.",
+        "explanation": "To describe a routine, French uses the present tense with sequence markers: d'abord (first), ensuite/puis (then), enfin (finally). The verbs stay in the present.",
+        "tip": "These little words order the actions: d'abord → ensuite → enfin.",
+        "exercises": [
+          { "sentence": "___ , je prends une douche. (first)", "answer": "D'abord", "hint": "premier marqueur" },
+          { "sentence": "___ , je bois un café. (then)", "answer": "Ensuite", "hint": "deuxième marqueur" },
+          { "sentence": "Le matin, je me ___ à sept heures. (se lever)", "answer": "lève", "hint": "se lever, je" },
+          { "sentence": "J'___ la radio dans la cuisine. (écouter)", "answer": "écoute", "hint": "écouter, je" }
+        ],
+        "production": { "instruction": "Décris ton matin en deux phrases avec « d'abord » et « ensuite ».", "example": "D'abord, je prends mon petit-déjeuner. Ensuite, je vais au travail." }
+      }
+    ],
+    "conjugation": [
+      { "verb": "se lever", "tense": "présent", "sentence": "Je me ___ à sept heures.", "answer": "lève", "hint": "je" },
+      { "verb": "prendre", "tense": "présent", "sentence": "Je ___ une douche.", "answer": "prends", "hint": "je" },
+      { "verb": "boire", "tense": "présent", "sentence": "Je ___ un café.", "answer": "bois", "hint": "je" },
+      { "verb": "sortir", "tense": "présent", "sentence": "À huit heures, je ___ de chez moi.", "answer": "sors", "hint": "je" }
+    ]
+  },
+  {
     "id": "listen-a2-lea-quartier",
     "level": "A2",
     "narratorId": "lea",
     "title": "Léa te parle de son quartier",
     "vocabTheme": "La vie de quartier",
     "transcript": "Salut, c'est Léa ! Aujourd'hui, je te parle de mon quartier, dans le 11e. Le matin, je descends acheter du pain à la boulangerie du coin. Le boulanger me connaît, on discute deux minutes, c'est sympa. Après, je prends un café en terrasse et je regarde les gens passer. L'après-midi, s'il fait beau, je me balade le long du canal. Le soir, on retrouve souvent des amis dans un petit bar. Ce que j'aime ici, c'est qu'on se sent comme dans un village, en plein cœur de Paris.",
-    "audioUrl": null,
-    "wordTimings": null,
+    "audioUrl": "/listening-audio/listen-a2-lea-quartier.mp3",
+    "wordTimings": [
+      {
+        "word": "Salut,",
+        "start": 0,
+        "end": 0.395
+      },
+      {
+        "word": "c'est",
+        "start": 0.418,
+        "end": 0.569
+      },
+      {
+        "word": "Léa",
+        "start": 0.592,
+        "end": 0.871
+      },
+      {
+        "word": "!",
+        "start": 0.987,
+        "end": 1.022
+      },
+      {
+        "word": "Aujourd'hui,",
+        "start": 1.265,
+        "end": 1.788
+      },
+      {
+        "word": "je",
+        "start": 1.811,
+        "end": 1.858
+      },
+      {
+        "word": "te",
+        "start": 1.892,
+        "end": 1.962
+      },
+      {
+        "word": "parle",
+        "start": 2.02,
+        "end": 2.218
+      },
+      {
+        "word": "de",
+        "start": 2.241,
+        "end": 2.31
+      },
+      {
+        "word": "mon",
+        "start": 2.357,
+        "end": 2.473
+      },
+      {
+        "word": "quartier,",
+        "start": 2.519,
+        "end": 2.937
+      },
+      {
+        "word": "dans",
+        "start": 2.961,
+        "end": 3.088
+      },
+      {
+        "word": "le",
+        "start": 3.111,
+        "end": 3.158
+      },
+      {
+        "word": "11e.",
+        "start": 3.193,
+        "end": 3.808
+      },
+      {
+        "word": "Le",
+        "start": 4.133,
+        "end": 4.249
+      },
+      {
+        "word": "matin,",
+        "start": 4.307,
+        "end": 4.644
+      },
+      {
+        "word": "je",
+        "start": 4.667,
+        "end": 4.725
+      },
+      {
+        "word": "descends",
+        "start": 4.76,
+        "end": 5.074
+      },
+      {
+        "word": "acheter",
+        "start": 5.097,
+        "end": 5.352
+      },
+      {
+        "word": "du",
+        "start": 5.387,
+        "end": 5.492
+      },
+      {
+        "word": "pain",
+        "start": 5.55,
+        "end": 5.712
+      },
+      {
+        "word": "à",
+        "start": 5.735,
+        "end": 5.759
+      },
+      {
+        "word": "la",
+        "start": 5.793,
+        "end": 5.851
+      },
+      {
+        "word": "boulangerie",
+        "start": 5.909,
+        "end": 6.327
+      },
+      {
+        "word": "du",
+        "start": 6.351,
+        "end": 6.444
+      },
+      {
+        "word": "coin.",
+        "start": 6.49,
+        "end": 6.827
+      },
+      {
+        "word": "Le",
+        "start": 7.152,
+        "end": 7.268
+      },
+      {
+        "word": "boulanger",
+        "start": 7.314,
+        "end": 7.686
+      },
+      {
+        "word": "me",
+        "start": 7.709,
+        "end": 7.767
+      },
+      {
+        "word": "connaît,",
+        "start": 7.802,
+        "end": 8.243
+      },
+      {
+        "word": "on",
+        "start": 8.266,
+        "end": 8.348
+      },
+      {
+        "word": "discute",
+        "start": 8.406,
+        "end": 8.754
+      },
+      {
+        "word": "deux",
+        "start": 8.777,
+        "end": 8.893
+      },
+      {
+        "word": "minutes,",
+        "start": 8.916,
+        "end": 9.334
+      },
+      {
+        "word": "c'est",
+        "start": 9.381,
+        "end": 9.567
+      },
+      {
+        "word": "sympa.",
+        "start": 9.59,
+        "end": 10.043
+      },
+      {
+        "word": "Après,",
+        "start": 10.368,
+        "end": 10.693
+      },
+      {
+        "word": "je",
+        "start": 10.774,
+        "end": 10.832
+      },
+      {
+        "word": "prends",
+        "start": 10.867,
+        "end": 11.041
+      },
+      {
+        "word": "un",
+        "start": 11.064,
+        "end": 11.111
+      },
+      {
+        "word": "café",
+        "start": 11.134,
+        "end": 11.401
+      },
+      {
+        "word": "en",
+        "start": 11.447,
+        "end": 11.494
+      },
+      {
+        "word": "terrasse",
+        "start": 11.552,
+        "end": 12.005
+      },
+      {
+        "word": "et",
+        "start": 12.028,
+        "end": 12.11
+      },
+      {
+        "word": "je",
+        "start": 12.156,
+        "end": 12.202
+      },
+      {
+        "word": "regarde",
+        "start": 12.226,
+        "end": 12.516
+      },
+      {
+        "word": "les",
+        "start": 12.539,
+        "end": 12.62
+      },
+      {
+        "word": "gens",
+        "start": 12.644,
+        "end": 12.795
+      },
+      {
+        "word": "passer.",
+        "start": 12.818,
+        "end": 13.224
+      },
+      {
+        "word": "L'après-midi,",
+        "start": 13.607,
+        "end": 14.211
+      },
+      {
+        "word": "s'il",
+        "start": 14.234,
+        "end": 14.373
+      },
+      {
+        "word": "fait",
+        "start": 14.443,
+        "end": 14.571
+      },
+      {
+        "word": "beau,",
+        "start": 14.606,
+        "end": 14.768
+      },
+      {
+        "word": "je",
+        "start": 14.791,
+        "end": 14.85
+      },
+      {
+        "word": "me",
+        "start": 14.896,
+        "end": 14.989
+      },
+      {
+        "word": "balade",
+        "start": 15.047,
+        "end": 15.36
+      },
+      {
+        "word": "le",
+        "start": 15.384,
+        "end": 15.442
+      },
+      {
+        "word": "long",
+        "start": 15.488,
+        "end": 15.627
+      },
+      {
+        "word": "du",
+        "start": 15.662,
+        "end": 15.743
+      },
+      {
+        "word": "canal.",
+        "start": 15.79,
+        "end": 16.278
+      },
+      {
+        "word": "Le",
+        "start": 16.661,
+        "end": 16.777
+      },
+      {
+        "word": "soir,",
+        "start": 16.823,
+        "end": 17.067
+      },
+      {
+        "word": "on",
+        "start": 17.09,
+        "end": 17.137
+      },
+      {
+        "word": "retrouve",
+        "start": 17.183,
+        "end": 17.566
+      },
+      {
+        "word": "souvent",
+        "start": 17.589,
+        "end": 17.88
+      },
+      {
+        "word": "des",
+        "start": 17.915,
+        "end": 18.031
+      },
+      {
+        "word": "amis",
+        "start": 18.1,
+        "end": 18.286
+      },
+      {
+        "word": "dans",
+        "start": 18.309,
+        "end": 18.449
+      },
+      {
+        "word": "un",
+        "start": 18.518,
+        "end": 18.565
+      },
+      {
+        "word": "petit",
+        "start": 18.588,
+        "end": 18.797
+      },
+      {
+        "word": "bar.",
+        "start": 18.82,
+        "end": 19.157
+      },
+      {
+        "word": "Ce",
+        "start": 19.54,
+        "end": 19.598
+      },
+      {
+        "word": "que",
+        "start": 19.633,
+        "end": 19.726
+      },
+      {
+        "word": "j'aime",
+        "start": 19.761,
+        "end": 19.981
+      },
+      {
+        "word": "ici,",
+        "start": 20.004,
+        "end": 20.329
+      },
+      {
+        "word": "c'est",
+        "start": 20.353,
+        "end": 20.492
+      },
+      {
+        "word": "qu'on",
+        "start": 20.515,
+        "end": 20.654
+      },
+      {
+        "word": "se",
+        "start": 20.689,
+        "end": 20.794
+      },
+      {
+        "word": "sent",
+        "start": 20.852,
+        "end": 21.061
+      },
+      {
+        "word": "comme",
+        "start": 21.096,
+        "end": 21.293
+      },
+      {
+        "word": "dans",
+        "start": 21.316,
+        "end": 21.479
+      },
+      {
+        "word": "un",
+        "start": 21.548,
+        "end": 21.595
+      },
+      {
+        "word": "village,",
+        "start": 21.653,
+        "end": 22.175
+      },
+      {
+        "word": "en",
+        "start": 22.199,
+        "end": 22.338
+      },
+      {
+        "word": "plein",
+        "start": 22.408,
+        "end": 22.57
+      },
+      {
+        "word": "cœur",
+        "start": 22.605,
+        "end": 22.744
+      },
+      {
+        "word": "de",
+        "start": 22.791,
+        "end": 22.86
+      },
+      {
+        "word": "Paris.",
+        "start": 22.907,
+        "end": 23.545
+      }
+    ],
     "clipStart": 0,
-    "clipEnd": 38,
+    "clipEnd": 24,
     "source": "Parisly",
     "date": null,
     "questions": [
-      { "question": "Dans quel arrondissement habite Léa ?", "options": ["Le 11e", "Le 1er", "Le 16e", "Le 5e"], "answer": "Le 11e", "explanation": "'mon quartier, dans le 11e.'" },
-      { "question": "Que fait-elle le matin ?", "options": ["Elle achète du pain", "Elle va au travail", "Elle fait du sport", "Elle dort"], "answer": "Elle achète du pain", "explanation": "'je descends acheter du pain à la boulangerie du coin.'" },
-      { "question": "Que fait-elle l'après-midi s'il fait beau ?", "options": ["Elle se balade le long du canal", "Elle reste chez elle", "Elle travaille", "Elle cuisine"], "answer": "Elle se balade le long du canal", "explanation": "'s'il fait beau, je me balade le long du canal.'" },
-      { "question": "Pourquoi aime-t-elle son quartier ?", "options": ["On se sent comme dans un village", "Il est très calme la nuit", "Il est près de la gare", "Il y a beaucoup de musées"], "answer": "On se sent comme dans un village", "explanation": "'on se sent comme dans un village, en plein cœur de Paris.'" }
+      {
+        "question": "Dans quel arrondissement habite Léa ?",
+        "options": [
+          "Le 11e",
+          "Le 1er",
+          "Le 16e",
+          "Le 5e"
+        ],
+        "answer": "Le 11e",
+        "explanation": "'mon quartier, dans le 11e.'"
+      },
+      {
+        "question": "Que fait-elle le matin ?",
+        "options": [
+          "Elle achète du pain",
+          "Elle va au travail",
+          "Elle fait du sport",
+          "Elle dort"
+        ],
+        "answer": "Elle achète du pain",
+        "explanation": "'je descends acheter du pain à la boulangerie du coin.'"
+      },
+      {
+        "question": "Que fait-elle l'après-midi s'il fait beau ?",
+        "options": [
+          "Elle se balade le long du canal",
+          "Elle reste chez elle",
+          "Elle travaille",
+          "Elle cuisine"
+        ],
+        "answer": "Elle se balade le long du canal",
+        "explanation": "'s'il fait beau, je me balade le long du canal.'"
+      },
+      {
+        "question": "Pourquoi aime-t-elle son quartier ?",
+        "options": [
+          "On se sent comme dans un village",
+          "Il est très calme la nuit",
+          "Il est près de la gare",
+          "Il y a beaucoup de musées"
+        ],
+        "answer": "On se sent comme dans un village",
+        "explanation": "'on se sent comme dans un village, en plein cœur de Paris.'"
+      }
     ],
     "vocab": [
-      { "word": "boulangerie", "definition": "bakery", "sentence": "J'achète du pain à la ___ du coin." },
-      { "word": "terrasse", "definition": "café terrace", "sentence": "Je prends un café en ___ ." },
-      { "word": "se balader", "definition": "to stroll", "sentence": "L'après-midi, j'aime me ___ le long du canal." },
-      { "word": "quartier", "definition": "neighborhood", "sentence": "Je te parle de mon ___ dans le 11e." }
+      {
+        "word": "boulangerie",
+        "definition": "bakery",
+        "sentence": "J'achète du pain à la ___ du coin."
+      },
+      {
+        "word": "terrasse",
+        "definition": "café terrace",
+        "sentence": "Je prends un café en ___ ."
+      },
+      {
+        "word": "se balader",
+        "definition": "to stroll",
+        "sentence": "L'après-midi, j'aime me ___ le long du canal."
+      },
+      {
+        "word": "quartier",
+        "definition": "neighborhood",
+        "sentence": "Je te parle de mon ___ dans le 11e."
+      }
     ],
     "grammar": [
       {
@@ -31,19 +575,62 @@
         "explanation": "To describe daily routines, French uses the present tense with time markers (le matin, l'après-midi, le soir, souvent). Pronominal verbs (se balader, se sentir) take a reflexive pronoun (je me balade).",
         "tip": "Time markers at the start of the sentence set the routine: 'Le matin, je...'.",
         "exercises": [
-          { "sentence": "Le matin, je ___ acheter du pain. (descendre)", "answer": "descends", "hint": "descendre, je" },
-          { "sentence": "L'après-midi, je me ___ le long du canal. (se balader)", "answer": "balade", "hint": "se balader, je" },
-          { "sentence": "Le soir, on ___ des amis dans un bar. (retrouver)", "answer": "retrouve", "hint": "retrouver, on" },
-          { "sentence": "Ce que j'aime, c'est qu'on se ___ comme dans un village. (se sentir)", "answer": "sent", "hint": "se sentir, on" }
+          {
+            "sentence": "Le matin, je ___ acheter du pain. (descendre)",
+            "answer": "descends",
+            "hint": "descendre, je"
+          },
+          {
+            "sentence": "L'après-midi, je me ___ le long du canal. (se balader)",
+            "answer": "balade",
+            "hint": "se balader, je"
+          },
+          {
+            "sentence": "Le soir, on ___ des amis dans un bar. (retrouver)",
+            "answer": "retrouve",
+            "hint": "retrouver, on"
+          },
+          {
+            "sentence": "Ce que j'aime, c'est qu'on se ___ comme dans un village. (se sentir)",
+            "answer": "sent",
+            "hint": "se sentir, on"
+          }
         ],
-        "production": { "instruction": "Décris ta routine du matin en deux phrases au présent.", "example": "Le matin, je me lève à sept heures et je prends un café." }
+        "production": {
+          "instruction": "Décris ta routine du matin en deux phrases au présent.",
+          "example": "Le matin, je me lève à sept heures et je prends un café."
+        }
       }
     ],
     "conjugation": [
-      { "verb": "prendre", "tense": "présent", "sentence": "Je ___ un café en terrasse.", "answer": "prends", "hint": "je" },
-      { "verb": "faire", "tense": "présent", "sentence": "S'il ___ beau, je sors.", "answer": "fait", "hint": "il" },
-      { "verb": "connaître", "tense": "présent", "sentence": "Le boulanger me ___ bien.", "answer": "connaît", "hint": "il" },
-      { "verb": "aimer", "tense": "présent", "sentence": "Ce que j'___ ici, c'est l'ambiance.", "answer": "aime", "hint": "je" }
+      {
+        "verb": "prendre",
+        "tense": "présent",
+        "sentence": "Je ___ un café en terrasse.",
+        "answer": "prends",
+        "hint": "je"
+      },
+      {
+        "verb": "faire",
+        "tense": "présent",
+        "sentence": "S'il ___ beau, je sors.",
+        "answer": "fait",
+        "hint": "il"
+      },
+      {
+        "verb": "connaître",
+        "tense": "présent",
+        "sentence": "Le boulanger me ___ bien.",
+        "answer": "connaît",
+        "hint": "il"
+      },
+      {
+        "verb": "aimer",
+        "tense": "présent",
+        "sentence": "Ce que j'___ ici, c'est l'ambiance.",
+        "answer": "aime",
+        "hint": "je"
+      }
     ]
   },
   {
@@ -53,23 +640,580 @@
     "title": "Jules raconte sa pire soirée resto",
     "vocabTheme": "Au restaurant",
     "transcript": "Alors, je vais te raconter un truc. La semaine dernière, j'ai voulu emmener une amie dans un resto soi-disant génial. J'avais réservé une semaine à l'avance, super content. On arrive, et là, catastrophe : ils avaient perdu la réservation. On a attendu quarante minutes debout. Quand on a enfin eu une table, le serveur a oublié notre commande. Bref, on a fini par rigoler, parce que c'était tellement absurde. Au final, on est allés manger un kebab à minuit, et franchement, c'était la meilleure partie de la soirée. Comme quoi, les plans qui tournent mal font parfois les meilleurs souvenirs.",
-    "audioUrl": null,
-    "wordTimings": null,
+    "audioUrl": "/listening-audio/listen-b1-jules-resto.mp3",
+    "wordTimings": [
+      {
+        "word": "Alors,",
+        "start": 0,
+        "end": 0.43
+      },
+      {
+        "word": "je",
+        "start": 0.58,
+        "end": 0.65
+      },
+      {
+        "word": "vais",
+        "start": 0.673,
+        "end": 0.778
+      },
+      {
+        "word": "te",
+        "start": 0.801,
+        "end": 0.882
+      },
+      {
+        "word": "raconter",
+        "start": 0.929,
+        "end": 1.335
+      },
+      {
+        "word": "un",
+        "start": 1.358,
+        "end": 1.416
+      },
+      {
+        "word": "truc.",
+        "start": 1.451,
+        "end": 1.846
+      },
+      {
+        "word": "La",
+        "start": 2.229,
+        "end": 2.345
+      },
+      {
+        "word": "semaine",
+        "start": 2.392,
+        "end": 2.659
+      },
+      {
+        "word": "dernière,",
+        "start": 2.694,
+        "end": 3.146
+      },
+      {
+        "word": "j'ai",
+        "start": 3.262,
+        "end": 3.413
+      },
+      {
+        "word": "voulu",
+        "start": 3.46,
+        "end": 3.727
+      },
+      {
+        "word": "emmener",
+        "start": 3.796,
+        "end": 4.18
+      },
+      {
+        "word": "une",
+        "start": 4.226,
+        "end": 4.354
+      },
+      {
+        "word": "amie",
+        "start": 4.377,
+        "end": 4.586
+      },
+      {
+        "word": "dans",
+        "start": 4.609,
+        "end": 4.783
+      },
+      {
+        "word": "un",
+        "start": 4.853,
+        "end": 4.899
+      },
+      {
+        "word": "resto",
+        "start": 4.957,
+        "end": 5.306
+      },
+      {
+        "word": "soi-disant",
+        "start": 5.399,
+        "end": 6.002
+      },
+      {
+        "word": "génial.",
+        "start": 6.049,
+        "end": 6.594
+      },
+      {
+        "word": "J'avais",
+        "start": 7.036,
+        "end": 7.326
+      },
+      {
+        "word": "réservé",
+        "start": 7.361,
+        "end": 7.767
+      },
+      {
+        "word": "une",
+        "start": 7.802,
+        "end": 7.895
+      },
+      {
+        "word": "semaine",
+        "start": 7.93,
+        "end": 8.266
+      },
+      {
+        "word": "à",
+        "start": 8.29,
+        "end": 8.313
+      },
+      {
+        "word": "l'avance,",
+        "start": 8.348,
+        "end": 8.858
+      },
+      {
+        "word": "super",
+        "start": 9.009,
+        "end": 9.416
+      },
+      {
+        "word": "content.",
+        "start": 9.474,
+        "end": 9.927
+      },
+      {
+        "word": "On",
+        "start": 10.368,
+        "end": 10.542
+      },
+      {
+        "word": "arrive,",
+        "start": 10.612,
+        "end": 11.041
+      },
+      {
+        "word": "et",
+        "start": 11.122,
+        "end": 11.25
+      },
+      {
+        "word": "là,",
+        "start": 11.297,
+        "end": 11.564
+      },
+      {
+        "word": "catastrophe",
+        "start": 11.656,
+        "end": 12.423
+      },
+      {
+        "word": ":",
+        "start": 12.446,
+        "end": 12.469
+      },
+      {
+        "word": "ils",
+        "start": 12.643,
+        "end": 12.806
+      },
+      {
+        "word": "avaient",
+        "start": 12.852,
+        "end": 13.27
+      },
+      {
+        "word": "perdu",
+        "start": 13.386,
+        "end": 13.735
+      },
+      {
+        "word": "la",
+        "start": 13.781,
+        "end": 13.851
+      },
+      {
+        "word": "réservation.",
+        "start": 13.909,
+        "end": 14.617
+      },
+      {
+        "word": "On",
+        "start": 14.942,
+        "end": 15.116
+      },
+      {
+        "word": "a",
+        "start": 15.198,
+        "end": 15.221
+      },
+      {
+        "word": "attendu",
+        "start": 15.29,
+        "end": 15.685
+      },
+      {
+        "word": "quarante",
+        "start": 15.801,
+        "end": 16.266
+      },
+      {
+        "word": "minutes",
+        "start": 16.301,
+        "end": 16.637
+      },
+      {
+        "word": "debout.",
+        "start": 16.66,
+        "end": 17.113
+      },
+      {
+        "word": "Quand",
+        "start": 17.554,
+        "end": 17.729
+      },
+      {
+        "word": "on",
+        "start": 17.81,
+        "end": 17.891
+      },
+      {
+        "word": "a",
+        "start": 17.984,
+        "end": 18.03
+      },
+      {
+        "word": "enfin",
+        "start": 18.112,
+        "end": 18.564
+      },
+      {
+        "word": "eu",
+        "start": 18.599,
+        "end": 18.657
+      },
+      {
+        "word": "une",
+        "start": 18.739,
+        "end": 18.855
+      },
+      {
+        "word": "table,",
+        "start": 18.878,
+        "end": 19.342
+      },
+      {
+        "word": "le",
+        "start": 19.551,
+        "end": 19.644
+      },
+      {
+        "word": "serveur",
+        "start": 19.702,
+        "end": 20.085
+      },
+      {
+        "word": "a",
+        "start": 20.132,
+        "end": 20.155
+      },
+      {
+        "word": "oublié",
+        "start": 20.213,
+        "end": 20.561
+      },
+      {
+        "word": "notre",
+        "start": 20.608,
+        "end": 20.852
+      },
+      {
+        "word": "commande.",
+        "start": 20.91,
+        "end": 21.374
+      },
+      {
+        "word": "Bref,",
+        "start": 21.757,
+        "end": 22.198
+      },
+      {
+        "word": "on",
+        "start": 22.28,
+        "end": 22.431
+      },
+      {
+        "word": "a",
+        "start": 22.512,
+        "end": 22.535
+      },
+      {
+        "word": "fini",
+        "start": 22.605,
+        "end": 22.86
+      },
+      {
+        "word": "par",
+        "start": 22.907,
+        "end": 23.058
+      },
+      {
+        "word": "rigoler,",
+        "start": 23.092,
+        "end": 23.603
+      },
+      {
+        "word": "parce",
+        "start": 23.754,
+        "end": 23.917
+      },
+      {
+        "word": "que",
+        "start": 23.94,
+        "end": 24.021
+      },
+      {
+        "word": "c'était",
+        "start": 24.068,
+        "end": 24.346
+      },
+      {
+        "word": "tellement",
+        "start": 24.404,
+        "end": 24.787
+      },
+      {
+        "word": "absurde.",
+        "start": 24.822,
+        "end": 25.438
+      },
+      {
+        "word": "Au",
+        "start": 25.681,
+        "end": 25.867
+      },
+      {
+        "word": "final,",
+        "start": 25.914,
+        "end": 26.273
+      },
+      {
+        "word": "on",
+        "start": 26.297,
+        "end": 26.366
+      },
+      {
+        "word": "est",
+        "start": 26.424,
+        "end": 26.494
+      },
+      {
+        "word": "allés",
+        "start": 26.575,
+        "end": 26.726
+      },
+      {
+        "word": "manger",
+        "start": 26.761,
+        "end": 27.051
+      },
+      {
+        "word": "un",
+        "start": 27.075,
+        "end": 27.133
+      },
+      {
+        "word": "kebab",
+        "start": 27.202,
+        "end": 27.574
+      },
+      {
+        "word": "à",
+        "start": 27.632,
+        "end": 27.655
+      },
+      {
+        "word": "minuit,",
+        "start": 27.702,
+        "end": 28.154
+      },
+      {
+        "word": "et",
+        "start": 28.363,
+        "end": 28.491
+      },
+      {
+        "word": "franchement,",
+        "start": 28.538,
+        "end": 29.118
+      },
+      {
+        "word": "c'était",
+        "start": 29.234,
+        "end": 29.524
+      },
+      {
+        "word": "la",
+        "start": 29.548,
+        "end": 29.606
+      },
+      {
+        "word": "meilleure",
+        "start": 29.722,
+        "end": 30.105
+      },
+      {
+        "word": "partie",
+        "start": 30.128,
+        "end": 30.395
+      },
+      {
+        "word": "de",
+        "start": 30.43,
+        "end": 30.488
+      },
+      {
+        "word": "la",
+        "start": 30.534,
+        "end": 30.593
+      },
+      {
+        "word": "soirée.",
+        "start": 30.651,
+        "end": 31.022
+      },
+      {
+        "word": "Comme",
+        "start": 31.463,
+        "end": 31.695
+      },
+      {
+        "word": "quoi,",
+        "start": 31.742,
+        "end": 32.067
+      },
+      {
+        "word": "les",
+        "start": 32.276,
+        "end": 32.404
+      },
+      {
+        "word": "plans",
+        "start": 32.439,
+        "end": 32.636
+      },
+      {
+        "word": "qui",
+        "start": 32.671,
+        "end": 32.764
+      },
+      {
+        "word": "tournent",
+        "start": 32.822,
+        "end": 33.124
+      },
+      {
+        "word": "mal",
+        "start": 33.147,
+        "end": 33.298
+      },
+      {
+        "word": "font",
+        "start": 33.367,
+        "end": 33.518
+      },
+      {
+        "word": "parfois",
+        "start": 33.541,
+        "end": 33.878
+      },
+      {
+        "word": "les",
+        "start": 33.901,
+        "end": 33.994
+      },
+      {
+        "word": "meilleurs",
+        "start": 34.029,
+        "end": 34.343
+      },
+      {
+        "word": "souvenirs.",
+        "start": 34.366,
+        "end": 35.155
+      }
+    ],
     "clipStart": 0,
-    "clipEnd": 42,
+    "clipEnd": 36,
     "source": "Parisly",
     "date": null,
     "questions": [
-      { "question": "Pourquoi Jules était-il content au début ?", "options": ["Il avait réservé dans un super resto", "Il avait gagné un prix", "C'était son anniversaire", "Il avait un nouveau travail"], "answer": "Il avait réservé dans un super resto", "explanation": "'j'ai voulu emmener une amie dans un resto soi-disant génial. J'avais réservé... super content.'" },
-      { "question": "Quel a été le premier problème ?", "options": ["Ils avaient perdu la réservation", "Le resto était fermé", "Il pleuvait", "Il avait oublié son portefeuille"], "answer": "Ils avaient perdu la réservation", "explanation": "'ils avaient perdu la réservation.'" },
-      { "question": "Qu'a oublié le serveur ?", "options": ["Leur commande", "L'addition", "Le menu", "Les couverts"], "answer": "Leur commande", "explanation": "'le serveur a oublié notre commande.'" },
-      { "question": "Comment se termine la soirée ?", "options": ["Ils mangent un kebab à minuit", "Ils rentrent fâchés", "Ils retournent au resto", "Ils appellent un ami"], "answer": "Ils mangent un kebab à minuit", "explanation": "'on est allés manger un kebab à minuit... la meilleure partie de la soirée.'" }
+      {
+        "question": "Pourquoi Jules était-il content au début ?",
+        "options": [
+          "Il avait réservé dans un super resto",
+          "Il avait gagné un prix",
+          "C'était son anniversaire",
+          "Il avait un nouveau travail"
+        ],
+        "answer": "Il avait réservé dans un super resto",
+        "explanation": "'j'ai voulu emmener une amie dans un resto soi-disant génial. J'avais réservé... super content.'"
+      },
+      {
+        "question": "Quel a été le premier problème ?",
+        "options": [
+          "Ils avaient perdu la réservation",
+          "Le resto était fermé",
+          "Il pleuvait",
+          "Il avait oublié son portefeuille"
+        ],
+        "answer": "Ils avaient perdu la réservation",
+        "explanation": "'ils avaient perdu la réservation.'"
+      },
+      {
+        "question": "Qu'a oublié le serveur ?",
+        "options": [
+          "Leur commande",
+          "L'addition",
+          "Le menu",
+          "Les couverts"
+        ],
+        "answer": "Leur commande",
+        "explanation": "'le serveur a oublié notre commande.'"
+      },
+      {
+        "question": "Comment se termine la soirée ?",
+        "options": [
+          "Ils mangent un kebab à minuit",
+          "Ils rentrent fâchés",
+          "Ils retournent au resto",
+          "Ils appellent un ami"
+        ],
+        "answer": "Ils mangent un kebab à minuit",
+        "explanation": "'on est allés manger un kebab à minuit... la meilleure partie de la soirée.'"
+      }
     ],
     "vocab": [
-      { "word": "réservation", "definition": "reservation", "sentence": "Ils avaient perdu ma ___ ." },
-      { "word": "commande", "definition": "order (food)", "sentence": "Le serveur a oublié notre ___ ." },
-      { "word": "soi-disant", "definition": "supposedly / so-called", "sentence": "Un resto ___ génial." },
-      { "word": "souvenirs", "definition": "memories", "sentence": "Les plans qui tournent mal font les meilleurs ___ ." }
+      {
+        "word": "réservation",
+        "definition": "reservation",
+        "sentence": "Ils avaient perdu ma ___ ."
+      },
+      {
+        "word": "commande",
+        "definition": "order (food)",
+        "sentence": "Le serveur a oublié notre ___ ."
+      },
+      {
+        "word": "soi-disant",
+        "definition": "supposedly / so-called",
+        "sentence": "Un resto ___ génial."
+      },
+      {
+        "word": "souvenirs",
+        "definition": "memories",
+        "sentence": "Les plans qui tournent mal font les meilleurs ___ ."
+      }
     ],
     "grammar": [
       {
@@ -78,19 +1222,62 @@
         "explanation": "In storytelling, the plus-que-parfait (avais réservé) describes what happened BEFORE another past action expressed in the passé composé (on est arrivés). It situates earlier background events.",
         "tip": "Plus-que-parfait = auxiliary in the imperfect (avais/étais) + past participle.",
         "exercises": [
-          { "sentence": "J'___ ___ une semaine à l'avance. (réserver — plus-que-parfait)", "answer": "avais réservé", "hint": "je, plus-que-parfait" },
-          { "sentence": "Quand on est arrivés, ils ___ ___ la réservation. (perdre — plus-que-parfait)", "answer": "avaient perdu", "hint": "ils, plus-que-parfait" },
-          { "sentence": "Le serveur ___ ___ notre commande. (oublier — passé composé)", "answer": "a oublié", "hint": "il, passé composé" },
-          { "sentence": "On ___ ___ manger un kebab. (aller — passé composé, être)", "answer": "est allés", "hint": "on/nous, être" }
+          {
+            "sentence": "J'___ ___ une semaine à l'avance. (réserver — plus-que-parfait)",
+            "answer": "avais réservé",
+            "hint": "je, plus-que-parfait"
+          },
+          {
+            "sentence": "Quand on est arrivés, ils ___ ___ la réservation. (perdre — plus-que-parfait)",
+            "answer": "avaient perdu",
+            "hint": "ils, plus-que-parfait"
+          },
+          {
+            "sentence": "Le serveur ___ ___ notre commande. (oublier — passé composé)",
+            "answer": "a oublié",
+            "hint": "il, passé composé"
+          },
+          {
+            "sentence": "On ___ ___ manger un kebab. (aller — passé composé, être)",
+            "answer": "est allés",
+            "hint": "on/nous, être"
+          }
         ],
-        "production": { "instruction": "Raconte un plan qui a mal tourné, en utilisant le passé composé.", "example": "J'ai raté mon train, donc je suis arrivé en retard à la fête." }
+        "production": {
+          "instruction": "Raconte un plan qui a mal tourné, en utilisant le passé composé.",
+          "example": "J'ai raté mon train, donc je suis arrivé en retard à la fête."
+        }
       }
     ],
     "conjugation": [
-      { "verb": "vouloir", "tense": "passé composé", "sentence": "J'___ ___ l'emmener au resto. (avoir + participe)", "answer": "ai voulu", "hint": "je, avoir" },
-      { "verb": "attendre", "tense": "passé composé", "sentence": "On ___ ___ quarante minutes. (avoir + participe)", "answer": "a attendu", "hint": "on, avoir" },
-      { "verb": "finir", "tense": "passé composé", "sentence": "On ___ ___ par rigoler. (avoir + participe)", "answer": "a fini", "hint": "on, avoir" },
-      { "verb": "être", "tense": "imparfait", "sentence": "C'___ tellement absurde !", "answer": "était", "hint": "il/ce" }
+      {
+        "verb": "vouloir",
+        "tense": "passé composé",
+        "sentence": "J'___ ___ l'emmener au resto. (avoir + participe)",
+        "answer": "ai voulu",
+        "hint": "je, avoir"
+      },
+      {
+        "verb": "attendre",
+        "tense": "passé composé",
+        "sentence": "On ___ ___ quarante minutes. (avoir + participe)",
+        "answer": "a attendu",
+        "hint": "on, avoir"
+      },
+      {
+        "verb": "finir",
+        "tense": "passé composé",
+        "sentence": "On ___ ___ par rigoler. (avoir + participe)",
+        "answer": "a fini",
+        "hint": "on, avoir"
+      },
+      {
+        "verb": "être",
+        "tense": "imparfait",
+        "sentence": "C'___ tellement absurde !",
+        "answer": "était",
+        "hint": "il/ce"
+      }
     ]
   },
   {
@@ -100,23 +1287,655 @@
     "title": "Léa : faut-il ralentir en ville ?",
     "vocabTheme": "Le rythme de vie urbain",
     "transcript": "Tu sais ce qui me frappe, en ce moment ? C'est cette obsession de tout faire vite. À Paris, on marche vite, on mange vite, on répond aux messages en deux secondes. Et pourtant, j'ai l'impression qu'on n'a jamais le temps de rien. Le week-end dernier, j'ai décidé de tester un truc : pas de téléphone pendant une journée entière. Au début, c'était presque angoissant, j'avais ce réflexe de vérifier mon écran toutes les cinq minutes. Mais petit à petit, quelque chose s'est apaisé. J'ai vraiment regardé les gens, j'ai pris le temps de lire. Bref, je ne dis pas qu'il faut tout abandonner, mais je crois qu'on gagnerait à ralentir, ne serait-ce qu'un peu.",
-    "audioUrl": null,
-    "wordTimings": null,
+    "audioUrl": "/listening-audio/listen-b2-lea-rythme-ville.mp3",
+    "wordTimings": [
+      {
+        "word": "Tu",
+        "start": 0,
+        "end": 0.186
+      },
+      {
+        "word": "sais",
+        "start": 0.244,
+        "end": 0.372
+      },
+      {
+        "word": "ce",
+        "start": 0.395,
+        "end": 0.441
+      },
+      {
+        "word": "qui",
+        "start": 0.476,
+        "end": 0.58
+      },
+      {
+        "word": "me",
+        "start": 0.627,
+        "end": 0.697
+      },
+      {
+        "word": "frappe,",
+        "start": 0.731,
+        "end": 1.184
+      },
+      {
+        "word": "en",
+        "start": 1.207,
+        "end": 1.289
+      },
+      {
+        "word": "ce",
+        "start": 1.312,
+        "end": 1.37
+      },
+      {
+        "word": "moment",
+        "start": 1.405,
+        "end": 1.741
+      },
+      {
+        "word": "?",
+        "start": 1.823,
+        "end": 1.939
+      },
+      {
+        "word": "C'est",
+        "start": 2.264,
+        "end": 2.473
+      },
+      {
+        "word": "cette",
+        "start": 2.496,
+        "end": 2.728
+      },
+      {
+        "word": "obsession",
+        "start": 2.752,
+        "end": 3.228
+      },
+      {
+        "word": "de",
+        "start": 3.286,
+        "end": 3.367
+      },
+      {
+        "word": "tout",
+        "start": 3.425,
+        "end": 3.599
+      },
+      {
+        "word": "faire",
+        "start": 3.634,
+        "end": 3.878
+      },
+      {
+        "word": "vite.",
+        "start": 3.924,
+        "end": 4.342
+      },
+      {
+        "word": "À",
+        "start": 4.725,
+        "end": 4.807
+      },
+      {
+        "word": "Paris,",
+        "start": 4.923,
+        "end": 5.364
+      },
+      {
+        "word": "on",
+        "start": 5.41,
+        "end": 5.526
+      },
+      {
+        "word": "marche",
+        "start": 5.584,
+        "end": 5.851
+      },
+      {
+        "word": "vite,",
+        "start": 5.886,
+        "end": 6.2
+      },
+      {
+        "word": "on",
+        "start": 6.246,
+        "end": 6.351
+      },
+      {
+        "word": "mange",
+        "start": 6.409,
+        "end": 6.629
+      },
+      {
+        "word": "vite,",
+        "start": 6.664,
+        "end": 6.931
+      },
+      {
+        "word": "on",
+        "start": 6.966,
+        "end": 7.07
+      },
+      {
+        "word": "répond",
+        "start": 7.14,
+        "end": 7.5
+      },
+      {
+        "word": "aux",
+        "start": 7.523,
+        "end": 7.593
+      },
+      {
+        "word": "messages",
+        "start": 7.639,
+        "end": 8.069
+      },
+      {
+        "word": "en",
+        "start": 8.092,
+        "end": 8.162
+      },
+      {
+        "word": "deux",
+        "start": 8.231,
+        "end": 8.348
+      },
+      {
+        "word": "secondes.",
+        "start": 8.371,
+        "end": 8.777
+      },
+      {
+        "word": "Et",
+        "start": 9.102,
+        "end": 9.242
+      },
+      {
+        "word": "pourtant,",
+        "start": 9.288,
+        "end": 9.659
+      },
+      {
+        "word": "j'ai",
+        "start": 9.683,
+        "end": 9.787
+      },
+      {
+        "word": "l'impression",
+        "start": 9.81,
+        "end": 10.263
+      },
+      {
+        "word": "qu'on",
+        "start": 10.31,
+        "end": 10.426
+      },
+      {
+        "word": "n'a",
+        "start": 10.461,
+        "end": 10.542
+      },
+      {
+        "word": "jamais",
+        "start": 10.6,
+        "end": 10.855
+      },
+      {
+        "word": "le",
+        "start": 10.89,
+        "end": 10.971
+      },
+      {
+        "word": "temps",
+        "start": 11.029,
+        "end": 11.204
+      },
+      {
+        "word": "de",
+        "start": 11.227,
+        "end": 11.308
+      },
+      {
+        "word": "rien.",
+        "start": 11.355,
+        "end": 11.796
+      },
+      {
+        "word": "Le",
+        "start": 12.237,
+        "end": 12.4
+      },
+      {
+        "word": "week-end",
+        "start": 12.446,
+        "end": 12.841
+      },
+      {
+        "word": "dernier,",
+        "start": 12.957,
+        "end": 13.34
+      },
+      {
+        "word": "j'ai",
+        "start": 13.363,
+        "end": 13.468
+      },
+      {
+        "word": "décidé",
+        "start": 13.503,
+        "end": 13.909
+      },
+      {
+        "word": "de",
+        "start": 13.956,
+        "end": 14.037
+      },
+      {
+        "word": "tester",
+        "start": 14.083,
+        "end": 14.443
+      },
+      {
+        "word": "un",
+        "start": 14.49,
+        "end": 14.548
+      },
+      {
+        "word": "truc",
+        "start": 14.594,
+        "end": 14.826
+      },
+      {
+        "word": ":",
+        "start": 15,
+        "end": 15.024
+      },
+      {
+        "word": "pas",
+        "start": 15.267,
+        "end": 15.442
+      },
+      {
+        "word": "de",
+        "start": 15.476,
+        "end": 15.558
+      },
+      {
+        "word": "téléphone",
+        "start": 15.604,
+        "end": 16.115
+      },
+      {
+        "word": "pendant",
+        "start": 16.15,
+        "end": 16.405
+      },
+      {
+        "word": "une",
+        "start": 16.428,
+        "end": 16.51
+      },
+      {
+        "word": "journée",
+        "start": 16.533,
+        "end": 16.8
+      },
+      {
+        "word": "entière.",
+        "start": 16.823,
+        "end": 17.415
+      },
+      {
+        "word": "Au",
+        "start": 17.798,
+        "end": 17.973
+      },
+      {
+        "word": "début,",
+        "start": 18.019,
+        "end": 18.321
+      },
+      {
+        "word": "c'était",
+        "start": 18.344,
+        "end": 18.6
+      },
+      {
+        "word": "presque",
+        "start": 18.623,
+        "end": 18.925
+      },
+      {
+        "word": "angoissant,",
+        "start": 18.948,
+        "end": 19.644
+      },
+      {
+        "word": "j'avais",
+        "start": 19.888,
+        "end": 20.167
+      },
+      {
+        "word": "ce",
+        "start": 20.19,
+        "end": 20.283
+      },
+      {
+        "word": "réflexe",
+        "start": 20.341,
+        "end": 20.724
+      },
+      {
+        "word": "de",
+        "start": 20.747,
+        "end": 20.817
+      },
+      {
+        "word": "vérifier",
+        "start": 20.863,
+        "end": 21.27
+      },
+      {
+        "word": "mon",
+        "start": 21.305,
+        "end": 21.432
+      },
+      {
+        "word": "écran",
+        "start": 21.502,
+        "end": 21.757
+      },
+      {
+        "word": "toutes",
+        "start": 21.815,
+        "end": 22.013
+      },
+      {
+        "word": "les",
+        "start": 22.036,
+        "end": 22.129
+      },
+      {
+        "word": "cinq",
+        "start": 22.164,
+        "end": 22.35
+      },
+      {
+        "word": "minutes.",
+        "start": 22.419,
+        "end": 22.826
+      },
+      {
+        "word": "Mais",
+        "start": 23.267,
+        "end": 23.441
+      },
+      {
+        "word": "petit",
+        "start": 23.476,
+        "end": 23.778
+      },
+      {
+        "word": "à",
+        "start": 23.859,
+        "end": 23.882
+      },
+      {
+        "word": "petit,",
+        "start": 23.928,
+        "end": 24.404
+      },
+      {
+        "word": "quelque",
+        "start": 24.555,
+        "end": 24.892
+      },
+      {
+        "word": "chose",
+        "start": 24.915,
+        "end": 25.147
+      },
+      {
+        "word": "s'est",
+        "start": 25.17,
+        "end": 25.321
+      },
+      {
+        "word": "apaisé.",
+        "start": 25.345,
+        "end": 25.914
+      },
+      {
+        "word": "J'ai",
+        "start": 26.355,
+        "end": 26.506
+      },
+      {
+        "word": "vraiment",
+        "start": 26.529,
+        "end": 26.866
+      },
+      {
+        "word": "regardé",
+        "start": 26.9,
+        "end": 27.295
+      },
+      {
+        "word": "les",
+        "start": 27.342,
+        "end": 27.458
+      },
+      {
+        "word": "gens,",
+        "start": 27.492,
+        "end": 27.887
+      },
+      {
+        "word": "j'ai",
+        "start": 28.003,
+        "end": 28.143
+      },
+      {
+        "word": "pris",
+        "start": 28.177,
+        "end": 28.328
+      },
+      {
+        "word": "le",
+        "start": 28.352,
+        "end": 28.41
+      },
+      {
+        "word": "temps",
+        "start": 28.444,
+        "end": 28.619
+      },
+      {
+        "word": "de",
+        "start": 28.642,
+        "end": 28.723
+      },
+      {
+        "word": "lire.",
+        "start": 28.781,
+        "end": 29.164
+      },
+      {
+        "word": "Bref,",
+        "start": 29.489,
+        "end": 29.791
+      },
+      {
+        "word": "je",
+        "start": 29.814,
+        "end": 29.896
+      },
+      {
+        "word": "ne",
+        "start": 29.931,
+        "end": 29.977
+      },
+      {
+        "word": "dis",
+        "start": 30,
+        "end": 30.116
+      },
+      {
+        "word": "pas",
+        "start": 30.14,
+        "end": 30.256
+      },
+      {
+        "word": "qu'il",
+        "start": 30.29,
+        "end": 30.418
+      },
+      {
+        "word": "faut",
+        "start": 30.476,
+        "end": 30.616
+      },
+      {
+        "word": "tout",
+        "start": 30.639,
+        "end": 30.813
+      },
+      {
+        "word": "abandonner,",
+        "start": 30.883,
+        "end": 31.451
+      },
+      {
+        "word": "mais",
+        "start": 31.486,
+        "end": 31.614
+      },
+      {
+        "word": "je",
+        "start": 31.649,
+        "end": 31.73
+      },
+      {
+        "word": "crois",
+        "start": 31.777,
+        "end": 31.962
+      },
+      {
+        "word": "qu'on",
+        "start": 31.997,
+        "end": 32.136
+      },
+      {
+        "word": "gagnerait",
+        "start": 32.195,
+        "end": 32.647
+      },
+      {
+        "word": "à",
+        "start": 32.682,
+        "end": 32.717
+      },
+      {
+        "word": "ralentir,",
+        "start": 32.787,
+        "end": 33.495
+      },
+      {
+        "word": "ne",
+        "start": 33.611,
+        "end": 33.704
+      },
+      {
+        "word": "serait-ce",
+        "start": 33.75,
+        "end": 34.006
+      },
+      {
+        "word": "qu'un",
+        "start": 34.04,
+        "end": 34.18
+      },
+      {
+        "word": "peu.",
+        "start": 34.238,
+        "end": 34.784
+      }
+    ],
     "clipStart": 0,
-    "clipEnd": 46,
+    "clipEnd": 35,
     "source": "Parisly",
     "date": null,
     "questions": [
-      { "question": "Qu'est-ce qui frappe Léa en ce moment ?", "options": ["L'obsession de tout faire vite", "Le prix des loyers", "Le bruit des voitures", "Le manque de cafés"], "answer": "L'obsession de tout faire vite", "explanation": "'C'est cette obsession de tout faire vite.'" },
-      { "question": "Quelle expérience a-t-elle tentée ?", "options": ["Une journée sans téléphone", "Un jour sans manger", "Une semaine sans parler", "Un mois sans sortir"], "answer": "Une journée sans téléphone", "explanation": "'pas de téléphone pendant une journée entière.'" },
-      { "question": "Comment se sentait-elle au début ?", "options": ["C'était presque angoissant", "Elle était soulagée", "Elle s'ennuyait", "Elle était en colère"], "answer": "C'était presque angoissant", "explanation": "'Au début, c'était presque angoissant.'" },
-      { "question": "Quelle est sa conclusion ?", "options": ["On gagnerait à ralentir un peu", "Il faut tout abandonner", "Le téléphone est indispensable", "Paris est invivable"], "answer": "On gagnerait à ralentir un peu", "explanation": "'je crois qu'on gagnerait à ralentir, ne serait-ce qu'un peu.'" }
+      {
+        "question": "Qu'est-ce qui frappe Léa en ce moment ?",
+        "options": [
+          "L'obsession de tout faire vite",
+          "Le prix des loyers",
+          "Le bruit des voitures",
+          "Le manque de cafés"
+        ],
+        "answer": "L'obsession de tout faire vite",
+        "explanation": "'C'est cette obsession de tout faire vite.'"
+      },
+      {
+        "question": "Quelle expérience a-t-elle tentée ?",
+        "options": [
+          "Une journée sans téléphone",
+          "Un jour sans manger",
+          "Une semaine sans parler",
+          "Un mois sans sortir"
+        ],
+        "answer": "Une journée sans téléphone",
+        "explanation": "'pas de téléphone pendant une journée entière.'"
+      },
+      {
+        "question": "Comment se sentait-elle au début ?",
+        "options": [
+          "C'était presque angoissant",
+          "Elle était soulagée",
+          "Elle s'ennuyait",
+          "Elle était en colère"
+        ],
+        "answer": "C'était presque angoissant",
+        "explanation": "'Au début, c'était presque angoissant.'"
+      },
+      {
+        "question": "Quelle est sa conclusion ?",
+        "options": [
+          "On gagnerait à ralentir un peu",
+          "Il faut tout abandonner",
+          "Le téléphone est indispensable",
+          "Paris est invivable"
+        ],
+        "answer": "On gagnerait à ralentir un peu",
+        "explanation": "'je crois qu'on gagnerait à ralentir, ne serait-ce qu'un peu.'"
+      }
     ],
     "vocab": [
-      { "word": "obsession", "definition": "obsession", "sentence": "C'est cette ___ de tout faire vite." },
-      { "word": "angoissant", "definition": "distressing / anxiety-inducing", "sentence": "Au début, c'était presque ___ ." },
-      { "word": "s'est apaisé", "definition": "calmed down", "sentence": "Petit à petit, quelque chose ___ ." },
-      { "word": "ralentir", "definition": "to slow down", "sentence": "On gagnerait à ___ un peu." }
+      {
+        "word": "obsession",
+        "definition": "obsession",
+        "sentence": "C'est cette ___ de tout faire vite."
+      },
+      {
+        "word": "angoissant",
+        "definition": "distressing / anxiety-inducing",
+        "sentence": "Au début, c'était presque ___ ."
+      },
+      {
+        "word": "s'est apaisé",
+        "definition": "calmed down",
+        "sentence": "Petit à petit, quelque chose ___ ."
+      },
+      {
+        "word": "ralentir",
+        "definition": "to slow down",
+        "sentence": "On gagnerait à ___ un peu."
+      }
     ],
     "grammar": [
       {
@@ -125,19 +1944,62 @@
         "explanation": "The conditionnel présent (gagnerait, devrait, aimerait) softens an assertion and expresses advice or a hypothetical benefit. It's key to sounding nuanced rather than categorical.",
         "tip": "Formed on the future stem + imperfect endings (-ais, -ais, -ait, -ions, -iez, -aient).",
         "exercises": [
-          { "sentence": "On ___ à ralentir un peu. (gagner — conditionnel)", "answer": "gagnerait", "hint": "on, conditionnel" },
-          { "sentence": "Tu ___ essayer une journée sans écran. (devoir — conditionnel)", "answer": "devrais", "hint": "tu, conseil" },
-          { "sentence": "J'___ aimer prendre plus de temps pour moi. (aimer — conditionnel : j'aimerais)", "answer": "aimerais", "hint": "je, souhait" },
-          { "sentence": "Ce ___ bien de déconnecter de temps en temps. (être — conditionnel)", "answer": "serait", "hint": "ce/il, conditionnel" }
+          {
+            "sentence": "On ___ à ralentir un peu. (gagner — conditionnel)",
+            "answer": "gagnerait",
+            "hint": "on, conditionnel"
+          },
+          {
+            "sentence": "Tu ___ essayer une journée sans écran. (devoir — conditionnel)",
+            "answer": "devrais",
+            "hint": "tu, conseil"
+          },
+          {
+            "sentence": "J'___ aimer prendre plus de temps pour moi. (aimer — conditionnel : j'aimerais)",
+            "answer": "aimerais",
+            "hint": "je, souhait"
+          },
+          {
+            "sentence": "Ce ___ bien de déconnecter de temps en temps. (être — conditionnel)",
+            "answer": "serait",
+            "hint": "ce/il, conditionnel"
+          }
         ],
-        "production": { "instruction": "Donne un conseil avec le conditionnel (« tu devrais... » ou « on gagnerait à... »).", "example": "Tu devrais éteindre ton téléphone le soir, ça aide à mieux dormir." }
+        "production": {
+          "instruction": "Donne un conseil avec le conditionnel (« tu devrais... » ou « on gagnerait à... »).",
+          "example": "Tu devrais éteindre ton téléphone le soir, ça aide à mieux dormir."
+        }
       }
     ],
     "conjugation": [
-      { "verb": "décider", "tense": "passé composé", "sentence": "J'___ ___ de tester un truc. (avoir + participe)", "answer": "ai décidé", "hint": "je, avoir" },
-      { "verb": "s'apaiser", "tense": "passé composé", "sentence": "Quelque chose ___ ___ . (pronominal : s'est apaisé)", "answer": "s'est apaisé", "hint": "il, pronominal" },
-      { "verb": "gagner", "tense": "conditionnel présent", "sentence": "On ___ à ralentir.", "answer": "gagnerait", "hint": "on" },
-      { "verb": "croire", "tense": "présent", "sentence": "Je ___ qu'on devrait ralentir.", "answer": "crois", "hint": "je" }
+      {
+        "verb": "décider",
+        "tense": "passé composé",
+        "sentence": "J'___ ___ de tester un truc. (avoir + participe)",
+        "answer": "ai décidé",
+        "hint": "je, avoir"
+      },
+      {
+        "verb": "s'apaiser",
+        "tense": "passé composé",
+        "sentence": "Quelque chose ___ ___ . (pronominal : s'est apaisé)",
+        "answer": "s'est apaisé",
+        "hint": "il, pronominal"
+      },
+      {
+        "verb": "gagner",
+        "tense": "conditionnel présent",
+        "sentence": "On ___ à ralentir.",
+        "answer": "gagnerait",
+        "hint": "on"
+      },
+      {
+        "verb": "croire",
+        "tense": "présent",
+        "sentence": "Je ___ qu'on devrait ralentir.",
+        "answer": "crois",
+        "hint": "je"
+      }
     ]
   },
   {
@@ -147,23 +2009,745 @@
     "title": "Jules : l'authenticité, ça veut dire quoi ?",
     "vocabTheme": "Société et culture",
     "transcript": "Il y a un mot qu'on entend partout aujourd'hui, et qui m'agace un peu, je l'avoue : c'est « authentique ». Tout est devenu authentique, le café authentique, le quartier authentique, l'expérience authentique. Mais à force de tout qualifier ainsi, on finit par vider le mot de son sens. Ce qui est paradoxal, c'est que dès qu'un lieu est étiqueté « authentique » par les guides, il attire une foule qui, précisément, en détruit le caractère. L'authenticité, par définition, ne se décrète pas : elle se constate, après coup, et souvent par hasard. À mon sens, les endroits les plus vrais sont ceux dont personne ne parle encore, ceux qu'on découvre sans les chercher. Le jour où un lieu devient une destination, il a déjà commencé à perdre ce pour quoi on l'aimait.",
-    "audioUrl": null,
-    "wordTimings": null,
+    "audioUrl": "/listening-audio/listen-c1-jules-authenticite.mp3",
+    "wordTimings": [
+      {
+        "word": "Il",
+        "start": 0,
+        "end": 0.186
+      },
+      {
+        "word": "y",
+        "start": 0.244,
+        "end": 0.267
+      },
+      {
+        "word": "a",
+        "start": 0.313,
+        "end": 0.337
+      },
+      {
+        "word": "un",
+        "start": 0.406,
+        "end": 0.464
+      },
+      {
+        "word": "mot",
+        "start": 0.511,
+        "end": 0.662
+      },
+      {
+        "word": "qu'on",
+        "start": 0.685,
+        "end": 0.824
+      },
+      {
+        "word": "entend",
+        "start": 0.894,
+        "end": 1.126
+      },
+      {
+        "word": "partout",
+        "start": 1.173,
+        "end": 1.556
+      },
+      {
+        "word": "aujourd'hui,",
+        "start": 1.591,
+        "end": 2.218
+      },
+      {
+        "word": "et",
+        "start": 2.345,
+        "end": 2.461
+      },
+      {
+        "word": "qui",
+        "start": 2.508,
+        "end": 2.601
+      },
+      {
+        "word": "m'agace",
+        "start": 2.659,
+        "end": 3.007
+      },
+      {
+        "word": "un",
+        "start": 3.03,
+        "end": 3.088
+      },
+      {
+        "word": "peu,",
+        "start": 3.135,
+        "end": 3.402
+      },
+      {
+        "word": "je",
+        "start": 3.553,
+        "end": 3.669
+      },
+      {
+        "word": "l'avoue",
+        "start": 3.727,
+        "end": 4.087
+      },
+      {
+        "word": ":",
+        "start": 4.11,
+        "end": 4.168
+      },
+      {
+        "word": "c'est",
+        "start": 4.342,
+        "end": 4.609
+      },
+      {
+        "word": "«",
+        "start": 4.632,
+        "end": 4.679
+      },
+      {
+        "word": "authentique",
+        "start": 4.702,
+        "end": 5.433
+      },
+      {
+        "word": "».",
+        "start": 5.468,
+        "end": 5.526
+      },
+      {
+        "word": "Tout",
+        "start": 5.77,
+        "end": 6.037
+      },
+      {
+        "word": "est",
+        "start": 6.095,
+        "end": 6.165
+      },
+      {
+        "word": "devenu",
+        "start": 6.281,
+        "end": 6.803
+      },
+      {
+        "word": "authentique,",
+        "start": 6.838,
+        "end": 7.57
+      },
+      {
+        "word": "le",
+        "start": 7.744,
+        "end": 7.837
+      },
+      {
+        "word": "café",
+        "start": 7.883,
+        "end": 8.255
+      },
+      {
+        "word": "authentique,",
+        "start": 8.29,
+        "end": 8.986
+      },
+      {
+        "word": "le",
+        "start": 9.16,
+        "end": 9.253
+      },
+      {
+        "word": "quartier",
+        "start": 9.3,
+        "end": 9.671
+      },
+      {
+        "word": "authentique,",
+        "start": 9.706,
+        "end": 10.414
+      },
+      {
+        "word": "l'expérience",
+        "start": 10.623,
+        "end": 11.273
+      },
+      {
+        "word": "authentique.",
+        "start": 11.296,
+        "end": 11.935
+      },
+      {
+        "word": "Mais",
+        "start": 12.26,
+        "end": 12.411
+      },
+      {
+        "word": "à",
+        "start": 12.446,
+        "end": 12.469
+      },
+      {
+        "word": "force",
+        "start": 12.55,
+        "end": 12.759
+      },
+      {
+        "word": "de",
+        "start": 12.783,
+        "end": 12.852
+      },
+      {
+        "word": "tout",
+        "start": 12.91,
+        "end": 13.038
+      },
+      {
+        "word": "qualifier",
+        "start": 13.061,
+        "end": 13.514
+      },
+      {
+        "word": "ainsi,",
+        "start": 13.537,
+        "end": 14.048
+      },
+      {
+        "word": "on",
+        "start": 14.222,
+        "end": 14.338
+      },
+      {
+        "word": "finit",
+        "start": 14.396,
+        "end": 14.663
+      },
+      {
+        "word": "par",
+        "start": 14.686,
+        "end": 14.826
+      },
+      {
+        "word": "vider",
+        "start": 14.895,
+        "end": 15.197
+      },
+      {
+        "word": "le",
+        "start": 15.232,
+        "end": 15.302
+      },
+      {
+        "word": "mot",
+        "start": 15.348,
+        "end": 15.487
+      },
+      {
+        "word": "de",
+        "start": 15.511,
+        "end": 15.592
+      },
+      {
+        "word": "son",
+        "start": 15.638,
+        "end": 15.778
+      },
+      {
+        "word": "sens.",
+        "start": 15.836,
+        "end": 16.288
+      },
+      {
+        "word": "Ce",
+        "start": 16.672,
+        "end": 16.811
+      },
+      {
+        "word": "qui",
+        "start": 16.857,
+        "end": 16.962
+      },
+      {
+        "word": "est",
+        "start": 17.02,
+        "end": 17.089
+      },
+      {
+        "word": "paradoxal,",
+        "start": 17.113,
+        "end": 17.983
+      },
+      {
+        "word": "c'est",
+        "start": 18.134,
+        "end": 18.378
+      },
+      {
+        "word": "que",
+        "start": 18.401,
+        "end": 18.529
+      },
+      {
+        "word": "dès",
+        "start": 18.587,
+        "end": 18.785
+      },
+      {
+        "word": "qu'un",
+        "start": 18.819,
+        "end": 18.994
+      },
+      {
+        "word": "lieu",
+        "start": 19.075,
+        "end": 19.261
+      },
+      {
+        "word": "est",
+        "start": 19.342,
+        "end": 19.411
+      },
+      {
+        "word": "étiqueté",
+        "start": 19.528,
+        "end": 19.922
+      },
+      {
+        "word": "«",
+        "start": 19.946,
+        "end": 19.992
+      },
+      {
+        "word": "authentique",
+        "start": 20.015,
+        "end": 20.665
+      },
+      {
+        "word": "»",
+        "start": 20.689,
+        "end": 20.712
+      },
+      {
+        "word": "par",
+        "start": 20.828,
+        "end": 21.002
+      },
+      {
+        "word": "les",
+        "start": 21.037,
+        "end": 21.13
+      },
+      {
+        "word": "guides,",
+        "start": 21.176,
+        "end": 21.699
+      },
+      {
+        "word": "il",
+        "start": 21.942,
+        "end": 22.093
+      },
+      {
+        "word": "attire",
+        "start": 22.175,
+        "end": 22.465
+      },
+      {
+        "word": "une",
+        "start": 22.488,
+        "end": 22.593
+      },
+      {
+        "word": "foule",
+        "start": 22.627,
+        "end": 22.883
+      },
+      {
+        "word": "qui,",
+        "start": 22.929,
+        "end": 23.092
+      },
+      {
+        "word": "précisément,",
+        "start": 23.115,
+        "end": 23.974
+      },
+      {
+        "word": "en",
+        "start": 24.09,
+        "end": 24.276
+      },
+      {
+        "word": "détruit",
+        "start": 24.357,
+        "end": 24.74
+      },
+      {
+        "word": "le",
+        "start": 24.764,
+        "end": 24.833
+      },
+      {
+        "word": "caractère.",
+        "start": 24.88,
+        "end": 25.565
+      },
+      {
+        "word": "L'authenticité,",
+        "start": 26.076,
+        "end": 27.109
+      },
+      {
+        "word": "par",
+        "start": 27.225,
+        "end": 27.399
+      },
+      {
+        "word": "définition,",
+        "start": 27.457,
+        "end": 28.224
+      },
+      {
+        "word": "ne",
+        "start": 28.432,
+        "end": 28.537
+      },
+      {
+        "word": "se",
+        "start": 28.583,
+        "end": 28.688
+      },
+      {
+        "word": "décrète",
+        "start": 28.734,
+        "end": 29.059
+      },
+      {
+        "word": "pas",
+        "start": 29.083,
+        "end": 29.268
+      },
+      {
+        "word": ":",
+        "start": 29.35,
+        "end": 29.396
+      },
+      {
+        "word": "elle",
+        "start": 29.512,
+        "end": 29.675
+      },
+      {
+        "word": "se",
+        "start": 29.698,
+        "end": 29.791
+      },
+      {
+        "word": "constate,",
+        "start": 29.837,
+        "end": 30.499
+      },
+      {
+        "word": "après",
+        "start": 30.615,
+        "end": 30.917
+      },
+      {
+        "word": "coup,",
+        "start": 30.952,
+        "end": 31.265
+      },
+      {
+        "word": "et",
+        "start": 31.439,
+        "end": 31.579
+      },
+      {
+        "word": "souvent",
+        "start": 31.625,
+        "end": 31.927
+      },
+      {
+        "word": "par",
+        "start": 31.95,
+        "end": 32.078
+      },
+      {
+        "word": "hasard.",
+        "start": 32.113,
+        "end": 32.508
+      },
+      {
+        "word": "À",
+        "start": 32.833,
+        "end": 32.914
+      },
+      {
+        "word": "mon",
+        "start": 33.007,
+        "end": 33.135
+      },
+      {
+        "word": "sens,",
+        "start": 33.204,
+        "end": 33.68
+      },
+      {
+        "word": "les",
+        "start": 33.854,
+        "end": 33.982
+      },
+      {
+        "word": "endroits",
+        "start": 34.04,
+        "end": 34.284
+      },
+      {
+        "word": "les",
+        "start": 34.307,
+        "end": 34.4
+      },
+      {
+        "word": "plus",
+        "start": 34.435,
+        "end": 34.621
+      },
+      {
+        "word": "vrais",
+        "start": 34.655,
+        "end": 34.934
+      },
+      {
+        "word": "sont",
+        "start": 34.969,
+        "end": 35.143
+      },
+      {
+        "word": "ceux",
+        "start": 35.189,
+        "end": 35.352
+      },
+      {
+        "word": "dont",
+        "start": 35.375,
+        "end": 35.503
+      },
+      {
+        "word": "personne",
+        "start": 35.526,
+        "end": 35.874
+      },
+      {
+        "word": "ne",
+        "start": 35.898,
+        "end": 35.979
+      },
+      {
+        "word": "parle",
+        "start": 36.025,
+        "end": 36.234
+      },
+      {
+        "word": "encore,",
+        "start": 36.258,
+        "end": 36.734
+      },
+      {
+        "word": "ceux",
+        "start": 36.908,
+        "end": 37.07
+      },
+      {
+        "word": "qu'on",
+        "start": 37.094,
+        "end": 37.21
+      },
+      {
+        "word": "découvre",
+        "start": 37.256,
+        "end": 37.72
+      },
+      {
+        "word": "sans",
+        "start": 37.779,
+        "end": 37.906
+      },
+      {
+        "word": "les",
+        "start": 37.929,
+        "end": 38.011
+      },
+      {
+        "word": "chercher.",
+        "start": 38.034,
+        "end": 38.498
+      },
+      {
+        "word": "Le",
+        "start": 38.94,
+        "end": 39.079
+      },
+      {
+        "word": "jour",
+        "start": 39.125,
+        "end": 39.357
+      },
+      {
+        "word": "où",
+        "start": 39.381,
+        "end": 39.473
+      },
+      {
+        "word": "un",
+        "start": 39.531,
+        "end": 39.601
+      },
+      {
+        "word": "lieu",
+        "start": 39.659,
+        "end": 39.798
+      },
+      {
+        "word": "devient",
+        "start": 39.857,
+        "end": 40.193
+      },
+      {
+        "word": "une",
+        "start": 40.216,
+        "end": 40.309
+      },
+      {
+        "word": "destination,",
+        "start": 40.333,
+        "end": 41.087
+      },
+      {
+        "word": "il",
+        "start": 41.331,
+        "end": 41.435
+      },
+      {
+        "word": "a",
+        "start": 41.494,
+        "end": 41.517
+      },
+      {
+        "word": "déjà",
+        "start": 41.563,
+        "end": 41.819
+      },
+      {
+        "word": "commencé",
+        "start": 41.865,
+        "end": 42.329
+      },
+      {
+        "word": "à",
+        "start": 42.399,
+        "end": 42.434
+      },
+      {
+        "word": "perdre",
+        "start": 42.515,
+        "end": 42.782
+      },
+      {
+        "word": "ce",
+        "start": 42.817,
+        "end": 42.922
+      },
+      {
+        "word": "pour",
+        "start": 42.968,
+        "end": 43.096
+      },
+      {
+        "word": "quoi",
+        "start": 43.142,
+        "end": 43.293
+      },
+      {
+        "word": "on",
+        "start": 43.316,
+        "end": 43.409
+      },
+      {
+        "word": "l'aimait.",
+        "start": 43.432,
+        "end": 44.025
+      }
+    ],
     "clipStart": 0,
-    "clipEnd": 50,
+    "clipEnd": 45,
     "source": "Parisly",
     "date": null,
     "questions": [
-      { "question": "Quel mot agace Jules ?", "options": ["« authentique »", "« moderne »", "« parisien »", "« tendance »"], "answer": "« authentique »", "explanation": "'c'est « authentique ». Tout est devenu authentique...'" },
-      { "question": "Quel paradoxe relève-t-il ?", "options": ["Étiqueter un lieu « authentique » attire une foule qui en détruit le caractère", "Les lieux authentiques sont les plus chers", "Personne ne visite les lieux authentiques", "L'authenticité se décrète facilement"], "answer": "Étiqueter un lieu « authentique » attire une foule qui en détruit le caractère", "explanation": "'dès qu'un lieu est étiqueté « authentique »... il attire une foule qui... en détruit le caractère.'" },
-      { "question": "Selon Jules, l'authenticité…", "options": ["ne se décrète pas, elle se constate après coup", "se planifie à l'avance", "s'achète", "se mesure en chiffres"], "answer": "ne se décrète pas, elle se constate après coup", "explanation": "'L'authenticité, par définition, ne se décrète pas : elle se constate, après coup.'" },
-      { "question": "Quels sont, pour lui, les endroits les plus vrais ?", "options": ["Ceux dont personne ne parle encore", "Les plus touristiques", "Les plus chers", "Les plus anciens"], "answer": "Ceux dont personne ne parle encore", "explanation": "'les endroits les plus vrais sont ceux dont personne ne parle encore.'" }
+      {
+        "question": "Quel mot agace Jules ?",
+        "options": [
+          "« authentique »",
+          "« moderne »",
+          "« parisien »",
+          "« tendance »"
+        ],
+        "answer": "« authentique »",
+        "explanation": "'c'est « authentique ». Tout est devenu authentique...'"
+      },
+      {
+        "question": "Quel paradoxe relève-t-il ?",
+        "options": [
+          "Étiqueter un lieu « authentique » attire une foule qui en détruit le caractère",
+          "Les lieux authentiques sont les plus chers",
+          "Personne ne visite les lieux authentiques",
+          "L'authenticité se décrète facilement"
+        ],
+        "answer": "Étiqueter un lieu « authentique » attire une foule qui en détruit le caractère",
+        "explanation": "'dès qu'un lieu est étiqueté « authentique »... il attire une foule qui... en détruit le caractère.'"
+      },
+      {
+        "question": "Selon Jules, l'authenticité…",
+        "options": [
+          "ne se décrète pas, elle se constate après coup",
+          "se planifie à l'avance",
+          "s'achète",
+          "se mesure en chiffres"
+        ],
+        "answer": "ne se décrète pas, elle se constate après coup",
+        "explanation": "'L'authenticité, par définition, ne se décrète pas : elle se constate, après coup.'"
+      },
+      {
+        "question": "Quels sont, pour lui, les endroits les plus vrais ?",
+        "options": [
+          "Ceux dont personne ne parle encore",
+          "Les plus touristiques",
+          "Les plus chers",
+          "Les plus anciens"
+        ],
+        "answer": "Ceux dont personne ne parle encore",
+        "explanation": "'les endroits les plus vrais sont ceux dont personne ne parle encore.'"
+      }
     ],
     "vocab": [
-      { "word": "m'agace", "definition": "annoys me", "sentence": "C'est un mot qui ___ un peu." },
-      { "word": "étiqueté", "definition": "labelled", "sentence": "Dès qu'un lieu est ___ « authentique »..." },
-      { "word": "se décrète", "definition": "is decreed / declared", "sentence": "L'authenticité ne ___ pas." },
-      { "word": "après coup", "definition": "in hindsight / afterwards", "sentence": "Elle se constate ___ ." }
+      {
+        "word": "m'agace",
+        "definition": "annoys me",
+        "sentence": "C'est un mot qui ___ un peu."
+      },
+      {
+        "word": "étiqueté",
+        "definition": "labelled",
+        "sentence": "Dès qu'un lieu est ___ « authentique »..."
+      },
+      {
+        "word": "se décrète",
+        "definition": "is decreed / declared",
+        "sentence": "L'authenticité ne ___ pas."
+      },
+      {
+        "word": "après coup",
+        "definition": "in hindsight / afterwards",
+        "sentence": "Elle se constate ___ ."
+      }
     ],
     "grammar": [
       {
@@ -172,19 +2756,62 @@
         "explanation": "'Dont' replaces a complement introduced by 'de' (parler de → dont on parle). Complex relatives like 'ce pour quoi', 'ce dont', 'ce à quoi' nominalize a whole idea and are typical of formal C1 speech.",
         "tip": "Choose the relative by the preposition the verb requires: parler DE → dont; penser À → ce à quoi.",
         "exercises": [
-          { "sentence": "Les endroits ___ personne ne parle sont les plus vrais. (parler de)", "answer": "dont", "hint": "parler de" },
-          { "sentence": "Il perd ___ ___ ___ on l'aimait. (that for which: ce pour quoi)", "answer": "ce pour quoi", "hint": "ce pour quoi" },
-          { "sentence": "C'est exactement ___ ___ je pensais. (that which I was thinking of: ce à quoi)", "answer": "ce à quoi", "hint": "penser à" },
-          { "sentence": "L'endroit ___ je rêve n'existe peut-être pas. (rêver de)", "answer": "dont", "hint": "rêver de" }
+          {
+            "sentence": "Les endroits ___ personne ne parle sont les plus vrais. (parler de)",
+            "answer": "dont",
+            "hint": "parler de"
+          },
+          {
+            "sentence": "Il perd ___ ___ ___ on l'aimait. (that for which: ce pour quoi)",
+            "answer": "ce pour quoi",
+            "hint": "ce pour quoi"
+          },
+          {
+            "sentence": "C'est exactement ___ ___ je pensais. (that which I was thinking of: ce à quoi)",
+            "answer": "ce à quoi",
+            "hint": "penser à"
+          },
+          {
+            "sentence": "L'endroit ___ je rêve n'existe peut-être pas. (rêver de)",
+            "answer": "dont",
+            "hint": "rêver de"
+          }
         ],
-        "production": { "instruction": "Écris une phrase avec « dont » à propos d'un lieu que tu aimes.", "example": "C'est un café dont j'apprécie le calme et dont peu de gens connaissent l'existence." }
+        "production": {
+          "instruction": "Écris une phrase avec « dont » à propos d'un lieu que tu aimes.",
+          "example": "C'est un café dont j'apprécie le calme et dont peu de gens connaissent l'existence."
+        }
       }
     ],
     "conjugation": [
-      { "verb": "agacer", "tense": "présent", "sentence": "C'est un mot qui m'___ .", "answer": "agace", "hint": "il/qui" },
-      { "verb": "finir", "tense": "présent", "sentence": "On ___ par vider le mot de son sens.", "answer": "finit", "hint": "on" },
-      { "verb": "attirer", "tense": "présent", "sentence": "Le label ___ une foule.", "answer": "attire", "hint": "il" },
-      { "verb": "découvrir", "tense": "présent", "sentence": "Ce sont des lieux qu'on ___ par hasard.", "answer": "découvre", "hint": "on" }
+      {
+        "verb": "agacer",
+        "tense": "présent",
+        "sentence": "C'est un mot qui m'___ .",
+        "answer": "agace",
+        "hint": "il/qui"
+      },
+      {
+        "verb": "finir",
+        "tense": "présent",
+        "sentence": "On ___ par vider le mot de son sens.",
+        "answer": "finit",
+        "hint": "on"
+      },
+      {
+        "verb": "attirer",
+        "tense": "présent",
+        "sentence": "Le label ___ une foule.",
+        "answer": "attire",
+        "hint": "il"
+      },
+      {
+        "verb": "découvrir",
+        "tense": "présent",
+        "sentence": "Ce sont des lieux qu'on ___ par hasard.",
+        "answer": "découvre",
+        "hint": "on"
+      }
     ]
   }
 ]
