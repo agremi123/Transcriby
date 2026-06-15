@@ -1854,6 +1854,11 @@ function writingPromptMiddleware(apiKey, openrouterKey) {
     try { const b = JSON.parse(await readBody(req)); topic = b.topic || ''; learnerLevel = b.learnerLevel || 'B1'; } catch {}
     res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
     const empty = { prompt: '', tips: { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] }, wordTarget: 80 };
+    // Local stock first — recyclable prompts at the learner's level. No API call.
+    {
+      const localWP = pickWritingPrompt(learnerLevel);
+      if (localWP) { res.end(JSON.stringify(localWP)); return; }
+    }
     if (!apiKey) { res.end(JSON.stringify(empty)); return; }
     try {
       // Fetch recent prompts so the model never produces a near-duplicate
