@@ -149,5 +149,7 @@ export function stockCounts() {
     speakingPrompts: speakingPrompts.length,
     practice: practice.length,
     words: words.length,
+    reading: reading.length,
+    listening: listening.length,
   };
 }
