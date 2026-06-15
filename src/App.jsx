@@ -99,7 +99,7 @@ export default function App() {
         <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer"
           className="fixed bottom-3 left-3 z-20 hidden sm:flex items-center gap-2 group pointer-events-none [&>*]:pointer-events-auto"
         >
-          <img src="/assets/remi-avatar.png" alt="Kru Rémi"
+          <img src="/assets/remi-avatar.jpg" alt="Kru Rémi"
             className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all shrink-0" />
           <span className="font-display text-[12px] italic text-navy/60 leading-none whitespace-nowrap">
             by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span>

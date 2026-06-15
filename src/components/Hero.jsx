@@ -599,8 +599,8 @@ function nextLevel(level) {
 }
 
 const DEMO_NARRATORS = {
-  lea: { id: 'lea', name: 'Léa', src: '/assets/lea.png' },
-  jules: { id: 'jules', name: 'Jules', src: '/assets/jules.png' },
+  lea: { id: 'lea', name: 'Léa', src: '/assets/lea.jpg' },
+  jules: { id: 'jules', name: 'Jules', src: '/assets/jules.jpg' },
 };
 
 // Little play icon shown over a clickable portrait on hover (parent needs `group`)
@@ -3378,8 +3378,8 @@ export function AudioDemoCard({
                       {/* Portrait buttons — click to play/stop */}
                       <div className="flex gap-3">
                         {[
-                          { id: 'jules', src: '/assets/jules.png', label: 'Jules' },
-                          { id: 'lea',   src: '/assets/lea.png',   label: 'Léa'   },
+                          { id: 'jules', src: '/assets/jules.jpg', label: 'Jules' },
+                          { id: 'lea',   src: '/assets/lea.jpg',   label: 'Léa'   },
                         ].map((n) => (
                           <div key={n.id} className="flex flex-col items-center gap-1">
                             <button type="button"
@@ -3597,7 +3597,7 @@ export function AudioDemoCard({
                     <div className="flex items-center gap-2.5 shrink-0">
                       <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/30 shrink-0 parisian-exp-bump">
                         <img
-                          src={narratorReaction?.id === 'jules' ? '/assets/jules.png' : '/assets/lea.png'}
+                          src={narratorReaction?.id === 'jules' ? '/assets/jules.jpg' : '/assets/lea.jpg'}
                           alt={narratorReaction?.id === 'jules' ? 'Jules' : 'Léa'}
                           className="w-full h-full object-cover object-top"
                         />
@@ -3642,7 +3642,7 @@ export function AudioDemoCard({
                         className="group relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
                         aria-label="Replay Léa's intro"
                       >
-                        <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
+                        <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
                         <PortraitHoverPlay />
                         {wordPlaying && parisianSpeakingText === chatIntroLine?.text && (
                           <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
@@ -3690,7 +3690,7 @@ export function AudioDemoCard({
                 <div className="absolute bottom-3 left-4 flex items-center gap-2 pointer-events-none">
                   <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0">
                     <img
-                      src={narratorReaction?.id === 'jules' ? '/assets/jules.png' : '/assets/lea.png'}
+                      src={narratorReaction?.id === 'jules' ? '/assets/jules.jpg' : '/assets/lea.jpg'}
                       alt={narratorReaction?.id === 'jules' ? 'Jules' : 'Léa'}
                       className="w-full h-full object-cover object-top"
                     />
@@ -3730,7 +3730,7 @@ export function AudioDemoCard({
                         className="group relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105 mt-0.5"
                         aria-label="Replay"
                       >
-                        <img src={(msg.narratorId === 'jules') ? '/assets/jules.png' : '/assets/lea.png'} alt={(msg.narratorId === 'jules') ? 'Jules' : 'Léa'} className="w-full h-full object-cover object-top" />
+                        <img src={(msg.narratorId === 'jules') ? '/assets/jules.jpg' : '/assets/lea.jpg'} alt={(msg.narratorId === 'jules') ? 'Jules' : 'Léa'} className="w-full h-full object-cover object-top" />
                         <PortraitHoverPlay />
                         {wordPlaying && parisianSpeakingText === msg.text && (
                           <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
@@ -4291,7 +4291,7 @@ export function AudioDemoCard({
                     className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
                     aria-label="Replay Léa's intro"
                   >
-                    <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
+                    <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
                     {wordPlaying && parisianSpeakingText === chatIntroLine?.text && (
                       <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
                     )}
@@ -5851,7 +5851,7 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
   );
 }
 
-const NARRATOR_PORTRAITS = { lea: '/assets/lea.png', jules: '/assets/jules.png' };
+const NARRATOR_PORTRAITS = { lea: '/assets/lea.jpg', jules: '/assets/jules.jpg' };
 
 // Normalize a vocab item for loose matching (strip articles, accents, case).
 function normVocab(s) {
@@ -6236,7 +6236,7 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
 
 // ── Guided writing review thread (Writing tab) ───────────────────────────────
 function WriteBubble({ narratorId, children, onReplay, text }) {
-  const portrait = narratorId === 'jules' ? '/assets/jules.png' : '/assets/lea.png';
+  const portrait = narratorId === 'jules' ? '/assets/jules.jpg' : '/assets/lea.jpg';
   const alt = narratorId === 'jules' ? 'Jules' : 'Léa';
   return (
     <div className="flex items-start gap-2.5">
@@ -7069,7 +7069,7 @@ export default function Hero() {
       return {
         id,
         name: id === 'lea' ? 'Léa' : 'Jules',
-        src: id === 'lea' ? '/assets/lea.png' : '/assets/jules.png',
+        src: id === 'lea' ? '/assets/lea.jpg' : '/assets/jules.jpg',
         intro: intro.text,
         introTranslation: intro.translation,
       };
@@ -7176,7 +7176,7 @@ export default function Hero() {
     <section className="relative pt-24 lg:pt-12 pb-12 min-h-screen overflow-visible">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0" style={{ background: 'radial-gradient(60% 80% at 80% 30%, rgba(217,196,162,0.30), transparent 60%), linear-gradient(180deg, #F6F1E8 0%, #F2EBDA 100%)' }} />
-        <img src="/assets/paris-skyline.png" alt=""
+        <img src="/assets/paris-skyline.jpg" alt=""
           className="absolute right-0 bottom-0 w-[1280px] max-w-[70%] object-contain object-bottom-right select-none"
           style={{ opacity: 0.85, mixBlendMode: 'multiply' }} />
         <div
@@ -7522,7 +7522,7 @@ export default function Hero() {
                 className="flex items-center gap-2 mt-1 group"
                 onClick={(e) => e.stopPropagation()}
               >
-                <img src="/assets/remi-avatar.png" alt="Kru Rémi" className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all" />
+                <img src="/assets/remi-avatar.jpg" alt="Kru Rémi" className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all" />
                 <span className="font-display text-[12px] italic text-navy/60 leading-none">
                   by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span> · certified French teacher
                 </span>

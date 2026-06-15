@@ -4,8 +4,8 @@ import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioSt
 import { tapSource, startLine, setPlaybackTime, stopLine } from './lipSync';
 
 export const NARRATORS = {
-  lea: { id: 'lea', name: 'Léa', src: '/assets/lea.png' },
-  jules: { id: 'jules', name: 'Jules', src: '/assets/jules.png' },
+  lea: { id: 'lea', name: 'Léa', src: '/assets/lea.jpg' },
+  jules: { id: 'jules', name: 'Jules', src: '/assets/jules.jpg' },
 };
 
 /** Playback gain — Léa's ElevenLabs voice runs hotter than Jules. */
