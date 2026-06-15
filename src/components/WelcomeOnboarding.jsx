@@ -326,8 +326,8 @@ export default function WelcomeOnboarding() {
                   <div className={`relative w-[150px] h-[150px] sm:w-[190px] sm:h-[190px] rounded-full overflow-hidden shadow-lg bg-ivory2 transition-all duration-300 ${
                     isSpeaking ? 'ring-4 ring-wine scale-[1.04] shadow-xl' : 'ring-2 ring-line/60'
                   }`}>
-                    {import.meta.env.DEV ? (
-                      /* 3D disabled on the local dev server — show the photo instead */
+                    {(!SHOW_3D_AVATAR || import.meta.env.DEV) ? (
+                      /* 3D off (flag) or local dev — show the photo instead */
                       <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
                     ) : (
                       <React.Suspense fallback={<img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />}>
