@@ -118,5 +118,41 @@
       { "question": "Complète : Une ___ idée. (bon)", "options": ["bonne", "bon", "bonnes", "bons"], "answer": "bonne" },
       { "question": "Où se place généralement « rouge » ?", "options": ["après le nom", "avant le nom", "à la fin de la phrase", "avant le verbe"], "answer": "après le nom" }
     ]
+  },
+  {
+    "id": "pr-present",
+    "level": "A1",
+    "topic": "le présent",
+    "keywords": ["présent", "present", "conjugaison présent", "verbes en -er"],
+    "exercises": [
+      { "question": "Complète : Je ___ français. (parler)", "options": ["parle", "parles", "parlent", "parler"], "answer": "parle" },
+      { "question": "Complète : Nous ___ à Paris. (habiter)", "options": ["habitons", "habitez", "habite", "habitent"], "answer": "habitons" },
+      { "question": "Complète : Tu ___ un café ? (vouloir)", "options": ["veux", "veut", "voulez", "veulent"], "answer": "veux" },
+      { "question": "Complète : Ils ___ au cinéma. (aller)", "options": ["vont", "va", "allons", "allez"], "answer": "vont" }
+    ]
+  },
+  {
+    "id": "pr-concordance-c1",
+    "level": "C1",
+    "topic": "la concordance des temps",
+    "keywords": ["concordance", "concordance des temps", "subjonctif passé", "temps composés"],
+    "exercises": [
+      { "question": "Complète : Je suis content que tu ___ venu hier. (subjonctif passé)", "options": ["sois", "es", "étais", "seras"], "answer": "sois" },
+      { "question": "Complète : Il aurait réussi s'il ___ davantage travaillé.", "options": ["avait", "aurait", "a", "avais"], "answer": "avait" },
+      { "question": "Complète : Bien qu'il ___ déjà parti, on l'attendait. (subjonctif passé : fût parti / soit parti)", "options": ["soit parti", "est parti", "était parti", "sera parti"], "answer": "soit parti" },
+      { "question": "Après « après que » + fait accompli, on emploie normalement :", "options": ["l'indicatif", "le subjonctif", "le conditionnel", "l'impératif"], "answer": "l'indicatif" }
+    ]
+  },
+  {
+    "id": "pr-mise-en-relief-c1",
+    "level": "C1",
+    "topic": "la mise en relief et les connecteurs",
+    "keywords": ["mise en relief", "ce qui ce que", "connecteurs", "articulation", "c'est qui"],
+    "exercises": [
+      { "question": "Complète : ___ me plaît, c'est le calme. (sujet)", "options": ["Ce qui", "Ce que", "Ce dont", "Que"], "answer": "Ce qui" },
+      { "question": "Complète : ___ j'ai besoin, c'est de temps. (avoir besoin de)", "options": ["Ce dont", "Ce que", "Ce qui", "Dont"], "answer": "Ce dont" },
+      { "question": "Quel connecteur exprime la conséquence ?", "options": ["par conséquent", "en revanche", "néanmoins", "or"], "answer": "par conséquent" },
+      { "question": "Complète : ___ ce soit difficile, il persévère. (concession + subjonctif)", "options": ["Bien que", "Parce que", "Puisque", "Depuis que"], "answer": "Bien que" }
+    ]
   }
 ]
