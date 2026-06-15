@@ -1960,6 +1960,25 @@ function translateWordMiddleware(apiKey, openrouterKey) {
   };
 }
 
+// Serves the pre-built A1–C2 lesson corpus from the local stockpile. No API.
+function lessonsMiddleware() {
+  return (req, res, next) => {
+    if (!req.url.startsWith('/api/lessons')) { next(); return; }
+    const url = new URL(req.url, 'http://x');
+    const type = (url.searchParams.get('type') || '').toLowerCase();
+    res.setHeader('Content-Type', 'application/json');
+    if (!['grammar', 'conjugation', 'vocabulary'].includes(type)) {
+      res.statusCode = 400;
+      res.end(JSON.stringify({ error: "type must be 'grammar', 'conjugation' or 'vocabulary'" }));
+      return;
+    }
+    const level = url.searchParams.get('level') || null;
+    const lessons = getLessons(type, level);
+    res.statusCode = 200;
+    res.end(JSON.stringify({ type, level: level || 'all', count: lessons.length, lessons }));
+  };
+}
+
 export default defineConfig(() => {
   const env = readEnvFile(process.cwd());
 
