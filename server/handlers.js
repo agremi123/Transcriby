@@ -391,6 +391,13 @@ export function handleInterviewFeedbackPost(body) {
 export async function handlePractice(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
+
+  // Local stock first — recyclable MCQ sets matched to the topic. No API call.
+  const localExercises = pickPractice(topic);
+  if (localExercises.length) {
+    return { statusCode: 200, body: { exercises: localExercises } };
+  }
+
   if (!ANTHROPIC_API_KEY || !topic) {
     return { statusCode: 200, body: { exercises: [] } };
   }
