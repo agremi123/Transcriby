@@ -40,6 +40,11 @@ import {
 // down the main landing-page bundle.
 const TalkingAvatar3D = React.lazy(() => import('./TalkingAvatar3D'));
 const LEA_AVATAR_SRC = '/avatars/avaturn.glb';
+// Master switch for the 3D talking avatar. Kept OFF until a production-ready,
+// commercially-licensed (and compressed) model is committed — otherwise prod
+// would 404 the model and fall back to a placeholder. While false, BOTH dev and
+// prod show the flat photo. Flip to true (and commit the model) to go live.
+const SHOW_3D_AVATAR = false;
 
 // Parisian-meter progress awarded for completing a speaking défi (≈7 défis to
 // fill the meter and level up to the next CEFR level).
