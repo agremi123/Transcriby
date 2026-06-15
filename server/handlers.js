@@ -423,6 +423,19 @@ export async function handlePractice(body) {
   }
 }
 
+// Serves the pre-built A1–C2 lesson corpus (grammar / conjugation / vocabulary)
+// straight from the local stockpile. Never calls the API.
+//   body/query: { type: 'grammar'|'conjugation'|'vocabulary', level?: 'A1'..'C2' }
+export function handleLessons(body) {
+  const type = (body?.type || '').toLowerCase();
+  const level = body?.level || null;
+  if (!['grammar', 'conjugation', 'vocabulary'].includes(type)) {
+    return { statusCode: 400, body: { error: "type must be 'grammar', 'conjugation' or 'vocabulary'" } };
+  }
+  const lessons = getLessons(type, level);
+  return { statusCode: 200, body: { type, level: level || 'all', count: lessons.length, lessons } };
+}
+
 // ── French RSS feeds for reading exercises ────────────────────────────────────
 const FRENCH_RSS_FEEDS = [
   { name: 'Le Monde',      url: 'https://www.lemonde.fr/rss/une.xml' },
