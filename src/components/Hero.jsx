@@ -3270,9 +3270,9 @@ export function AudioDemoCard({
             level={effectiveLevel}
             doneTypes={levelExercisesDone}
             onPick={(type) => {
-              if (type === 'comprehension') setActiveTab('practice');
+              if (type === 'reading') setActiveTab('reading');
               else if (type === 'listening') setActiveTab('listening');
-              else if (type === 'reading') setActiveTab('reading');
+              else if (type === 'speaking') setActiveTab('speaking');
               else if (type === 'writing') activateWriteMode();
             }}
           />
