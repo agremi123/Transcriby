@@ -1269,7 +1269,7 @@ export function AudioDemoCard({
   const [practiceVocabAnswers, setPracticeVocabAnswers] = React.useState({});
   const [practiceAnsweredQ, setPracticeAnsweredQ] = React.useState({});
   const [pointsDelta, setPointsDelta] = React.useState(null); // { value: +3 | -1, id: number } for animation
-  const { dailyParisianPoints } = useLearnerProfile();
+  const { dailyParisianPoints, effectiveLevel, levelExercisesDone, markExerciseDone } = useLearnerProfile();
   const [assessingLevel, setAssessingLevel] = React.useState(false);
   const [activeTabInternal, setActiveTabInternal] = React.useState('transcript');
   const activeTab = activeTabProp ?? activeTabInternal;
