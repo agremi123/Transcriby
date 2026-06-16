@@ -52,6 +52,14 @@ export function LearnerProfileProvider({ children }) {
     return next;
   }, []);
 
+  // Mark one exercise "stop" done at the learner's current level (idempotent).
+  const markExerciseDone = React.useCallback((type) => {
+    const current = loadLearnerProfile();
+    const level = getEffectiveLevel(current);
+    if (getLevelExercisesDone(current, level).includes(type)) return;
+    setProfile(markLevelExerciseDone(current, level, type));
+  }, []);
+
   const gainDailyParisianPoints = React.useCallback((amount) => {
     const next = addDailyParisianPoints(amount);
     setDailyParisianPoints(next);
