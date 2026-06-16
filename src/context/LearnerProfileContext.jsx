@@ -6,6 +6,8 @@ import {
   spendParisianExperience,
   getEffectiveLevel,
   getInitialParisianPercent,
+  getLevelExercisesDone,
+  markLevelExerciseDone,
   loadLearnerProfile,
   resetWelcomeOnboarding as resetWelcomeOnboardingProfile,
   saveLearnerProfile,
