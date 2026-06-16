@@ -148,6 +148,8 @@ export function LearnerProfileProvider({ children }) {
   const value = React.useMemo(() => ({
     profile,
     effectiveLevel,
+    levelExercisesDone: getLevelExercisesDone(profile, effectiveLevel),
+    markExerciseDone,
     experienceHighlightTick,
     setGender,
     completeOnboarding,
