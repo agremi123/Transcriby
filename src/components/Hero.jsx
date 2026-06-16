@@ -1336,10 +1336,10 @@ export function AudioDemoCard({
   React.useEffect(() => {
     if (writeReview.stage === 'corrected' || writeReview.stage === 'explained') markExerciseDone('writing');
   }, [writeReview.stage, markExerciseDone]);
-  // Compréhension: the learner has answered in the quick practice quiz.
+  // Speaking: the learner produced a spoken answer in the speaking exercise.
   React.useEffect(() => {
-    if (activeTab === 'practice' && Object.keys(practiceAnsweredQ).length >= 1) markExerciseDone('comprehension');
-  }, [activeTab, practiceAnsweredQ, markExerciseDone]);
+    if (activeTab === 'speaking' && (settledText || '').trim()) markExerciseDone('speaking');
+  }, [activeTab, settledText, markExerciseDone]);
 
   const writeTextareaRef = React.useRef(null);
   const writeBoxRef = React.useRef(null);
