@@ -3264,6 +3264,19 @@ export function AudioDemoCard({
           box sits just under the floating points / Discover row that overlaps the
           card's top edge (the Speak/Write + Discover controls are hidden on mobile). */}
       <div className="px-3 sm:px-7 pt-2 sm:pt-3 flex flex-col gap-2 flex-1 min-h-0">
+        {/* Mobile-only level-progress arrow in the speech-box white space */}
+        <div className="sm:hidden shrink-0 px-1 pb-0.5">
+          <LevelProgressArrow
+            level={effectiveLevel}
+            doneTypes={levelExercisesDone}
+            onPick={(type) => {
+              if (type === 'comprehension') setActiveTab('practice');
+              else if (type === 'listening') setActiveTab('listening');
+              else if (type === 'reading') setActiveTab('reading');
+              else if (type === 'writing') activateWriteMode();
+            }}
+          />
+        </div>
         <div className="hidden sm:flex items-center justify-center gap-1.5 sm:gap-3 shrink-0 flex-wrap">
           <div className="relative hidden sm:flex items-center rounded-full p-0.5 bg-wine/10">
             <div
