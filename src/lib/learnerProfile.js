@@ -153,6 +153,26 @@ export function getEffectiveLevel(profile) {
   return profile?.assessedLevel || profile?.claimedLevel || 'A2';
 }
 
+/**
+ * Exercise "stops" the learner has completed at a given CEFR level, stored as
+ * { [level]: ['reading', ...] }. Keyed by level so the set naturally resets when
+ * the learner reaches a new level. Drives the mobile level-progress arrow.
+ */
+export function getLevelExercisesDone(profile, level) {
+  const arr = profile?.levelExercises?.[level];
+  return Array.isArray(arr) ? arr : [];
+}
+
+export function markLevelExerciseDone(profile, level, type) {
+  const map = (profile && profile.levelExercises) || {};
+  const current = Array.isArray(map[level]) ? map[level] : [];
+  if (current.includes(type)) return profile; // idempotent — no churn if already done
+  return saveLearnerProfile({
+    ...profile,
+    levelExercises: { ...map, [level]: [...current, type] },
+  });
+}
+
 export function mergeAssessedLevel(currentLevel, newLevel, sampleCount) {
   const next = normalizeLevel(newLevel);
   if (!next) return normalizeLevel(currentLevel);
