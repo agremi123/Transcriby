@@ -1324,6 +1324,23 @@ export function AudioDemoCard({
     const t = setTimeout(() => { sc.scrollTop = sc.scrollHeight; }, 80);
     return () => clearTimeout(t);
   }, [writeReview.stage, writeReview.reaction, writeReview.corrected, writeReview.explanation, writeReviewHistory.length, writeReviewExample, writeReviewExampleLoading]);
+
+  // ── Mobile level-arrow: mark each exercise "stop" done on its completion signal ──
+  // Reading / Listening: a section of the current article validated.
+  React.useEffect(() => {
+    if (exerciseTabsDone < 1) return;
+    if (activeTab === 'reading') markExerciseDone('reading');
+    else if (activeTab === 'listening') markExerciseDone('listening');
+  }, [exerciseTabsDone, activeTab, markExerciseDone]);
+  // Writing: the Parisian has corrected/explained the submitted text.
+  React.useEffect(() => {
+    if (writeReview.stage === 'corrected' || writeReview.stage === 'explained') markExerciseDone('writing');
+  }, [writeReview.stage, markExerciseDone]);
+  // Compréhension: the learner has answered in the quick practice quiz.
+  React.useEffect(() => {
+    if (activeTab === 'practice' && Object.keys(practiceAnsweredQ).length >= 1) markExerciseDone('comprehension');
+  }, [activeTab, practiceAnsweredQ, markExerciseDone]);
+
   const writeTextareaRef = React.useRef(null);
   const writeBoxRef = React.useRef(null);
   const [speakCorrection, setSpeakCorrection] = React.useState(null);
