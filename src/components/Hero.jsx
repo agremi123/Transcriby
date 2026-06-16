@@ -603,6 +603,65 @@ function nextLevel(level) {
   return i >= 0 && i < CEFR.length - 1 ? CEFR[i + 1] : null;
 }
 
+// The four exercise "stops" on the mobile level-progress arrow, left → right.
+const LEVEL_ARROW_STOPS = [
+  { id: 'comprehension', label: 'Compréhension', x: 50 },
+  { id: 'listening',     label: 'Listening',     x: 144 },
+  { id: 'reading',       label: 'Reading',       x: 238 },
+  { id: 'writing',       label: 'Writing',       x: 300 },
+];
+
+// Compact level-progress arrow (mobile): current level → next level, with four
+// tappable exercise stops. Each stop fills in once that exercise is completed
+// (tracked per level); when all four are done the next-level badge lights up.
+// Mirrors the "My Parisian Progress" look, flattened into a straight arrow.
+function LevelProgressArrow({ level, doneTypes = [], onPick }) {
+  const next = nextLevel(level);
+  if (!next) return null; // C2 — no next level to aim for
+  const done = new Set(doneTypes);
+  const allDone = LEVEL_ARROW_STOPS.every((s) => done.has(s.id));
+  const WINE = '#8B1E2D';
+  const seg = (x1, x2, solid, key) => (
+    <line key={key} x1={x1} y1="24" x2={x2} y2="24" stroke={WINE}
+      strokeWidth={solid ? 2 : 1.6} strokeLinecap="round"
+      strokeDasharray={solid ? 'none' : '4 6'} opacity={solid ? 1 : 0.45} />
+  );
+  return (
+    <svg viewBox="0 0 360 60" width="100%" role="group"
+      aria-label={`Your level ${level}, next level ${next}. Tap an exercise to continue.`}>
+      {seg(20, 50, done.has('comprehension'), 's0')}
+      {seg(50, 144, done.has('listening'), 's1')}
+      {seg(144, 238, done.has('reading'), 's2')}
+      {seg(238, 300, done.has('writing'), 's3')}
+      {seg(300, 340, allDone, 's4')}
+      <path d="M331 19 L341 24 L331 29 Z" fill={WINE} opacity={allDone ? 1 : 0.55} />
+
+      <circle cx="20" cy="24" r="12" fill={WINE} />
+      <text x="20" y="28" textAnchor="middle" fill="#F6F1E8"
+        fontFamily="'SF Mono',monospace" fontSize="11" fontWeight="700">{level}</text>
+      <circle cx="340" cy="24" r="12" fill={allDone ? WINE : '#fff'} stroke={WINE} strokeWidth="1.5" />
+      <text x="340" y="28" textAnchor="middle" fill={allDone ? '#F6F1E8' : WINE}
+        fontFamily="'SF Mono',monospace" fontSize="11" fontWeight="700">{next}</text>
+
+      {LEVEL_ARROW_STOPS.map((s) => {
+        const isDone = done.has(s.id);
+        return (
+          <g key={s.id} role="button" tabIndex={0}
+            aria-label={`${s.label}${isDone ? ' — completed' : ''}`}
+            style={{ cursor: 'pointer' }}
+            onClick={() => onPick?.(s.id)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick?.(s.id); } }}>
+            <circle cx={s.x} cy="24" r="15" fill="transparent" />
+            <circle cx={s.x} cy="24" r="6" fill={isDone ? WINE : '#fff'} stroke={WINE} strokeWidth="1.6" />
+            <text x={s.x} y="46" textAnchor="middle" fill={isDone ? WINE : '#1A2340'}
+              fillOpacity={isDone ? 1 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="11">{s.label}</text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 const DEMO_NARRATORS = {
   lea: { id: 'lea', name: 'Léa', src: '/assets/lea.jpg' },
   jules: { id: 'jules', name: 'Jules', src: '/assets/jules.jpg' },
