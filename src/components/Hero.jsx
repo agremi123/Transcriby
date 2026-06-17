@@ -7330,7 +7330,6 @@ export default function Hero() {
         <button
           type="button"
           onClick={() => goToDashboard()}
-          style={{ animation: 'parisianFadeInDown 0.25s ease forwards' }}
           className="sm:hidden fixed top-[18px] right-4 z-50 inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory font-display text-[11px] leading-none px-3 py-2 shadow-md"
         >
           Judge your French
