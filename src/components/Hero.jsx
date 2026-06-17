@@ -3261,12 +3261,15 @@ export function AudioDemoCard({
         {/* Level-progress arrow — the clickable exercise picker (the practice tabs
             used to live in the bottom bar). Capped width on desktop so it stays tidy. */}
         <div className="shrink-0 px-1 pb-0.5 sm:max-w-[440px] sm:mx-auto sm:w-full">
-          {/* "Pick your challenge" callout — points down to the arrow below */}
-          <div className="flex flex-col items-center -mb-1">
-            <div className="relative inline-flex items-center rounded-full bg-wine text-ivory px-3 py-1 font-display text-[11px] sm:text-[12px] tracking-wide italic shadow-sm">
+          {/* "Pick your challenge" callout — points down to the arrow below.
+              Plain text (no filled background) so it doesn't read as a button. */}
+          <div className="flex flex-col items-center -mb-0.5">
+            <span className="font-display text-[12px] sm:text-[13px] tracking-wide italic text-wine/80">
               Pick your challenge
-              <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-[5px] w-2 h-2 bg-wine rotate-45" aria-hidden />
-            </div>
+            </span>
+            <svg width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden className="mt-0.5 text-wine/70">
+              <path d="M5.5 7L0.5 0.5h10L5.5 7z" fill="currentColor" />
+            </svg>
           </div>
           <LevelProgressArrow
             level={effectiveLevel}
