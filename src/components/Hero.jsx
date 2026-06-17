@@ -7325,7 +7325,9 @@ export default function Hero() {
         <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[1fr_680px] gap-8 items-stretch lg:h-[calc(100vh-96px)]">
           {/* Mobile-only: Léa portrait + tab-specific line — stacks ON TOP of the speech box on mobile */}
           {exercisePanelActive && (() => {
-            const exerciseLine = EXERCISE_TAB_LINES[heroActiveTab] || '';
+            const entry = EXERCISE_TAB_LINES[heroActiveTab] || {};
+            const exerciseLine = entry.text || '';
+            const exerciseTranslation = entry.translation || '';
             const isPlaying = introPlaying === 'lea' && introSpeechText === exerciseLine;
             return (
               <div className="sm:hidden order-0 -mb-4 flex items-center gap-3 w-full">
@@ -7350,9 +7352,16 @@ export default function Hero() {
                   <span className={`absolute top-1/2 -left-1 -translate-y-1/2 w-2.5 h-2.5 rotate-45 border-l border-b ${
                     isPlaying ? 'bg-wine/5 border-wine/25' : 'bg-white/90 border-wine/15'
                   }`} aria-hidden />
-                  <p className={`font-display text-[13px] italic leading-snug ${isPlaying ? 'text-wine' : 'text-navy/80'}`}>
-                    {exerciseLine}
-                  </p>
+                  {/* Tap the line to reveal the English translation (same as other Parisian speech boxes) */}
+                  <NarratorHoverText
+                    text={exerciseLine}
+                    translation={exerciseTranslation}
+                    highlightSpeech={isPlaying}
+                    speechPlaybackTime={introPlaybackTime}
+                    speechTimings={introTimings}
+                    className={`font-display text-[13px] italic leading-snug ${isPlaying ? 'text-wine' : 'text-navy/80'}`}
+                    wrapperClassName="relative w-full"
+                  />
                 </div>
               </div>
             );
