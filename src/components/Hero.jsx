@@ -7159,6 +7159,8 @@ export default function Hero() {
     const session = introSessionRef.current;
     setIntroPlaying(narrator.id);
     setIntroSpeechText(narrator.intro);
+    // Surface her spoken line next to the portrait on mobile
+    setLeaSpeech({ text: narrator.intro, narratorId: narrator.id });
 
     try {
       const buf = await fetchNarratorAudio(narrator.intro, narrator.id);
