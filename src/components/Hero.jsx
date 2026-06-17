@@ -3148,6 +3148,26 @@ export function AudioDemoCard({
         )
       )}
       <div className="flex flex-row items-center gap-1 sm:gap-2">
+        {/* Parisian Points display — to the left of the mic */}
+        <PointsBurst points={dailyParisianPoints} className="mr-1">
+          <div className="relative flex items-center justify-center w-9 sm:w-11 h-9 sm:h-11 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
+            <div className="flex flex-col items-center gap-[3px] -mt-1.5">
+              <span className="font-display text-[14px] sm:text-[19px] font-bold text-wine leading-none tabular-nums">
+                {dailyParisianPoints}
+              </span>
+              <span className="text-[6.5px] font-mono tracking-wide uppercase text-wine/60 leading-tight">points</span>
+            </div>
+            {pointsDelta && (
+              <span
+                key={pointsDelta.id}
+                className="absolute -top-4 left-1/2 -translate-x-1/2 font-display font-bold text-[13px] whitespace-nowrap pointer-events-none"
+                style={{ color: pointsDelta.value > 0 ? '#16a34a' : '#8B1E2D', animation: 'parisianDeltaFloat 1.4s ease-out forwards' }}
+              >
+                {pointsDelta.value > 0 ? `+${pointsDelta.value}` : pointsDelta.value}
+              </span>
+            )}
+          </div>
+        </PointsBurst>
         <div className="relative flex flex-col items-center">
           {(showStartHint || highlightMic || showRepeatHint) && !isRecording && (
             <motion.div
