@@ -7266,6 +7266,14 @@ export default function Hero() {
     }, { replace: true });
   }, [heroActiveTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // When an exercise panel is showing its generated content, put the speech box
+  // ABOVE that content on mobile (stacked layout) — desktop stays side-by-side.
+  const exercisePanelActive =
+    (heroActiveTab === 'reading' && readingActive) ||
+    (heroActiveTab === 'listening' && listeningActive) ||
+    (heroActiveTab === 'speaking' && speakingActive) ||
+    (heroActiveTab === 'writing' && writingActive);
+
   return (
     <section className="relative pt-24 lg:pt-12 pb-12 min-h-screen overflow-visible">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
