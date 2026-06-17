@@ -4837,19 +4837,36 @@ export function AudioDemoCard({
       <div className="flex items-start shrink-0">
         {/* Left column: tabs + correction UI */}
         <div className="flex-1 min-w-0 flex flex-col">
-          <div className="ml-2 sm:ml-7 flex overflow-x-auto border-t border-line/50">
-            {[
-              { id: 'transcript', label: 'Chat' },
-              { id: 'listening',  label: 'Listening' },
-              { id: 'reading',    label: 'Reading' },
-              { id: 'speaking',   label: 'Speaking' },
-              { id: 'writing',    label: 'Writing' },
-            ].map((t) => (
-              <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
-                className={`text-[9px] sm:text-[11px] px-1 sm:px-3 tracking-wide uppercase py-2.5 sm:py-3 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
-                {t.label}
+          <div className="ml-2 sm:ml-7 flex items-center gap-1.5 sm:gap-2 border-t border-line/50 py-2">
+            {/* Chat — now a pill button (the practice tabs live in the progress line on top) */}
+            <button type="button" onClick={() => setActiveTab('transcript')}
+              className={`inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 font-display text-[12px] sm:text-[15px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap shrink-0 ${
+                activeTab === 'transcript'
+                  ? 'bg-wine text-ivory ring-2 ring-wine/30'
+                  : 'bg-wine text-ivory hover:bg-wine2'
+              }`}>
+              Chat
+            </button>
+            {/* Discover a Parisian word — moved here, next to Chat */}
+            <div className="relative group shrink-0">
+              <button type="button" disabled={dailyParisianPoints < DISCOVER_WORD_COST} onClick={handleDiscoverWord}
+                className={`relative inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 font-display text-[12px] sm:text-[15px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap ${
+                  dailyParisianPoints < DISCOVER_WORD_COST
+                    ? 'bg-wine/30 text-ivory/70 cursor-not-allowed'
+                    : inputMode === 'discover'
+                      ? 'bg-wine text-ivory ring-2 ring-wine/30'
+                      : highlightDiscover
+                        ? 'bg-wine text-ivory ring-[3px] ring-wine/45 shadow-md scale-[1.03]'
+                        : 'bg-wine text-ivory hover:bg-wine2'
+                }`}>
+                Discover a Parisian word
               </button>
-            ))}
+              <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 z-30 w-56 text-center rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                {dailyParisianPoints < DISCOVER_WORD_COST
+                  ? `Costs ${DISCOVER_WORD_COST} Parisian points — you have ${dailyParisianPoints}. Earn more by speaking & chatting.`
+                  : `Costs ${DISCOVER_WORD_COST} Parisian points.`}
+              </span>
+            </div>
           </div>
           {/* Parisian reaction + correction now render inline in the transcript
               above (no separate bottom bar). */}
