@@ -28,11 +28,11 @@ function LandingPage() {
     <div className="relative">
       <Nav />
       <Hero />
-      <UniversitiesBar />
-<Features />
+      <Features />
       <Comparison />
       <Testimonials />
       <Pricing />
+      <UniversitiesBar />
       <Faq />
       <CTABanner />
       <Footer />
