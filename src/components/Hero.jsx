@@ -3096,6 +3096,14 @@ export function AudioDemoCard({
   const transcriptHeight = 'flex-1 min-h-0';
   const isExerciseTab = activeTab === 'reading' || activeTab === 'listening';
 
+  // Recompute the sub-tab "more →" arrow when the bar appears or the viewport changes.
+  React.useEffect(() => {
+    if (!isExerciseTab) return undefined;
+    updateSubTabsMore();
+    window.addEventListener('resize', updateSubTabsMore);
+    return () => window.removeEventListener('resize', updateSubTabsMore);
+  }, [isExerciseTab, exerciseSubTab, updateSubTabsMore]);
+
   // Clear leftover speech transcription when switching the card's tab, so a tab
   // like Speaking starts empty instead of showing remnants of the Chat session.
   const prevCardTabRef = React.useRef(activeTab);
