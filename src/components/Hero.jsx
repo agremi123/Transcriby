@@ -7439,13 +7439,13 @@ export default function Hero() {
               const hint = hints[heroActiveTab];
               if (!hint) return null;
               return (
-                <div className="sm:hidden -mt-5 mb-3 flex justify-center">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-wine/[0.07] border border-wine/20 px-4 py-1.5 text-wine/85 font-display italic text-[12px] leading-snug shadow-sm">
-                    <svg width="11" height="13" viewBox="0 0 11 13" fill="none" className="shrink-0 animate-bounce" style={{ animationDuration: '1.6s' }} aria-hidden>
+                <div className="sm:hidden -mt-8 mb-2 flex justify-center">
+                  <div className="inline-flex items-center gap-1.5 rounded-md bg-white/80 border border-navy/15 px-2.5 py-1 text-navy/70 font-display italic text-[11px] leading-snug shadow-sm">
+                    <svg width="9" height="11" viewBox="0 0 11 13" fill="none" className="shrink-0 animate-bounce text-wine/70" style={{ animationDuration: '1.6s' }} aria-hidden>
                       <path d="M5.5 1v10M1.5 7l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     <span className="text-center">{hint}</span>
-                    <svg width="11" height="13" viewBox="0 0 11 13" fill="none" className="shrink-0" aria-hidden>
+                    <svg width="9" height="11" viewBox="0 0 11 13" fill="none" className="shrink-0 text-wine/70" aria-hidden>
                       <path d="M5.5 12V2M1.5 6l4-4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
