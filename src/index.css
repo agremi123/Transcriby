@@ -228,3 +228,14 @@ body {
 .scroll-thin::-webkit-scrollbar-thumb:hover {
   background: rgba(26, 35, 64, 0.7);
 }
+
+/* Scrollable but with no visible scrollbar (used by the exercise sub-tab bar) */
+.scrollbar-hide {
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* old Edge/IE */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;                  /* Chrome/Safari */
+}
