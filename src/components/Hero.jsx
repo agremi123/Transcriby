@@ -7427,6 +7427,29 @@ export default function Hero() {
             );
           })()}
           <div className={`relative flex flex-col justify-center overflow-visible ${exercisePanelActive ? 'order-2 lg:order-none' : ''}`}>
+            {/* Mobile-only: instruction between the speech box (above) and the content (below).
+                ↓ points to the content to read/listen, ↑ points to the questions in the box. */}
+            {exercisePanelActive && (() => {
+              const hints = {
+                reading: 'read the article and answer the questions',
+                listening: 'listen to the audio and answer the questions',
+                speaking: 'read the prompt and try to answer',
+                writing: 'read the prompt and try to answer',
+              };
+              const hint = hints[heroActiveTab];
+              if (!hint) return null;
+              return (
+                <div className="sm:hidden flex items-center justify-center gap-2 mb-3 text-wine/80 font-display italic text-[12px] leading-snug">
+                  <svg width="11" height="13" viewBox="0 0 11 13" fill="none" className="shrink-0 animate-bounce" style={{ animationDuration: '1.6s' }} aria-hidden>
+                    <path d="M5.5 1v10M1.5 7l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span className="text-center">{hint}</span>
+                  <svg width="11" height="13" viewBox="0 0 11 13" fill="none" className="shrink-0" aria-hidden>
+                    <path d="M5.5 12V2M1.5 6l4-4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+              );
+            })()}
             {heroActiveTab === 'reading' && readingActive && (
               <ReadingArticlePanel
                 loading={readingLoading}
