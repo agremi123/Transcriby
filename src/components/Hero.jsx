@@ -5825,12 +5825,14 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
           {/* Title */}
           {title && (
             <div className="relative mb-2 shrink-0 px-3 py-2 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
-              {/* Completion badge — absolute overlay so it never pushes the title down */}
-              <div className="absolute top-1.5 right-1.5 z-10">
+              {/* Next podcast (left) + completion badge (right) — absolute overlay so
+                  they never push the title down */}
+              <div className="absolute top-1.5 right-1.5 z-10 flex items-center gap-1.5">
+                <NextArticleButton compact doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} label="Next podcast" />
                 <ThemeBadge achieved={themeAchieved} total={THEME_ARTICLE_TOTAL} label="podcast" />
               </div>
               {/* Theme of the listening challenge */}
-              <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-wine/60 truncate mb-1 pr-8">
+              <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-wine/60 truncate mb-1 pr-28">
                 {theme || 'Listening challenge'}
               </p>
               <div className="flex items-start gap-2 pr-7">
@@ -5843,10 +5845,6 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
                 )}
               </div>
               {vocabTheme && <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 mt-0.5 block">{vocabTheme}</span>}
-              {/* Next podcast — gated button, fills as the four exercise tabs are completed */}
-              <div className="mt-2 flex justify-end">
-                <NextArticleButton doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} label="Next podcast" />
-              </div>
             </div>
           )}
 
