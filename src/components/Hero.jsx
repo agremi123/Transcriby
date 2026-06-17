@@ -3338,8 +3338,8 @@ export function AudioDemoCard({
           {isExerciseTab ? (
             <div className="flex flex-col flex-1 min-h-0">
               {/* Exercise subtab bar */}
-              <div className="flex border-b border-line/50 shrink-0 items-stretch">
-                <div className="flex overflow-x-auto flex-1 min-w-0">
+              <div className="relative flex border-b border-line/50 shrink-0 items-stretch">
+                <div ref={subTabsRef} onScroll={updateSubTabsMore} className="flex overflow-x-auto scrollbar-hide flex-1 min-w-0">
                 {[
                   { id: 'comprehension', label: 'Compréhension' },
                   { id: 'vocabulary',    label: 'Vocabulaire' },
