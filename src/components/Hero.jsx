@@ -5826,7 +5826,7 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
               {/* Next podcast (left) + completion badge (right) — absolute overlay so
                   they never push the title down */}
               <div className="absolute top-1.5 right-1.5 z-10 flex items-center gap-1.5">
-                <NextArticleButton compact doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} label="Next podcast" />
+                <NextArticleButton compact doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} label="Next podcast" className="-translate-y-[3px]" />
                 <ThemeBadge achieved={themeAchieved} total={THEME_ARTICLE_TOTAL} label="podcast" />
               </div>
               {/* Theme of the listening challenge */}
