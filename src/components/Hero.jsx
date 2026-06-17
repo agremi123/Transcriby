@@ -7087,6 +7087,13 @@ export default function Hero() {
       .catch(() => setWritingLoading(false));
   }, [practiceTopic, effectiveLevel]);
 
+  const EXERCISE_TAB_LINES = {
+    listening: "Tu as lancé le challenge listening ! Écoute le podcast et réponds aux questions pour gagner des points et passer au suivant !",
+    reading:   "Tu as lancé le challenge reading ! Lis l'article et réponds aux questions pour gagner des points et passer au suivant !",
+    speaking:  "Tu as lancé le challenge speaking ! Parle en français et utilise le vocabulaire ciblé pour gagner des points Parisiens !",
+    writing:   "Tu as lancé le challenge writing ! Écris un texte basé sur le prompt et les conseils pour gagner des points Parisiens !",
+  };
+
   const [introNarrator, setIntroNarrator] = React.useState(null);
   const [introPlaying, setIntroPlaying] = React.useState(null); // null | 'lea' | 'jules'
   const [introPlaybackTime, setIntroPlaybackTime] = React.useState(null);
