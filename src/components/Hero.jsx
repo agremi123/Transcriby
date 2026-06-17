@@ -7563,7 +7563,8 @@ export default function Hero() {
                       isPlaying ? 'text-wine italic' : 'text-wine'
                     }`}>{n.name}</span>
                   </button>
-                  {/* Mobile-only: Léa's live speech + the (shrinking) assessment CTA below it */}
+                  {/* Mobile-only: Léa's live speech takes this spot; the assessment CTA
+                      relocates to the top-right header (fixed) once she has spoken. */}
                   <div className="sm:hidden flex-1 min-w-0 self-center text-left flex flex-col gap-2">
                     <AnimatePresence>
                       {leaSpeech?.text && (
@@ -7580,18 +7581,15 @@ export default function Hero() {
                         </motion.div>
                       )}
                     </AnimatePresence>
-                    <button
-                      type="button"
-                      onClick={() => goToDashboard()}
-                      style={{
-                        fontSize: leaSpeech?.text ? '10px' : '13.5px',
-                        padding: leaSpeech?.text ? '4px 10px' : '10px 14px',
-                        transition: 'font-size 300ms ease, padding 300ms ease',
-                      }}
-                      className="inline-flex items-center text-left font-display leading-snug text-ivory bg-wine hover:bg-wine2 rounded-2xl shadow-sm self-start"
-                    >
-                      Click for Léa to judge your French
-                    </button>
+                    {!leaSpeech?.text && (
+                      <button
+                        type="button"
+                        onClick={() => goToDashboard()}
+                        className="inline-flex items-center text-left font-display text-[13.5px] leading-snug text-ivory bg-wine hover:bg-wine2 rounded-2xl px-3.5 py-2.5 shadow-sm self-start"
+                      >
+                        Click for Léa to judge your French
+                      </button>
+                    )}
                   </div>
                   </div>
                   );
