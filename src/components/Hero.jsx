@@ -7543,7 +7543,7 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 h-[440px] sm:min-h-[500px] sm:max-h-[500px]">
+          <div className={`flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 h-[440px] sm:min-h-[500px] sm:max-h-[500px] ${exercisePanelActive ? 'order-1 lg:order-none' : ''}`}>
             <div className="relative shrink-0 w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] h-[440px] sm:min-h-[500px] sm:max-h-[500px]">
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
