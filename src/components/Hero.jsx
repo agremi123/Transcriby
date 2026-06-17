@@ -5384,14 +5384,14 @@ function NextArticleButton({ doneTabs = 0, totalTabs = 4, articleIndex = 1, onNe
           <span className="absolute inset-y-0 left-0 bg-wine/20 transition-all duration-500" style={{ width: `${pct}%` }} aria-hidden />
         )}
         <span className="relative z-10 inline-flex items-center gap-1">
-          Next article
+          {label}
           <span className="font-mono tabular-nums opacity-80">{Math.min(articleIndex, THEME_ARTICLE_TOTAL)}/{THEME_ARTICLE_TOTAL}</span>
         </span>
       </button>
       <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-30 w-56 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
         {allDone
-          ? 'All four tabs done — load the next article!'
-          : `${doneTabs}/${totalTabs} tabs done. Complete all 4 (6 correct answers each) to unlock the next article.`}
+          ? `All four tabs done — load the ${label.toLowerCase().replace('next ', 'next ')}!`
+          : `${doneTabs}/${totalTabs} tabs done. Complete all 4 (6 correct answers each) to unlock the ${label.toLowerCase().replace('next ', '')}.`}
       </span>
     </div>
   );
