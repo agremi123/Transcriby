@@ -7164,6 +7164,16 @@ export default function Hero() {
     }
   };
 
+  // Auto-play Léa's tab-specific line on mobile when user picks an exercise tab
+  React.useEffect(() => {
+    const line = EXERCISE_TAB_LINES[heroActiveTab];
+    if (!line) return;
+    const t = window.setTimeout(() => {
+      playNarratorIntro({ id: 'lea', intro: line });
+    }, 350);
+    return () => window.clearTimeout(t);
+  }, [heroActiveTab]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const narrators = React.useMemo(() => (
     ['lea', 'jules'].map((id) => {
       const intro = getNarratorIntro(id, effectiveLevel);
