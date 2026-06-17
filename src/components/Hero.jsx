@@ -7360,7 +7360,7 @@ export default function Hero() {
         <button
           type="button"
           onClick={() => goToDashboard()}
-          className="sm:hidden fixed top-[18px] right-4 z-50 inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory font-display text-[11px] leading-none px-3 py-2 shadow-md max-w-[55vw] text-right"
+          className="sm:hidden fixed top-[36px] -translate-y-1/2 right-4 z-50 inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory font-display text-[11px] leading-none px-3 py-2 shadow-md max-w-[55vw] text-right"
         >
           Click for Léa to judge your French
         </button>
