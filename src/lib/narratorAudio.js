@@ -1,10 +1,11 @@
 import React from 'react';
 import { buildWordTimings, playDecodedBuffer } from './speechHighlight';
 import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from './siteAudio';
+import { tapSource, startLine, setPlaybackTime, stopLine } from './lipSync';
 
 export const NARRATORS = {
-  lea: { id: 'lea', name: 'Léa', src: '/assets/lea.png' },
-  jules: { id: 'jules', name: 'Jules', src: '/assets/jules.png' },
+  lea: { id: 'lea', name: 'Léa', src: '/assets/lea.jpg' },
+  jules: { id: 'jules', name: 'Jules', src: '/assets/jules.jpg' },
 };
 
 /** Playback gain — Léa's ElevenLabs voice runs hotter than Jules. */
@@ -24,6 +25,8 @@ export function connectNarratorSource(ctx, source, narrator) {
   gain.gain.value = getNarratorVolume(narrator);
   source.connect(gain);
   gain.connect(ctx.destination);
+  // Feed the 3D avatar's mouth from the live voice (no-op if no avatar mounted).
+  tapSource(ctx, source);
   return gain;
 }
 
@@ -210,11 +213,18 @@ export function useNarratorDialogue() {
     setSpeechText(line.text);
     setSpeechTimings(buildWordTimings(line.text, decoded.duration));
     setSpeechPlaybackTime(0);
-    await playBuffer(ctx, sourceRef, decoded, line.narrator, (t) => {
-      if (!isActive()) return;
-      setSpeechPlaybackTime(t);
-      if (t == null) clearSpeechHighlight();
-    }, siteSession);
+    // Drive the 3D avatar's mouth shapes from this line (no-op if no avatar mounted).
+    startLine(line.text, decoded.duration);
+    try {
+      await playBuffer(ctx, sourceRef, decoded, line.narrator, (t) => {
+        if (!isActive()) return;
+        setSpeechPlaybackTime(t);
+        setPlaybackTime(t);
+        if (t == null) clearSpeechHighlight();
+      }, siteSession);
+    } finally {
+      stopLine();
+    }
   }, [clearSpeechHighlight]);
 
   const playLines = React.useCallback(async (scriptLines) => {

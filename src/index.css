@@ -180,6 +180,21 @@ body {
   100% { opacity: 0; transform: translateX(-50%) translateY(-24px); }
 }
 
+@keyframes parisianFadeInDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Sequenced hint arrows: down arrow nudges, then the up arrow, looping forever */
+@keyframes hintArrowDown {
+  0%, 30%, 100% { transform: translateY(0); }
+  15%           { transform: translateY(3px); }
+}
+@keyframes hintArrowUp {
+  0%, 30%, 100% { transform: translateY(0); }
+  15%           { transform: translateY(-3px); }
+}
+
 /* Arc animation keyframes */
 @keyframes hlPulse {
   from { transform: scale(1); opacity: 0.3; }
@@ -227,4 +242,15 @@ body {
 }
 .scroll-thin::-webkit-scrollbar-thumb:hover {
   background: rgba(26, 35, 64, 0.7);
+}
+
+/* Scrollable but with no visible scrollbar (used by the exercise sub-tab bar) */
+.scrollbar-hide {
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* old Edge/IE */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;                  /* Chrome/Safari */
 }

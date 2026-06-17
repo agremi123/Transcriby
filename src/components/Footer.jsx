@@ -7,7 +7,7 @@ export function CTABanner() {
         <Reveal>
           <div className="relative overflow-hidden border border-line bg-ivory2">
             <img
-              src="/assets/paris-skyline.png"
+              src="/assets/paris-skyline.jpg"
               alt=""
               className="absolute inset-0 w-full h-full object-cover object-bottom select-none"
               style={{ opacity: 0.7, mixBlendMode: 'multiply' }}

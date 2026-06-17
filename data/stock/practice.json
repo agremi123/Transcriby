@@ -1,0 +1,158 @@
+[
+  {
+    "id": "pr-articles",
+    "level": "A1",
+    "topic": "les articles",
+    "keywords": ["article", "articles", "le la les", "un une des", "déterminant"],
+    "exercises": [
+      { "question": "Choisis l'article correct : J'achète ___ pain.", "options": ["du", "de la", "des", "le"], "answer": "du" },
+      { "question": "Complète : ___ amis de Marie sont sympas.", "options": ["Le", "La", "Les", "Un"], "answer": "Les" },
+      { "question": "Quelle phrase est correcte ?", "options": ["Je n'ai pas de voiture.", "Je n'ai pas une voiture.", "Je n'ai pas la voiture.", "Je n'ai pas des voiture."], "answer": "Je n'ai pas de voiture." },
+      { "question": "Complète : Il boit ___ eau.", "options": ["de l'", "du", "de la", "des"], "answer": "de l'" }
+    ]
+  },
+  {
+    "id": "pr-passe-compose",
+    "level": "A2",
+    "topic": "le passé composé",
+    "keywords": ["passé composé", "passe compose", "auxiliaire", "participe passé"],
+    "exercises": [
+      { "question": "Choisis la forme correcte : Hier, elle ___ au cinéma.", "options": ["est allée", "a allé", "est allé", "a allée"], "answer": "est allée" },
+      { "question": "Complète : Nous ___ un bon repas.", "options": ["avons mangé", "sommes mangé", "avons mangés", "as mangé"], "answer": "avons mangé" },
+      { "question": "Quel verbe utilise l'auxiliaire ÊTRE au passé composé ?", "options": ["partir", "manger", "regarder", "finir"], "answer": "partir" },
+      { "question": "Complète : Ils ___ tard hier soir.", "options": ["sont rentrés", "ont rentré", "sont rentré", "ont rentrés"], "answer": "sont rentrés" }
+    ]
+  },
+  {
+    "id": "pr-imparfait",
+    "level": "A2",
+    "topic": "l'imparfait",
+    "keywords": ["imparfait", "passé", "description", "habitude"],
+    "exercises": [
+      { "question": "Complète : Quand j'étais petit, je ___ au parc.", "options": ["jouais", "ai joué", "jouerai", "joue"], "answer": "jouais" },
+      { "question": "Choisis la forme correcte de ÊTRE à l'imparfait (nous) :", "options": ["étions", "sommes", "étaient", "était"], "answer": "étions" },
+      { "question": "Quand utilise-t-on l'imparfait ?", "options": ["Pour décrire / une habitude passée", "Pour une action ponctuelle terminée", "Pour le futur", "Pour un ordre"], "answer": "Pour décrire / une habitude passée" },
+      { "question": "Complète : Il ___ beau ce jour-là.", "options": ["faisait", "a fait", "fera", "fait"], "answer": "faisait" }
+    ]
+  },
+  {
+    "id": "pr-passe-compose-imparfait",
+    "level": "B1",
+    "topic": "passé composé vs imparfait",
+    "keywords": ["passé composé vs imparfait", "récit", "passe compose imparfait"],
+    "exercises": [
+      { "question": "Complète : Je ___ la télé quand le téléphone ___ .", "options": ["regardais / a sonné", "ai regardé / sonnait", "regardais / sonnait", "ai regardé / a sonné"], "answer": "regardais / a sonné" },
+      { "question": "Quelle phrase exprime une action soudaine dans le passé ?", "options": ["Soudain, il est tombé.", "Il faisait froid.", "Nous étions fatigués.", "Le soleil brillait."], "answer": "Soudain, il est tombé." },
+      { "question": "Complète : Pendant qu'elle ___ , les enfants ___ .", "options": ["cuisinait / dormaient", "a cuisiné / ont dormi", "cuisinait / ont dormi", "a cuisiné / dormaient"], "answer": "cuisinait / dormaient" },
+      { "question": "Le décor d'un récit (météo, lieu) se met généralement à :", "options": ["l'imparfait", "au passé composé", "au futur", "au présent"], "answer": "l'imparfait" }
+    ]
+  },
+  {
+    "id": "pr-futur",
+    "level": "B1",
+    "topic": "le futur simple",
+    "keywords": ["futur", "futur simple", "avenir"],
+    "exercises": [
+      { "question": "Complète : Demain, nous ___ à la plage.", "options": ["irons", "allons", "irions", "allions"], "answer": "irons" },
+      { "question": "Choisis le futur de ÊTRE (je) :", "options": ["serai", "suis", "serais", "étais"], "answer": "serai" },
+      { "question": "Complète : Tu ___ bientôt de mes nouvelles. (avoir)", "options": ["auras", "as", "aurais", "avais"], "answer": "auras" },
+      { "question": "Quel est le radical du futur de FAIRE ?", "options": ["fer-", "fais-", "fait-", "fas-"], "answer": "fer-" }
+    ]
+  },
+  {
+    "id": "pr-pronoms",
+    "level": "B1",
+    "topic": "les pronoms",
+    "keywords": ["pronom", "pronoms", "COD", "COI", "y en"],
+    "exercises": [
+      { "question": "Remplace : Tu vois Marie ? — Oui, je ___ vois.", "options": ["la", "le", "lui", "y"], "answer": "la" },
+      { "question": "Remplace : Tu penses à tes vacances ? — Oui, j'___ pense.", "options": ["y", "en", "le", "lui"], "answer": "y" },
+      { "question": "Remplace : Tu veux du café ? — Oui, j'___ veux.", "options": ["en", "y", "le", "la"], "answer": "en" },
+      { "question": "Remplace : Tu parles à ton frère ? — Oui, je ___ parle.", "options": ["lui", "le", "y", "en"], "answer": "lui" }
+    ]
+  },
+  {
+    "id": "pr-subjonctif",
+    "level": "B2",
+    "topic": "le subjonctif",
+    "keywords": ["subjonctif", "il faut que", "bien que"],
+    "exercises": [
+      { "question": "Complète : Il faut que tu ___ à l'heure. (être)", "options": ["sois", "es", "seras", "étais"], "answer": "sois" },
+      { "question": "Quelle expression demande le subjonctif ?", "options": ["bien que", "parce que", "puisque", "depuis que"], "answer": "bien que" },
+      { "question": "Complète : Je ne pense pas qu'il ___ raison. (avoir)", "options": ["ait", "a", "aura", "avait"], "answer": "ait" },
+      { "question": "Complète : Je veux que nous ___ un effort. (faire)", "options": ["fassions", "faisons", "ferons", "faisions"], "answer": "fassions" }
+    ]
+  },
+  {
+    "id": "pr-conditionnel",
+    "level": "B2",
+    "topic": "le conditionnel",
+    "keywords": ["conditionnel", "politesse", "hypothèse", "si"],
+    "exercises": [
+      { "question": "Complète (politesse) : Je ___ un café, s'il vous plaît.", "options": ["voudrais", "veux", "voudrai", "voulais"], "answer": "voudrais" },
+      { "question": "Complète : Si j'avais le temps, je ___ avec toi.", "options": ["viendrais", "viendrai", "venais", "viens"], "answer": "viendrais" },
+      { "question": "Après « si » (hypothèse irréelle du présent), on emploie :", "options": ["l'imparfait", "le conditionnel", "le futur", "le subjonctif"], "answer": "l'imparfait" },
+      { "question": "Complète (conseil) : Tu ___ te reposer. (devoir)", "options": ["devrais", "dois", "devras", "devais"], "answer": "devrais" }
+    ]
+  },
+  {
+    "id": "pr-prepositions",
+    "level": "A2",
+    "topic": "les prépositions",
+    "keywords": ["préposition", "prepositions", "à en de", "lieu"],
+    "exercises": [
+      { "question": "Complète : Je vais ___ France cet été.", "options": ["en", "à", "au", "dans"], "answer": "en" },
+      { "question": "Complète : Il habite ___ Portugal.", "options": ["au", "en", "à", "dans le"], "answer": "au" },
+      { "question": "Complète : Nous allons ___ Paris demain.", "options": ["à", "en", "au", "dans"], "answer": "à" },
+      { "question": "Complète : Elle vient ___ Espagne.", "options": ["d'", "de", "du", "des"], "answer": "d'" }
+    ]
+  },
+  {
+    "id": "pr-accord-adjectifs",
+    "level": "A2",
+    "topic": "l'accord des adjectifs",
+    "keywords": ["accord", "adjectif", "adjectifs", "genre nombre"],
+    "exercises": [
+      { "question": "Complète : Une voiture ___ . (blanc)", "options": ["blanche", "blanc", "blanches", "blancs"], "answer": "blanche" },
+      { "question": "Complète : De ___ fleurs. (beau)", "options": ["belles", "beaux", "beau", "belle"], "answer": "belles" },
+      { "question": "Complète : Une ___ idée. (bon)", "options": ["bonne", "bon", "bonnes", "bons"], "answer": "bonne" },
+      { "question": "Où se place généralement « rouge » ?", "options": ["après le nom", "avant le nom", "à la fin de la phrase", "avant le verbe"], "answer": "après le nom" }
+    ]
+  },
+  {
+    "id": "pr-present",
+    "level": "A1",
+    "topic": "le présent",
+    "keywords": ["présent", "present", "conjugaison présent", "verbes en -er"],
+    "exercises": [
+      { "question": "Complète : Je ___ français. (parler)", "options": ["parle", "parles", "parlent", "parler"], "answer": "parle" },
+      { "question": "Complète : Nous ___ à Paris. (habiter)", "options": ["habitons", "habitez", "habite", "habitent"], "answer": "habitons" },
+      { "question": "Complète : Tu ___ un café ? (vouloir)", "options": ["veux", "veut", "voulez", "veulent"], "answer": "veux" },
+      { "question": "Complète : Ils ___ au cinéma. (aller)", "options": ["vont", "va", "allons", "allez"], "answer": "vont" }
+    ]
+  },
+  {
+    "id": "pr-concordance-c1",
+    "level": "C1",
+    "topic": "la concordance des temps",
+    "keywords": ["concordance", "concordance des temps", "subjonctif passé", "temps composés"],
+    "exercises": [
+      { "question": "Complète : Je suis content que tu ___ venu hier. (subjonctif passé)", "options": ["sois", "es", "étais", "seras"], "answer": "sois" },
+      { "question": "Complète : Il aurait réussi s'il ___ davantage travaillé.", "options": ["avait", "aurait", "a", "avais"], "answer": "avait" },
+      { "question": "Complète : Bien qu'il ___ déjà parti, on l'attendait. (subjonctif passé : fût parti / soit parti)", "options": ["soit parti", "est parti", "était parti", "sera parti"], "answer": "soit parti" },
+      { "question": "Après « après que » + fait accompli, on emploie normalement :", "options": ["l'indicatif", "le subjonctif", "le conditionnel", "l'impératif"], "answer": "l'indicatif" }
+    ]
+  },
+  {
+    "id": "pr-mise-en-relief-c1",
+    "level": "C1",
+    "topic": "la mise en relief et les connecteurs",
+    "keywords": ["mise en relief", "ce qui ce que", "connecteurs", "articulation", "c'est qui"],
+    "exercises": [
+      { "question": "Complète : ___ me plaît, c'est le calme. (sujet)", "options": ["Ce qui", "Ce que", "Ce dont", "Que"], "answer": "Ce qui" },
+      { "question": "Complète : ___ j'ai besoin, c'est de temps. (avoir besoin de)", "options": ["Ce dont", "Ce que", "Ce qui", "Dont"], "answer": "Ce dont" },
+      { "question": "Quel connecteur exprime la conséquence ?", "options": ["par conséquent", "en revanche", "néanmoins", "or"], "answer": "par conséquent" },
+      { "question": "Complète : ___ ce soit difficile, il persévère. (concession + subjonctif)", "options": ["Bien que", "Parce que", "Puisque", "Depuis que"], "answer": "Bien que" }
+    ]
+  }
+]

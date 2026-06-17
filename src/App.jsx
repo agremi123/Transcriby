@@ -17,6 +17,10 @@ import DevPanel from './components/DevPanel';
 import { LearnerProfileProvider, useLearnerProfile } from './context/LearnerProfileContext';
 import { isProfileSetupComplete, loadLearnerProfile } from './lib/learnerProfile';
 
+// Lazy so the 3D libraries (Three.js) load ONLY on /avatar-test and never
+// weigh down the main app bundle.
+const AvatarTest = React.lazy(() => import('./pages/AvatarTest'));
+
 
 
 function LandingPage() {
@@ -24,11 +28,11 @@ function LandingPage() {
     <div className="relative">
       <Nav />
       <Hero />
-      <UniversitiesBar />
-<Features />
+      <Features />
       <Comparison />
       <Testimonials />
       <Pricing />
+      <UniversitiesBar />
       <Faq />
       <CTABanner />
       <Footer />
@@ -95,7 +99,7 @@ export default function App() {
         <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer"
           className="fixed bottom-3 left-3 z-20 hidden sm:flex items-center gap-2 group pointer-events-none [&>*]:pointer-events-auto"
         >
-          <img src="/assets/remi-avatar.png" alt="Kru Rémi"
+          <img src="/assets/remi-avatar.jpg" alt="Kru Rémi"
             className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all shrink-0" />
           <span className="font-display text-[12px] italic text-navy/60 leading-none whitespace-nowrap">
             by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span>
@@ -109,6 +113,17 @@ export default function App() {
           <Route path="/expressions" element={<MyExpressions />} />
           <Route path="/targets" element={<MyTargets />} />
           <Route path="/reading" element={<ReadingExercise />} />
+          {/* Dev-only 3D avatar test harness — not exposed in production */}
+          {import.meta.env.DEV && (
+            <Route
+              path="/avatar-test"
+              element={
+                <React.Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-paper text-navy/40 font-display italic">Loading 3D…</div>}>
+                  <AvatarTest />
+                </React.Suspense>
+              }
+            />
+          )}
         </Routes>
       </LearnerProfileProvider>
     </BrowserRouter>

@@ -11,7 +11,16 @@ import { fetchNarratorAudio, connectNarratorSource, NARRATORS } from '../lib/nar
 import { buildWordTimings, playDecodedBuffer } from '../lib/speechHighlight';
 import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from '../lib/siteAudio';
 import { NarratorHoverText } from '../lib/NarratorHoverText';
+import { startLine, setPlaybackTime, stopLine } from '../lib/lipSync';
 import { Logo, NAV_CTA_CLASS } from './atoms';
+
+// Lazy so the 3D libraries load only when the welcome avatar actually mounts,
+// never weighing down the main app bundle.
+const TalkingAvatar3D = React.lazy(() => import('./TalkingAvatar3D'));
+const LEA_AVATAR_SRC = '/avatars/avaturn.glb';
+// Master switch for the 3D talking avatar — keep in sync with Hero.jsx. While
+// false, both dev and prod show the flat photo (no missing-model 404 in prod).
+const SHOW_3D_AVATAR = false;
 
 const BADGE_IMG_CLASS =
   'w-[140px] h-[140px] sm:w-[168px] sm:h-[168px] object-contain object-center pointer-events-none';
@@ -49,6 +58,7 @@ export default function WelcomeOnboarding() {
     sessionRef.current += 1;
     try { sourceRef.current?.stop(); } catch {}
     sourceRef.current = null;
+    stopLine(); // reset the avatar mouth
     setPlaying(false);
     setActiveSpeakingNarrator(null);
     setSpeechPlaybackTime(null);
@@ -82,6 +92,7 @@ export default function WelcomeOnboarding() {
       if (!isActive()) return;
 
       setSpeechTimings(buildWordTimings(line.text, decoded.duration));
+      startLine(line.text, decoded.duration); // drive the 3D avatar's mouth shapes
       await playDecodedBuffer(ctx, {
         buffer: decoded,
         narrator: line.narrator,
@@ -91,6 +102,7 @@ export default function WelcomeOnboarding() {
         onTimeUpdate: (t) => {
           if (!isActive()) return;
           setSpeechPlaybackTime(t);
+          setPlaybackTime(t);
           if (t == null) {
             setSpeechPlaybackTime(null);
             setSpeechTimings([]);
@@ -140,6 +152,7 @@ export default function WelcomeOnboarding() {
         if (!isActive()) return;
 
         setSpeechTimings(buildWordTimings(line.text, decoded.duration));
+        startLine(line.text, decoded.duration); // drive the 3D avatar's mouth shapes
         await playDecodedBuffer(ctx, {
           buffer: decoded,
           narrator: line.narrator,
@@ -149,6 +162,7 @@ export default function WelcomeOnboarding() {
           onTimeUpdate: (t) => {
             if (!isActive()) return;
             setSpeechPlaybackTime(t);
+            setPlaybackTime(t);
             if (t == null) {
               setSpeechPlaybackTime(null);
               setSpeechTimings([]);
@@ -292,7 +306,7 @@ export default function WelcomeOnboarding() {
             <div className="flex items-center justify-between mb-6">
               <Logo className="shrink-0 pointer-events-none" />
               <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group">
-                <img src="/assets/remi-avatar.png" alt="Kru Rémi" className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all shrink-0" />
+                <img src="/assets/remi-avatar.jpg" alt="Kru Rémi" className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all shrink-0" />
                 <span className="font-display text-[12px] italic text-navy/60 leading-none whitespace-nowrap">
                   by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span> · certified French teacher
                 </span>
@@ -309,10 +323,17 @@ export default function WelcomeOnboarding() {
               const highlightSpeech = isSpeaking && speechText === line.text && speechPlaybackTime != null;
               return (
                 <div className="flex flex-col items-center gap-3 mb-6 max-w-[400px] mx-auto">
-                  <div className={`relative w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] rounded-full overflow-hidden shadow-lg transition-all duration-300 ${
+                  <div className={`relative w-[150px] h-[150px] sm:w-[190px] sm:h-[190px] rounded-full overflow-hidden shadow-lg bg-ivory2 transition-all duration-300 ${
                     isSpeaking ? 'ring-4 ring-wine scale-[1.04] shadow-xl' : 'ring-2 ring-line/60'
                   }`}>
-                    <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
+                    {(!SHOW_3D_AVATAR || import.meta.env.DEV) ? (
+                      /* 3D off (flag) or local dev — show the photo instead */
+                      <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
+                    ) : (
+                      <React.Suspense fallback={<img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />}>
+                        <TalkingAvatar3D src={LEA_AVATAR_SRC} controls={false} />
+                      </React.Suspense>
+                    )}
                     {isSpeaking && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-25 pointer-events-none" />}
                   </div>
                   <span className={`text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${isSpeaking ? 'text-wine' : 'text-navy/60'}`}>
@@ -353,7 +374,6 @@ export default function WelcomeOnboarding() {
             {/* Phase 2: Jules appears with his taunt + badge picker */}
             {(showLevelPicker || levelLocked) && (() => {
               const julesLine = linesByNarrator['jules'] ?? JULES_LEVEL_PICKER_LINE;
-              const n = NARRATORS['jules'];
               const isSpeaking = activeNarrator === 'jules';
               const highlightSpeech = isSpeaking && speechText === julesLine.text && speechPlaybackTime != null;
               return (
@@ -364,12 +384,6 @@ export default function WelcomeOnboarding() {
                   transition={{ duration: 0.35 }}
                   className="flex flex-col items-center gap-3 mb-5"
                 >
-                  <div className={`relative w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] rounded-full overflow-hidden shadow-md shrink-0 transition-all duration-300 ${
-                    isSpeaking ? 'ring-4 ring-wine scale-[1.04]' : 'ring-2 ring-line/60'
-                  }`}>
-                    <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
-                    {isSpeaking && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-25 pointer-events-none" />}
-                  </div>
                   <div className={`rounded-xl px-4 py-3 border transition-colors duration-300 inline-flex items-start gap-2 ${
                     isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
                   }`}>

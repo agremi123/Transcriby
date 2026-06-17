@@ -1,0 +1,254 @@
+[
+  {
+    "id": "vocab-a1-famille",
+    "level": "A1",
+    "theme": "La famille",
+    "words": [
+      { "word": "la mère", "translation": "mother", "example": "Ma mère s'appelle Sophie.", "exampleTranslation": "My mother's name is Sophie." },
+      { "word": "le père", "translation": "father", "example": "Mon père travaille à Paris.", "exampleTranslation": "My father works in Paris." },
+      { "word": "le frère", "translation": "brother", "example": "J'ai un frère plus âgé.", "exampleTranslation": "I have an older brother." },
+      { "word": "la sœur", "translation": "sister", "example": "Ma sœur habite à Lyon.", "exampleTranslation": "My sister lives in Lyon." },
+      { "word": "les parents", "translation": "parents", "example": "Mes parents sont retraités.", "exampleTranslation": "My parents are retired." },
+      { "word": "les enfants", "translation": "children", "example": "Ils ont trois enfants.", "exampleTranslation": "They have three children." }
+    ],
+    "exercises": [
+      { "word": "mère", "definition": "mother", "sentence": "Ma ___ prépare le dîner." },
+      { "word": "père", "definition": "father", "sentence": "Mon ___ lit le journal." },
+      { "word": "sœur", "definition": "sister", "sentence": "Ma petite ___ a cinq ans." },
+      { "word": "frère", "definition": "brother", "sentence": "Mon ___ joue au foot." },
+      { "word": "parents", "definition": "parents", "sentence": "Le dimanche, je déjeune chez mes ___ ." },
+      { "word": "enfants", "definition": "children", "sentence": "Les ___ jouent dans le jardin." }
+    ]
+  },
+  {
+    "id": "vocab-a1-cafe",
+    "level": "A1",
+    "theme": "Au café",
+    "words": [
+      { "word": "un café", "translation": "a coffee", "example": "Je prends un café, s'il vous plaît.", "exampleTranslation": "I'll have a coffee, please." },
+      { "word": "l'eau", "translation": "water", "example": "Une carafe d'eau, merci.", "exampleTranslation": "A jug of water, thanks." },
+      { "word": "l'addition", "translation": "the bill", "example": "L'addition, s'il vous plaît !", "exampleTranslation": "The bill, please!" },
+      { "word": "la terrasse", "translation": "the terrace", "example": "On s'assoit en terrasse ?", "exampleTranslation": "Shall we sit on the terrace?" },
+      { "word": "le serveur", "translation": "the waiter", "example": "Le serveur arrive tout de suite.", "exampleTranslation": "The waiter is coming right away." },
+      { "word": "un croissant", "translation": "a croissant", "example": "Un café et un croissant, parfait.", "exampleTranslation": "A coffee and a croissant, perfect." }
+    ],
+    "exercises": [
+      { "word": "café", "definition": "coffee", "sentence": "Le matin, je bois un ___ ." },
+      { "word": "addition", "definition": "the bill", "sentence": "On demande l'___ au serveur." },
+      { "word": "terrasse", "definition": "terrace", "sentence": "Il fait beau, on mange en ___ ." },
+      { "word": "eau", "definition": "water", "sentence": "Je voudrais un verre d'___ ." },
+      { "word": "serveur", "definition": "waiter", "sentence": "Le ___ prend la commande." },
+      { "word": "croissant", "definition": "croissant", "sentence": "Au petit-déjeuner, j'adore un ___ chaud." }
+    ]
+  },
+  {
+    "id": "vocab-a2-vetements",
+    "level": "A2",
+    "theme": "Les vêtements",
+    "words": [
+      { "word": "un manteau", "translation": "a coat", "example": "Mets ton manteau, il fait froid.", "exampleTranslation": "Put on your coat, it's cold." },
+      { "word": "une chemise", "translation": "a shirt", "example": "Il porte une chemise blanche.", "exampleTranslation": "He's wearing a white shirt." },
+      { "word": "un pantalon", "translation": "trousers", "example": "Ce pantalon est trop grand.", "exampleTranslation": "These trousers are too big." },
+      { "word": "des chaussures", "translation": "shoes", "example": "J'ai acheté des chaussures neuves.", "exampleTranslation": "I bought new shoes." },
+      { "word": "une robe", "translation": "a dress", "example": "Elle a mis une jolie robe.", "exampleTranslation": "She put on a pretty dress." },
+      { "word": "une écharpe", "translation": "a scarf", "example": "Prends une écharpe pour sortir.", "exampleTranslation": "Take a scarf to go out." }
+    ],
+    "exercises": [
+      { "word": "manteau", "definition": "a coat", "sentence": "En hiver, je porte un gros ___ ." },
+      { "word": "chemise", "definition": "a shirt", "sentence": "Pour le travail, il met une ___ ." },
+      { "word": "chaussures", "definition": "shoes", "sentence": "Ces ___ sont confortables." },
+      { "word": "robe", "definition": "a dress", "sentence": "Pour la fête, elle achète une ___ ." },
+      { "word": "pantalon", "definition": "trousers", "sentence": "Mon ___ est noir." },
+      { "word": "écharpe", "definition": "a scarf", "sentence": "Il fait froid, mets ton ___ ." }
+    ]
+  },
+  {
+    "id": "vocab-a2-transports",
+    "level": "A2",
+    "theme": "Les transports",
+    "words": [
+      { "word": "le métro", "translation": "the subway", "example": "Je prends le métro tous les jours.", "exampleTranslation": "I take the subway every day." },
+      { "word": "un billet", "translation": "a ticket", "example": "Achète un billet au guichet.", "exampleTranslation": "Buy a ticket at the counter." },
+      { "word": "la gare", "translation": "the station", "example": "Le train part de la gare de Lyon.", "exampleTranslation": "The train leaves from Gare de Lyon." },
+      { "word": "un arrêt", "translation": "a stop", "example": "Descends au prochain arrêt.", "exampleTranslation": "Get off at the next stop." },
+      { "word": "un vélo", "translation": "a bike", "example": "Je vais au travail à vélo.", "exampleTranslation": "I go to work by bike." },
+      { "word": "un trajet", "translation": "a journey", "example": "Le trajet dure vingt minutes.", "exampleTranslation": "The journey takes twenty minutes." }
+    ],
+    "exercises": [
+      { "word": "métro", "definition": "the subway", "sentence": "À Paris, le ___ est très pratique." },
+      { "word": "billet", "definition": "a ticket", "sentence": "N'oublie pas ton ___ de train." },
+      { "word": "gare", "definition": "the station", "sentence": "On se retrouve à la ___ à midi." },
+      { "word": "arrêt", "definition": "a stop", "sentence": "Le bus s'arrête au prochain ___ ." },
+      { "word": "vélo", "definition": "a bike", "sentence": "Le week-end, je fais du ___ ." },
+      { "word": "trajet", "definition": "a journey", "sentence": "Mon ___ jusqu'au bureau est court." }
+    ]
+  },
+  {
+    "id": "vocab-b1-emotions",
+    "level": "B1",
+    "theme": "Les émotions et les sentiments",
+    "words": [
+      { "word": "la joie", "translation": "joy", "example": "Quelle joie de te revoir !", "exampleTranslation": "What a joy to see you again!" },
+      { "word": "inquiet", "translation": "worried", "example": "Je suis un peu inquiet pour lui.", "exampleTranslation": "I'm a little worried about him." },
+      { "word": "déçu", "translation": "disappointed", "example": "Elle était déçue par le film.", "exampleTranslation": "She was disappointed by the film." },
+      { "word": "soulagé", "translation": "relieved", "example": "Je suis soulagé que tout aille bien.", "exampleTranslation": "I'm relieved everything's fine." },
+      { "word": "ému", "translation": "moved (emotionally)", "example": "Il était ému aux larmes.", "exampleTranslation": "He was moved to tears." },
+      { "word": "agacé", "translation": "annoyed", "example": "Le bruit m'agace.", "exampleTranslation": "The noise annoys me." }
+    ],
+    "exercises": [
+      { "word": "inquiet", "definition": "worried", "sentence": "Il n'a pas appelé, je suis ___ ." },
+      { "word": "déçu", "definition": "disappointed", "sentence": "Le match était nul, j'étais ___ ." },
+      { "word": "soulagé", "definition": "relieved", "sentence": "Après l'examen, j'étais ___ ." },
+      { "word": "joie", "definition": "joy", "sentence": "Les retrouvailles étaient pleines de ___ ." },
+      { "word": "ému", "definition": "moved", "sentence": "Pendant le discours, il était très ___ ." },
+      { "word": "agacé", "definition": "annoyed", "sentence": "Les retards répétés m'ont ___ ." }
+    ]
+  },
+  {
+    "id": "vocab-b1-environnement",
+    "level": "B1",
+    "theme": "L'environnement",
+    "words": [
+      { "word": "le réchauffement", "translation": "warming", "example": "Le réchauffement climatique nous inquiète.", "exampleTranslation": "Global warming worries us." },
+      { "word": "le tri", "translation": "sorting (recycling)", "example": "Le tri des déchets est important.", "exampleTranslation": "Sorting waste is important." },
+      { "word": "polluer", "translation": "to pollute", "example": "Les voitures polluent la ville.", "exampleTranslation": "Cars pollute the city." },
+      { "word": "le gaspillage", "translation": "waste", "example": "Il faut éviter le gaspillage alimentaire.", "exampleTranslation": "We must avoid food waste." },
+      { "word": "durable", "translation": "sustainable", "example": "On cherche un mode de vie durable.", "exampleTranslation": "We're looking for a sustainable lifestyle." },
+      { "word": "l'énergie", "translation": "energy", "example": "Les énergies renouvelables se développent.", "exampleTranslation": "Renewable energies are developing." }
+    ],
+    "exercises": [
+      { "word": "réchauffement", "definition": "warming", "sentence": "Le ___ climatique fait fondre les glaciers." },
+      { "word": "tri", "definition": "sorting", "sentence": "Je fais le ___ du verre et du papier." },
+      { "word": "polluer", "definition": "to pollute", "sentence": "Les usines ___ les rivières." },
+      { "word": "gaspillage", "definition": "waste", "sentence": "Le ___ d'eau est un vrai problème." },
+      { "word": "durable", "definition": "sustainable", "sentence": "On veut un développement ___ ." },
+      { "word": "énergie", "definition": "energy", "sentence": "Le solaire est une ___ propre." }
+    ]
+  },
+  {
+    "id": "vocab-b2-travail",
+    "level": "B2",
+    "theme": "Le monde du travail",
+    "words": [
+      { "word": "un entretien", "translation": "an interview", "example": "J'ai un entretien d'embauche demain.", "exampleTranslation": "I have a job interview tomorrow." },
+      { "word": "embaucher", "translation": "to hire", "example": "L'entreprise va embaucher dix personnes.", "exampleTranslation": "The company is going to hire ten people." },
+      { "word": "le télétravail", "translation": "remote work", "example": "Je fais du télétravail deux jours par semaine.", "exampleTranslation": "I work remotely two days a week." },
+      { "word": "une compétence", "translation": "a skill", "example": "La communication est une compétence clé.", "exampleTranslation": "Communication is a key skill." },
+      { "word": "un délai", "translation": "a deadline", "example": "Le délai est très serré.", "exampleTranslation": "The deadline is very tight." },
+      { "word": "une réunion", "translation": "a meeting", "example": "La réunion a été reportée.", "exampleTranslation": "The meeting was postponed." }
+    ],
+    "exercises": [
+      { "word": "entretien", "definition": "an interview", "sentence": "Je me prépare pour mon ___ d'embauche." },
+      { "word": "embaucher", "definition": "to hire", "sentence": "La start-up veut ___ de nouveaux profils." },
+      { "word": "télétravail", "definition": "remote work", "sentence": "Depuis 2020, le ___ s'est généralisé." },
+      { "word": "compétence", "definition": "a skill", "sentence": "Cette ___ est très recherchée." },
+      { "word": "délai", "definition": "a deadline", "sentence": "On doit respecter le ___ de livraison." },
+      { "word": "réunion", "definition": "a meeting", "sentence": "La ___ commence à neuf heures." }
+    ]
+  },
+  {
+    "id": "vocab-b2-societe",
+    "level": "B2",
+    "theme": "La société et l'actualité",
+    "words": [
+      { "word": "une manifestation", "translation": "a demonstration", "example": "La manifestation a réuni des milliers de personnes.", "exampleTranslation": "The demonstration drew thousands of people." },
+      { "word": "une grève", "translation": "a strike", "example": "Les transports sont en grève aujourd'hui.", "exampleTranslation": "Transport is on strike today." },
+      { "word": "une loi", "translation": "a law", "example": "Le parlement a voté une nouvelle loi.", "exampleTranslation": "Parliament passed a new law." },
+      { "word": "les inégalités", "translation": "inequalities", "example": "Les inégalités se creusent.", "exampleTranslation": "Inequalities are widening." },
+      { "word": "un citoyen", "translation": "a citizen", "example": "Chaque citoyen a des droits et des devoirs.", "exampleTranslation": "Every citizen has rights and duties." },
+      { "word": "le pouvoir d'achat", "translation": "purchasing power", "example": "Le pouvoir d'achat baisse avec l'inflation.", "exampleTranslation": "Purchasing power falls with inflation." }
+    ],
+    "exercises": [
+      { "word": "manifestation", "definition": "a demonstration", "sentence": "Une grande ___ a eu lieu place de la République." },
+      { "word": "grève", "definition": "a strike", "sentence": "À cause de la ___ , il n'y a pas de train." },
+      { "word": "loi", "definition": "a law", "sentence": "Cette ___ entre en vigueur en janvier." },
+      { "word": "inégalités", "definition": "inequalities", "sentence": "Le rapport dénonce les ___ sociales." },
+      { "word": "citoyen", "definition": "a citizen", "sentence": "Chaque ___ peut voter à dix-huit ans." },
+      { "word": "pouvoir d'achat", "definition": "purchasing power", "sentence": "Les salariés réclament plus de ___ ." }
+    ]
+  },
+  {
+    "id": "vocab-c1-argumentation",
+    "level": "C1",
+    "theme": "L'argumentation et le débat",
+    "words": [
+      { "word": "soutenir une thèse", "translation": "to defend an argument", "example": "Il soutient une thèse audacieuse.", "exampleTranslation": "He defends a bold argument." },
+      { "word": "nuancer", "translation": "to qualify / add nuance", "example": "Il faut nuancer ce jugement.", "exampleTranslation": "We must qualify this judgement." },
+      { "word": "une objection", "translation": "an objection", "example": "Je vois une objection à ton raisonnement.", "exampleTranslation": "I see an objection to your reasoning." },
+      { "word": "réfuter", "translation": "to refute", "example": "Elle a réfuté tous les arguments.", "exampleTranslation": "She refuted all the arguments." },
+      { "word": "un enjeu", "translation": "a stake / key issue", "example": "L'enjeu principal est économique.", "exampleTranslation": "The main issue is economic." },
+      { "word": "mettre en évidence", "translation": "to highlight", "example": "L'étude met en évidence un lien clair.", "exampleTranslation": "The study highlights a clear link." }
+    ],
+    "exercises": [
+      { "word": "nuancer", "definition": "to add nuance", "sentence": "Avant de conclure, il faut ___ ce constat." },
+      { "word": "objection", "definition": "an objection", "sentence": "Permettez-moi de soulever une ___ ." },
+      { "word": "réfuter", "definition": "to refute", "sentence": "L'avocat a réussi à ___ l'accusation." },
+      { "word": "enjeu", "definition": "key issue", "sentence": "Le véritable ___ de ce débat est éthique." },
+      { "word": "soutenir", "definition": "to defend (an argument)", "sentence": "Il est difficile de ___ une telle thèse." },
+      { "word": "mettre en évidence", "definition": "to highlight", "sentence": "Ces chiffres ___ une tendance inquiétante." }
+    ]
+  },
+  {
+    "id": "vocab-c1-expressions-idiomatiques",
+    "level": "C1",
+    "theme": "Expressions idiomatiques courantes",
+    "words": [
+      { "word": "coûter les yeux de la tête", "translation": "to cost a fortune", "example": "Cet appartement coûte les yeux de la tête.", "exampleTranslation": "This flat costs a fortune." },
+      { "word": "avoir le cafard", "translation": "to feel down / blue", "example": "Depuis son départ, elle a le cafard.", "exampleTranslation": "Since he left, she's been feeling down." },
+      { "word": "tomber dans les pommes", "translation": "to faint", "example": "Il faisait si chaud qu'elle est tombée dans les pommes.", "exampleTranslation": "It was so hot she fainted." },
+      { "word": "poser un lapin", "translation": "to stand someone up", "example": "Il m'a posé un lapin hier soir.", "exampleTranslation": "He stood me up last night." },
+      { "word": "mettre la main à la pâte", "translation": "to pitch in", "example": "Tout le monde a mis la main à la pâte.", "exampleTranslation": "Everyone pitched in." },
+      { "word": "avoir un poil dans la main", "translation": "to be lazy", "example": "Ce collègue a un poil dans la main.", "exampleTranslation": "That colleague is bone-idle." }
+    ],
+    "exercises": [
+      { "word": "cafard", "definition": "the blues (avoir le ___)", "sentence": "Quand il pleut, j'ai parfois le ___ ." },
+      { "word": "lapin", "definition": "to stand someone up (poser un ___)", "sentence": "Elle ne viendra pas, elle m'a posé un ___ ." },
+      { "word": "pommes", "definition": "to faint (tomber dans les ___)", "sentence": "À la vue du sang, il est tombé dans les ___ ." },
+      { "word": "pâte", "definition": "to pitch in (mettre la main à la ___)", "sentence": "Pour le déménagement, chacun a mis la main à la ___ ." },
+      { "word": "yeux", "definition": "to cost a fortune (coûter les ___ de la tête)", "sentence": "Cette montre coûte les ___ de la tête." },
+      { "word": "poil", "definition": "to be lazy (avoir un ___ dans la main)", "sentence": "Il ne fait jamais rien, il a un ___ dans la main." }
+    ]
+  },
+  {
+    "id": "vocab-c2-registre-soutenu",
+    "level": "C2",
+    "theme": "Le registre soutenu",
+    "words": [
+      { "word": "néanmoins", "translation": "nevertheless", "example": "Le projet est risqué ; néanmoins, il mérite d'être tenté.", "exampleTranslation": "The project is risky; nevertheless, it's worth attempting." },
+      { "word": "à l'aune de", "translation": "in light of / by the yardstick of", "example": "Tout se mesure à l'aune de ses conséquences.", "exampleTranslation": "Everything is measured by its consequences." },
+      { "word": "prôner", "translation": "to advocate", "example": "Le philosophe prône la modération.", "exampleTranslation": "The philosopher advocates moderation." },
+      { "word": "un truisme", "translation": "a truism", "example": "Dire que le temps passe est un truisme.", "exampleTranslation": "Saying time passes is a truism." },
+      { "word": "fustiger", "translation": "to castigate", "example": "L'éditorial fustige l'inaction du gouvernement.", "exampleTranslation": "The editorial castigates the government's inaction." },
+      { "word": "subséquemment", "translation": "subsequently (formal)", "example": "La loi fut votée et, subséquemment, appliquée.", "exampleTranslation": "The law was passed and, subsequently, applied." }
+    ],
+    "exercises": [
+      { "word": "néanmoins", "definition": "nevertheless", "sentence": "C'est coûteux ; ___ , les bénéfices sont réels." },
+      { "word": "prôner", "definition": "to advocate", "sentence": "Ce courant de pensée tend à ___ la simplicité." },
+      { "word": "fustiger", "definition": "to castigate", "sentence": "Les critiques n'ont pas manqué de ___ cette décision." },
+      { "word": "truisme", "definition": "a truism", "sentence": "Affirmer cela relève du ___ ." },
+      { "word": "aune", "definition": "yardstick (à l'___ de)", "sentence": "On juge une époque à l'___ de ses œuvres." },
+      { "word": "subséquemment", "definition": "subsequently (formal)", "sentence": "Le rapport fut remis et, ___ , débattu." }
+    ]
+  },
+  {
+    "id": "vocab-c2-argot-parisien",
+    "level": "C2",
+    "theme": "L'argot et le français parlé parisien",
+    "words": [
+      { "word": "kiffer", "translation": "to love / really like (slang)", "example": "Je kiffe trop ce quartier.", "exampleTranslation": "I really love this neighborhood." },
+      { "word": "un truc de ouf", "translation": "a crazy thing (slang)", "example": "Le concert, c'était un truc de ouf.", "exampleTranslation": "The concert was something crazy." },
+      { "word": "être crevé", "translation": "to be exhausted (slang)", "example": "Après le boulot, je suis crevé.", "exampleTranslation": "After work, I'm wiped out." },
+      { "word": "le boulot", "translation": "work / job (informal)", "example": "J'ai trop de boulot en ce moment.", "exampleTranslation": "I have too much work right now." },
+      { "word": "bosser", "translation": "to work (slang)", "example": "Elle bosse dans une agence.", "exampleTranslation": "She works at an agency." },
+      { "word": "ça craint", "translation": "that sucks / that's dodgy", "example": "Le métro à cette heure-là, ça craint.", "exampleTranslation": "The metro at that hour, it's dodgy." }
+    ],
+    "exercises": [
+      { "word": "kiffer", "definition": "to really like (slang)", "sentence": "Franchement, je ___ ce resto." },
+      { "word": "boulot", "definition": "work (informal)", "sentence": "Je rentre tard, j'ai eu beaucoup de ___ ." },
+      { "word": "bosser", "definition": "to work (slang)", "sentence": "Ce week-end, je dois ___ sur mon projet." },
+      { "word": "crevé", "definition": "exhausted (slang)", "sentence": "J'ai mal dormi, je suis ___ ." },
+      { "word": "ouf", "definition": "crazy (un truc de ___)", "sentence": "Cette soirée, c'était un truc de ___ ." },
+      { "word": "craint", "definition": "that sucks (ça ___)", "sentence": "Il pleut et j'ai oublié mon parapluie, ça ___ ." }
+    ]
+  }
+]

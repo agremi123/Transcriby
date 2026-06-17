@@ -36,6 +36,16 @@ import {
   pickNarratorReaction,
 } from '../lib/narratorLevelAdapt';
 
+// Lazy so the 3D libraries load only when the avatar mounts, never weighing
+// down the main landing-page bundle.
+const TalkingAvatar3D = React.lazy(() => import('./TalkingAvatar3D'));
+const LEA_AVATAR_SRC = '/avatars/avaturn.glb';
+// Master switch for the 3D talking avatar. Kept OFF until a production-ready,
+// commercially-licensed (and compressed) model is committed — otherwise prod
+// would 404 the model and fall back to a placeholder. While false, BOTH dev and
+// prod show the flat photo. Flip to true (and commit the model) to go live.
+const SHOW_3D_AVATAR = false;
+
 // Parisian-meter progress awarded for completing a speaking défi (≈7 défis to
 // fill the meter and level up to the next CEFR level).
 const DEFI_COMPLETE_XP = 15;
@@ -593,9 +603,68 @@ function nextLevel(level) {
   return i >= 0 && i < CEFR.length - 1 ? CEFR[i + 1] : null;
 }
 
+// The four exercise "stops" on the mobile level-progress arrow, left → right.
+const LEVEL_ARROW_STOPS = [
+  { id: 'reading',   label: 'Reading',   x: 50 },
+  { id: 'listening', label: 'Listening', x: 144 },
+  { id: 'speaking',  label: 'Speaking',  x: 238 },
+  { id: 'writing',   label: 'Writing',   x: 300 },
+];
+
+// Compact level-progress arrow (mobile): current level → next level, with four
+// tappable exercise stops. Each stop fills in once that exercise is completed
+// (tracked per level); when all four are done the next-level badge lights up.
+// Mirrors the "My Parisian Progress" look, flattened into a straight arrow.
+function LevelProgressArrow({ level, doneTypes = [], onPick }) {
+  const next = nextLevel(level);
+  if (!next) return null; // C2 — no next level to aim for
+  const done = new Set(doneTypes);
+  const allDone = LEVEL_ARROW_STOPS.every((s) => done.has(s.id));
+  const WINE = '#8B1E2D';
+  const seg = (x1, x2, solid, key) => (
+    <line key={key} x1={x1} y1="24" x2={x2} y2="24" stroke={WINE}
+      strokeWidth={solid ? 2 : 1.6} strokeLinecap="round"
+      strokeDasharray={solid ? 'none' : '4 6'} opacity={solid ? 1 : 0.45} />
+  );
+  return (
+    <svg viewBox="0 0 360 60" width="100%" role="group"
+      aria-label={`Your level ${level}, next level ${next}. Tap an exercise to continue.`}>
+      {seg(20, 50, done.has('reading'), 's0')}
+      {seg(50, 144, done.has('listening'), 's1')}
+      {seg(144, 238, done.has('speaking'), 's2')}
+      {seg(238, 300, done.has('writing'), 's3')}
+      {seg(300, 340, allDone, 's4')}
+      <path d="M331 19 L341 24 L331 29 Z" fill={WINE} opacity={allDone ? 1 : 0.55} />
+
+      <circle cx="20" cy="24" r="12" fill={WINE} />
+      <text x="20" y="28" textAnchor="middle" fill="#F6F1E8"
+        fontFamily="'SF Mono',monospace" fontSize="11" fontWeight="700">{level}</text>
+      <circle cx="340" cy="24" r="12" fill={allDone ? WINE : '#fff'} stroke={WINE} strokeWidth="1.5" />
+      <text x="340" y="28" textAnchor="middle" fill={allDone ? '#F6F1E8' : WINE}
+        fontFamily="'SF Mono',monospace" fontSize="11" fontWeight="700">{next}</text>
+
+      {LEVEL_ARROW_STOPS.map((s) => {
+        const isDone = done.has(s.id);
+        return (
+          <g key={s.id} role="button" tabIndex={0}
+            aria-label={`${s.label}${isDone ? ' — completed' : ''}`}
+            style={{ cursor: 'pointer' }}
+            onClick={() => onPick?.(s.id)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick?.(s.id); } }}>
+            <circle cx={s.x} cy="24" r="15" fill="transparent" />
+            <circle cx={s.x} cy="24" r="6" fill={isDone ? WINE : '#fff'} stroke={WINE} strokeWidth="1.6" />
+            <text x={s.x} y="46" textAnchor="middle" fill={isDone ? WINE : '#1A2340'}
+              fillOpacity={isDone ? 1 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="11">{s.label}</text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 const DEMO_NARRATORS = {
-  lea: { id: 'lea', name: 'Léa', src: '/assets/lea.png' },
-  jules: { id: 'jules', name: 'Jules', src: '/assets/jules.png' },
+  lea: { id: 'lea', name: 'Léa', src: '/assets/lea.jpg' },
+  jules: { id: 'jules', name: 'Jules', src: '/assets/jules.jpg' },
 };
 
 // Little play icon shown over a clickable portrait on hover (parent needs `group`)
@@ -1168,6 +1237,8 @@ export function AudioDemoCard({
   writingWordTarget = 80,
   onWritingProgress = null,
   onNewWritingChallenge = null,
+  discoverWordRef = null,
+  onLeaSpeak = null,
 }) {
   const { effectiveLevel, gainExperience, gainDailyParisianPoints } = useLearnerProfile();
   const {
@@ -1199,7 +1270,7 @@ export function AudioDemoCard({
   const [practiceVocabAnswers, setPracticeVocabAnswers] = React.useState({});
   const [practiceAnsweredQ, setPracticeAnsweredQ] = React.useState({});
   const [pointsDelta, setPointsDelta] = React.useState(null); // { value: +3 | -1, id: number } for animation
-  const { dailyParisianPoints } = useLearnerProfile();
+  const { dailyParisianPoints, levelExercisesDone, markExerciseDone } = useLearnerProfile();
   const [assessingLevel, setAssessingLevel] = React.useState(false);
   const [activeTabInternal, setActiveTabInternal] = React.useState('transcript');
   const activeTab = activeTabProp ?? activeTabInternal;
@@ -1254,8 +1325,34 @@ export function AudioDemoCard({
     const t = setTimeout(() => { sc.scrollTop = sc.scrollHeight; }, 80);
     return () => clearTimeout(t);
   }, [writeReview.stage, writeReview.reaction, writeReview.corrected, writeReview.explanation, writeReviewHistory.length, writeReviewExample, writeReviewExampleLoading]);
+
+  // ── Mobile level-arrow: mark each exercise "stop" done on its completion signal ──
+  // Reading / Listening: a section of the current article validated.
+  React.useEffect(() => {
+    if (exerciseTabsDone < 1) return;
+    if (activeTab === 'reading') markExerciseDone('reading');
+    else if (activeTab === 'listening') markExerciseDone('listening');
+  }, [exerciseTabsDone, activeTab, markExerciseDone]);
+  // Writing: the Parisian has corrected/explained the submitted text.
+  React.useEffect(() => {
+    if (writeReview.stage === 'corrected' || writeReview.stage === 'explained') markExerciseDone('writing');
+  }, [writeReview.stage, markExerciseDone]);
+  // Speaking: the learner produced a spoken answer in the speaking exercise.
+  React.useEffect(() => {
+    if (activeTab === 'speaking' && (settledText || '').trim()) markExerciseDone('speaking');
+  }, [activeTab, settledText, markExerciseDone]);
+
   const writeTextareaRef = React.useRef(null);
   const writeBoxRef = React.useRef(null);
+  // Exercise sub-tab bar: track whether there's more to scroll to the right so we
+  // can show a little "more →" arrow instead of an ugly scrollbar.
+  const subTabsRef = React.useRef(null);
+  const [subTabsMore, setSubTabsMore] = React.useState(false);
+  const updateSubTabsMore = React.useCallback(() => {
+    const el = subTabsRef.current;
+    if (!el) { setSubTabsMore(false); return; }
+    setSubTabsMore(el.scrollWidth - el.clientWidth - el.scrollLeft > 4);
+  }, []);
   const [speakCorrection, setSpeakCorrection] = React.useState(null);
   const [fetchingCorrection, setFetchingCorrection] = React.useState(false);
   const [manualCorrection, setManualCorrection] = React.useState(null);
@@ -1909,6 +2006,8 @@ export function AudioDemoCard({
     const session = beginSiteAudioPlayback();
     const activeNarrator = resolveClientNarrator(line.id);
     const trimmed = line.text.trim();
+    // Surface every spoken Parisian line to the hero portrait area (mobile)
+    onLeaSpeak?.({ text: trimmed, narratorId: activeNarrator });
     setNarrator(activeNarrator);
     setNarratorVoiceLoadingKey(`${activeNarrator}:${trimmed}`);
     try {
@@ -1940,7 +2039,7 @@ export function AudioDemoCard({
     } catch {
       stopParisianAudio();
     }
-  }, [stopParisianAudio]);
+  }, [stopParisianAudio, onLeaSpeak]);
 
   const finalizeCorrection = React.useCallback((correction, readerId) => {
     const corrected = correction.corrected?.trim() || '';
@@ -2156,6 +2255,53 @@ export function AudioDemoCard({
     setPointsDelta({ value, id: Date.now() });
     setTimeout(() => setPointsDelta(null), 1400);
   }, [gainDailyParisianPoints]);
+
+  // Discover-a-Parisian-word flow. Extracted so it can also be triggered from
+  // outside the card (the mobile button next to the points, in the Hero avatar
+  // block) via discoverWordRef.
+  const handleDiscoverWord = React.useCallback(async () => {
+    if (dailyParisianPoints < DISCOVER_WORD_COST) return; // not enough points to discover a word
+    setHighlightDiscover(false);
+    // Switch to Chat tab + speak mode
+    setActiveTab('transcript');
+    setInputMode('speak');
+    setLastSpeakWriteMode('speak');
+    if (parisianWordChallengeLoading) return;
+    setParisianWordChallengeLoading(true);
+    setParisianWordChallenge(null);
+    try {
+      const res = await fetch('/api/word', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+      const data = await res.json();
+      if (!data?.word) { setParisianWordChallengeLoading(false); return; }
+      firePointsDelta(-DISCOVER_WORD_COST); // discovering a word costs Parisian points
+      // Narrator + explanation come from the DB so the pre-generated
+      // audio in the narrator-audio bucket matches exactly (no TTS wait)
+      const narratorId = data.narratorId || (Math.random() < 0.5 ? 'lea' : 'jules');
+      const intro = data.explanation || `Voici ton mot parisien du jour : « ${data.word} ». Ça veut dire "${data.meaning}". Par exemple : "${data.example}". Essaie maintenant de l'utiliser dans une phrase !`;
+      const challenge = { word: data.word, meaning: data.meaning, example: data.example, exampleTranslation: data.exampleTranslation, narratorId };
+      setParisianWordChallenge(challenge);
+      parisianWordChallengeRef.current = challenge;
+      setParisianChallengeAttempt(0);
+      parisianChallengeAttemptRef.current = 0;
+      // Append the word card + Léa's intro inline, below existing chat
+      const cardId = `word-card-${Date.now()}`;
+      const introId = `lea-intro-${Date.now()}`;
+      const withCard = [
+        ...chatHistoryRef.current,
+        { id: cardId, role: 'word-card', word: data.word, meaning: data.meaning, example: data.example },
+        { id: introId, role: 'lea', text: intro, narratorId },
+      ];
+      chatHistoryRef.current = withCard;
+      setChatHistory(withCard);
+      playNarratorLine({ id: narratorId, text: intro });
+    } catch {}
+    setParisianWordChallengeLoading(false);
+  }, [dailyParisianPoints, parisianWordChallengeLoading, firePointsDelta, setActiveTab, playNarratorLine]);
+
+  // Expose the discover action to the Hero avatar block (mobile button).
+  React.useEffect(() => {
+    if (discoverWordRef) discoverWordRef.current = handleDiscoverWord;
+  }, [discoverWordRef, handleDiscoverWord]);
 
   const loadPractice = async (topic, { openFullscreen = false } = {}) => {
     const t = topic || overallWeakness;
@@ -2953,6 +3099,14 @@ export function AudioDemoCard({
   const transcriptHeight = 'flex-1 min-h-0';
   const isExerciseTab = activeTab === 'reading' || activeTab === 'listening';
 
+  // Recompute the sub-tab "more →" arrow when the bar appears or the viewport changes.
+  React.useEffect(() => {
+    if (!isExerciseTab) return undefined;
+    updateSubTabsMore();
+    window.addEventListener('resize', updateSubTabsMore);
+    return () => window.removeEventListener('resize', updateSubTabsMore);
+  }, [isExerciseTab, exerciseSubTab, updateSubTabsMore]);
+
   // Clear leftover speech transcription when switching the card's tab, so a tab
   // like Speaking starts empty instead of showing remnants of the Chat session.
   const prevCardTabRef = React.useRef(activeTab);
@@ -2994,7 +3148,7 @@ export function AudioDemoCard({
         )
       )}
       <div className="flex flex-row items-center gap-1 sm:gap-2">
-        {/* Parisian Points display */}
+        {/* Parisian Points display — to the left of the mic */}
         <PointsBurst points={dailyParisianPoints} className="mr-1">
           <div className="relative flex items-center justify-center w-9 sm:w-11 h-9 sm:h-11 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
             <div className="flex flex-col items-center gap-[3px] -mt-1.5">
@@ -3006,11 +3160,8 @@ export function AudioDemoCard({
             {pointsDelta && (
               <span
                 key={pointsDelta.id}
-                className={`absolute -top-4 left-1/2 -translate-x-1/2 font-display font-bold text-[13px] whitespace-nowrap pointer-events-none`}
-                style={{
-                  color: pointsDelta.value > 0 ? '#16a34a' : '#8B1E2D',
-                  animation: 'parisianDeltaFloat 1.4s ease-out forwards',
-                }}
+                className="absolute -top-4 left-1/2 -translate-x-1/2 font-display font-bold text-[13px] whitespace-nowrap pointer-events-none"
+                style={{ color: pointsDelta.value > 0 ? '#16a34a' : '#8B1E2D', animation: 'parisianDeltaFloat 1.4s ease-out forwards' }}
               >
                 {pointsDelta.value > 0 ? `+${pointsDelta.value}` : pointsDelta.value}
               </span>
@@ -3065,6 +3216,41 @@ export function AudioDemoCard({
     </div>
   ) : null;
 
+  // Mobile-only mic/pen mode toggle that replaces the points + mic cluster.
+  // Mic = Speak (tap to switch to speak; tap again to record). Pen = Write
+  // (tap to switch to write; tap again to submit).
+  const mobileModeToggle = (
+    <div className="relative flex items-center rounded-full p-0.5 bg-wine/10 shrink-0">
+      <div className="relative">
+        {isRecording && inputMode === 'speak' && (
+          <span className="absolute inset-0 m-auto w-9 h-9 rounded-full bg-wine/25 animate-ping pointer-events-none" style={{ animationDuration: '1.1s' }} />
+        )}
+        <button type="button"
+          onClick={() => { if (inputMode !== 'speak') activateSpeakMode(); else toggleRecording(); }}
+          disabled={status === 'connecting' || manualCorrecting || stoppingRecording}
+          className={`relative z-10 w-9 h-9 rounded-full inline-flex items-center justify-center transition-colors disabled:opacity-60 ${inputMode === 'speak' ? 'bg-wine text-ivory' : 'text-navy/45'}`}
+          aria-label={inputMode === 'speak' ? (isRecording ? 'Stop recording' : 'Record') : 'Switch to speak'}>
+          {inputMode === 'speak' && isRecording ? (
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden><rect x="1" y="1" width="10" height="10" rx="2" fill="currentColor" /></svg>
+          ) : (
+            <svg width="12" height="15" viewBox="0 0 16 20" fill="none" aria-hidden>
+              <rect x="5" y="1" width="6" height="11" rx="3" fill="currentColor" />
+              <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            </svg>
+          )}
+        </button>
+      </div>
+      <button type="button"
+        onClick={() => { if (inputMode !== 'write') activateWriteMode(); else if (writeText.trim()) finishWriteInput(); }}
+        className={`relative z-10 w-9 h-9 rounded-full inline-flex items-center justify-center transition-colors ${inputMode === 'write' ? 'bg-wine text-ivory' : 'text-navy/45'}`}
+        aria-label={inputMode === 'write' ? 'Submit writing' : 'Switch to write'}>
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden>
+          <path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+    </div>
+  );
+
   return (
     <>
     {fullscreen && <div className="fixed inset-0 bg-navy/40 backdrop-blur-sm z-40" onClick={onClose} />}
@@ -3075,7 +3261,7 @@ export function AudioDemoCard({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={fullscreen
         ? 'fixed inset-6 z-50 bg-paper flex overflow-hidden rounded-2xl'
-        : 'relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 h-[500px] sm:min-h-[500px] sm:max-h-[500px]'}
+        : 'relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 h-[440px] sm:min-h-[500px] sm:max-h-[500px]'}
       style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)' }}
     >
       {/* Close button in fullscreen */}
@@ -3091,10 +3277,36 @@ export function AudioDemoCard({
 
       {/* Main content column (2/3) */}
       <div className={fullscreen ? 'flex-[2] flex flex-col overflow-y-auto min-w-0' : 'flex flex-col flex-1 min-h-0'}>
-      {/* Mode controls + speech box */}
-      <div className="px-3 sm:px-7 pt-3 flex flex-col gap-2 flex-1 min-h-0">
-        <div className="flex items-center justify-center gap-1.5 sm:gap-3 shrink-0 flex-wrap">
-          <div className="relative flex items-center rounded-full p-0.5 bg-wine/10">
+      {/* Mode controls + speech box — small top padding on mobile so the speech
+          box sits just under the floating points / Discover row that overlaps the
+          card's top edge (the Speak/Write + Discover controls are hidden on mobile). */}
+      <div className="px-3 sm:px-7 pt-2 sm:pt-3 flex flex-col gap-2 flex-1 min-h-0">
+        {/* Level-progress arrow — the clickable exercise picker (the practice tabs
+            used to live in the bottom bar). Capped width on desktop so it stays tidy. */}
+        <div className="shrink-0 px-1 pb-0.5 sm:max-w-[440px] sm:mx-auto sm:w-full">
+          {/* "Pick your challenge" callout — points down to the arrow below.
+              Plain text (no filled background) so it doesn't read as a button. */}
+          <div className="flex flex-col items-center -mb-0.5">
+            <span className="font-display text-[12px] sm:text-[13px] tracking-wide italic text-wine/80">
+              Pick your challenge
+            </span>
+            <svg width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden className="mt-0.5 text-wine/70">
+              <path d="M5.5 7L0.5 0.5h10L5.5 7z" fill="currentColor" />
+            </svg>
+          </div>
+          <LevelProgressArrow
+            level={effectiveLevel}
+            doneTypes={levelExercisesDone}
+            onPick={(type) => {
+              if (type === 'reading') setActiveTab('reading');
+              else if (type === 'listening') setActiveTab('listening');
+              else if (type === 'speaking') setActiveTab('speaking');
+              else if (type === 'writing') activateWriteMode();
+            }}
+          />
+        </div>
+        <div className="hidden sm:flex items-center justify-center gap-1.5 sm:gap-3 shrink-0 flex-wrap">
+          <div className="relative hidden sm:flex items-center rounded-full p-0.5 bg-wine/10">
             <div
               className="absolute top-0.5 bottom-0.5 rounded-full bg-wine transition-all duration-200"
               style={(activeTab === 'writing' || activeTab === 'speaking') ? { width: 'calc(100% - 4px)', left: '2px' } : { width: 'calc((100% - 4px) / 2)', left: lastSpeakWriteMode === 'write' ? 'calc(2px + (100% - 4px) / 2)' : '2px' }}
@@ -3110,72 +3322,14 @@ export function AudioDemoCard({
             ))}
           </div>
 
-          <span className="text-[12px] sm:text-[14px] text-navy/40 font-display italic">or</span>
-
-          <div className="relative group">
-          <button type="button" disabled={dailyParisianPoints < DISCOVER_WORD_COST} onClick={async () => {
-            if (dailyParisianPoints < DISCOVER_WORD_COST) return; // not enough points to discover a word
-            setHighlightDiscover(false);
-            // Switch to Chat tab + speak mode
-            setActiveTab('transcript');
-            setInputMode('speak');
-            setLastSpeakWriteMode('speak');
-            if (parisianWordChallengeLoading) return;
-            setParisianWordChallengeLoading(true);
-            setParisianWordChallenge(null);
-            try {
-              const res = await fetch('/api/word', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-              const data = await res.json();
-              if (!data?.word) { setParisianWordChallengeLoading(false); return; }
-              firePointsDelta(-DISCOVER_WORD_COST); // discovering a word costs Parisian points
-              // Narrator + explanation come from the DB so the pre-generated
-              // audio in the narrator-audio bucket matches exactly (no TTS wait)
-              const narratorId = data.narratorId || (Math.random() < 0.5 ? 'lea' : 'jules');
-              const intro = data.explanation || `Voici ton mot parisien du jour : « ${data.word} ». Ça veut dire "${data.meaning}". Par exemple : "${data.example}". Essaie maintenant de l'utiliser dans une phrase !`;
-              const challenge = { word: data.word, meaning: data.meaning, example: data.example, exampleTranslation: data.exampleTranslation, narratorId };
-              setParisianWordChallenge(challenge);
-              parisianWordChallengeRef.current = challenge;
-              setParisianChallengeAttempt(0);
-              parisianChallengeAttemptRef.current = 0;
-              // Append the word card + Léa's intro inline, below existing chat
-              const cardId = `word-card-${Date.now()}`;
-              const introId = `lea-intro-${Date.now()}`;
-              const withCard = [
-                ...chatHistoryRef.current,
-                { id: cardId, role: 'word-card', word: data.word, meaning: data.meaning, example: data.example },
-                { id: introId, role: 'lea', text: intro, narratorId },
-              ];
-              chatHistoryRef.current = withCard;
-              setChatHistory(withCard);
-              playNarratorLine({ id: narratorId, text: intro });
-            } catch {}
-            setParisianWordChallengeLoading(false);
-          }}
-            className={`relative inline-flex items-center px-2.5 sm:px-4 py-1 sm:py-1.5 font-display text-[12px] sm:text-[15px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap ${
-              dailyParisianPoints < DISCOVER_WORD_COST
-                ? 'bg-wine/30 text-ivory/70 cursor-not-allowed'
-                : inputMode === 'discover'
-                  ? 'bg-wine text-ivory ring-2 ring-wine/30'
-                  : highlightDiscover
-                    ? 'bg-wine text-ivory ring-[3px] ring-wine/45 shadow-md scale-[1.03]'
-                    : 'bg-wine text-ivory hover:bg-wine2'
-            }`}>
-            Discover a Parisian word
-          </button>
-          <span className="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-1.5 z-30 w-56 text-center rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-            {dailyParisianPoints < DISCOVER_WORD_COST
-              ? `Costs ${DISCOVER_WORD_COST} Parisian points — you have ${dailyParisianPoints}. Earn more by speaking & chatting.`
-              : `Costs ${DISCOVER_WORD_COST} Parisian points.`}
-          </span>
-          </div>
         </div>
 
         <div ref={writeBoxRef} className="relative bg-ivory/60 border border-line/70 overflow-hidden flex-1 flex flex-col min-h-0">
           {isExerciseTab ? (
             <div className="flex flex-col flex-1 min-h-0">
               {/* Exercise subtab bar */}
-              <div className="flex border-b border-line/50 shrink-0 items-stretch">
-                <div className="flex overflow-x-auto flex-1 min-w-0">
+              <div className="relative flex border-b border-line/50 shrink-0 items-stretch">
+                <div ref={subTabsRef} onScroll={updateSubTabsMore} className="flex overflow-x-auto scrollbar-hide flex-1 min-w-0">
                 {[
                   { id: 'comprehension', label: 'Compréhension' },
                   { id: 'vocabulary',    label: 'Vocabulaire' },
@@ -3199,10 +3353,22 @@ export function AudioDemoCard({
                   );
                 })}
                 </div>
-                {/* Next article — a progress bar that fills as each tab is finished */}
-                <div className="shrink-0 flex items-center justify-center px-2 border-l border-line/40 border-b-2 border-b-transparent">
-                  <NextArticleButton compact doneTabs={exerciseTabsDone} articleIndex={articleIndex} onNextArticle={onNextArticle} />
-                </div>
+                {/* "More to the right" affordance — a fade + tappable arrow that scrolls
+                    the bar onward; hidden once you reach the end. Replaces the scrollbar. */}
+                {subTabsMore && (
+                  <button
+                    type="button"
+                    aria-label="Voir plus d'onglets"
+                    onClick={() => subTabsRef.current?.scrollBy({ left: 120, behavior: 'smooth' })}
+                    className="absolute right-0 top-0 bottom-0 z-10 flex items-center pl-6 pr-1.5 bg-gradient-to-l from-ivory via-ivory/90 to-transparent"
+                  >
+                    <span className="text-wine animate-pulse" aria-hidden>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 6l6 6-6 6" />
+                      </svg>
+                    </span>
+                  </button>
+                )}
               </div>
               {/* Exercise content */}
               <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3">
@@ -3325,8 +3491,8 @@ export function AudioDemoCard({
                       {/* Portrait buttons — click to play/stop */}
                       <div className="flex gap-3">
                         {[
-                          { id: 'jules', src: '/assets/jules.png', label: 'Jules' },
-                          { id: 'lea',   src: '/assets/lea.png',   label: 'Léa'   },
+                          { id: 'jules', src: '/assets/jules.jpg', label: 'Jules' },
+                          { id: 'lea',   src: '/assets/lea.jpg',   label: 'Léa'   },
                         ].map((n) => (
                           <div key={n.id} className="flex flex-col items-center gap-1">
                             <button type="button"
@@ -3544,7 +3710,7 @@ export function AudioDemoCard({
                     <div className="flex items-center gap-2.5 shrink-0">
                       <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/30 shrink-0 parisian-exp-bump">
                         <img
-                          src={narratorReaction?.id === 'jules' ? '/assets/jules.png' : '/assets/lea.png'}
+                          src={narratorReaction?.id === 'jules' ? '/assets/jules.jpg' : '/assets/lea.jpg'}
                           alt={narratorReaction?.id === 'jules' ? 'Jules' : 'Léa'}
                           className="w-full h-full object-cover object-top"
                         />
@@ -3582,14 +3748,14 @@ export function AudioDemoCard({
                     <span key={`border-${writeHintKey}`} className="absolute top-3 left-3 right-3 bottom-3 rounded-lg border-2 border-wine/30 animate-pulse pointer-events-none" aria-hidden />
                   )}
                   {activeTab !== 'writing' && (
-                    <div className="flex items-start gap-3 px-4 pt-4 pb-2 shrink-0">
+                    <div className="hidden sm:flex items-start gap-3 px-4 pt-4 pb-2 shrink-0">
                       <button
                         type="button"
                         onClick={() => chatIntroLine && playNarratorLine({ id: 'lea', text: chatIntroLine.text })}
                         className="group relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
                         aria-label="Replay Léa's intro"
                       >
-                        <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
+                        <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
                         <PortraitHoverPlay />
                         {wordPlaying && parisianSpeakingText === chatIntroLine?.text && (
                           <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
@@ -3637,7 +3803,7 @@ export function AudioDemoCard({
                 <div className="absolute bottom-3 left-4 flex items-center gap-2 pointer-events-none">
                   <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0">
                     <img
-                      src={narratorReaction?.id === 'jules' ? '/assets/jules.png' : '/assets/lea.png'}
+                      src={narratorReaction?.id === 'jules' ? '/assets/jules.jpg' : '/assets/lea.jpg'}
                       alt={narratorReaction?.id === 'jules' ? 'Jules' : 'Léa'}
                       className="w-full h-full object-cover object-top"
                     />
@@ -3670,14 +3836,15 @@ export function AudioDemoCard({
                       <p className="text-[12px] text-navy/55 italic mt-0.5 leading-snug">« {msg.example} »</p>
                     </div>
                   ) : msg.role === 'lea' ? (
-                    <div key={msg.id} className="flex items-start gap-2.5">
+                    /* Mobile: Léa's lines live next to her portrait (hero), not in the box */
+                    <div key={msg.id} className="hidden sm:flex items-start gap-2.5">
                       <button
                         type="button"
                         onClick={() => !msg.loading && msg.text && playNarratorLine({ id: msg.narratorId || 'lea', text: msg.text })}
                         className="group relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105 mt-0.5"
                         aria-label="Replay"
                       >
-                        <img src={(msg.narratorId === 'jules') ? '/assets/jules.png' : '/assets/lea.png'} alt={(msg.narratorId === 'jules') ? 'Jules' : 'Léa'} className="w-full h-full object-cover object-top" />
+                        <img src={(msg.narratorId === 'jules') ? '/assets/jules.jpg' : '/assets/lea.jpg'} alt={(msg.narratorId === 'jules') ? 'Jules' : 'Léa'} className="w-full h-full object-cover object-top" />
                         <PortraitHoverPlay />
                         {wordPlaying && parisianSpeakingText === msg.text && (
                           <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
@@ -4231,14 +4398,14 @@ export function AudioDemoCard({
                   {source === 'tab' ? 'Listening to tab audio…' : source === 'system' ? 'Listening to system audio…' : 'Start speaking…'}
                 </p>
               ) : status !== 'connecting' && activeTab !== 'speaking' && activeTab !== 'writing' ? (
-                <div className="flex items-start gap-3 py-1">
+                <div className="hidden sm:flex items-start gap-3 py-1">
                   <button
                     type="button"
                     onClick={() => chatIntroLine && playNarratorLine({ id: 'lea', text: chatIntroLine.text })}
                     className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
                     aria-label="Replay Léa's intro"
                   >
-                    <img src="/assets/lea.png" alt="Léa" className="w-full h-full object-cover object-top" />
+                    <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
                     {wordPlaying && parisianSpeakingText === chatIntroLine?.text && (
                       <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
                     )}
@@ -4661,24 +4828,42 @@ export function AudioDemoCard({
       <div className="flex items-start shrink-0">
         {/* Left column: tabs + correction UI */}
         <div className="flex-1 min-w-0 flex flex-col">
-          <div className="ml-2 sm:ml-7 flex overflow-x-auto border-t border-line/50">
-            {[
-              { id: 'transcript', label: 'Chat' },
-              { id: 'listening',  label: 'Listening' },
-              { id: 'reading',    label: 'Reading' },
-              { id: 'speaking',   label: 'Speaking' },
-              { id: 'writing',    label: 'Writing' },
-            ].map((t) => (
-              <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
-                className={`text-[9px] sm:text-[11px] px-1 sm:px-3 tracking-wide uppercase py-2.5 sm:py-3 border-b-2 transition-colors whitespace-nowrap shrink-0 ${activeTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/70 hover:text-navy'}`}>
-                {t.label}
+          <div className="ml-2 sm:ml-7 flex items-center gap-1.5 sm:gap-2 border-t border-line/50 py-2">
+            {/* Chat — now a pill button (the practice tabs live in the progress line on top) */}
+            <button type="button" onClick={() => setActiveTab('transcript')}
+              className={`inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 font-display text-[12px] sm:text-[15px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap shrink-0 ${
+                activeTab === 'transcript'
+                  ? 'bg-wine text-ivory ring-2 ring-wine/30'
+                  : 'bg-wine text-ivory hover:bg-wine2'
+              }`}>
+              Chat
+            </button>
+            {/* Discover a Parisian word — moved here, next to Chat */}
+            <div className="relative group shrink-0">
+              <button type="button" disabled={dailyParisianPoints < DISCOVER_WORD_COST} onClick={handleDiscoverWord}
+                className={`relative inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 font-display text-[12px] sm:text-[15px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap ${
+                  dailyParisianPoints < DISCOVER_WORD_COST
+                    ? 'bg-wine/30 text-ivory/70 cursor-not-allowed'
+                    : inputMode === 'discover'
+                      ? 'bg-wine text-ivory ring-2 ring-wine/30'
+                      : highlightDiscover
+                        ? 'bg-wine text-ivory ring-[3px] ring-wine/45 shadow-md scale-[1.03]'
+                        : 'bg-wine text-ivory hover:bg-wine2'
+                }`}>
+                Discover a Parisian word
               </button>
-            ))}
+              <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 z-30 w-56 text-center rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                {dailyParisianPoints < DISCOVER_WORD_COST
+                  ? `Costs ${DISCOVER_WORD_COST} Parisian points — you have ${dailyParisianPoints}. Earn more by speaking & chatting.`
+                  : `Costs ${DISCOVER_WORD_COST} Parisian points.`}
+              </span>
+            </div>
           </div>
           {/* Parisian reaction + correction now render inline in the transcript
               above (no separate bottom bar). */}
         </div>{/* end left column */}
-        {/* Right controls */}
+        {/* Right controls — desktop: per-mode points + action button */}
+        <div className="hidden sm:block shrink-0">
         {inputMode === 'write' ? (
           <div className="shrink-0 flex items-center gap-1 sm:gap-2 pr-2 sm:pr-3 py-1">
             {writeText.trim().length > 0 && (
@@ -4720,6 +4905,27 @@ export function AudioDemoCard({
             {speakActionControls}
           </div>
         ) : null}
+        </div>
+        {/* Mobile: Parisian points (left) + mic/pen mode toggle (right) */}
+        {(inputMode === 'speak' || inputMode === 'write') && (
+          <div className="sm:hidden shrink-0 pr-2 py-1 self-center flex items-center gap-1.5">
+            <PointsBurst points={dailyParisianPoints}>
+              <div className="relative flex items-center justify-center w-9 h-9 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
+                <div className="flex flex-col items-center gap-[2px] -mt-0.5">
+                  <span className="font-display text-[13px] font-bold text-wine leading-none tabular-nums">{dailyParisianPoints}</span>
+                  <span className="text-[6px] font-mono tracking-wide uppercase text-wine/60 leading-none">pts</span>
+                </div>
+                {pointsDelta && (
+                  <span key={pointsDelta.id} className="absolute -top-4 left-1/2 -translate-x-1/2 font-display font-bold text-[13px] whitespace-nowrap pointer-events-none"
+                    style={{ color: pointsDelta.value > 0 ? '#16a34a' : '#8B1E2D', animation: 'parisianDeltaFloat 1.4s ease-out forwards' }}>
+                    {pointsDelta.value > 0 ? `+${pointsDelta.value}` : pointsDelta.value}
+                  </span>
+                )}
+              </div>
+            </PointsBurst>
+            {mobileModeToggle}
+          </div>
+        )}
       </div>{/* end combined row */}
 
       {(error || tabCaptureError) && (
@@ -5209,12 +5415,12 @@ function AutoFitTitle({ title }) {
 // Gated "Next article X/3" button that is ALSO a progress bar: its fill grows as
 // each of the four exercise tabs is finished (25% each). Unlocked + clickable
 // only when all four are done; a hover tooltip explains the lock.
-function NextArticleButton({ doneTabs = 0, totalTabs = 4, articleIndex = 1, onNextArticle = null, compact = false }) {
+function NextArticleButton({ doneTabs = 0, totalTabs = 4, articleIndex = 1, onNextArticle = null, compact = false, label = 'Next article', className = '' }) {
   const allDone = doneTabs >= totalTabs;
   const pct = Math.round((Math.min(doneTabs, totalTabs) / totalTabs) * 100);
   const sizeCls = compact ? 'text-[8px] tracking-wide px-1.5 py-0.5' : 'text-[10px] tracking-wide px-2.5 py-1';
   return (
-    <div className="relative group shrink-0">
+    <div className={`relative group shrink-0 ${className}`}>
       <button
         type="button"
         onClick={() => { if (allDone) onNextArticle?.(); }}
@@ -5229,14 +5435,14 @@ function NextArticleButton({ doneTabs = 0, totalTabs = 4, articleIndex = 1, onNe
           <span className="absolute inset-y-0 left-0 bg-wine/20 transition-all duration-500" style={{ width: `${pct}%` }} aria-hidden />
         )}
         <span className="relative z-10 inline-flex items-center gap-1">
-          Next article
+          {label}
           <span className="font-mono tabular-nums opacity-80">{Math.min(articleIndex, THEME_ARTICLE_TOTAL)}/{THEME_ARTICLE_TOTAL}</span>
         </span>
       </button>
       <span className="pointer-events-none absolute top-full right-0 mt-1.5 z-30 w-56 rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
         {allDone
-          ? 'All four tabs done — load the next article!'
-          : `${doneTabs}/${totalTabs} tabs done. Complete all 4 (6 correct answers each) to unlock the next article.`}
+          ? `All four tabs done — load the ${label.toLowerCase().replace('next ', 'next ')}!`
+          : `${doneTabs}/${totalTabs} tabs done. Complete all 4 (6 correct answers each) to unlock the ${label.toLowerCase().replace('next ', '')}.`}
       </span>
     </div>
   );
@@ -5356,12 +5562,14 @@ function ReadingArticlePanel({
           {/* Title — auto-shrinks to fit 2 lines, never truncated */}
           {title && (
             <div className="relative mb-5 shrink-0 mr-3 px-4 py-3 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
-              {/* Completion badge — absolute overlay so it never pushes the title down */}
-              <div className="absolute top-2 right-2 z-10">
+              {/* Next article (left) + completion badge (right) — absolute overlay so
+                  they never push the title down */}
+              <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5">
+                <NextArticleButton compact doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} label="Next article" className="-translate-y-[3px]" />
                 <ThemeBadge achieved={themeAchieved} total={THEME_ARTICLE_TOTAL} label="article" />
               </div>
               {/* Theme of the reading challenge */}
-              <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-wine/60 truncate mb-1.5 pr-8">
+              <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-wine/60 truncate mb-1.5 pr-28">
                 {theme || 'Reading challenge'}
               </p>
               <AutoFitTitle title={title} />
@@ -5379,12 +5587,6 @@ function ReadingArticlePanel({
 
           {/* Byline, daily points circle, translate */}
           <div className="relative mt-4 shrink-0 border-t pt-3 pl-4 pr-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
-            {/* Next article — overlaid (no layout space) so nothing else moves.
-                Vertically aligned with the newspaper byline, horizontally centered
-                over the Translate button (both are right-anchored + fixed width). */}
-            <div className="absolute top-[5px] right-[22px] z-10">
-              <NextArticleButton doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} />
-            </div>
             {byline ? (
               <p className="text-[10px] font-mono tracking-[0.12em] mb-3 truncate" style={{ color: '#8b1e2d' }}>
                 {byline}
@@ -5655,12 +5857,14 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
           {/* Title */}
           {title && (
             <div className="relative mb-2 shrink-0 px-3 py-2 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
-              {/* Completion badge — absolute overlay so it never pushes the title down */}
-              <div className="absolute top-1.5 right-1.5 z-10">
+              {/* Next podcast (left) + completion badge (right) — absolute overlay so
+                  they never push the title down */}
+              <div className="absolute top-1.5 right-1.5 z-10 flex items-center gap-1.5">
+                <NextArticleButton compact doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} label="Next podcast" className="-translate-y-[3px]" />
                 <ThemeBadge achieved={themeAchieved} total={THEME_ARTICLE_TOTAL} label="podcast" />
               </div>
               {/* Theme of the listening challenge */}
-              <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-wine/60 truncate mb-1 pr-8">
+              <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-wine/60 truncate mb-1 pr-28">
                 {theme || 'Listening challenge'}
               </p>
               <div className="flex items-start gap-2 pr-7">
@@ -5736,11 +5940,6 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
 
           {/* Footer: byline + points + translate */}
           <div className="relative shrink-0 border-t pt-2" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
-            {/* Next article — overlaid on the podcast byline line (no layout space,
-                so nothing else moves), centered over the Translate button. */}
-            <div className="absolute top-[1px] right-[11px] z-10">
-              <NextArticleButton doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} />
-            </div>
             {byline && <p className="text-[10px] font-mono tracking-[0.12em] mb-1.5 truncate" style={{ color: '#8b1e2d' }}>{byline}</p>}
             <div className="flex items-center justify-between gap-2 relative">
               <DailyParisianPointsIndicator points={dailyParisianPoints} hideLabel />
@@ -5790,7 +5989,7 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
   );
 }
 
-const NARRATOR_PORTRAITS = { lea: '/assets/lea.png', jules: '/assets/jules.png' };
+const NARRATOR_PORTRAITS = { lea: '/assets/lea.jpg', jules: '/assets/jules.jpg' };
 
 // Normalize a vocab item for loose matching (strip articles, accents, case).
 function normVocab(s) {
@@ -6175,7 +6374,7 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
 
 // ── Guided writing review thread (Writing tab) ───────────────────────────────
 function WriteBubble({ narratorId, children, onReplay, text }) {
-  const portrait = narratorId === 'jules' ? '/assets/jules.png' : '/assets/lea.png';
+  const portrait = narratorId === 'jules' ? '/assets/jules.jpg' : '/assets/lea.jpg';
   const alt = narratorId === 'jules' ? 'Jules' : 'Léa';
   return (
     <div className="flex items-start gap-2.5">
@@ -6617,6 +6816,8 @@ export default function Hero() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [heroActiveTab, setHeroActiveTab] = React.useState('transcript');
+  // Léa's latest spoken line — shown next to her portrait on mobile (not in the box).
+  const [leaSpeech, setLeaSpeech] = React.useState(null); // { text, narratorId } | null
   const learnMode = searchParams.get('learn');
   const learnLevel = searchParams.get('level');
   const practiceTopic = searchParams.get('practice');
@@ -6647,6 +6848,9 @@ export default function Hero() {
   const loadedListeningTopicRef = React.useRef(null);
   const loadedSpeakingTopicRef = React.useRef(null);
   const loadedWritingTopicRef = React.useRef(null);
+  // Lets the mobile "Discover a Parisian word" button (rendered next to the points
+  // in the avatar block) trigger the card's discover flow.
+  const discoverWordRef = React.useRef(null);
 
   // Detect reading mode from URL once — store in state so it survives clearPracticeParam
   React.useEffect(() => {
@@ -6929,6 +7133,25 @@ export default function Hero() {
       .catch(() => setWritingLoading(false));
   }, [practiceTopic, effectiveLevel]);
 
+  const EXERCISE_TAB_LINES = {
+    listening: {
+      text: "Tu as lancé le challenge listening ! Écoute le podcast et réponds aux questions pour gagner des points et passer au suivant !",
+      translation: "You've started the listening challenge! Listen to the podcast and answer the questions to earn points and move on to the next one!",
+    },
+    reading: {
+      text: "Tu as lancé le challenge reading ! Lis l'article et réponds aux questions pour gagner des points et passer au suivant !",
+      translation: "You've started the reading challenge! Read the article and answer the questions to earn points and move on to the next one!",
+    },
+    speaking: {
+      text: "Tu as lancé le challenge speaking ! Parle en français et utilise le vocabulaire ciblé pour gagner des points Parisiens !",
+      translation: "You've started the speaking challenge! Speak in French and use the target vocabulary to earn Parisian points!",
+    },
+    writing: {
+      text: "Tu as lancé le challenge writing ! Écris un texte basé sur le prompt et les conseils pour gagner des points Parisiens !",
+      translation: "You've started the writing challenge! Write a text based on the prompt and tips to earn Parisian points!",
+    },
+  };
+
   const [introNarrator, setIntroNarrator] = React.useState(null);
   const [introPlaying, setIntroPlaying] = React.useState(null); // null | 'lea' | 'jules'
   const [introPlaybackTime, setIntroPlaybackTime] = React.useState(null);
@@ -6966,6 +7189,8 @@ export default function Hero() {
     const session = introSessionRef.current;
     setIntroPlaying(narrator.id);
     setIntroSpeechText(narrator.intro);
+    // Surface her spoken line next to the portrait on mobile
+    setLeaSpeech({ text: narrator.intro, narratorId: narrator.id });
 
     try {
       const buf = await fetchNarratorAudio(narrator.intro, narrator.id);
@@ -6999,13 +7224,23 @@ export default function Hero() {
     }
   };
 
+  // Auto-play Léa's tab-specific line on mobile when user picks an exercise tab
+  React.useEffect(() => {
+    const entry = EXERCISE_TAB_LINES[heroActiveTab];
+    if (!entry) return;
+    const t = window.setTimeout(() => {
+      playNarratorIntro({ id: 'lea', intro: entry.text });
+    }, 350);
+    return () => window.clearTimeout(t);
+  }, [heroActiveTab]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const narrators = React.useMemo(() => (
     ['lea', 'jules'].map((id) => {
       const intro = getNarratorIntro(id, effectiveLevel);
       return {
         id,
         name: id === 'lea' ? 'Léa' : 'Jules',
-        src: id === 'lea' ? '/assets/lea.png' : '/assets/jules.png',
+        src: id === 'lea' ? '/assets/lea.jpg' : '/assets/jules.jpg',
         intro: intro.text,
         introTranslation: intro.translation,
       };
@@ -7108,11 +7343,31 @@ export default function Hero() {
     }, { replace: true });
   }, [heroActiveTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // When an exercise panel is showing its generated content, put the speech box
+  // ABOVE that content on mobile (stacked layout) — desktop stays side-by-side.
+  const exercisePanelActive =
+    (heroActiveTab === 'reading' && readingActive) ||
+    (heroActiveTab === 'listening' && listeningActive) ||
+    (heroActiveTab === 'speaking' && speakingActive) ||
+    (heroActiveTab === 'writing' && writingActive);
+
   return (
     <section className="relative pt-24 lg:pt-12 pb-12 min-h-screen overflow-visible">
+      {/* Mobile-only: assessment CTA relocated to the top-right header (opposite the
+          Parisly logo) once Léa's text has taken its place next to her portrait.
+          Plain (CSS) fade-in so it never gets stuck mid-animation in throttled tabs. */}
+      {leaSpeech?.text && (
+        <button
+          type="button"
+          onClick={() => goToDashboard()}
+          className="sm:hidden fixed top-[18px] right-4 z-50 inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory font-display text-[11px] leading-none px-3 py-2 shadow-md max-w-[55vw] text-right"
+        >
+          Click for Léa to judge your French
+        </button>
+      )}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0" style={{ background: 'radial-gradient(60% 80% at 80% 30%, rgba(217,196,162,0.30), transparent 60%), linear-gradient(180deg, #F6F1E8 0%, #F2EBDA 100%)' }} />
-        <img src="/assets/paris-skyline.png" alt=""
+        <img src="/assets/paris-skyline.jpg" alt=""
           className="absolute right-0 bottom-0 w-[1280px] max-w-[70%] object-contain object-bottom-right select-none"
           style={{ opacity: 0.85, mixBlendMode: 'multiply' }} />
         <div
@@ -7128,7 +7383,75 @@ export default function Hero() {
 
       <Container className="relative">
         <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[1fr_680px] gap-8 items-stretch lg:h-[calc(100vh-96px)]">
-          <div className="relative flex flex-col justify-center overflow-visible">
+          {/* Mobile-only: Léa portrait + tab-specific line — stacks ON TOP of the speech box on mobile */}
+          {exercisePanelActive && (() => {
+            const entry = EXERCISE_TAB_LINES[heroActiveTab] || {};
+            const exerciseLine = entry.text || '';
+            const exerciseTranslation = entry.translation || '';
+            const isPlaying = introPlaying === 'lea' && introSpeechText === exerciseLine;
+            return (
+              <div className="sm:hidden order-0 -mb-4 flex items-center gap-3 w-full">
+                <button
+                  type="button"
+                  onClick={() => playNarratorIntro({ id: 'lea', intro: exerciseLine })}
+                  className="group relative flex-shrink-0"
+                  aria-label="Rejouer le message de Léa"
+                  aria-pressed={isPlaying}
+                >
+                  <div className={`relative w-20 h-20 rounded-full overflow-hidden transition-all duration-300 ${
+                    isPlaying ? 'ring-[3px] ring-wine shadow-lg' : 'ring-2 ring-wine/40 group-hover:ring-wine shadow-sm'
+                  }`}>
+                    <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
+                    {isPlaying && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-35 pointer-events-none" />}
+                  </div>
+                </button>
+                <div className={`relative flex-1 min-w-0 rounded-2xl border px-3.5 py-2.5 transition-colors duration-300 ${
+                  isPlaying ? 'bg-wine/5 border-wine/25' : 'bg-white/90 border-wine/15 shadow-sm'
+                }`}>
+                  {/* little pointer toward the portrait */}
+                  <span className={`absolute top-1/2 -left-1 -translate-y-1/2 w-2.5 h-2.5 rotate-45 border-l border-b ${
+                    isPlaying ? 'bg-wine/5 border-wine/25' : 'bg-white/90 border-wine/15'
+                  }`} aria-hidden />
+                  {/* Tap the line to reveal the English translation (same as other Parisian speech boxes) */}
+                  <NarratorHoverText
+                    text={exerciseLine}
+                    translation={exerciseTranslation}
+                    highlightSpeech={isPlaying}
+                    speechPlaybackTime={introPlaybackTime}
+                    speechTimings={introTimings}
+                    className={`font-display text-[13px] italic leading-snug ${isPlaying ? 'text-wine' : 'text-navy/80'}`}
+                    wrapperClassName="relative w-full"
+                  />
+                </div>
+              </div>
+            );
+          })()}
+          <div className={`relative flex flex-col justify-center overflow-visible ${exercisePanelActive ? 'order-2 lg:order-none' : ''}`}>
+            {/* Mobile-only: instruction between the speech box (above) and the content (below).
+                ↓ points to the content to read/listen, ↑ points to the questions in the box. */}
+            {exercisePanelActive && (() => {
+              const hints = {
+                reading: 'Read the article and answer the questions',
+                listening: 'Listen to the audio and answer the questions',
+                speaking: 'Read the prompt and try to answer',
+                writing: 'Read the prompt and try to answer',
+              };
+              const hint = hints[heroActiveTab];
+              if (!hint) return null;
+              return (
+                <div className="sm:hidden -mt-[28px] mb-1 flex justify-center">
+                  <div className="inline-flex items-center gap-1.5 rounded-md bg-white/80 border border-navy/15 px-2.5 py-1 text-navy/70 font-display italic text-[11px] leading-snug shadow-sm">
+                    <svg width="9" height="11" viewBox="0 0 11 13" fill="none" className="shrink-0 text-wine/70" style={{ animation: 'hintArrowDown 2s ease-in-out infinite' }} aria-hidden>
+                      <path d="M5.5 1v10M1.5 7l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className="text-center">{hint}</span>
+                    <svg width="9" height="11" viewBox="0 0 11 13" fill="none" className="shrink-0 text-wine/70" style={{ animation: 'hintArrowUp 2s ease-in-out 1s infinite' }} aria-hidden>
+                      <path d="M5.5 12V2M1.5 6l4-4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                </div>
+              );
+            })()}
             {heroActiveTab === 'reading' && readingActive && (
               <ReadingArticlePanel
                 loading={readingLoading}
@@ -7215,20 +7538,20 @@ export default function Hero() {
 
             {/* Jules et Léa — hidden on practice tabs */}
             {!['speaking','listening','reading','writing'].includes(heroActiveTab) && (
-            <Reveal delay={0.25} className="overflow-visible">
+            <Reveal delay={0.25} className="order-last lg:order-none -mb-3 lg:mb-0 relative z-20 overflow-visible">
               <div className="mt-6 flex items-center justify-center gap-8 sm:gap-10 relative z-20 overflow-visible">
-                {narrators.map((n) => {
+                {narrators.filter((n) => n.id === 'lea').map((n) => {
                   const isPlaying = introPlaying === n.id;
                   return (
+                  <div key={n.id} className="flex items-center gap-3 w-full px-2 sm:contents">
                   <button
-                    key={n.id}
                     type="button"
                     onClick={() => playNarratorIntro(n)}
                     className="group relative flex flex-col items-center gap-2"
                     aria-label={`Listen to ${n.name}'s introduction`}
                     aria-pressed={isPlaying}
                   >
-                    <div className="relative w-24 h-24 sm:w-28 sm:h-28 overflow-visible">
+                    <div className="relative w-24 h-24 sm:w-48 sm:h-48 overflow-visible">
                       <AnimatePresence>
                         {isPlaying && (
                           <motion.div
@@ -7237,7 +7560,7 @@ export default function Hero() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 4 }}
                             transition={{ duration: 0.2 }}
-                            className={`absolute z-[100] ${
+                            className={`hidden sm:block absolute z-[100] ${
                               n.id === 'lea'
                                 ? 'right-full mr-3 sm:mr-4 -top-3 sm:-top-4 w-[min(200px,calc(100vw-2.5rem))] sm:w-[216px]'
                                 : 'left-full ml-3 sm:ml-4 -top-3 sm:-top-4 w-[min(220px,calc(100vw-2.5rem))] sm:w-[240px]'
@@ -7282,29 +7605,60 @@ export default function Hero() {
                           ? 'ring-[3px] ring-wine shadow-lg'
                           : 'ring-2 ring-wine/40 group-hover:ring-wine shadow-sm group-hover:shadow-md'
                       }`}>
-                        <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
+                        {(!SHOW_3D_AVATAR || import.meta.env.DEV) ? (
+                          /* 3D off (flag) or local dev — show the photo instead */
+                          <img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />
+                        ) : (
+                          <React.Suspense fallback={<img src={n.src} alt={n.name} className="w-full h-full object-cover object-top" />}>
+                            <TalkingAvatar3D src={LEA_AVATAR_SRC} controls={false} />
+                          </React.Suspense>
+                        )}
                         {isPlaying && (
                           <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-35 pointer-events-none" />
                         )}
-                        <div className={`absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity ${
-                          isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                        }`}>
-                          {isPlaying ? (
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="white" aria-hidden>
-                              <rect x="2" y="2" width="10" height="10" rx="1.5" fill="white" />
-                            </svg>
-                          ) : (
+                        {/* Play affordance only on hover — never covers her face while she's talking */}
+                        {!isPlaying && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                             <svg width="26" height="26" viewBox="0 0 24 24" fill="white" aria-hidden>
                               <path d="M8 5v14l11-7z" fill="white" />
                             </svg>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <span className={`font-display text-[14px] font-medium transition-colors ${
+                    <span className={`hidden sm:block font-display text-[14px] font-medium transition-colors ${
                       isPlaying ? 'text-wine italic' : 'text-wine'
                     }`}>{n.name}</span>
                   </button>
+                  {/* Mobile-only: Léa's live speech takes this spot; the assessment CTA
+                      relocates to the top-right header (fixed) once she has spoken. */}
+                  <div className="sm:hidden flex-1 min-w-0 self-center text-left flex flex-col gap-2">
+                    <AnimatePresence>
+                      {leaSpeech?.text && (
+                        <motion.div
+                          key="lea-speech"
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 4 }}
+                          transition={{ duration: 0.25 }}
+                          className="relative rounded-2xl bg-white/90 border border-wine/15 shadow-sm px-3 py-2"
+                        >
+                          <span className="absolute top-1/2 -left-1 -translate-y-1/2 w-2.5 h-2.5 rotate-45 border-l border-b bg-white/90 border-wine/15" aria-hidden />
+                          <p className="font-display text-[13px] italic text-navy/80 leading-snug">{leaSpeech.text}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    {!leaSpeech?.text && (
+                      <button
+                        type="button"
+                        onClick={() => goToDashboard()}
+                        className="inline-flex items-center text-left font-display text-[13.5px] leading-snug text-ivory bg-wine hover:bg-wine2 rounded-2xl px-3.5 py-2.5 shadow-sm self-start"
+                      >
+                        Click for Léa to judge your French
+                      </button>
+                    )}
+                  </div>
+                  </div>
                   );
                 })}
               </div>
@@ -7317,7 +7671,7 @@ export default function Hero() {
                 helping you express yourself with fluency and confidence.
               </p>
             </Reveal>
-            <Reveal delay={0.42}>
+            <Reveal delay={0.42} className="hidden sm:block">
               <div className="mt-8 flex items-center">
                 <div className="relative inline-flex">
                   <ParisianExperienceHint placement="right" />
@@ -7338,10 +7692,11 @@ export default function Hero() {
               </div>
             </Reveal>
             </div>
+
           </div>
 
-          <div className="flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 h-[500px] sm:min-h-[500px] sm:max-h-[500px]">
-            <div className="relative shrink-0 w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] h-[500px] sm:min-h-[500px] sm:max-h-[500px]">
+          <div className={`flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 h-[440px] sm:min-h-[500px] sm:max-h-[500px] ${exercisePanelActive ? 'order-1 lg:order-none' : ''}`}>
+            <div className="relative shrink-0 w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] h-[440px] sm:min-h-[500px] sm:max-h-[500px]">
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
               initialTopic={practiceType === 'reading' ? null : practiceTopic}
@@ -7378,6 +7733,8 @@ export default function Hero() {
               writingWordTarget={writingWordTarget}
               onWritingProgress={handleWritingProgress}
               onNewWritingChallenge={loadNewWritingChallenge}
+              discoverWordRef={discoverWordRef}
+              onLeaSpeak={setLeaSpeech}
             />
             </div>
           </div>
@@ -7420,7 +7777,7 @@ export default function Hero() {
                 className="flex items-center gap-2 mt-1 group"
                 onClick={(e) => e.stopPropagation()}
               >
-                <img src="/assets/remi-avatar.png" alt="Kru Rémi" className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all" />
+                <img src="/assets/remi-avatar.jpg" alt="Kru Rémi" className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all" />
                 <span className="font-display text-[12px] italic text-navy/60 leading-none">
                   by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span> · certified French teacher
                 </span>

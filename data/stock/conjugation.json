@@ -1,0 +1,322 @@
+[
+  {
+    "id": "conj-a1-present-er",
+    "level": "A1",
+    "tense": "Présent",
+    "group": "Verbes du 1er groupe (-ER)",
+    "topic": "Le présent des verbes en -ER",
+    "rule": "Pour les verbes du 1er groupe (infinitif en -er), on enlève la terminaison -er du radical et on ajoute : -e, -es, -e, -ons, -ez, -ent.",
+    "tip": "C'est le groupe le plus régulier et le plus nombreux. Attention : à l'oral, je parle / tu parles / il parle / ils parlent se prononcent de la même façon.",
+    "table": { "infinitif": "parler", "traduction": "to speak", "je": "parle", "tu": "parles", "il_elle_on": "parle", "nous": "parlons", "vous": "parlez", "ils_elles": "parlent" },
+    "example": "Le matin, je parle français avec mes amis.",
+    "exampleTranslation": "In the morning, I speak French with my friends.",
+    "exercises": [
+      { "verb": "manger", "tense": "présent", "sentence": "Le midi, je ___ un sandwich au café.", "answer": "mange", "hint": "je" },
+      { "verb": "habiter", "tense": "présent", "sentence": "Nous ___ à Paris depuis deux ans.", "answer": "habitons", "hint": "nous" },
+      { "verb": "regarder", "tense": "présent", "sentence": "Tu ___ un film ce soir ?", "answer": "regardes", "hint": "tu" },
+      { "verb": "travailler", "tense": "présent", "sentence": "Elle ___ dans une boulangerie.", "answer": "travaille", "hint": "elle" },
+      { "verb": "écouter", "tense": "présent", "sentence": "Vous ___ de la musique française.", "answer": "écoutez", "hint": "vous" },
+      { "verb": "aimer", "tense": "présent", "sentence": "Mes parents ___ beaucoup voyager.", "answer": "aiment", "hint": "ils" }
+    ]
+  },
+  {
+    "id": "conj-a1-etre-avoir",
+    "level": "A1",
+    "tense": "Présent",
+    "group": "Auxiliaires",
+    "topic": "Le présent de ÊTRE et AVOIR",
+    "rule": "Être et avoir sont les deux verbes les plus importants : ils servent aussi d'auxiliaires pour former les temps composés. Ils sont irréguliers, il faut les apprendre par cœur.",
+    "tip": "On utilise avoir pour l'âge (j'ai 24 ans) et être pour la nationalité ou la profession (je suis français, elle est médecin).",
+    "table": { "infinitif": "être / avoir", "traduction": "to be / to have", "je": "suis / ai", "tu": "es / as", "il_elle_on": "est / a", "nous": "sommes / avons", "vous": "êtes / avez", "ils_elles": "sont / ont" },
+    "example": "Je suis parisienne et j'ai vingt-quatre ans.",
+    "exampleTranslation": "I'm Parisian and I'm twenty-four years old.",
+    "exercises": [
+      { "verb": "être", "tense": "présent", "sentence": "Nous ___ contents de te voir.", "answer": "sommes", "hint": "nous" },
+      { "verb": "avoir", "tense": "présent", "sentence": "Tu ___ un stylo, s'il te plaît ?", "answer": "as", "hint": "tu" },
+      { "verb": "être", "tense": "présent", "sentence": "Vous ___ en retard ce matin.", "answer": "êtes", "hint": "vous" },
+      { "verb": "avoir", "tense": "présent", "sentence": "Elle ___ deux frères et une sœur.", "answer": "a", "hint": "elle" },
+      { "verb": "être", "tense": "présent", "sentence": "Mes voisins ___ très sympathiques.", "answer": "sont", "hint": "ils" },
+      { "verb": "avoir", "tense": "présent", "sentence": "J'___ faim, on va manger ?", "answer": "ai", "hint": "je" }
+    ]
+  },
+  {
+    "id": "conj-a1-aller-faire",
+    "level": "A1",
+    "tense": "Présent",
+    "group": "Verbes irréguliers fréquents",
+    "topic": "Le présent de ALLER et FAIRE",
+    "rule": "Aller et faire sont irréguliers mais très fréquents. Aller sert aussi à former le futur proche (je vais manger). Faire s'emploie dans beaucoup d'expressions (faire les courses, faire du sport).",
+    "tip": "On dit « je vais bien » pour parler de sa santé, et « il fait beau » pour la météo.",
+    "table": { "infinitif": "aller / faire", "traduction": "to go / to do, make", "je": "vais / fais", "tu": "vas / fais", "il_elle_on": "va / fait", "nous": "allons / faisons", "vous": "allez / faites", "ils_elles": "vont / font" },
+    "example": "Le week-end, je vais au marché et je fais la cuisine.",
+    "exampleTranslation": "On the weekend, I go to the market and I cook.",
+    "exercises": [
+      { "verb": "aller", "tense": "présent", "sentence": "Demain, nous ___ au cinéma.", "answer": "allons", "hint": "nous" },
+      { "verb": "faire", "tense": "présent", "sentence": "Qu'est-ce que tu ___ ce week-end ?", "answer": "fais", "hint": "tu" },
+      { "verb": "aller", "tense": "présent", "sentence": "Elle ___ à l'école à pied.", "answer": "va", "hint": "elle" },
+      { "verb": "faire", "tense": "présent", "sentence": "Vous ___ du sport le matin ?", "answer": "faites", "hint": "vous" },
+      { "verb": "aller", "tense": "présent", "sentence": "Comment ___-tu aujourd'hui ?", "answer": "vas", "hint": "tu" },
+      { "verb": "faire", "tense": "présent", "sentence": "Ils ___ leurs devoirs après le dîner.", "answer": "font", "hint": "ils" }
+    ]
+  },
+  {
+    "id": "conj-a2-passe-compose-avoir",
+    "level": "A2",
+    "tense": "Passé composé",
+    "group": "Auxiliaire AVOIR",
+    "topic": "Le passé composé avec AVOIR",
+    "rule": "Le passé composé se forme avec l'auxiliaire avoir au présent + le participe passé du verbe. Participes : -er → -é (mangé), -ir (2e groupe) → -i (fini), beaucoup d'irréguliers (avoir → eu, faire → fait, prendre → pris).",
+    "tip": "Avec avoir, le participe passé ne s'accorde PAS avec le sujet : « elle a mangé » (et non « mangée »).",
+    "table": { "infinitif": "manger (avoir)", "traduction": "to eat (past)", "je": "ai mangé", "tu": "as mangé", "il_elle_on": "a mangé", "nous": "avons mangé", "vous": "avez mangé", "ils_elles": "ont mangé" },
+    "example": "Hier soir, j'ai mangé dans un petit resto du 11e.",
+    "exampleTranslation": "Last night, I ate in a small restaurant in the 11th.",
+    "exercises": [
+      { "verb": "regarder", "tense": "passé composé", "sentence": "Hier, nous ___ un film français. (avons + participe)", "answer": "avons regardé", "hint": "nous / avoir" },
+      { "verb": "finir", "tense": "passé composé", "sentence": "Tu ___ ton travail ? (as + participe)", "answer": "as fini", "hint": "tu / avoir" },
+      { "verb": "prendre", "tense": "passé composé", "sentence": "Elle ___ le métro ce matin. (a + participe)", "answer": "a pris", "hint": "elle / avoir" },
+      { "verb": "faire", "tense": "passé composé", "sentence": "Qu'est-ce que vous ___ ce week-end ? (avez + participe)", "answer": "avez fait", "hint": "vous / avoir" },
+      { "verb": "voir", "tense": "passé composé", "sentence": "J'___ un super concert hier. (ai + participe)", "answer": "ai vu", "hint": "je / avoir" },
+      { "verb": "boire", "tense": "passé composé", "sentence": "Ils ___ un café en terrasse. (ont + participe)", "answer": "ont bu", "hint": "ils / avoir" }
+    ]
+  },
+  {
+    "id": "conj-a2-passe-compose-etre",
+    "level": "A2",
+    "tense": "Passé composé",
+    "group": "Auxiliaire ÊTRE",
+    "topic": "Le passé composé avec ÊTRE",
+    "rule": "Certains verbes forment le passé composé avec être : les verbes de mouvement/changement d'état (aller, venir, partir, arriver, entrer, sortir, monter, descendre, naître, mourir, rester, tomber, devenir) et tous les verbes pronominaux. Avec être, le participe passé s'accorde avec le sujet.",
+    "tip": "Astuce : la « maison de être » regroupe ces verbes. Accord : « elle est allée », « ils sont partis », « elles sont venues ».",
+    "table": { "infinitif": "aller (être)", "traduction": "to go (past)", "je": "suis allé(e)", "tu": "es allé(e)", "il_elle_on": "est allé(e)", "nous": "sommes allé(e)s", "vous": "êtes allé(e)s", "ils_elles": "sont allé(e)s" },
+    "example": "Elle est arrivée à la gare à huit heures.",
+    "exampleTranslation": "She arrived at the station at eight o'clock.",
+    "exercises": [
+      { "verb": "partir", "tense": "passé composé", "sentence": "Mes amis ___ en vacances hier. (être + participe)", "answer": "sont partis", "hint": "ils / être, accord" },
+      { "verb": "venir", "tense": "passé composé", "sentence": "Marie ___ à la fête samedi. (être + participe)", "answer": "est venue", "hint": "elle / être, accord" },
+      { "verb": "rester", "tense": "passé composé", "sentence": "Nous ___ à la maison tout le week-end. (être + participe)", "answer": "sommes restés", "hint": "nous / être" },
+      { "verb": "tomber", "tense": "passé composé", "sentence": "Il ___ dans l'escalier. (être + participe)", "answer": "est tombé", "hint": "il / être" },
+      { "verb": "arriver", "tense": "passé composé", "sentence": "Tu ___ à quelle heure hier ? (être + participe)", "answer": "es arrivé", "hint": "tu / être" },
+      { "verb": "se lever", "tense": "passé composé", "sentence": "Elles ___ tôt ce matin. (verbe pronominal)", "answer": "se sont levées", "hint": "elles / pronominal, accord" }
+    ]
+  },
+  {
+    "id": "conj-a2-imparfait",
+    "level": "A2",
+    "tense": "Imparfait",
+    "group": "Tous les groupes",
+    "topic": "L'imparfait",
+    "rule": "L'imparfait se forme sur le radical du « nous » au présent (nous parlons → parl-) + les terminaisons : -ais, -ais, -ait, -ions, -iez, -aient. Seul être est irrégulier (j'étais).",
+    "tip": "On l'utilise pour décrire le passé (le décor, les habitudes : « quand j'étais petit, je jouais... ») par opposition au passé composé qui raconte les actions ponctuelles.",
+    "table": { "infinitif": "parler", "traduction": "to speak (imperfect)", "je": "parlais", "tu": "parlais", "il_elle_on": "parlait", "nous": "parlions", "vous": "parliez", "ils_elles": "parlaient" },
+    "example": "Quand j'étais enfant, j'habitais à la campagne.",
+    "exampleTranslation": "When I was a child, I lived in the countryside.",
+    "exercises": [
+      { "verb": "être", "tense": "imparfait", "sentence": "Quand j'___ petit, j'aimais le foot.", "answer": "étais", "hint": "je" },
+      { "verb": "avoir", "tense": "imparfait", "sentence": "Nous ___ une vieille voiture à l'époque.", "answer": "avions", "hint": "nous" },
+      { "verb": "faire", "tense": "imparfait", "sentence": "Il ___ beau ce jour-là.", "answer": "faisait", "hint": "il" },
+      { "verb": "habiter", "tense": "imparfait", "sentence": "Vous ___ où avant de venir à Paris ?", "answer": "habitiez", "hint": "vous" },
+      { "verb": "jouer", "tense": "imparfait", "sentence": "Les enfants ___ dans le jardin.", "answer": "jouaient", "hint": "ils" },
+      { "verb": "aller", "tense": "imparfait", "sentence": "Tous les étés, tu ___ chez tes grands-parents.", "answer": "allais", "hint": "tu" }
+    ]
+  },
+  {
+    "id": "conj-a2-futur-proche",
+    "level": "A2",
+    "tense": "Futur proche",
+    "group": "ALLER + infinitif",
+    "topic": "Le futur proche",
+    "rule": "Le futur proche se forme avec le verbe aller au présent + l'infinitif du verbe principal. Il exprime une action future proche ou planifiée.",
+    "tip": "Très utilisé à l'oral. Pour la négation, on encadre seulement aller : « je ne vais pas sortir ».",
+    "table": { "infinitif": "manger (futur proche)", "traduction": "going to eat", "je": "vais manger", "tu": "vas manger", "il_elle_on": "va manger", "nous": "allons manger", "vous": "allez manger", "ils_elles": "vont manger" },
+    "example": "Ce soir, on va dîner chez des amis.",
+    "exampleTranslation": "Tonight, we're going to have dinner at friends'.",
+    "exercises": [
+      { "verb": "partir", "tense": "futur proche", "sentence": "Demain, je ___ en voyage. (aller + infinitif)", "answer": "vais partir", "hint": "je" },
+      { "verb": "appeler", "tense": "futur proche", "sentence": "Tu ___ ta mère ce soir ? (aller + infinitif)", "answer": "vas appeler", "hint": "tu" },
+      { "verb": "pleuvoir", "tense": "futur proche", "sentence": "Regarde le ciel, il ___ . (aller + infinitif)", "answer": "va pleuvoir", "hint": "il" },
+      { "verb": "visiter", "tense": "futur proche", "sentence": "Nous ___ le Louvre dimanche. (aller + infinitif)", "answer": "allons visiter", "hint": "nous" },
+      { "verb": "prendre", "tense": "futur proche", "sentence": "Vous ___ le train de quelle heure ? (aller + infinitif)", "answer": "allez prendre", "hint": "vous" },
+      { "verb": "arriver", "tense": "futur proche", "sentence": "Ils ___ dans cinq minutes. (aller + infinitif)", "answer": "vont arriver", "hint": "ils" }
+    ]
+  },
+  {
+    "id": "conj-b1-futur-simple",
+    "level": "B1",
+    "tense": "Futur simple",
+    "group": "Tous les groupes",
+    "topic": "Le futur simple",
+    "rule": "Le futur simple se forme sur l'infinitif (pour -re, on enlève le e) + les terminaisons -ai, -as, -a, -ons, -ez, -ont. Beaucoup de verbes ont un radical irrégulier : être → ser-, avoir → aur-, aller → ir-, faire → fer-, venir → viendr-, pouvoir → pourr-, voir → verr-.",
+    "tip": "Les terminaisons sont les mêmes pour tous les verbes : ce sont presque celles du verbe avoir au présent.",
+    "table": { "infinitif": "parler", "traduction": "will speak", "je": "parlerai", "tu": "parleras", "il_elle_on": "parlera", "nous": "parlerons", "vous": "parlerez", "ils_elles": "parleront" },
+    "example": "L'année prochaine, je voyagerai au Japon.",
+    "exampleTranslation": "Next year, I will travel to Japan.",
+    "exercises": [
+      { "verb": "être", "tense": "futur simple", "sentence": "Demain, nous ___ à Lyon.", "answer": "serons", "hint": "nous, radical ser-" },
+      { "verb": "avoir", "tense": "futur simple", "sentence": "Tu ___ bientôt de mes nouvelles.", "answer": "auras", "hint": "tu, radical aur-" },
+      { "verb": "aller", "tense": "futur simple", "sentence": "Elle ___ à l'université en septembre.", "answer": "ira", "hint": "elle, radical ir-" },
+      { "verb": "faire", "tense": "futur simple", "sentence": "Vous ___ quoi cet été ?", "answer": "ferez", "hint": "vous, radical fer-" },
+      { "verb": "venir", "tense": "futur simple", "sentence": "Ils ___ nous voir à Noël.", "answer": "viendront", "hint": "ils, radical viendr-" },
+      { "verb": "pouvoir", "tense": "futur simple", "sentence": "Je ___ t'aider demain.", "answer": "pourrai", "hint": "je, radical pourr-" }
+    ]
+  },
+  {
+    "id": "conj-b1-conditionnel-present",
+    "level": "B1",
+    "tense": "Conditionnel présent",
+    "group": "Tous les groupes",
+    "topic": "Le conditionnel présent",
+    "rule": "Le conditionnel présent se forme sur le radical du futur simple + les terminaisons de l'imparfait : -ais, -ais, -ait, -ions, -iez, -aient.",
+    "tip": "On l'utilise pour la politesse (« je voudrais... »), le souhait (« j'aimerais... »), le conseil (« tu devrais... ») et l'hypothèse (« si j'avais le temps, je viendrais »).",
+    "table": { "infinitif": "aimer", "traduction": "would like", "je": "aimerais", "tu": "aimerais", "il_elle_on": "aimerait", "nous": "aimerions", "vous": "aimeriez", "ils_elles": "aimeraient" },
+    "example": "Je voudrais un café et un croissant, s'il vous plaît.",
+    "exampleTranslation": "I would like a coffee and a croissant, please.",
+    "exercises": [
+      { "verb": "vouloir", "tense": "conditionnel présent", "sentence": "Je ___ réserver une table pour deux.", "answer": "voudrais", "hint": "je, politesse" },
+      { "verb": "aimer", "tense": "conditionnel présent", "sentence": "Nous ___ visiter Montmartre.", "answer": "aimerions", "hint": "nous, souhait" },
+      { "verb": "pouvoir", "tense": "conditionnel présent", "sentence": "___-tu m'aider, s'il te plaît ?", "answer": "pourrais", "hint": "tu, politesse" },
+      { "verb": "devoir", "tense": "conditionnel présent", "sentence": "Vous ___ vous reposer un peu.", "answer": "devriez", "hint": "vous, conseil" },
+      { "verb": "être", "tense": "conditionnel présent", "sentence": "Ce ___ super de se revoir.", "answer": "serait", "hint": "il/ce" },
+      { "verb": "venir", "tense": "conditionnel présent", "sentence": "Si j'avais le temps, je ___ avec toi.", "answer": "viendrais", "hint": "je, hypothèse" }
+    ]
+  },
+  {
+    "id": "conj-b1-subjonctif-present",
+    "level": "B1",
+    "tense": "Subjonctif présent",
+    "group": "Tous les groupes",
+    "topic": "Le subjonctif présent (introduction)",
+    "rule": "Le subjonctif présent se forme sur le radical de la 3e personne du pluriel au présent (ils parlent → parl-) + -e, -es, -e, -ions, -iez, -ent. Irréguliers fréquents : être (sois...), avoir (aie...), faire (fasse...), aller (aille...), pouvoir (puisse...), savoir (sache...).",
+    "tip": "On l'emploie après « il faut que », « je veux que », « bien que », « pour que », et après les verbes de sentiment/volonté/doute. Toujours introduit par « que ».",
+    "table": { "infinitif": "parler", "traduction": "(that) I speak", "je": "que je parle", "tu": "que tu parles", "il_elle_on": "qu'il parle", "nous": "que nous parlions", "vous": "que vous parliez", "ils_elles": "qu'ils parlent" },
+    "example": "Il faut que je parte tôt demain matin.",
+    "exampleTranslation": "I have to leave early tomorrow morning.",
+    "exercises": [
+      { "verb": "être", "tense": "subjonctif présent", "sentence": "Il faut que tu ___ à l'heure.", "answer": "sois", "hint": "que tu" },
+      { "verb": "faire", "tense": "subjonctif présent", "sentence": "Je veux que nous ___ un effort.", "answer": "fassions", "hint": "que nous" },
+      { "verb": "aller", "tense": "subjonctif présent", "sentence": "Il faut qu'elle ___ chez le médecin.", "answer": "aille", "hint": "qu'elle" },
+      { "verb": "avoir", "tense": "subjonctif présent", "sentence": "Bien que vous ___ raison, je ne suis pas d'accord.", "answer": "ayez", "hint": "que vous" },
+      { "verb": "pouvoir", "tense": "subjonctif présent", "sentence": "Pour que je ___ venir, préviens-moi tôt.", "answer": "puisse", "hint": "que je" },
+      { "verb": "prendre", "tense": "subjonctif présent", "sentence": "Il vaut mieux que tu ___ un parapluie.", "answer": "prennes", "hint": "que tu" }
+    ]
+  },
+  {
+    "id": "conj-b2-subjonctif-present-avance",
+    "level": "B2",
+    "tense": "Subjonctif présent",
+    "group": "Emplois avancés",
+    "topic": "Le subjonctif présent : déclencheurs et nuances",
+    "rule": "Le subjonctif s'impose après l'expression du doute (je ne pense pas que), de la nécessité (il est essentiel que), du but (afin que), de la concession (quoique), et certaines conjonctions (avant que, jusqu'à ce que, à condition que, sans que).",
+    "tip": "Opposition clé : « je pense qu'il vient » (indicatif, certitude) vs « je ne pense pas qu'il vienne » (subjonctif, doute).",
+    "table": { "infinitif": "venir", "traduction": "(that) he come", "je": "que je vienne", "tu": "que tu viennes", "il_elle_on": "qu'il vienne", "nous": "que nous venions", "vous": "que vous veniez", "ils_elles": "qu'ils viennent" },
+    "example": "Je reste jusqu'à ce que tu reviennes.",
+    "exampleTranslation": "I'll stay until you come back.",
+    "exercises": [
+      { "verb": "venir", "tense": "subjonctif présent", "sentence": "Je ne crois pas qu'il ___ ce soir.", "answer": "vienne", "hint": "qu'il, doute" },
+      { "verb": "finir", "tense": "subjonctif présent", "sentence": "Attends avant qu'on ___ la réunion.", "answer": "finisse", "hint": "qu'on" },
+      { "verb": "savoir", "tense": "subjonctif présent", "sentence": "Il est important que vous le ___ .", "answer": "sachiez", "hint": "que vous" },
+      { "verb": "comprendre", "tense": "subjonctif présent", "sentence": "J'explique afin que tu ___ bien.", "answer": "comprennes", "hint": "que tu, but" },
+      { "verb": "être", "tense": "subjonctif présent", "sentence": "Quoique ce ___ difficile, on va y arriver.", "answer": "soit", "hint": "que ce, concession" },
+      { "verb": "dire", "tense": "subjonctif présent", "sentence": "Je doute qu'ils ___ la vérité.", "answer": "disent", "hint": "qu'ils, doute" }
+    ]
+  },
+  {
+    "id": "conj-b2-plus-que-parfait",
+    "level": "B2",
+    "tense": "Plus-que-parfait",
+    "group": "Temps composé",
+    "topic": "Le plus-que-parfait",
+    "rule": "Le plus-que-parfait se forme avec l'auxiliaire (avoir ou être) à l'imparfait + le participe passé. Il exprime une action antérieure à une autre action passée.",
+    "tip": "Très utile dans le récit : « Quand je suis arrivé, ils étaient déjà partis » (le départ est antérieur à l'arrivée).",
+    "table": { "infinitif": "finir (avoir)", "traduction": "had finished", "je": "avais fini", "tu": "avais fini", "il_elle_on": "avait fini", "nous": "avions fini", "vous": "aviez fini", "ils_elles": "avaient fini" },
+    "example": "Quand je suis arrivé, le film avait déjà commencé.",
+    "exampleTranslation": "When I arrived, the film had already started.",
+    "exercises": [
+      { "verb": "partir", "tense": "plus-que-parfait", "sentence": "Quand on est arrivés, ils ___ déjà ___ . (être à l'imparfait + participe)", "answer": "étaient déjà partis", "hint": "ils / être" },
+      { "verb": "manger", "tense": "plus-que-parfait", "sentence": "Je n'avais plus faim car j'___ ___ avant. (avoir à l'imparfait + participe)", "answer": "avais mangé", "hint": "je / avoir" },
+      { "verb": "oublier", "tense": "plus-que-parfait", "sentence": "Elle a raté le train : elle ___ ___ son billet. (avoir + participe)", "answer": "avait oublié", "hint": "elle / avoir" },
+      { "verb": "se coucher", "tense": "plus-que-parfait", "sentence": "Nous ___ déjà ___ quand tu as appelé. (pronominal)", "answer": "nous étions déjà couchés", "hint": "nous / pronominal" },
+      { "verb": "voir", "tense": "plus-que-parfait", "sentence": "Tu ___ ___ ce film avant ? (avoir + participe)", "answer": "avais vu", "hint": "tu / avoir" },
+      { "verb": "préparer", "tense": "plus-que-parfait", "sentence": "Tout était prêt : ils ___ tout ___ la veille. (avoir + participe)", "answer": "avaient tout préparé", "hint": "ils / avoir" }
+    ]
+  },
+  {
+    "id": "conj-b2-conditionnel-passe",
+    "level": "B2",
+    "tense": "Conditionnel passé",
+    "group": "Temps composé",
+    "topic": "Le conditionnel passé",
+    "rule": "Le conditionnel passé se forme avec l'auxiliaire au conditionnel présent (aurais / serais) + le participe passé. Il exprime le regret, le reproche, ou une hypothèse non réalisée dans le passé.",
+    "tip": "Structure de l'hypothèse irréelle du passé : « Si j'avais su (plus-que-parfait), je serais venu (conditionnel passé). »",
+    "table": { "infinitif": "venir (être)", "traduction": "would have come", "je": "serais venu(e)", "tu": "serais venu(e)", "il_elle_on": "serait venu(e)", "nous": "serions venu(e)s", "vous": "seriez venu(e)s", "ils_elles": "seraient venu(e)s" },
+    "example": "Si j'avais su, je serais venu plus tôt.",
+    "exampleTranslation": "If I had known, I would have come earlier.",
+    "exercises": [
+      { "verb": "aimer", "tense": "conditionnel passé", "sentence": "J'___ ___ te voir hier. (avoir au conditionnel + participe)", "answer": "aurais aimé", "hint": "je / avoir, regret" },
+      { "verb": "devoir", "tense": "conditionnel passé", "sentence": "Tu ___ ___ me prévenir. (avoir au conditionnel + participe)", "answer": "aurais dû", "hint": "tu / avoir, reproche" },
+      { "verb": "partir", "tense": "conditionnel passé", "sentence": "Sans toi, elle ___ ___ . (être au conditionnel + participe)", "answer": "serait partie", "hint": "elle / être" },
+      { "verb": "pouvoir", "tense": "conditionnel passé", "sentence": "Nous ___ ___ gagner avec un peu de chance. (avoir + participe)", "answer": "aurions pu", "hint": "nous / avoir" },
+      { "verb": "venir", "tense": "conditionnel passé", "sentence": "Ils ___ ___ s'ils avaient été libres. (être + participe)", "answer": "seraient venus", "hint": "ils / être, hypothèse" },
+      { "verb": "faire", "tense": "conditionnel passé", "sentence": "À ta place, j'___ ___ autrement. (avoir + participe)", "answer": "aurais fait", "hint": "je / avoir" }
+    ]
+  },
+  {
+    "id": "conj-c1-subjonctif-passe",
+    "level": "C1",
+    "tense": "Subjonctif passé",
+    "group": "Temps composé",
+    "topic": "Le subjonctif passé",
+    "rule": "Le subjonctif passé se forme avec l'auxiliaire au subjonctif présent (que j'aie / que je sois) + le participe passé. Il exprime une action antérieure ou accomplie après les mêmes déclencheurs que le subjonctif présent.",
+    "tip": "Comparez : « Je suis content que tu viennes » (présent/futur) vs « Je suis content que tu sois venu » (action passée accomplie).",
+    "table": { "infinitif": "finir (avoir)", "traduction": "(that) I have finished", "je": "que j'aie fini", "tu": "que tu aies fini", "il_elle_on": "qu'il ait fini", "nous": "que nous ayons fini", "vous": "que vous ayez fini", "ils_elles": "qu'ils aient fini" },
+    "example": "Je suis ravi que tu aies réussi ton examen.",
+    "exampleTranslation": "I'm delighted that you passed your exam.",
+    "exercises": [
+      { "verb": "finir", "tense": "subjonctif passé", "sentence": "Je doute qu'il ___ ___ à temps. (avoir au subj. + participe)", "answer": "ait fini", "hint": "qu'il / avoir" },
+      { "verb": "venir", "tense": "subjonctif passé", "sentence": "Bien que tu ___ ___ tard, on est contents. (être au subj. + participe)", "answer": "sois venu", "hint": "que tu / être" },
+      { "verb": "comprendre", "tense": "subjonctif passé", "sentence": "Il est possible qu'ils n'___ pas ___ la consigne. (avoir + participe)", "answer": "aient compris", "hint": "qu'ils / avoir" },
+      { "verb": "partir", "tense": "subjonctif passé", "sentence": "Je crains qu'elle ne ___ déjà ___ . (être + participe)", "answer": "soit déjà partie", "hint": "qu'elle / être" },
+      { "verb": "faire", "tense": "subjonctif passé", "sentence": "C'est dommage que vous n'___ rien ___ . (avoir + participe)", "answer": "ayez rien fait", "hint": "que vous / avoir" },
+      { "verb": "se tromper", "tense": "subjonctif passé", "sentence": "Il se peut que je me ___ ___ . (pronominal au subj. passé)", "answer": "sois trompé", "hint": "que je / pronominal" }
+    ]
+  },
+  {
+    "id": "conj-c1-passe-simple",
+    "level": "C1",
+    "tense": "Passé simple",
+    "group": "Temps littéraire",
+    "topic": "Le passé simple (reconnaissance et emploi écrit)",
+    "rule": "Le passé simple est le temps du récit écrit/littéraire. Terminaisons : -er → -ai, -as, -a, -âmes, -âtes, -èrent ; -ir/-re → -is, -is, -it, -îmes, -îtes, -irent ; type « pouvoir/vouloir » → -us, -us, -ut, -ûmes, -ûtes, -urent. Irréguliers : être (fus), avoir (eus), faire (fis), venir (vins).",
+    "tip": "On l'utilise surtout à la 3e personne dans les romans et l'histoire. À l'oral et dans la langue courante, on emploie le passé composé.",
+    "table": { "infinitif": "parler", "traduction": "spoke (literary)", "je": "parlai", "tu": "parlas", "il_elle_on": "parla", "nous": "parlâmes", "vous": "parlâtes", "ils_elles": "parlèrent" },
+    "example": "Il entra, salua l'assemblée et prit la parole.",
+    "exampleTranslation": "He came in, greeted the assembly and began to speak.",
+    "exercises": [
+      { "verb": "entrer", "tense": "passé simple", "sentence": "Le héros ___ dans la pièce sombre.", "answer": "entra", "hint": "il, -er" },
+      { "verb": "finir", "tense": "passé simple", "sentence": "Ils ___ leur voyage en automne.", "answer": "finirent", "hint": "ils, -ir" },
+      { "verb": "être", "tense": "passé simple", "sentence": "Ce ___ une journée mémorable.", "answer": "fut", "hint": "il, irrégulier" },
+      { "verb": "avoir", "tense": "passé simple", "sentence": "Elle ___ soudain une idée.", "answer": "eut", "hint": "elle, irrégulier" },
+      { "verb": "faire", "tense": "passé simple", "sentence": "Les soldats ___ halte au village.", "answer": "firent", "hint": "ils, irrégulier" },
+      { "verb": "venir", "tense": "passé simple", "sentence": "Le roi ___ en personne.", "answer": "vint", "hint": "il, irrégulier" }
+    ]
+  },
+  {
+    "id": "conj-c2-temps-litteraires",
+    "level": "C2",
+    "tense": "Subjonctif imparfait / plus-que-parfait",
+    "group": "Temps littéraires",
+    "topic": "Le subjonctif imparfait et la concordance soutenue",
+    "rule": "Dans la langue très soutenue/littéraire, après un verbe principal au passé, le subjonctif présent devient subjonctif imparfait (qu'il parlât) et le subjonctif passé devient subjonctif plus-que-parfait (qu'il eût parlé). Formation du subj. imparfait : à partir du passé simple (il parla → qu'il parlât).",
+    "tip": "Quasi disparu de l'oral : à connaître pour la lecture des textes classiques. Dans la langue courante, on garde le subjonctif présent même après un passé.",
+    "table": { "infinitif": "parler", "traduction": "(that) he spoke (literary)", "je": "que je parlasse", "tu": "que tu parlasses", "il_elle_on": "qu'il parlât", "nous": "que nous parlassions", "vous": "que vous parlassiez", "ils_elles": "qu'ils parlassent" },
+    "example": "Il fallait qu'il partît avant l'aube.",
+    "exampleTranslation": "He had to leave before dawn (literary register).",
+    "exercises": [
+      { "verb": "partir", "tense": "subjonctif imparfait", "sentence": "Il aurait fallu qu'il ___ plus tôt.", "answer": "partît", "hint": "qu'il, littéraire" },
+      { "verb": "être", "tense": "subjonctif imparfait", "sentence": "On craignait que ce ne ___ trop tard.", "answer": "fût", "hint": "qu'il/ce" },
+      { "verb": "avoir", "tense": "subjonctif imparfait", "sentence": "Bien qu'il ___ tout perdu, il gardait espoir.", "answer": "eût", "hint": "qu'il" },
+      { "verb": "venir", "tense": "subjonctif imparfait", "sentence": "Elle souhaitait qu'il ___ la voir.", "answer": "vînt", "hint": "qu'il, littéraire" },
+      { "verb": "faire", "tense": "subjonctif imparfait", "sentence": "Le maître exigeait que chacun ___ son devoir.", "answer": "fît", "hint": "qu'il" },
+      { "verb": "savoir", "tense": "subjonctif plus-que-parfait", "sentence": "Quoiqu'il ne l'___ jamais ___ , il s'en doutait. (eût + participe)", "answer": "eût su", "hint": "qu'il, plus-que-parfait" }
+    ]
+  }
+]

@@ -6,6 +6,8 @@ import {
   spendParisianExperience,
   getEffectiveLevel,
   getInitialParisianPercent,
+  getLevelExercisesDone,
+  markLevelExerciseDone,
   loadLearnerProfile,
   resetWelcomeOnboarding as resetWelcomeOnboardingProfile,
   saveLearnerProfile,
@@ -48,6 +50,14 @@ export function LearnerProfileProvider({ children }) {
     const next = spendParisianExperience(loadLearnerProfile(), amount);
     setProfile(next);
     return next;
+  }, []);
+
+  // Mark one exercise "stop" done at the learner's current level (idempotent).
+  const markExerciseDone = React.useCallback((type) => {
+    const current = loadLearnerProfile();
+    const level = getEffectiveLevel(current);
+    if (getLevelExercisesDone(current, level).includes(type)) return;
+    setProfile(markLevelExerciseDone(current, level, type));
   }, []);
 
   const gainDailyParisianPoints = React.useCallback((amount) => {
@@ -138,6 +148,8 @@ export function LearnerProfileProvider({ children }) {
   const value = React.useMemo(() => ({
     profile,
     effectiveLevel,
+    levelExercisesDone: getLevelExercisesDone(profile, effectiveLevel),
+    markExerciseDone,
     experienceHighlightTick,
     setGender,
     completeOnboarding,
@@ -150,7 +162,7 @@ export function LearnerProfileProvider({ children }) {
     gainDailyParisianPoints,
     refreshProfile,
     resetWelcomeOnboarding,
-  }), [profile, effectiveLevel, experienceHighlightTick, dailyParisianPoints, setGender, completeOnboarding, setClaimedLevel, recordSample, mergeInterviewReport, gainExperience, spendExperience, gainDailyParisianPoints, refreshProfile, resetWelcomeOnboarding]);
+  }), [profile, effectiveLevel, experienceHighlightTick, dailyParisianPoints, setGender, completeOnboarding, setClaimedLevel, recordSample, mergeInterviewReport, gainExperience, spendExperience, markExerciseDone, gainDailyParisianPoints, refreshProfile, resetWelcomeOnboarding]);
 
   return (
     <LearnerProfileContext.Provider value={value}>

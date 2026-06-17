@@ -5,7 +5,7 @@ export default function Comparison() {
   return (
     <section className="relative bg-navy text-ivory py-24 md:py-28 overflow-hidden grain">
       <img
-        src="/assets/paris-skyline.png"
+        src="/assets/paris-skyline.jpg"
         alt=""
         className="absolute right-0 bottom-0 w-[900px] max-w-[60%] object-contain object-bottom-right select-none pointer-events-none"
         style={{ opacity: 0.18, mixBlendMode: 'screen' }}

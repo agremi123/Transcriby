@@ -1,0 +1,272 @@
+[
+  {
+    "id": "read-a1-journee-paris",
+    "level": "A1",
+    "title": "Une journée à Paris",
+    "source": "Parisly",
+    "author": "La rédaction Parisly",
+    "date": null,
+    "link": null,
+    "passage": "Léa habite à Paris, dans le 11e arrondissement. Le matin, elle prend un café et un croissant dans un petit bar. Ensuite, elle va au travail à vélo. Elle aime beaucoup son quartier. Il y a des boulangeries, des cafés et un grand marché le dimanche. À midi, Léa mange un sandwich avec ses amis dans un parc. Le soir, elle rentre à la maison et elle regarde un film. Le week-end, elle aime flâner dans les rues et visiter les musées. Paris est une ville magnifique, mais la vie est parfois chère et le métro est souvent plein.",
+    "questions": [
+      { "question": "Où habite Léa ?", "options": ["Dans le 11e arrondissement", "À Lyon", "À la campagne", "Dans le 1er arrondissement"], "answer": "Dans le 11e arrondissement", "explanation": "The text says 'Léa habite à Paris, dans le 11e arrondissement.' The other options are not mentioned." },
+      { "question": "Comment va-t-elle au travail ?", "options": ["À vélo", "En métro", "En voiture", "À pied"], "answer": "À vélo", "explanation": "'elle va au travail à vélo' = she goes to work by bike." },
+      { "question": "Que mange-t-elle à midi ?", "options": ["Un sandwich", "Un croissant", "Une pizza", "Une salade"], "answer": "Un sandwich", "explanation": "'À midi, Léa mange un sandwich' — at noon she eats a sandwich, not the croissant she has in the morning." },
+      { "question": "Quand y a-t-il un grand marché ?", "options": ["Le dimanche", "Le lundi", "Le matin", "Le soir"], "answer": "Le dimanche", "explanation": "'un grand marché le dimanche' = a big market on Sundays." },
+      { "question": "Qu'est-ce qu'elle aime faire le week-end ?", "options": ["Flâner et visiter les musées", "Travailler", "Cuisiner", "Faire du sport"], "answer": "Flâner et visiter les musées", "explanation": "'le week-end, elle aime flâner dans les rues et visiter les musées.'" },
+      { "question": "Selon le texte, quel est un problème à Paris ?", "options": ["La vie est chère et le métro est plein", "Il n'y a pas de cafés", "Il n'y a pas de parcs", "Les musées sont fermés"], "answer": "La vie est chère et le métro est plein", "explanation": "The last sentence: 'la vie est parfois chère et le métro est souvent plein.'" }
+    ],
+    "vocab": [
+      { "word": "quartier", "definition": "neighborhood", "sentence": "Léa aime beaucoup son ___ ." },
+      { "word": "boulangeries", "definition": "bakeries", "sentence": "Il y a des ___ et des cafés dans la rue." },
+      { "word": "flâner", "definition": "to stroll aimlessly", "sentence": "Le week-end, elle aime ___ dans les rues." },
+      { "word": "vélo", "definition": "bike", "sentence": "Elle va au travail à ___ ." }
+    ],
+    "grammar": [
+      {
+        "point": "Le présent des verbes en -er",
+        "example": "Léa habite à Paris et elle travaille dans le quartier.",
+        "explanation": "Verbs ending in -er (habiter, manger, regarder, aimer) follow a regular pattern in the present tense: je -e, tu -es, il/elle -e, nous -ons, vous -ez, ils/elles -ent.",
+        "tip": "Most French verbs belong to this group, so mastering it unlocks a lot.",
+        "exercises": [
+          { "sentence": "Le matin, Léa ___ un café. (prendre est irrégulier ; ici : aimer) → Elle ___ son quartier.", "answer": "aime", "hint": "aimer, elle" },
+          { "sentence": "Nous ___ dans le 11e arrondissement. (habiter)", "answer": "habitons", "hint": "habiter, nous" },
+          { "sentence": "Le soir, elle ___ un film. (regarder)", "answer": "regarde", "hint": "regarder, elle" },
+          { "sentence": "Vous ___ un sandwich à midi ? (manger)", "answer": "mangez", "hint": "manger, vous" }
+        ],
+        "production": { "instruction": "Écris une phrase au présent avec le verbe « aimer » pour parler de ta ville.", "example": "J'aime ma ville parce qu'il y a beaucoup de cafés." }
+      }
+    ],
+    "conjugation": [
+      { "verb": "aller", "tense": "présent", "sentence": "Le matin, elle ___ au travail.", "answer": "va", "hint": "elle" },
+      { "verb": "prendre", "tense": "présent", "sentence": "Je ___ un café et un croissant.", "answer": "prends", "hint": "je" },
+      { "verb": "être", "tense": "présent", "sentence": "Paris ___ une ville magnifique.", "answer": "est", "hint": "il/elle" },
+      { "verb": "avoir", "tense": "présent", "sentence": "Il y ___ un grand marché le dimanche.", "answer": "a", "hint": "il" }
+    ]
+  },
+  {
+    "id": "read-a2-marche-dimanche",
+    "level": "A2",
+    "title": "Le marché du dimanche",
+    "source": "Parisly",
+    "author": "La rédaction Parisly",
+    "date": null,
+    "link": null,
+    "passage": "Dimanche dernier, je suis allé au marché de mon quartier avec ma sœur. Nous sommes partis tôt le matin parce que le marché est très populaire. Il y avait beaucoup de monde et de belles couleurs partout. J'ai acheté des fruits, des légumes et un bon fromage. Ma sœur a choisi des fleurs pour la maison. Le vendeur de fromages était très sympathique ; il nous a donné un petit morceau à goûter. Après le marché, nous avons pris un café en terrasse. Il faisait beau et nous étions contents. C'était une matinée simple mais agréable. J'aime ces moments parce qu'ils me rappellent que la vie à Paris n'est pas seulement le travail et le métro.",
+    "questions": [
+      { "question": "Quand le narrateur est-il allé au marché ?", "options": ["Dimanche dernier", "Hier soir", "Lundi matin", "Samedi"], "answer": "Dimanche dernier", "explanation": "'Dimanche dernier, je suis allé au marché' — last Sunday." },
+      { "question": "Avec qui y est-il allé ?", "options": ["Avec sa sœur", "Avec ses parents", "Seul", "Avec un ami"], "answer": "Avec sa sœur", "explanation": "'avec ma sœur' = with my sister." },
+      { "question": "Pourquoi sont-ils partis tôt ?", "options": ["Parce que le marché est très populaire", "Parce qu'il pleuvait", "Parce qu'ils travaillaient", "Parce que le marché ferme tôt"], "answer": "Parce que le marché est très populaire", "explanation": "'parce que le marché est très populaire' — it's very popular, so they went early to avoid the crowd." },
+      { "question": "Qu'est-ce que la sœur a acheté ?", "options": ["Des fleurs", "Du fromage", "Des fruits", "Un café"], "answer": "Des fleurs", "explanation": "'Ma sœur a choisi des fleurs pour la maison.'" },
+      { "question": "Qu'a fait le vendeur de fromages ?", "options": ["Il a donné un morceau à goûter", "Il a baissé le prix", "Il a fermé tôt", "Il a vendu des fleurs"], "answer": "Il a donné un morceau à goûter", "explanation": "'il nous a donné un petit morceau à goûter' = he gave a small piece to taste." },
+      { "question": "Quel est le sentiment général du texte ?", "options": ["Un moment simple et agréable", "De la tristesse", "De la colère", "De l'ennui"], "answer": "Un moment simple et agréable", "explanation": "'C'était une matinée simple mais agréable' and 'nous étions contents' convey a pleasant feeling." }
+    ],
+    "vocab": [
+      { "word": "marché", "definition": "market", "sentence": "Le dimanche, je vais au ___ de mon quartier." },
+      { "word": "fromage", "definition": "cheese", "sentence": "J'ai acheté un bon ___ ." },
+      { "word": "goûter", "definition": "to taste", "sentence": "Le vendeur nous a donné un morceau à ___ ." },
+      { "word": "terrasse", "definition": "terrace", "sentence": "Après le marché, nous avons pris un café en ___ ." }
+    ],
+    "grammar": [
+      {
+        "point": "Le passé composé (avoir et être)",
+        "example": "J'ai acheté des fruits et nous sommes partis tôt.",
+        "explanation": "The passé composé uses an auxiliary (avoir or être) in the present + a past participle. Movement verbs like aller and partir use être (with agreement); most others use avoir (no agreement).",
+        "tip": "Remember the small group of 'être' verbs (aller, venir, partir, arriver, rester...) and pronominal verbs.",
+        "exercises": [
+          { "sentence": "Nous ___ tôt le matin. (partir — être)", "answer": "sommes partis", "hint": "partir, nous, être" },
+          { "sentence": "J'___ des fruits et des légumes. (acheter — avoir)", "answer": "ai acheté", "hint": "acheter, je, avoir" },
+          { "sentence": "Ma sœur ___ des fleurs. (choisir — avoir)", "answer": "a choisi", "hint": "choisir, elle, avoir" },
+          { "sentence": "Après, nous ___ un café. (prendre — avoir)", "answer": "avons pris", "hint": "prendre, nous, avoir" }
+        ],
+        "production": { "instruction": "Écris une phrase au passé composé pour raconter ce que tu as fait le week-end dernier.", "example": "Le week-end dernier, je suis allé au cinéma avec des amis." }
+      }
+    ],
+    "conjugation": [
+      { "verb": "aller", "tense": "passé composé", "sentence": "Dimanche, je ___ au marché. (être + participe)", "answer": "suis allé", "hint": "je, être" },
+      { "verb": "avoir", "tense": "imparfait", "sentence": "Il y ___ beaucoup de monde.", "answer": "avait", "hint": "il" },
+      { "verb": "être", "tense": "imparfait", "sentence": "Le vendeur ___ très sympathique.", "answer": "était", "hint": "il" },
+      { "verb": "faire", "tense": "imparfait", "sentence": "Il ___ beau ce matin-là.", "answer": "faisait", "hint": "il" }
+    ]
+  },
+  {
+    "id": "read-b1-velo-ville",
+    "level": "B1",
+    "title": "Le vélo, nouvelle star des rues parisiennes",
+    "source": "Parisly",
+    "author": "La rédaction Parisly",
+    "date": null,
+    "link": null,
+    "passage": "Depuis quelques années, le vélo a complètement changé le visage de Paris. Là où il y avait des files de voitures, on voit aujourd'hui des pistes cyclables remplies de cyclistes de tous âges. La ville a investi dans des centaines de kilomètres de voies protégées, et de plus en plus d'habitants ont décidé de laisser leur voiture au garage. Pour beaucoup, c'est une question de temps : à vélo, on évite les embouteillages et on arrive souvent plus vite. Pour d'autres, c'est surtout un choix écologique. Cependant, tout n'est pas parfait. Certains piétons se plaignent des cyclistes qui ne respectent pas toujours les règles, et quand il pleut, pédaler devient moins agréable. Malgré ces difficultés, la tendance semble durable. Si la ville continue d'aménager des pistes sûres, le vélo restera sans doute le moyen de transport préféré de nombreux Parisiens.",
+    "questions": [
+      { "question": "Qu'est-ce qui a changé le visage de Paris selon le texte ?", "options": ["Le vélo", "Le métro", "Les voitures électriques", "Les bus"], "answer": "Le vélo", "explanation": "The text opens by saying cycling 'a complètement changé le visage de Paris'." },
+      { "question": "Qu'a fait la ville pour encourager le vélo ?", "options": ["Investir dans des voies protégées", "Interdire les voitures", "Baisser le prix du métro", "Construire des parkings"], "answer": "Investir dans des voies protégées", "explanation": "'La ville a investi dans des centaines de kilomètres de voies protégées.'" },
+      { "question": "Pour quelle raison certains choisissent le vélo ?", "options": ["Pour éviter les embouteillages", "Parce que c'est obligatoire", "Parce que le métro est fermé", "Pour faire du sport uniquement"], "answer": "Pour éviter les embouteillages", "explanation": "'à vélo, on évite les embouteillages et on arrive souvent plus vite.'" },
+      { "question": "De quoi se plaignent certains piétons ?", "options": ["Des cyclistes qui ne respectent pas les règles", "Du bruit des voitures", "Du prix des vélos", "Des pistes trop étroites"], "answer": "Des cyclistes qui ne respectent pas les règles", "explanation": "'Certains piétons se plaignent des cyclistes qui ne respectent pas toujours les règles.'" },
+      { "question": "Quel facteur rend le vélo moins agréable ?", "options": ["La pluie", "Le froid", "La nuit", "La chaleur"], "answer": "La pluie", "explanation": "'quand il pleut, pédaler devient moins agréable.'" },
+      { "question": "Quelle est la conclusion de l'auteur ?", "options": ["La tendance semble durable", "Le vélo va disparaître", "Les voitures reviendront", "La ville va supprimer les pistes"], "answer": "La tendance semble durable", "explanation": "'Malgré ces difficultés, la tendance semble durable.'" }
+    ],
+    "vocab": [
+      { "word": "pistes cyclables", "definition": "bike lanes", "sentence": "On voit des cyclistes sur les ___ partout en ville." },
+      { "word": "embouteillages", "definition": "traffic jams", "sentence": "À vélo, on évite les ___ ." },
+      { "word": "écologique", "definition": "eco-friendly", "sentence": "Pour beaucoup, c'est un choix ___ ." },
+      { "word": "se plaignent", "definition": "complain", "sentence": "Certains piétons ___ des cyclistes." }
+    ],
+    "grammar": [
+      {
+        "point": "L'expression de la concession et de l'opposition",
+        "example": "Malgré ces difficultés, la tendance semble durable. Cependant, tout n'est pas parfait.",
+        "explanation": "To express a contrast: 'cependant' / 'pourtant' (however), 'malgré + nom' (despite), 'alors que' (whereas). These connectors structure an argument by acknowledging an obstacle or a contrast.",
+        "tip": "'Malgré' is followed by a noun (malgré la pluie), never a full clause.",
+        "exercises": [
+          { "sentence": "___ ces difficultés, le vélo reste populaire. (despite + noun)", "answer": "Malgré", "hint": "+ nom" },
+          { "sentence": "Le vélo est rapide ; ___ , il pleut souvent. (however)", "answer": "cependant", "hint": "however" },
+          { "sentence": "Certains aiment le vélo ___ d'autres préfèrent le métro. (whereas)", "answer": "alors que", "hint": "contraste" },
+          { "sentence": "Il pédale tous les jours ___ il pleuve. (although + subjunctive: bien qu')", "answer": "bien qu'", "hint": "concession + subjonctif" }
+        ],
+        "production": { "instruction": "Écris une phrase avec « cependant » pour nuancer une opinion sur les transports.", "example": "Le métro est pratique ; cependant, il est souvent bondé aux heures de pointe." }
+      }
+    ],
+    "conjugation": [
+      { "verb": "changer", "tense": "passé composé", "sentence": "Le vélo ___ le visage de la ville. (avoir + participe)", "answer": "a changé", "hint": "il, avoir" },
+      { "verb": "décider", "tense": "passé composé", "sentence": "Des habitants ___ de laisser leur voiture. (avoir + participe)", "answer": "ont décidé", "hint": "ils, avoir" },
+      { "verb": "rester", "tense": "futur simple", "sentence": "Le vélo ___ le transport préféré des Parisiens.", "answer": "restera", "hint": "il, futur" },
+      { "verb": "continuer", "tense": "présent", "sentence": "Si la ville ___ d'aménager des pistes...", "answer": "continue", "hint": "elle, présent après si" }
+    ]
+  },
+  {
+    "id": "read-b2-teletravail",
+    "level": "B2",
+    "title": "Quand le télétravail redessine la ville",
+    "source": "Parisly",
+    "author": "La rédaction Parisly",
+    "date": null,
+    "link": null,
+    "passage": "La généralisation du télétravail a transformé bien plus que nos habitudes professionnelles : elle a discrètement redessiné la géographie de nos villes. Les quartiers d'affaires, autrefois bondés du lundi au vendredi, se vident désormais plusieurs jours par semaine, tandis que les quartiers résidentiels connaissent une activité nouvelle en pleine journée. Les cafés de quartier, longtemps désertés aux heures de bureau, voient affluer une clientèle d'actifs équipés d'ordinateurs portables. Ce phénomène n'est pas sans conséquences. D'un côté, il offre une qualité de vie inédite à ceux qui peuvent travailler de chez eux : moins de transports, plus de temps pour la famille. De l'autre, il creuse les inégalités, car tous les métiers ne se prêtent pas au travail à distance. Par ailleurs, certains commerces du centre-ville, qui dépendaient des salariés, peinent à survivre. Reste une question ouverte : nos villes sauront-elles se réinventer pour accompagner ce changement, ou se contenteront-elles de le subir ?",
+    "questions": [
+      { "question": "Quel est le thème central du texte ?", "options": ["L'impact du télétravail sur la ville", "Le prix de l'immobilier", "Les transports en commun", "Le tourisme à Paris"], "answer": "L'impact du télétravail sur la ville", "explanation": "The text explains how remote work 'a discrètement redessiné la géographie de nos villes'." },
+      { "question": "Qu'arrive-t-il aux quartiers d'affaires ?", "options": ["Ils se vident plusieurs jours par semaine", "Ils sont plus bondés qu'avant", "Ils sont détruits", "Ils deviennent résidentiels"], "answer": "Ils se vident plusieurs jours par semaine", "explanation": "'Les quartiers d'affaires... se vident désormais plusieurs jours par semaine.'" },
+      { "question": "Qui fréquente désormais les cafés de quartier en journée ?", "options": ["Des actifs avec des ordinateurs portables", "Des touristes", "Des étudiants uniquement", "Personne"], "answer": "Des actifs avec des ordinateurs portables", "explanation": "'une clientèle d'actifs équipés d'ordinateurs portables.'" },
+      { "question": "Quel inconvénient le texte mentionne-t-il ?", "options": ["Le télétravail creuse les inégalités", "Le télétravail coûte trop cher", "Le télétravail est interdit", "Le télétravail augmente les transports"], "answer": "Le télétravail creuse les inégalités", "explanation": "'il creuse les inégalités, car tous les métiers ne se prêtent pas au travail à distance.'" },
+      { "question": "Pourquoi certains commerces du centre peinent-ils à survivre ?", "options": ["Ils dépendaient des salariés", "Ils sont trop chers", "Ils ferment le week-end", "Ils manquent de personnel"], "answer": "Ils dépendaient des salariés", "explanation": "'certains commerces du centre-ville, qui dépendaient des salariés, peinent à survivre.'" },
+      { "question": "Comment se termine le texte ?", "options": ["Par une question ouverte", "Par une solution claire", "Par une statistique", "Par une citation"], "answer": "Par une question ouverte", "explanation": "The last sentence poses an open question about whether cities will reinvent themselves." }
+    ],
+    "vocab": [
+      { "word": "redessiné", "definition": "reshaped", "sentence": "Le télétravail a ___ la géographie des villes." },
+      { "word": "affluer", "definition": "to flock / pour in", "sentence": "Les cafés voient ___ une nouvelle clientèle." },
+      { "word": "inégalités", "definition": "inequalities", "sentence": "Le phénomène creuse les ___ ." },
+      { "word": "peinent", "definition": "struggle", "sentence": "Certains commerces ___ à survivre." }
+    ],
+    "grammar": [
+      {
+        "point": "La structure « d'un côté... de l'autre » et les connecteurs d'argumentation",
+        "example": "D'un côté, il offre une qualité de vie inédite ; de l'autre, il creuse les inégalités.",
+        "explanation": "To build a balanced argument, French uses paired connectors: 'd'un côté... de l'autre' (on one hand... on the other), 'par ailleurs' (moreover), 'tandis que' (whereas). They signal the structure of the reasoning to the reader.",
+        "tip": "These connectors are essential for the B2/C1 essay and for nuanced opinions.",
+        "exercises": [
+          { "sentence": "___ ___ ___, le télétravail libère du temps ; de l'autre, il isole. (on one hand)", "answer": "D'un côté", "hint": "on one hand" },
+          { "sentence": "Les bureaux se vident ___ ___ les quartiers résidentiels s'animent. (whereas)", "answer": "tandis que", "hint": "contraste simultané" },
+          { "sentence": "Le télétravail réduit les transports. ___ ___, il fragilise certains commerces. (moreover)", "answer": "Par ailleurs", "hint": "addition d'argument" },
+          { "sentence": "Tous les métiers ne s'y prêtent pas, ___ il creuse les inégalités. (therefore: c'est pourquoi)", "answer": "c'est pourquoi", "hint": "conséquence" }
+        ],
+        "production": { "instruction": "Écris deux phrases reliées par « d'un côté... de l'autre » sur un sujet de société.", "example": "D'un côté, les réseaux sociaux nous connectent ; de l'autre, ils peuvent nous isoler." }
+      }
+    ],
+    "conjugation": [
+      { "verb": "transformer", "tense": "passé composé", "sentence": "Le télétravail ___ nos habitudes. (avoir + participe)", "answer": "a transformé", "hint": "il, avoir" },
+      { "verb": "dépendre", "tense": "imparfait", "sentence": "Ces commerces ___ des salariés.", "answer": "dépendaient", "hint": "ils" },
+      { "verb": "savoir", "tense": "futur simple", "sentence": "Nos villes ___-elles se réinventer ?", "answer": "sauront", "hint": "elles, futur" },
+      { "verb": "se prêter", "tense": "présent", "sentence": "Tous les métiers ne ___ pas au travail à distance. (pronominal)", "answer": "se prêtent", "hint": "ils, pronominal" }
+    ]
+  },
+  {
+    "id": "read-c1-art-public",
+    "level": "C1",
+    "title": "L'art dans l'espace public : embellissement ou provocation ?",
+    "source": "Parisly",
+    "author": "La rédaction Parisly",
+    "date": null,
+    "link": null,
+    "passage": "Qu'une fresque monumentale recouvre un mur aveugle ou qu'une sculpture surgisse au milieu d'une place, l'art dans l'espace public ne laisse jamais indifférent. Ses défenseurs y voient une démocratisation salutaire : en s'affranchissant des murs du musée, l'œuvre va à la rencontre de ceux qui n'y mettraient jamais les pieds. Elle transforme le quotidien, suscite la conversation, et confère parfois à un quartier délaissé une identité nouvelle. À l'inverse, ses détracteurs dénoncent une esthétique imposée : nul n'a choisi de voir cette installation surgir sous ses fenêtres, et ce qui se veut émancipateur peut virer à la provocation gratuite, voire à une opération de communication déguisée. La frontière, il est vrai, est ténue entre l'œuvre qui interpelle et celle qui agresse. Reste que, loin de se réduire à un simple décor, l'art urbain pose une question éminemment politique : à qui appartient la ville, et qui a le droit d'en façonner le visage ? C'est peut-être là, dans ce débat même, que réside sa plus grande valeur.",
+    "questions": [
+      { "question": "Quelle est la position des défenseurs de l'art public ?", "options": ["Il démocratise l'accès à l'art", "Il coûte trop cher", "Il abîme les murs", "Il doit rester dans les musées"], "answer": "Il démocratise l'accès à l'art", "explanation": "'Ses défenseurs y voient une démocratisation salutaire... l'œuvre va à la rencontre de ceux qui n'y mettraient jamais les pieds.'" },
+      { "question": "Que reprochent les détracteurs à l'art public ?", "options": ["Une esthétique imposée", "Un manque de couleurs", "Un coût nul", "Une absence d'artistes"], "answer": "Une esthétique imposée", "explanation": "'ses détracteurs dénoncent une esthétique imposée : nul n'a choisi de voir cette installation.'" },
+      { "question": "Selon le texte, la frontière est « ténue » entre quoi et quoi ?", "options": ["L'œuvre qui interpelle et celle qui agresse", "Le musée et la rue", "L'artiste et le public", "Le passé et le présent"], "answer": "L'œuvre qui interpelle et celle qui agresse", "explanation": "'La frontière... est ténue entre l'œuvre qui interpelle et celle qui agresse.'" },
+      { "question": "Quelle question « politique » l'art urbain pose-t-il ?", "options": ["À qui appartient la ville", "Combien coûte une fresque", "Qui peint le mieux", "Où placer les musées"], "answer": "À qui appartient la ville", "explanation": "'à qui appartient la ville, et qui a le droit d'en façonner le visage ?'" },
+      { "question": "Où réside, selon l'auteur, la plus grande valeur de l'art urbain ?", "options": ["Dans le débat qu'il suscite", "Dans son prix", "Dans sa beauté seule", "Dans sa rareté"], "answer": "Dans le débat qu'il suscite", "explanation": "'C'est peut-être là, dans ce débat même, que réside sa plus grande valeur.'" },
+      { "question": "Quel est le registre du texte ?", "options": ["Soutenu et argumentatif", "Familier", "Technique", "Poétique narratif"], "answer": "Soutenu et argumentatif", "explanation": "The vocabulary ('s'affranchissant', 'détracteurs', 'ténue', 'éminemment') and the balanced thèse/antithèse structure mark a formal argumentative register." }
+    ],
+    "vocab": [
+      { "word": "s'affranchissant", "definition": "freeing itself (from)", "sentence": "En ___ des murs du musée, l'œuvre va vers le public." },
+      { "word": "détracteurs", "definition": "critics / detractors", "sentence": "Ses ___ dénoncent une esthétique imposée." },
+      { "word": "ténue", "definition": "thin / tenuous", "sentence": "La frontière est ___ entre interpeller et agresser." },
+      { "word": "façonner", "definition": "to shape", "sentence": "Qui a le droit de ___ le visage de la ville ?" }
+    ],
+    "grammar": [
+      {
+        "point": "La mise en relief et le subjonctif après l'incertitude",
+        "example": "C'est dans ce débat que réside sa valeur. Qu'une fresque recouvre un mur ou qu'une sculpture surgisse, l'art interpelle.",
+        "explanation": "Mise en relief ('c'est... que', 'ce qui... c'est') foregrounds an element. The subjunctive appears after 'que' expressing hypothesis/alternative ('qu'une fresque recouvre... ou qu'une sculpture surgisse') and after expressions of doubt.",
+        "tip": "After 'bien que', 'que... ou que', and verbs of doubt, switch to the subjunctive.",
+        "exercises": [
+          { "sentence": "___ ___ frappe l'observateur, c'est l'audace de l'œuvre. (what... : ce qui)", "answer": "Ce qui", "hint": "mise en relief, sujet" },
+          { "sentence": "Qu'une fresque ___ un mur, elle ne laisse pas indifférent. (recouvrir, subjonctif)", "answer": "recouvre", "hint": "que + subjonctif" },
+          { "sentence": "C'est dans le débat ___ réside sa valeur. (que/qui : COD de réside → sujet ?)", "answer": "que", "hint": "c'est... que (complément)" },
+          { "sentence": "Je ne crois pas que cet art ___ une simple décoration. (être, subjonctif)", "answer": "soit", "hint": "doute + subjonctif" }
+        ],
+        "production": { "instruction": "Écris une phrase de mise en relief avec « Ce qui me frappe, c'est... » sur une œuvre ou un lieu.", "example": "Ce qui me frappe dans cette fresque, c'est la manière dont elle transforme tout le quartier." }
+      }
+    ],
+    "conjugation": [
+      { "verb": "voir", "tense": "présent", "sentence": "Ses défenseurs y ___ une démocratisation.", "answer": "voient", "hint": "ils" },
+      { "verb": "surgir", "tense": "subjonctif présent", "sentence": "Qu'une sculpture ___ au milieu de la place...", "answer": "surgisse", "hint": "qu'elle, subjonctif" },
+      { "verb": "résider", "tense": "présent", "sentence": "C'est là que ___ sa plus grande valeur.", "answer": "réside", "hint": "elle/il" },
+      { "verb": "appartenir", "tense": "présent", "sentence": "À qui ___ la ville ?", "answer": "appartient", "hint": "elle" }
+    ]
+  },
+  {
+    "id": "read-c2-gentrification",
+    "level": "C2",
+    "title": "La gentrification, ou le paradoxe des quartiers qui se renient",
+    "source": "Parisly",
+    "author": "La rédaction Parisly",
+    "date": null,
+    "link": null,
+    "passage": "Il est un paradoxe que les métropoles contemporaines peinent à dénouer : à mesure qu'un quartier populaire gagne en attractivité, il tend à expulser ceux-là mêmes qui en avaient forgé l'identité. Le mécanisme est connu, presque mécanique. D'abord viennent les artistes et les étudiants, séduits par des loyers modestes et une atmosphère authentique. Leur présence confère au lieu un supplément d'âme qui ne tarde pas à séduire une population plus aisée. Les cafés se multiplient, les façades se ravalent, et les prix, insidieusement, s'envolent. Au terme du processus, le quartier a conservé l'apparence pittoresque qui faisait son charme, mais en a perdu la substance : les habitants d'origine, chassés par des loyers devenus prohibitifs, ont cédé la place à une bourgeoisie en quête d'authenticité — une authenticité que sa seule arrivée a, par un cruel retournement, contribué à dissoudre. Faut-il pour autant condamner toute rénovation urbaine ? Ce serait sombrer dans une nostalgie stérile. La véritable question, autrement plus ardue, consiste à savoir comment l'on peut embellir un quartier sans en déposséder les siens — comment concilier, en somme, la mixité que l'on célèbre dans les discours et celle, autrement exigeante, que réclame le réel.",
+    "questions": [
+      { "question": "Quel est le paradoxe décrit dans le texte ?", "options": ["Un quartier attractif expulse ceux qui l'ont façonné", "Les loyers baissent quand un quartier s'embellit", "Les artistes deviennent riches", "Les villes refusent toute rénovation"], "answer": "Un quartier attractif expulse ceux qui l'ont façonné", "explanation": "'à mesure qu'un quartier populaire gagne en attractivité, il tend à expulser ceux-là mêmes qui en avaient forgé l'identité.'" },
+      { "question": "Qui arrive en premier dans le processus décrit ?", "options": ["Les artistes et les étudiants", "Les banquiers", "Les touristes", "Les promoteurs immobiliers"], "answer": "Les artistes et les étudiants", "explanation": "'D'abord viennent les artistes et les étudiants, séduits par des loyers modestes.'" },
+      { "question": "Que devient le quartier au terme du processus ?", "options": ["Il garde l'apparence mais perd la substance", "Il devient pauvre", "Il est abandonné", "Il redevient populaire"], "answer": "Il garde l'apparence mais perd la substance", "explanation": "'le quartier a conservé l'apparence pittoresque... mais en a perdu la substance.'" },
+      { "question": "Pourquoi l'auteur juge-t-il vaine la simple condamnation de la rénovation ?", "options": ["Ce serait une nostalgie stérile", "Parce que la rénovation est interdite", "Parce que personne ne s'en soucie", "Parce que les quartiers ne changent jamais"], "answer": "Ce serait une nostalgie stérile", "explanation": "'Ce serait sombrer dans une nostalgie stérile.'" },
+      { "question": "Quelle est, selon l'auteur, la « véritable question » ?", "options": ["Embellir un quartier sans en déposséder les habitants", "Augmenter les loyers", "Attirer plus de touristes", "Construire des musées"], "answer": "Embellir un quartier sans en déposséder les habitants", "explanation": "'comment l'on peut embellir un quartier sans en déposséder les siens.'" },
+      { "question": "Le « cruel retournement » évoqué désigne le fait que :", "options": ["L'arrivée d'une population en quête d'authenticité dissout cette authenticité", "Les loyers finissent par baisser", "Les artistes reviennent", "Le quartier redevient pauvre"], "answer": "L'arrivée d'une population en quête d'authenticité dissout cette authenticité", "explanation": "'une authenticité que sa seule arrivée a, par un cruel retournement, contribué à dissoudre.'" }
+    ],
+    "vocab": [
+      { "word": "dénouer", "definition": "to untangle / resolve", "sentence": "Un paradoxe que les villes peinent à ___ ." },
+      { "word": "insidieusement", "definition": "insidiously", "sentence": "Les prix, ___ , s'envolent." },
+      { "word": "prohibitifs", "definition": "prohibitive (too high)", "sentence": "Des loyers devenus ___ chassent les habitants." },
+      { "word": "déposséder", "definition": "to dispossess", "sentence": "Embellir un quartier sans en ___ les siens." }
+    ],
+    "grammar": [
+      {
+        "point": "Les nuances du subjonctif et la concession soutenue",
+        "example": "Faut-il pour autant condamner toute rénovation ? À mesure qu'un quartier gagne en attractivité, il expulse ses habitants.",
+        "explanation": "At C2, concession and proportion are expressed with refined connectors: 'à mesure que' (as / in proportion as), 'pour autant' (for all that), 'quand bien même' (even if/though + conditional). The subjunctive marks doubt, purpose and concession; mastering its register distinguishes advanced writing.",
+        "tip": "'Pour autant' nuances a conclusion ('Faut-il pour autant condamner...?' = does that mean we should condemn...?).",
+        "exercises": [
+          { "sentence": "___ ___ que le quartier s'embellit, les loyers montent. (as / in proportion as)", "answer": "À mesure", "hint": "proportion" },
+          { "sentence": "Faut-il ___ ___ renoncer à toute rénovation ? (for all that)", "answer": "pour autant", "hint": "nuance d'une conclusion" },
+          { "sentence": "Bien que le quartier ___ son charme, il a perdu son âme. (garder, subjonctif)", "answer": "garde", "hint": "bien que + subjonctif" },
+          { "sentence": "___ ___ ___ on rénovât les façades, l'identité demeurerait fragile. (even though + literary subj.: quand bien même)", "answer": "Quand bien même", "hint": "concession + conditionnel/subj." }
+        ],
+        "production": { "instruction": "Écris une phrase nuancée avec « pour autant » à propos d'un changement urbain.", "example": "Le quartier s'est embelli ; faut-il pour autant oublier ceux qui l'habitaient ?" }
+      }
+    ],
+    "conjugation": [
+      { "verb": "peiner", "tense": "présent", "sentence": "Les métropoles ___ à dénouer ce paradoxe.", "answer": "peinent", "hint": "elles" },
+      { "verb": "conférer", "tense": "présent", "sentence": "Leur présence ___ au lieu un supplément d'âme.", "answer": "confère", "hint": "elle" },
+      { "verb": "céder", "tense": "passé composé", "sentence": "Les habitants ___ la place à une population aisée. (avoir + participe)", "answer": "ont cédé", "hint": "ils, avoir" },
+      { "verb": "concilier", "tense": "infinitif", "sentence": "La question est de savoir comment ___ embellissement et mixité.", "answer": "concilier", "hint": "forme infinitive" }
+    ]
+  }
+]

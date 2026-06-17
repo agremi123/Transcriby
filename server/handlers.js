@@ -10,6 +10,7 @@ import {
 } from './narrator-audio-cache.js';
 import { getSupabaseAdmin } from './supabase.js';
 import { getStoredWritingExample, saveWritingExample } from './writing-examples.js';
+import { pickWord, pickWritingPrompt, pickSpeakingPrompt, pickPractice, pickReading, pickListening, getLessons } from './contentStock.js';
 
 // Log every spoken narrator line (text + cached audio URL) to narrator_lines.
 // Fire-and-forget; duplicate lines are ignored via the (narrator, texthash) key.
@@ -390,6 +391,13 @@ export function handleInterviewFeedbackPost(body) {
 export async function handlePractice(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
+
+  // Local stock first — recyclable MCQ sets matched to the topic. No API call.
+  const localExercises = pickPractice(topic);
+  if (localExercises.length) {
+    return { statusCode: 200, body: { exercises: localExercises } };
+  }
+
   if (!ANTHROPIC_API_KEY || !topic) {
     return { statusCode: 200, body: { exercises: [] } };
   }
@@ -413,6 +421,20 @@ export async function handlePractice(body) {
   } catch {
     return { statusCode: 200, body: { exercises: [] } };
   }
+}
+
+// Serves the pre-built A1–C2 lesson corpus (grammar / conjugation / vocabulary)
+// straight from the local stockpile. Never calls the API.
+//   body/query: { type: 'grammar'|'conjugation'|'vocabulary', level?: 'A1'..'C2' }
+export function handleLessons(body, req) {
+  const q = req?.query || {};
+  const type = (body?.type || q.type || '').toLowerCase();
+  const level = body?.level || q.level || null;
+  if (!['grammar', 'conjugation', 'vocabulary'].includes(type)) {
+    return { statusCode: 400, body: { error: "type must be 'grammar', 'conjugation' or 'vocabulary'" } };
+  }
+  const lessons = getLessons(type, level);
+  return { statusCode: 200, body: { type, level: level || 'all', count: lessons.length, lessons } };
 }
 
 // ── French RSS feeds for reading exercises ────────────────────────────────────
@@ -853,6 +875,13 @@ export async function handleReading(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
   const empty = { passage: '', source: null, title: '', author: null, date: null, vocab: [], questions: [], grammar: [], conjugation: [] };
+
+  // Local stock first — recyclable original passages + exercises at the
+  // learner's level. No API call, works fully offline. (Topic-agnostic: serves
+  // a leveled reading rather than matching an arbitrary topic.)
+  const localR = pickReading(body?.learnerLevel || null);
+  if (localR) return { statusCode: 200, body: localR };
+
   if (!ANTHROPIC_API_KEY || !topic) return { statusCode: 200, body: empty };
 
   const supabase = getSupabase();
@@ -920,6 +949,11 @@ export async function handleWritingPrompt(body) {
   const topic = body?.topic || '';
   const level = body?.learnerLevel || 'B1';
   const empty = { prompt: '', tips: { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] }, wordTarget: 80 };
+
+  // Local stock first — recyclable prompts at the learner's level. No API call.
+  const localWP = pickWritingPrompt(level);
+  if (localWP) return { statusCode: 200, body: localWP };
+
   if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
 
   const supabase = getSupabaseAdmin() || getSupabase();
@@ -968,6 +1002,11 @@ export async function handleSpeakingPrompt(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
   const empty = { narratorId: 'lea', openingLine: 'Bonjour !', openingLineTranslation: 'Hello!', topicLabel: topic };
+
+  // Local stock first — recyclable speaking openers. No API call.
+  const localSP = pickSpeakingPrompt(body?.learnerLevel || null);
+  if (localSP) return { statusCode: 200, body: localSP };
+
   if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
 
   const supabase = getSupabaseAdmin() || getSupabase();
@@ -1265,6 +1304,25 @@ function narratorForWord(word) {
 
 export async function handleWord() {
   const { ANTHROPIC_API_KEY, ELEVENLABS_API_KEY } = getEnv();
+
+  // Local stock first — recyclable Parisian-word pool. No API call, and works
+  // even without any API key configured (fully offline).
+  const localW = pickWord();
+  if (localW) {
+    return {
+      statusCode: 200,
+      body: {
+        word: localW.word,
+        meaning: localW.meaning,
+        example: localW.example,
+        exampleTranslation: localW.exampleTranslation,
+        audioUrl: null,
+        explanation: localW.explanation || buildWordIntro(localW),
+        narratorId: localW.narratorId || narratorForWord(localW.word),
+      },
+    };
+  }
+
   if (!ANTHROPIC_API_KEY) {
     return { statusCode: 200, body: { word: null } };
   }
@@ -1411,6 +1469,13 @@ export async function handleListening(body) {
   const topic = body?.topic || '';
 
   const empty = { title: '', audioUrl: null, transcript: '', source: '', date: null, vocabTheme: '', questions: [], vocab: [], grammar: [], conjugation: [] };
+
+  // Local stock first — recyclable transcripts + exercises at the learner's
+  // level. No API call. audioUrl may be null (the player handles that and shows
+  // the transcript + exercises); narration can be generated separately.
+  const localL = pickListening(level);
+  if (localL) return { statusCode: 200, body: localL };
+
   if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
 
   // Service role so the fire-and-forget save can't be blocked by RLS

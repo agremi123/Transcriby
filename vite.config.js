@@ -12,6 +12,7 @@ import { getStoredWritingExample, saveWritingExample } from './server/writing-ex
 import { sendHandlerResult } from './server/node-response.js';
 import { buildCorrectionSystemPrompts } from './server/correctionPrompts.js';
 import { sanitizeParisianCorrection, parseCorrectionResponse } from './src/lib/correctionFormat.js';
+import { pickWord, pickWritingPrompt, pickSpeakingPrompt, pickPractice, pickReading, pickListening, getLessons } from './server/contentStock.js';
 
 // ── Dev token tracker ──────────────────────────────────────────────────────
 const DEV_COSTS_FILE = new URL('./data/dev-costs.json', import.meta.url).pathname;
@@ -677,6 +678,20 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
 
   return async (req, res, next) => {
     if (req.url !== '/api/word' || req.method !== 'POST') { next(); return; }
+    // Local stock first — recyclable pool, no API call (matches production).
+    {
+      const localW = pickWord();
+      if (localW) {
+        res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({
+          word: localW.word, meaning: localW.meaning, example: localW.example,
+          exampleTranslation: localW.exampleTranslation, audioUrl: null,
+          explanation: localW.explanation || buildWordIntro(localW),
+          narratorId: localW.narratorId || narratorForWord(localW.word),
+        }));
+        return;
+      }
+    }
     if (!anthropicKey) {
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ word: null })); return;
@@ -836,12 +851,18 @@ function readingMiddleware(apiKey, openrouterKey) {
 
   return async (req, res, next) => {
     if (req.url !== '/api/reading' || req.method !== 'POST') { next(); return; }
-    let topic = '';
+    let topic = '', learnerLevel = null;
     try {
       const body = JSON.parse(await readBody(req));
       topic = body.topic || '';
+      learnerLevel = body.learnerLevel || null;
     } catch {
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
+    }
+    // Local stock first — recyclable passages + exercises. No API call.
+    {
+      const localR = pickReading(learnerLevel);
+      if (localR) { res.statusCode = 200; res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(localR)); return; }
     }
     if (!topic) {
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
@@ -975,6 +996,14 @@ function practiceMiddleware(apiKey, openrouterKey) {
       topic = body.topic || '';
     } catch {
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
+    }
+    // Local stock first — recyclable MCQ sets matched to the topic. No API call.
+    {
+      const localEx = pickPractice(topic);
+      if (localEx.length) {
+        res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ exercises: localEx })); return;
+      }
     }
     if (!apiKey || !topic) {
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
@@ -1249,6 +1278,12 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
     }
     res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+    // Local stock first — recyclable transcripts + exercises (audio may be null;
+    // the player handles that). No API call.
+    {
+      const localL = pickListening(learnerLevel || null);
+      if (localL) { res.end(JSON.stringify(localL)); return; }
+    }
     if (!anthropicKey) {
       res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: '', questions: [], vocab: [], grammar: [] })); return;
     }
@@ -1665,6 +1700,11 @@ N'utilise JAMAIS de markdown ni d'astérisques. Réponds uniquement en JSON :
 
     // Prompt mode (opening line)
     const topic = body.topic || '';
+    // Local stock first — recyclable openers. No API call (matches production).
+    {
+      const localSP = pickSpeakingPrompt(body.learnerLevel || null);
+      if (localSP) { res.end(JSON.stringify(localSP)); return; }
+    }
     if (!apiKey) { res.end(JSON.stringify({ narratorId: 'lea', openingLine: '', topic })); return; }
     try {
       const narratorId = SPEAKING_NARRATORS[Math.floor(Math.random() * SPEAKING_NARRATORS.length)];
@@ -1831,6 +1871,11 @@ function writingPromptMiddleware(apiKey, openrouterKey) {
     try { const b = JSON.parse(await readBody(req)); topic = b.topic || ''; learnerLevel = b.learnerLevel || 'B1'; } catch {}
     res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
     const empty = { prompt: '', tips: { vocab: [], expressions: [], grammar: [], conjugation: [], connecteurs: [] }, wordTarget: 80 };
+    // Local stock first — recyclable prompts at the learner's level. No API call.
+    {
+      const localWP = pickWritingPrompt(learnerLevel);
+      if (localWP) { res.end(JSON.stringify(localWP)); return; }
+    }
     if (!apiKey) { res.end(JSON.stringify(empty)); return; }
     try {
       // Fetch recent prompts so the model never produces a near-duplicate
@@ -1927,6 +1972,25 @@ function translateWordMiddleware(apiKey, openrouterKey) {
   };
 }
 
+// Serves the pre-built A1–C2 lesson corpus from the local stockpile. No API.
+function lessonsMiddleware() {
+  return (req, res, next) => {
+    if (!req.url.startsWith('/api/lessons')) { next(); return; }
+    const url = new URL(req.url, 'http://x');
+    const type = (url.searchParams.get('type') || '').toLowerCase();
+    res.setHeader('Content-Type', 'application/json');
+    if (!['grammar', 'conjugation', 'vocabulary'].includes(type)) {
+      res.statusCode = 400;
+      res.end(JSON.stringify({ error: "type must be 'grammar', 'conjugation' or 'vocabulary'" }));
+      return;
+    }
+    const level = url.searchParams.get('level') || null;
+    const lessons = getLessons(type, level);
+    res.statusCode = 200;
+    res.end(JSON.stringify({ type, level: level || 'all', count: lessons.length, lessons }));
+  };
+}
+
 export default defineConfig(() => {
   const env = readEnvFile(process.cwd());
 
@@ -1942,6 +2006,7 @@ export default defineConfig(() => {
           server.middlewares.use(interviewFeedbackMiddleware());
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
           server.middlewares.use(devStatsMiddleware());
+          server.middlewares.use(lessonsMiddleware());
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(audioProxyMiddleware());
@@ -1961,6 +2026,7 @@ export default defineConfig(() => {
           server.middlewares.use(interviewFeedbackMiddleware());
           server.middlewares.use(ttsMiddleware(env.OPENAI_API_KEY));
           server.middlewares.use(devStatsMiddleware());
+          server.middlewares.use(lessonsMiddleware());
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
           server.middlewares.use(audioProxyMiddleware());
