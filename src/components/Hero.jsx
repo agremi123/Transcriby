@@ -5534,12 +5534,6 @@ function ReadingArticlePanel({
 
           {/* Byline, daily points circle, translate */}
           <div className="relative mt-4 shrink-0 border-t pt-3 pl-4 pr-3" style={{ borderColor: 'rgba(139,30,45,0.2)' }}>
-            {/* Next article — overlaid (no layout space) so nothing else moves.
-                Vertically aligned with the newspaper byline, horizontally centered
-                over the Translate button (both are right-anchored + fixed width). */}
-            <div className="absolute top-[5px] right-[22px] z-10">
-              <NextArticleButton doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} />
-            </div>
             {byline ? (
               <p className="text-[10px] font-mono tracking-[0.12em] mb-3 truncate" style={{ color: '#8b1e2d' }}>
                 {byline}
