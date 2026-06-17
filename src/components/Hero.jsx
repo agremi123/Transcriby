@@ -7527,33 +7527,6 @@ export default function Hero() {
             </Reveal>
             )}
 
-            {/* Mobile-only: Léa portrait + tab-specific speech line when an exercise tab is active */}
-            {['speaking','listening','reading','writing'].includes(heroActiveTab) && (() => {
-              const exerciseLine = EXERCISE_TAB_LINES[heroActiveTab] || '';
-              const isPlaying = introPlaying === 'lea' && introSpeechText === exerciseLine;
-              return (
-                <div className="sm:hidden mt-6 flex items-center gap-3 w-full px-2">
-                  <button
-                    type="button"
-                    onClick={() => playNarratorIntro({ id: 'lea', intro: exerciseLine })}
-                    className="group relative flex-shrink-0"
-                    aria-label="Rejouer le message de Léa"
-                    aria-pressed={isPlaying}
-                  >
-                    <div className={`relative w-24 h-24 rounded-full overflow-hidden transition-all duration-300 ${
-                      isPlaying ? 'ring-[3px] ring-wine shadow-lg' : 'ring-2 ring-wine/40 group-hover:ring-wine shadow-sm'
-                    }`}>
-                      <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
-                      {isPlaying && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-35 pointer-events-none" />}
-                    </div>
-                  </button>
-                  <p className={`flex-1 min-w-0 font-display text-[13.5px] italic leading-snug ${isPlaying ? 'text-wine' : 'text-navy/75'}`}>
-                    « {exerciseLine} »
-                  </p>
-                </div>
-              );
-            })()}
-
             <Reveal delay={0.35}>
               <p className="mt-6 max-w-[min(500px,calc(100vw-3rem))] text-[15px] leading-[1.6] text-navy/70">
                 Parisly listens as you speak and correct your French in real time,
