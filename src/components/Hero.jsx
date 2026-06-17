@@ -7441,11 +7441,11 @@ export default function Hero() {
               return (
                 <div className="sm:hidden -mt-[28px] mb-2 flex justify-center">
                   <div className="inline-flex items-center gap-1.5 rounded-md bg-white/80 border border-navy/15 px-2.5 py-1 text-navy/70 font-display italic text-[11px] leading-snug shadow-sm">
-                    <svg width="9" height="11" viewBox="0 0 11 13" fill="none" className="shrink-0 animate-bounce text-wine/70" style={{ animationDuration: '1.6s' }} aria-hidden>
+                    <svg width="9" height="11" viewBox="0 0 11 13" fill="none" className="shrink-0 text-wine/70" style={{ animation: 'hintArrowDown 2s ease-in-out infinite' }} aria-hidden>
                       <path d="M5.5 1v10M1.5 7l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     <span className="text-center">{hint}</span>
-                    <svg width="9" height="11" viewBox="0 0 11 13" fill="none" className="shrink-0 text-wine/70" aria-hidden>
+                    <svg width="9" height="11" viewBox="0 0 11 13" fill="none" className="shrink-0 text-wine/70" style={{ animation: 'hintArrowUp 2s ease-in-out 1s infinite' }} aria-hidden>
                       <path d="M5.5 12V2M1.5 6l4-4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
