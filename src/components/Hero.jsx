@@ -1343,6 +1343,15 @@ export function AudioDemoCard({
 
   const writeTextareaRef = React.useRef(null);
   const writeBoxRef = React.useRef(null);
+  // Exercise sub-tab bar: track whether there's more to scroll to the right so we
+  // can show a little "more →" arrow instead of an ugly scrollbar.
+  const subTabsRef = React.useRef(null);
+  const [subTabsMore, setSubTabsMore] = React.useState(false);
+  const updateSubTabsMore = React.useCallback(() => {
+    const el = subTabsRef.current;
+    if (!el) { setSubTabsMore(false); return; }
+    setSubTabsMore(el.scrollWidth - el.clientWidth - el.scrollLeft > 4);
+  }, []);
   const [speakCorrection, setSpeakCorrection] = React.useState(null);
   const [fetchingCorrection, setFetchingCorrection] = React.useState(false);
   const [manualCorrection, setManualCorrection] = React.useState(null);
