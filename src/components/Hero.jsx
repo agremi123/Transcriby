@@ -5822,6 +5822,10 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
                 )}
               </div>
               {vocabTheme && <span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 mt-0.5 block">{vocabTheme}</span>}
+              {/* Next podcast — gated button, fills as the four exercise tabs are completed */}
+              <div className="mt-2 flex justify-end">
+                <NextArticleButton doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} label="Next podcast" />
+              </div>
             </div>
           )}
 
