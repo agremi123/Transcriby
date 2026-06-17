@@ -3816,7 +3816,8 @@ export function AudioDemoCard({
                       <p className="text-[12px] text-navy/55 italic mt-0.5 leading-snug">« {msg.example} »</p>
                     </div>
                   ) : msg.role === 'lea' ? (
-                    <div key={msg.id} className={`${msg.id === 'intro' ? 'hidden sm:flex' : 'flex'} items-start gap-2.5`}>
+                    /* Mobile: Léa's lines live next to her portrait (hero), not in the box */
+                    <div key={msg.id} className="hidden sm:flex items-start gap-2.5">
                       <button
                         type="button"
                         onClick={() => !msg.loading && msg.text && playNarratorLine({ id: msg.narratorId || 'lea', text: msg.text })}
