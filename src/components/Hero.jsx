@@ -7583,11 +7583,12 @@ export default function Hero() {
                     <button
                       type="button"
                       onClick={() => goToDashboard()}
-                      className={`inline-flex items-center text-left font-display text-ivory bg-wine hover:bg-wine2 rounded-2xl shadow-sm transition-all duration-300 self-start ${
-                        leaSpeech?.text
-                          ? 'text-[10px] leading-tight px-2.5 py-1'
-                          : 'text-[13.5px] leading-snug px-3.5 py-2.5'
-                      }`}
+                      style={{
+                        fontSize: leaSpeech?.text ? '10px' : '13.5px',
+                        padding: leaSpeech?.text ? '4px 10px' : '10px 14px',
+                        transition: 'font-size 300ms ease, padding 300ms ease',
+                      }}
+                      className="inline-flex items-center text-left font-display leading-snug text-ivory bg-wine hover:bg-wine2 rounded-2xl shadow-sm self-start"
                     >
                       Click for Léa to judge your French
                     </button>
