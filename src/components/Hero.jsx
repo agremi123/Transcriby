@@ -7431,10 +7431,10 @@ export default function Hero() {
                 ↓ points to the content to read/listen, ↑ points to the questions in the box. */}
             {exercisePanelActive && (() => {
               const hints = {
-                reading: 'read the article and answer the questions',
-                listening: 'listen to the audio and answer the questions',
-                speaking: 'read the prompt and try to answer',
-                writing: 'read the prompt and try to answer',
+                reading: 'Read the article and answer the questions',
+                listening: 'Listen to the audio and answer the questions',
+                speaking: 'Read the prompt and try to answer',
+                writing: 'Read the prompt and try to answer',
               };
               const hint = hints[heroActiveTab];
               if (!hint) return null;
