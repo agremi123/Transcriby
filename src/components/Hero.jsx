@@ -5516,6 +5516,10 @@ function ReadingArticlePanel({
                 {theme || 'Reading challenge'}
               </p>
               <AutoFitTitle title={title} />
+              {/* Next article — gated button, fills as the four exercise tabs are completed */}
+              <div className="mt-2.5 flex justify-end">
+                <NextArticleButton doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} label="Next article" />
+              </div>
             </div>
           )}
 
