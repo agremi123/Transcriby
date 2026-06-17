@@ -6786,6 +6786,8 @@ export default function Hero() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [heroActiveTab, setHeroActiveTab] = React.useState('transcript');
+  // Léa's latest spoken line — shown next to her portrait on mobile (not in the box).
+  const [leaSpeech, setLeaSpeech] = React.useState(null); // { text, narratorId } | null
   const learnMode = searchParams.get('learn');
   const learnLevel = searchParams.get('level');
   const practiceTopic = searchParams.get('practice');
