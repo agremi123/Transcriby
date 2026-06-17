@@ -7561,12 +7561,31 @@ export default function Hero() {
                       isPlaying ? 'text-wine italic' : 'text-wine'
                     }`}>{n.name}</span>
                   </button>
-                  {/* Mobile-only: assessment CTA to the right of her portrait */}
-                  <div className="sm:hidden flex-1 min-w-0 self-center text-left">
+                  {/* Mobile-only: Léa's live speech + the (shrinking) assessment CTA below it */}
+                  <div className="sm:hidden flex-1 min-w-0 self-center text-left flex flex-col gap-2">
+                    <AnimatePresence>
+                      {leaSpeech?.text && (
+                        <motion.div
+                          key="lea-speech"
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 4 }}
+                          transition={{ duration: 0.25 }}
+                          className="relative rounded-2xl bg-white/90 border border-wine/15 shadow-sm px-3 py-2"
+                        >
+                          <span className="absolute top-1/2 -left-1 -translate-y-1/2 w-2.5 h-2.5 rotate-45 border-l border-b bg-white/90 border-wine/15" aria-hidden />
+                          <p className="font-display text-[13px] italic text-navy/80 leading-snug">{leaSpeech.text}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                     <button
                       type="button"
                       onClick={() => goToDashboard()}
-                      className="inline-flex items-center text-left font-display text-[13.5px] leading-snug text-ivory bg-wine hover:bg-wine2 rounded-2xl px-3.5 py-2.5 transition-colors shadow-sm"
+                      className={`inline-flex items-center text-left font-display text-ivory bg-wine hover:bg-wine2 rounded-2xl shadow-sm transition-all duration-300 self-start ${
+                        leaSpeech?.text
+                          ? 'text-[10px] leading-tight px-2.5 py-1'
+                          : 'text-[13.5px] leading-snug px-3.5 py-2.5'
+                      }`}
                     >
                       Click for Léa to judge your French
                     </button>
