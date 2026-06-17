@@ -3363,6 +3363,22 @@ export function AudioDemoCard({
                   );
                 })}
                 </div>
+                {/* "More to the right" affordance — a fade + tappable arrow that scrolls
+                    the bar onward; hidden once you reach the end. Replaces the scrollbar. */}
+                {subTabsMore && (
+                  <button
+                    type="button"
+                    aria-label="Voir plus d'onglets"
+                    onClick={() => subTabsRef.current?.scrollBy({ left: 120, behavior: 'smooth' })}
+                    className="absolute right-0 top-0 bottom-0 z-10 flex items-center pl-6 pr-1.5 bg-gradient-to-l from-ivory via-ivory/90 to-transparent"
+                  >
+                    <span className="text-wine animate-pulse" aria-hidden>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 6l6 6-6 6" />
+                      </svg>
+                    </span>
+                  </button>
+                )}
               </div>
               {/* Exercise content */}
               <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3">
