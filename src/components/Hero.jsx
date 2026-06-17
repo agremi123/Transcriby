@@ -7326,9 +7326,9 @@ export default function Hero() {
         <button
           type="button"
           onClick={() => goToDashboard()}
-          className="sm:hidden fixed top-[18px] right-4 z-50 inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory font-display text-[11px] leading-none px-3 py-2 shadow-md"
+          className="sm:hidden fixed top-[18px] right-4 z-50 inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory font-display text-[11px] leading-none px-3 py-2 shadow-md max-w-[55vw] text-right"
         >
-          Judge your French
+          Click for Léa to judge your French
         </button>
       )}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
