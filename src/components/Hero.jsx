@@ -4886,9 +4886,23 @@ export function AudioDemoCard({
           </div>
         ) : null}
         </div>
-        {/* Mobile: mic/pen mode toggle replaces the points + mic cluster */}
+        {/* Mobile: Parisian points (left) + mic/pen mode toggle (right) */}
         {(inputMode === 'speak' || inputMode === 'write') && (
-          <div className="sm:hidden shrink-0 pr-2 py-1 self-center">
+          <div className="sm:hidden shrink-0 pr-2 py-1 self-center flex items-center gap-1.5">
+            <PointsBurst points={dailyParisianPoints}>
+              <div className="relative flex items-center justify-center w-9 h-9 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
+                <div className="flex flex-col items-center gap-[2px] -mt-0.5">
+                  <span className="font-display text-[13px] font-bold text-wine leading-none tabular-nums">{dailyParisianPoints}</span>
+                  <span className="text-[6px] font-mono tracking-wide uppercase text-wine/60 leading-none">pts</span>
+                </div>
+                {pointsDelta && (
+                  <span key={pointsDelta.id} className="absolute -top-4 left-1/2 -translate-x-1/2 font-display font-bold text-[13px] whitespace-nowrap pointer-events-none"
+                    style={{ color: pointsDelta.value > 0 ? '#16a34a' : '#8B1E2D', animation: 'parisianDeltaFloat 1.4s ease-out forwards' }}>
+                    {pointsDelta.value > 0 ? `+${pointsDelta.value}` : pointsDelta.value}
+                  </span>
+                )}
+              </div>
+            </PointsBurst>
             {mobileModeToggle}
           </div>
         )}
