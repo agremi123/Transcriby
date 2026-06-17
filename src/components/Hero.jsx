@@ -3346,10 +3346,6 @@ export function AudioDemoCard({
                   );
                 })}
                 </div>
-                {/* Next article — a progress bar that fills as each tab is finished */}
-                <div className="shrink-0 flex items-center justify-center px-2 border-l border-line/40 border-b-2 border-b-transparent">
-                  <NextArticleButton compact doneTabs={exerciseTabsDone} articleIndex={articleIndex} onNextArticle={onNextArticle} />
-                </div>
               </div>
               {/* Exercise content */}
               <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3">
