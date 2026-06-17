@@ -5381,12 +5381,12 @@ function AutoFitTitle({ title }) {
 // Gated "Next article X/3" button that is ALSO a progress bar: its fill grows as
 // each of the four exercise tabs is finished (25% each). Unlocked + clickable
 // only when all four are done; a hover tooltip explains the lock.
-function NextArticleButton({ doneTabs = 0, totalTabs = 4, articleIndex = 1, onNextArticle = null, compact = false, label = 'Next article' }) {
+function NextArticleButton({ doneTabs = 0, totalTabs = 4, articleIndex = 1, onNextArticle = null, compact = false, label = 'Next article', className = '' }) {
   const allDone = doneTabs >= totalTabs;
   const pct = Math.round((Math.min(doneTabs, totalTabs) / totalTabs) * 100);
   const sizeCls = compact ? 'text-[8px] tracking-wide px-1.5 py-0.5' : 'text-[10px] tracking-wide px-2.5 py-1';
   return (
-    <div className="relative group shrink-0">
+    <div className={`relative group shrink-0 ${className}`}>
       <button
         type="button"
         onClick={() => { if (allDone) onNextArticle?.(); }}
