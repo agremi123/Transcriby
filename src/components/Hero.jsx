@@ -7552,7 +7552,7 @@ export default function Hero() {
                       isPlaying ? 'text-wine italic' : 'text-wine'
                     }`}>{n.name}</span>
                   </button>
-                  {/* Mobile-only: assessment CTA to the right of her portrait, with points beneath it */}
+                  {/* Mobile-only: assessment CTA to the right of her portrait */}
                   <div className="sm:hidden flex-1 min-w-0 self-center text-left">
                     <button
                       type="button"
@@ -7561,14 +7561,6 @@ export default function Hero() {
                     >
                       Click for Léa to judge your French
                     </button>
-                    <div className="mt-2 flex items-center gap-2">
-                      <PointsBurst points={dailyParisianPoints}>
-                        <div className="inline-flex items-center gap-1 rounded-full bg-wine/[0.08] border-2 border-wine/20 px-2 py-1 shadow-sm">
-                          <span className="font-display text-[15px] font-bold text-wine leading-none tabular-nums">{dailyParisianPoints}</span>
-                          <span className="text-[7px] font-mono uppercase tracking-wide text-wine/60 leading-none">pts</span>
-                        </div>
-                      </PointsBurst>
-                    </div>
                   </div>
                   </div>
                   );
