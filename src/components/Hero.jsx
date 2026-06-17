@@ -7581,32 +7581,6 @@ export default function Hero() {
             </Reveal>
             </div>
 
-            {/* Mobile-only: Léa portrait + tab-specific line, shown ABOVE speech box when exercise is active */}
-            {exercisePanelActive && (() => {
-              const exerciseLine = EXERCISE_TAB_LINES[heroActiveTab] || '';
-              const isPlaying = introPlaying === 'lea' && introSpeechText === exerciseLine;
-              return (
-                <div className="sm:hidden mt-4 flex items-center gap-3 w-full px-2">
-                  <button
-                    type="button"
-                    onClick={() => playNarratorIntro({ id: 'lea', intro: exerciseLine })}
-                    className="group relative flex-shrink-0"
-                    aria-label="Rejouer le message de Léa"
-                    aria-pressed={isPlaying}
-                  >
-                    <div className={`relative w-20 h-20 rounded-full overflow-hidden transition-all duration-300 ${
-                      isPlaying ? 'ring-[3px] ring-wine shadow-lg' : 'ring-2 ring-wine/40 group-hover:ring-wine shadow-sm'
-                    }`}>
-                      <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
-                      {isPlaying && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-35 pointer-events-none" />}
-                    </div>
-                  </button>
-                  <p className={`flex-1 min-w-0 font-display text-[13px] italic leading-snug ${isPlaying ? 'text-wine' : 'text-navy/75'}`}>
-                    « {exerciseLine} »
-                  </p>
-                </div>
-              );
-            })()}
           </div>
 
           <div className={`flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 h-[440px] sm:min-h-[500px] sm:max-h-[500px] ${exercisePanelActive ? 'order-1 lg:order-none' : ''}`}>
