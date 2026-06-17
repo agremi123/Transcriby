@@ -7312,6 +7312,32 @@ export default function Hero() {
       <Container className="relative">
         <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[1fr_680px] gap-8 items-stretch lg:h-[calc(100vh-96px)]">
           <div className={`relative flex flex-col justify-center overflow-visible ${exercisePanelActive ? 'order-2 lg:order-none' : ''}`}>
+            {/* Mobile-only: Léa portrait + tab-specific line — shown at top of this column on mobile */}
+            {exercisePanelActive && (() => {
+              const exerciseLine = EXERCISE_TAB_LINES[heroActiveTab] || '';
+              const isPlaying = introPlaying === 'lea' && introSpeechText === exerciseLine;
+              return (
+                <div className="sm:hidden mb-4 flex items-center gap-3 w-full">
+                  <button
+                    type="button"
+                    onClick={() => playNarratorIntro({ id: 'lea', intro: exerciseLine })}
+                    className="group relative flex-shrink-0"
+                    aria-label="Rejouer le message de Léa"
+                    aria-pressed={isPlaying}
+                  >
+                    <div className={`relative w-20 h-20 rounded-full overflow-hidden transition-all duration-300 ${
+                      isPlaying ? 'ring-[3px] ring-wine shadow-lg' : 'ring-2 ring-wine/40 group-hover:ring-wine shadow-sm'
+                    }`}>
+                      <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
+                      {isPlaying && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-35 pointer-events-none" />}
+                    </div>
+                  </button>
+                  <p className={`flex-1 min-w-0 font-display text-[13px] italic leading-snug ${isPlaying ? 'text-wine' : 'text-navy/75'}`}>
+                    « {exerciseLine} »
+                  </p>
+                </div>
+              );
+            })()}
             {heroActiveTab === 'reading' && readingActive && (
               <ReadingArticlePanel
                 loading={readingLoading}
