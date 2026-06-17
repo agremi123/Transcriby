@@ -7516,7 +7516,7 @@ export default function Hero() {
                 helping you express yourself with fluency and confidence.
               </p>
             </Reveal>
-            <Reveal delay={0.42}>
+            <Reveal delay={0.42} className="hidden sm:block">
               <div className="mt-8 flex items-center">
                 <div className="relative inline-flex">
                   <ParisianExperienceHint placement="right" />
