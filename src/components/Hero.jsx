@@ -7583,18 +7583,6 @@ export default function Hero() {
                           <span className="text-[7px] font-mono uppercase tracking-wide text-wine/60 leading-none">pts</span>
                         </div>
                       </PointsBurst>
-                      <button
-                        type="button"
-                        disabled={dailyParisianPoints < DISCOVER_WORD_COST}
-                        onClick={() => discoverWordRef.current?.()}
-                        className={`inline-flex items-center px-2.5 py-1 font-display text-[11.5px] leading-tight tracking-wide rounded-full transition-all duration-300 ${
-                          dailyParisianPoints < DISCOVER_WORD_COST
-                            ? 'bg-wine/30 text-ivory/70 cursor-not-allowed'
-                            : 'bg-wine text-ivory hover:bg-wine2'
-                        }`}
-                      >
-                        Discover a Parisian word
-                      </button>
                     </div>
                   </div>
                   </div>
