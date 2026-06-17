@@ -2039,7 +2039,7 @@ export function AudioDemoCard({
     } catch {
       stopParisianAudio();
     }
-  }, [stopParisianAudio]);
+  }, [stopParisianAudio, onLeaSpeak]);
 
   const finalizeCorrection = React.useCallback((correction, readerId) => {
     const corrected = correction.corrected?.trim() || '';
