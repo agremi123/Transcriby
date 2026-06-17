@@ -7294,7 +7294,7 @@ export default function Hero() {
 
       <Container className="relative">
         <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[1fr_680px] gap-8 items-stretch lg:h-[calc(100vh-96px)]">
-          <div className="relative flex flex-col justify-center overflow-visible">
+          <div className={`relative flex flex-col justify-center overflow-visible ${exercisePanelActive ? 'order-2 lg:order-none' : ''}`}>
             {heroActiveTab === 'reading' && readingActive && (
               <ReadingArticlePanel
                 loading={readingLoading}
