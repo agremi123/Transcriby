@@ -7323,6 +7323,24 @@ export default function Hero() {
 
   return (
     <section className="relative pt-24 lg:pt-12 pb-12 min-h-screen overflow-visible">
+      {/* Mobile-only: assessment CTA relocated to the top-right header (opposite the
+          Parisly logo) once Léa's text has taken its place next to her portrait. */}
+      <AnimatePresence>
+        {leaSpeech?.text && (
+          <motion.button
+            key="judge-cta-header"
+            type="button"
+            onClick={() => goToDashboard()}
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.25 }}
+            className="sm:hidden fixed top-[18px] right-4 z-50 inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory font-display text-[11px] leading-none px-3 py-2 shadow-md"
+          >
+            Judge your French
+          </motion.button>
+        )}
+      </AnimatePresence>
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0" style={{ background: 'radial-gradient(60% 80% at 80% 30%, rgba(217,196,162,0.30), transparent 60%), linear-gradient(180deg, #F6F1E8 0%, #F2EBDA 100%)' }} />
         <img src="/assets/paris-skyline.jpg" alt=""
