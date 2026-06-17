@@ -5531,7 +5531,7 @@ function ReadingArticlePanel({
               {/* Next article (left) + completion badge (right) — absolute overlay so
                   they never push the title down */}
               <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5">
-                <NextArticleButton compact doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} label="Next article" />
+                <NextArticleButton compact doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} label="Next article" className="-translate-y-[3px]" />
                 <ThemeBadge achieved={themeAchieved} total={THEME_ARTICLE_TOTAL} label="article" />
               </div>
               {/* Theme of the reading challenge */}
