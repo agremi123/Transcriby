@@ -2006,6 +2006,8 @@ export function AudioDemoCard({
     const session = beginSiteAudioPlayback();
     const activeNarrator = resolveClientNarrator(line.id);
     const trimmed = line.text.trim();
+    // Surface every spoken Parisian line to the hero portrait area (mobile)
+    onLeaSpeak?.({ text: trimmed, narratorId: activeNarrator });
     setNarrator(activeNarrator);
     setNarratorVoiceLoadingKey(`${activeNarrator}:${trimmed}`);
     try {
