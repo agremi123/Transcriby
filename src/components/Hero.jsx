@@ -7088,10 +7088,22 @@ export default function Hero() {
   }, [practiceTopic, effectiveLevel]);
 
   const EXERCISE_TAB_LINES = {
-    listening: "Tu as lancé le challenge listening ! Écoute le podcast et réponds aux questions pour gagner des points et passer au suivant !",
-    reading:   "Tu as lancé le challenge reading ! Lis l'article et réponds aux questions pour gagner des points et passer au suivant !",
-    speaking:  "Tu as lancé le challenge speaking ! Parle en français et utilise le vocabulaire ciblé pour gagner des points Parisiens !",
-    writing:   "Tu as lancé le challenge writing ! Écris un texte basé sur le prompt et les conseils pour gagner des points Parisiens !",
+    listening: {
+      text: "Tu as lancé le challenge listening ! Écoute le podcast et réponds aux questions pour gagner des points et passer au suivant !",
+      translation: "You've started the listening challenge! Listen to the podcast and answer the questions to earn points and move on to the next one!",
+    },
+    reading: {
+      text: "Tu as lancé le challenge reading ! Lis l'article et réponds aux questions pour gagner des points et passer au suivant !",
+      translation: "You've started the reading challenge! Read the article and answer the questions to earn points and move on to the next one!",
+    },
+    speaking: {
+      text: "Tu as lancé le challenge speaking ! Parle en français et utilise le vocabulaire ciblé pour gagner des points Parisiens !",
+      translation: "You've started the speaking challenge! Speak in French and use the target vocabulary to earn Parisian points!",
+    },
+    writing: {
+      text: "Tu as lancé le challenge writing ! Écris un texte basé sur le prompt et les conseils pour gagner des points Parisiens !",
+      translation: "You've started the writing challenge! Write a text based on the prompt and tips to earn Parisian points!",
+    },
   };
 
   const [introNarrator, setIntroNarrator] = React.useState(null);
