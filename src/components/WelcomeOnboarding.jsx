@@ -562,14 +562,12 @@ export default function WelcomeOnboarding() {
                           >
                             <motion.div
                               layoutId={SELECTED_BADGE_LAYOUT}
-                              className="relative flex items-center justify-center w-[190px] h-[190px] sm:w-[210px] sm:h-[210px]"
+                              className="relative flex items-center justify-center w-[260px] h-[260px] sm:w-[280px] sm:h-[280px]"
                             >
-                              {/* Frame sized to hug the visible badge (the PNG is landscape) */}
-                              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[72%] h-[72%] rounded-full border border-wine ring-2 ring-wine/25 ring-offset-2 ring-offset-paper bg-paper shadow-md" />
                               <img
                                 src={getLevelBadgeSrc(pickedLevel)}
                                 alt=""
-                                className={`relative ${BADGE_IMG_CLASS}`}
+                                className={BADGE_IMG_CLASS}
                               />
                             </motion.div>
 
