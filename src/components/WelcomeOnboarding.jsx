@@ -529,7 +529,7 @@ export default function WelcomeOnboarding() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2 }}
-                            className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4"
+                            className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4"
                           >
                             {LEVEL_PICKER.map(({ id, label, hint }) => (
                               <motion.button
