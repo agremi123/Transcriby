@@ -540,7 +540,7 @@ export default function WelcomeOnboarding() {
                                 aria-label={`${label}, ${hint}`}
                                 exit={{ opacity: 0, scale: 0.88 }}
                                 transition={{ duration: 0.22 }}
-                                className="flex items-center justify-center rounded-xl border border-line bg-paper p-1 sm:p-1.5 shadow-sm hover:shadow-md hover:border-wine/35 transition-colors"
+                                className="flex items-center justify-center aspect-square rounded-full border border-line bg-paper p-1.5 sm:p-2 shadow-sm hover:shadow-md hover:border-wine/35 hover:scale-[1.03] transition-all"
                               >
                                 <img
                                   src={getLevelBadgeSrc(id)}
