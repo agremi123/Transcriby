@@ -876,13 +876,15 @@ export async function handleReading(body) {
   const topic = body?.topic || '';
   const empty = { passage: '', source: null, title: '', author: null, date: null, vocab: [], questions: [], grammar: [], conjugation: [] };
 
-  // Local stock first — recyclable original passages + exercises at the
-  // learner's level. No API call, works fully offline. (Topic-agnostic: serves
-  // a leveled reading rather than matching an arbitrary topic.)
-  const localR = pickReading(body?.learnerLevel || null);
-  if (localR) return { statusCode: 200, body: localR };
+  // Reading uses REAL documents: live French-press articles (RSS) with exercises
+  // generated around them, cached in Supabase. The local Parisly stock is only a
+  // last-resort fallback so the panel is never blank when feeds are unreachable.
+  const stockFallback = () => {
+    const localR = pickReading(body?.learnerLevel || null);
+    return { statusCode: 200, body: localR || empty };
+  };
 
-  if (!ANTHROPIC_API_KEY || !topic) return { statusCode: 200, body: empty };
+  if (!ANTHROPIC_API_KEY) return stockFallback();
 
   const supabase = getSupabase();
 
