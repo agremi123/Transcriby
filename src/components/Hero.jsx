@@ -3519,9 +3519,7 @@ export function AudioDemoCard({
                       <span className="absolute inset-y-0 left-0 bg-wine/15 transition-all duration-500" style={{ width: `${pct}%` }} aria-hidden />
                       <span className="relative z-10 inline-flex items-center gap-1">
                         {t.label}
-                        {prog.done
-                          ? <span className="text-green-600 text-[10px]" aria-hidden>✓</span>
-                          : <span className={`font-mono tabular-nums ${exerciseSubTab === t.id ? 'text-wine/60' : 'text-navy/30'}`}>{prog.correct}/{EXERCISE_GOAL}</span>}
+                        {prog.done && <span className="text-green-600 text-[10px]" aria-hidden>✓</span>}
                       </span>
                     </button>
                   );
