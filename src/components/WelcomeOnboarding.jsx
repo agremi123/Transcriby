@@ -293,7 +293,7 @@ export default function WelcomeOnboarding() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-navy/40 backdrop-blur-sm"
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-navy/40 backdrop-blur-sm"
       >
         <motion.div
           initial={{ opacity: 0, y: 16, scale: 0.98 }}
