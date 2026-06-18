@@ -1589,7 +1589,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       res.end(JSON.stringify(result));
     } catch (err) {
       console.error('[listening] error:', err.message);
-      res.end(JSON.stringify({ title: '', audioUrl: null, transcript: '', source: 'RFI', questions: [], vocab: [], grammar: [] }));
+      sendStockFallback();
     }
   };
 }
