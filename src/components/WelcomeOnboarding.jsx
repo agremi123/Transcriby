@@ -300,7 +300,7 @@ export default function WelcomeOnboarding() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           className="w-full max-w-[820px] max-h-[92vh] rounded-2xl border border-line/80 bg-paper shadow-[0_24px_64px_rgba(26,35,64,0.18)] overflow-y-auto"
         >
-          <div className="px-6 sm:px-10 pt-6 pb-7">
+          <div className="px-4 sm:px-10 pt-6 pb-7">
 
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
