@@ -443,7 +443,7 @@ export default function WelcomeOnboarding() {
 
                 {/* I'm already Parisian */}
                 <div className="relative flex flex-col items-center gap-1.5">
-                  <p className="text-[11px] tracking-[0.12em] uppercase text-navy/35 font-semibold">I'm already Parisian</p>
+                  <p className="text-[11px] tracking-[0.12em] uppercase text-navy/35 font-semibold">I'm already a Parislyan</p>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
