@@ -611,50 +611,106 @@ const LEVEL_ARROW_STOPS = [
   { id: 'writing',   label: 'Writing',   x: 276 },
 ];
 
+// Two finished exercises (e.g. 2 reading articles) make ONE challenge; it takes
+// CHALLENGES_PER_SEGMENT completed challenges to fully fill a skill's line.
+const EXERCISES_PER_CHALLENGE = 2;
+const CHALLENGES_PER_SEGMENT = 5;
+
 // Compact level-progress arrow (mobile): current level → next level, with four
-// tappable exercise stops. Each stop fills in once that exercise is completed
-// (tracked per level); when all four are done the next-level badge lights up.
+// tappable exercise stops. Each skill's line is fragmented (dashed) and creeps
+// forward one notch (1/CHALLENGES_PER_SEGMENT) per completed challenge. A ring
+// around the level badge tracks the half-finished challenge of the skill the
+// learner last advanced: half after 1 exercise, full after 2.
 // Mirrors the "My Parisian Progress" look, flattened into a straight arrow.
-function LevelProgressArrow({ level, doneTypes = [], onPick }) {
+function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = null, onPick }) {
   const next = nextLevel(level);
   if (!next) return null; // C2 — no next level to aim for
-  const done = new Set(doneTypes);
-  const allDone = LEVEL_ARROW_STOPS.every((s) => done.has(s.id));
   const WINE = '#8B1E2D';
-  const seg = (x1, x2, solid, key) => (
-    <line key={key} x1={x1} y1="24" x2={x2} y2="24" stroke={WINE}
-      strokeWidth={solid ? 2 : 1.6} strokeLinecap="round"
-      strokeDasharray={solid ? 'none' : '4 6'} opacity={solid ? 1 : 0.45} />
-  );
+
+  // Fraction (0..1) of a skill's line that is filled, from completed challenges.
+  const segFrac = (type) => {
+    const n = Math.max(0, Number(counts[type]) || 0);
+    const challenges = Math.floor(n / EXERCISES_PER_CHALLENGE);
+    return Math.min(1, challenges / CHALLENGES_PER_SEGMENT);
+  };
+  const fracs = {
+    reading: segFrac('reading'), listening: segFrac('listening'),
+    speaking: segFrac('speaking'), writing: segFrac('writing'),
+  };
+  const allDone = LEVEL_ARROW_STOPS.every((s) => fracs[s.id] >= 1);
+
+  // The badge ring shows the current challenge of the last-advanced skill:
+  // 0 exercises → empty, 1 → half, 2 → full (challenge just banked into the line).
+  const ringType = lastType && counts[lastType] != null ? lastType : 'reading';
+  const ringCount = Math.max(0, Number(counts[ringType]) || 0);
+  const inChallenge = ringCount % EXERCISES_PER_CHALLENGE; // 0 or 1
+  const ringFrac = inChallenge === 1 ? 0.5 : (ringCount > 0 ? 1 : 0);
+  const ringLabel = `${inChallenge === 0 && ringCount > 0 ? EXERCISES_PER_CHALLENGE : inChallenge}/${EXERCISES_PER_CHALLENGE}`;
+  const RING_R = 16;
+  const RING_C = 2 * Math.PI * RING_R;
+
+  // A skill's line: a faint dashed track for the whole span + a solid wine
+  // overlay that grows from the left as challenges are completed.
+  const fillSeg = (x1, x2, frac, key) => {
+    const fx = x1 + Math.max(0, Math.min(1, frac)) * (x2 - x1);
+    return (
+      <g key={key}>
+        <line x1={x1} y1="24" x2={x2} y2="24" stroke={WINE} strokeWidth="1.6"
+          strokeLinecap="round" strokeDasharray="4 6" opacity="0.4" />
+        {frac > 0 && (
+          <line x1={x1} y1="24" x2={fx} y2="24" stroke={WINE} strokeWidth="2.6"
+            strokeLinecap="round" opacity="0.95"
+            style={{ transition: 'all 0.45s ease' }} />
+        )}
+      </g>
+    );
+  };
+
   return (
     <svg viewBox="0 0 360 60" width="100%" role="group"
       aria-label={`Your level ${level}, next level ${next}. Tap an exercise to continue.`}>
-      {seg(20, 84, done.has('reading'), 's0')}
-      {seg(84, 148, done.has('listening'), 's1')}
-      {seg(148, 212, done.has('speaking'), 's2')}
-      {seg(212, 276, done.has('writing'), 's3')}
-      {seg(276, 340, allDone, 's4')}
+      {fillSeg(20, 84, fracs.reading, 's0')}
+      {fillSeg(84, 148, fracs.listening, 's1')}
+      {fillSeg(148, 212, fracs.speaking, 's2')}
+      {fillSeg(212, 276, fracs.writing, 's3')}
+      {fillSeg(276, 340, allDone ? 1 : 0, 's4')}
       <path d="M331 19 L341 24 L331 29 Z" fill={WINE} opacity={allDone ? 1 : 0.55} />
 
+      {/* Current-level badge with a challenge-progress ring around it */}
+      <circle cx="20" cy="24" r={RING_R} fill="none" stroke={WINE} strokeWidth="2.6" opacity="0.16" />
+      {ringFrac > 0 && (
+        <circle cx="20" cy="24" r={RING_R} fill="none" stroke={WINE} strokeWidth="2.6"
+          strokeLinecap="round" transform="rotate(-90 20 24)"
+          strokeDasharray={`${ringFrac * RING_C} ${RING_C}`}
+          style={{ transition: 'stroke-dasharray 0.45s ease' }}>
+          <title>{`Current challenge: ${ringLabel}`}</title>
+        </circle>
+      )}
       <circle cx="20" cy="24" r="12" fill={WINE} />
       <text x="20" y="28" textAnchor="middle" fill="#F6F1E8"
         fontFamily="'SF Mono',monospace" fontSize="11" fontWeight="700">{level}</text>
+      <text x="20" y="52" textAnchor="middle" fill={WINE} fillOpacity="0.8"
+        fontFamily="'SF Mono',monospace" fontSize="8.5" fontWeight="700">{ringLabel}</text>
+
       <circle cx="340" cy="24" r="12" fill={allDone ? WINE : '#fff'} stroke={WINE} strokeWidth="1.5" />
       <text x="340" y="28" textAnchor="middle" fill={allDone ? '#F6F1E8' : WINE}
         fontFamily="'SF Mono',monospace" fontSize="11" fontWeight="700">{next}</text>
 
       {LEVEL_ARROW_STOPS.map((s) => {
-        const isDone = done.has(s.id);
+        const frac = fracs[s.id] || 0;
+        const isDone = frac >= 1;
+        const started = frac > 0;
         return (
           <g key={s.id} role="button" tabIndex={0}
-            aria-label={`${s.label}${isDone ? ' — completed' : ''}`}
+            aria-label={`${s.label}${isDone ? ' — completed' : started ? ' — in progress' : ''}`}
             style={{ cursor: 'pointer', outline: 'none' }}
             onClick={() => onPick?.(s.id)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick?.(s.id); } }}>
             <circle cx={s.x} cy="24" r="15" fill="transparent" />
             <circle cx={s.x} cy="24" r="6" fill={isDone ? WINE : '#fff'} stroke={WINE} strokeWidth="1.6" />
-            <text x={s.x} y="46" textAnchor="middle" fill={isDone ? WINE : '#1A2340'}
-              fillOpacity={isDone ? 1 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="11">{s.label}</text>
+            {started && !isDone && <circle cx={s.x} cy="24" r="2.6" fill={WINE} />}
+            <text x={s.x} y="46" textAnchor="middle" fill={isDone || started ? WINE : '#1A2340'}
+              fillOpacity={isDone ? 1 : started ? 0.8 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="11">{s.label}</text>
           </g>
         );
       })}
