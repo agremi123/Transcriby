@@ -560,7 +560,7 @@ export default function WelcomeOnboarding() {
                           >
                             <motion.div
                               layoutId={SELECTED_BADGE_LAYOUT}
-                              className="flex items-center justify-center rounded-xl border border-wine ring-2 ring-wine/25 ring-offset-2 ring-offset-paper bg-paper p-1 sm:p-1.5 shadow-md"
+                              className="flex items-center justify-center w-[200px] h-[200px] sm:w-[230px] sm:h-[230px] rounded-full border border-wine ring-2 ring-wine/25 ring-offset-2 ring-offset-paper bg-paper p-2.5 shadow-md"
                             >
                               <img
                                 src={getLevelBadgeSrc(pickedLevel)}
