@@ -629,11 +629,11 @@ function LevelProgressArrow({ level, doneTypes = [], onPick }) {
   return (
     <svg viewBox="0 0 360 60" width="100%" role="group"
       aria-label={`Your level ${level}, next level ${next}. Tap an exercise to continue.`}>
-      {seg(20, 50, done.has('reading'), 's0')}
-      {seg(50, 144, done.has('listening'), 's1')}
-      {seg(144, 238, done.has('speaking'), 's2')}
-      {seg(238, 300, done.has('writing'), 's3')}
-      {seg(300, 340, allDone, 's4')}
+      {seg(20, 84, done.has('reading'), 's0')}
+      {seg(84, 148, done.has('listening'), 's1')}
+      {seg(148, 212, done.has('speaking'), 's2')}
+      {seg(212, 276, done.has('writing'), 's3')}
+      {seg(276, 340, allDone, 's4')}
       <path d="M331 19 L341 24 L331 29 Z" fill={WINE} opacity={allDone ? 1 : 0.55} />
 
       <circle cx="20" cy="24" r="12" fill={WINE} />
