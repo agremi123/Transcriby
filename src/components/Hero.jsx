@@ -605,10 +605,10 @@ function nextLevel(level) {
 
 // The four exercise "stops" on the mobile level-progress arrow, left → right.
 const LEVEL_ARROW_STOPS = [
-  { id: 'reading',   label: 'Reading',   x: 50 },
-  { id: 'listening', label: 'Listening', x: 144 },
-  { id: 'speaking',  label: 'Speaking',  x: 238 },
-  { id: 'writing',   label: 'Writing',   x: 300 },
+  { id: 'reading',   label: 'Reading',   x: 84 },
+  { id: 'listening', label: 'Listening', x: 148 },
+  { id: 'speaking',  label: 'Speaking',  x: 212 },
+  { id: 'writing',   label: 'Writing',   x: 276 },
 ];
 
 // Compact level-progress arrow (mobile): current level → next level, with four
