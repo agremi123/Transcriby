@@ -1466,6 +1466,38 @@ export function AudioDemoCard({
     if (activeTab === 'speaking' && (settledText || '').trim()) markExerciseDone('speaking');
   }, [activeTab, settledText, markExerciseDone]);
 
+  // ── Count FINISHED exercises (2 = one challenge) for the level-arrow line/ring ──
+  // Each ref guards against double-counting the same exercise; it's cleared when
+  // a fresh exercise/prompt begins so the next completion counts once.
+  const countedArticleRef = React.useRef({ reading: false, listening: false });
+  const countedWriteRef = React.useRef(null);
+  const countedSpeakRef = React.useRef('');
+  // Reading / Listening: all four exercise tabs of the current article validated.
+  React.useEffect(() => {
+    if (activeTab !== 'reading' && activeTab !== 'listening') return;
+    if (exerciseTabsDone >= 4 && !countedArticleRef.current[activeTab]) {
+      countedArticleRef.current[activeTab] = true;
+      incrementArticle(activeTab);
+    }
+  }, [exerciseTabsDone, activeTab, incrementArticle]);
+  // Writing: count one prompt per corrected submission (deduped by its text).
+  React.useEffect(() => {
+    const corrected = writeReview.stage === 'corrected' || writeReview.stage === 'explained';
+    if (corrected && writeReview.original && countedWriteRef.current !== writeReview.original) {
+      countedWriteRef.current = writeReview.original;
+      incrementArticle('writing');
+    }
+    if (writeReview.stage === 'idle') countedWriteRef.current = null;
+  }, [writeReview.stage, writeReview.original, incrementArticle]);
+  // Speaking: count one prompt per distinct settled spoken answer.
+  React.useEffect(() => {
+    const text = (settledText || '').trim();
+    if (activeTab === 'speaking' && text && text !== countedSpeakRef.current) {
+      countedSpeakRef.current = text;
+      incrementArticle('speaking');
+    }
+  }, [activeTab, settledText, incrementArticle]);
+
   const writeTextareaRef = React.useRef(null);
   const writeBoxRef = React.useRef(null);
   // Exercise sub-tab bar: track whether there's more to scroll to the right so we
