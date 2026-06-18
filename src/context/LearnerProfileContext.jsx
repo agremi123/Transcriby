@@ -63,6 +63,14 @@ export function LearnerProfileProvider({ children }) {
     setProfile(markLevelExerciseDone(current, level, type));
   }, []);
 
+  // Record one finished exercise (article / podcast / prompt) for the current
+  // level + skill. Two finished exercises = one completed challenge.
+  const incrementArticle = React.useCallback((type) => {
+    const current = loadLearnerProfile();
+    const level = getEffectiveLevel(current);
+    setProfile(incrementLevelArticle(current, level, type));
+  }, []);
+
   const gainDailyParisianPoints = React.useCallback((amount) => {
     const next = addDailyParisianPoints(amount);
     setDailyParisianPoints(next);
