@@ -827,7 +827,9 @@ async function fetchRssFeed(feed) {
   } catch { return []; }
 }
 
-function readingMiddleware(apiKey, openrouterKey) {
+function readingMiddleware(apiKey, openrouterKey, supabaseUrl, supabaseKey) {
+  let supabase = null;
+  if (supabaseUrl && supabaseKey) supabase = createClient(supabaseUrl, supabaseKey);
   const DATA_DIR = resolve(process.cwd(), 'data');
   const SESSIONS_FILE = resolve(DATA_DIR, 'reading-sessions.json');
 
