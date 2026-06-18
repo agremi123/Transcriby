@@ -3543,6 +3543,8 @@ export function AudioDemoCard({
                       </>
                     )
                 )}
+                </>
+                )}
               </div>
             </div>
           ) : inputMode === 'discover' && activeTab !== 'writing' ? (
