@@ -5679,6 +5679,7 @@ function ReadingArticlePanel({
   doneTabs = 0,
   articleIndex = 1,
   onNextArticle = null,
+  targetLevel = '',
 }) {
   // The theme badge unlocks once all THEME_ARTICLE_TOTAL articles are complete
   // (i.e. on the last article with all four exercise tabs validated).
