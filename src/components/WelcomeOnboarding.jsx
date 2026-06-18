@@ -461,7 +461,7 @@ export default function WelcomeOnboarding() {
                     <button
                       type="button"
                       onClick={() => { setAuthError(null); setReturningEmailForm(true); }}
-                      className="text-[12px] text-navy/40 hover:text-wine transition-colors font-display underline underline-offset-2"
+                      className="text-[13px] text-navy/40 hover:text-wine transition-colors font-display underline underline-offset-2"
                     >
                       or via email
                     </button>
