@@ -888,14 +888,23 @@ export async function handleReading(body) {
 
   const supabase = getSupabase();
 
-  // 1. Serve from stock
+  // 1. Serve a REAL cached article from the DB (Le Monde, L'Obs…). Prefer an
+  // unserved one; once all are served, recycle the oldest rather than generating
+  // fresh — the library already holds plenty of real articles.
   if (supabase) {
-    const { data: rows } = await supabase
+    let { data: rows } = await supabase
       .from('reading_articles')
       .select('*')
       .eq('served', false)
       .order('created_at', { ascending: true })
       .limit(1);
+    if (!rows || rows.length === 0) {
+      ({ data: rows } = await supabase
+        .from('reading_articles')
+        .select('*')
+        .order('created_at', { ascending: true })
+        .limit(1));
+    }
     if (rows && rows.length > 0) {
       const row = rows[0];
       // Mark as served (fire-and-forget)
