@@ -5656,14 +5656,12 @@ function ReadingArticlePanel({
           {/* Title — auto-shrinks to fit 2 lines, never truncated */}
           {title && (
             <div className="relative mb-5 shrink-0 mr-3 px-4 py-3 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
-              {/* Next article (left) + completion badge (right) — absolute overlay so
-                  they never push the title down */}
+              {/* Completion badge (right) — absolute overlay so it never pushes the title down */}
               <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5">
-                <NextArticleButton compact doneTabs={doneTabs} articleIndex={articleIndex} onNextArticle={onNextArticle} label="Next article" className="-translate-y-[3px]" />
                 <ThemeBadge achieved={themeAchieved} total={THEME_ARTICLE_TOTAL} label="article" />
               </div>
               {/* Theme of the reading challenge */}
-              <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-wine/60 truncate mb-1.5 pr-28">
+              <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-wine/60 truncate mb-1.5 pr-12">
                 {theme || 'Reading challenge'}
               </p>
               <AutoFitTitle title={title} />
