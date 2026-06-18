@@ -1190,7 +1190,7 @@ function ConjugationItem({ c, ci, firePointsDelta, narratorId = 'lea', onAnswere
 }
 
 // Each exercise tab is a progress bar: this many correct answers validates it.
-const EXERCISE_GOAL = 6;
+const EXERCISE_GOAL = 1;
 
 // Drives one exercise tab as a progress bar: a recyclable list of items, a count
 // of correct answers, and an onAnswered() that appends another (recycled) item
