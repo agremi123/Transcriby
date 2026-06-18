@@ -531,7 +531,7 @@ export default function WelcomeOnboarding() {
                             transition={{ duration: 0.2 }}
                             className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-4"
                           >
-                            {LEVEL_PICKER.map(({ id, label, hint }) => (
+                            {LEVEL_PICKER.filter(({ id }) => id !== 'C2').map(({ id, label, hint }) => (
                               <motion.button
                                 key={id}
                                 type="button"
