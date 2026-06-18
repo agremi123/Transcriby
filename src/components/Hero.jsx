@@ -3167,6 +3167,18 @@ export function AudioDemoCard({
   const transcriptHeight = 'flex-1 min-h-0';
   const isExerciseTab = activeTab === 'reading' || activeTab === 'listening';
 
+  // Sub-tab completion → B1 → B1.1 progress line. Order matters for "next step".
+  const SUB_TAB_ORDER = ['comprehension', 'vocabulary', 'grammar', 'conjugation'];
+  const subTabDoneSet = new Set(SUB_TAB_ORDER.filter((id) => TAB_PROGRESS[id]?.done));
+  const allSubTabsDone = subTabDoneSet.size === SUB_TAB_ORDER.length;
+  const currentSubProg = TAB_PROGRESS[exerciseSubTab];
+  const challengeTitle = activeTab === 'listening' ? 'Listening' : 'Reading';
+  const handleSubLevelContinue = React.useCallback(() => {
+    const next = SUB_TAB_ORDER.find((id) => !subTabDoneSet.has(id));
+    if (next) setExerciseSubTab(next);
+    else onNextArticle?.();
+  }, [subTabDoneSet, setExerciseSubTab, onNextArticle]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Recompute the sub-tab "more →" arrow when the bar appears or the viewport changes.
   React.useEffect(() => {
     if (!isExerciseTab) return undefined;
