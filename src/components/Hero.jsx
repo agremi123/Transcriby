@@ -7661,6 +7661,7 @@ export default function Hero() {
                 doneTabs={exerciseTabsDone}
                 articleIndex={articleIndex}
                 onNextArticle={loadNextReadingArticle}
+                targetLevel={nextLevel(effectiveLevel) || effectiveLevel}
               />
             )}
             {heroActiveTab === 'listening' && listeningActive && (
