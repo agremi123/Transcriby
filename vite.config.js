@@ -861,14 +861,40 @@ function readingMiddleware(apiKey, openrouterKey, supabaseUrl, supabaseKey) {
     } catch {
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
     }
-    // Reading uses REAL documents (live French-press RSS articles + generated
-    // exercises). Local Parisly stock is only a fallback so the panel is never
-    // blank if the feeds are unreachable.
+    // Reading uses REAL documents. Local Parisly stock is only a fallback so the
+    // panel is never blank if both the DB and the feeds are unreachable.
     const sendStockFallback = () => {
       const localR = pickReading(learnerLevel);
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(localR || { passage: '', source: null, questions: [] }));
     };
+    // Step 0: serve a REAL article already cached in Supabase (Le Monde, L'Obs…).
+    // This is the common path — no API call, no generation. Mirrors production.
+    if (supabase) {
+      try {
+        let { data: rows } = await supabase
+          .from('reading_articles').select('*')
+          .eq('served', false).order('created_at', { ascending: true }).limit(1);
+        if (!rows || rows.length === 0) {
+          // All served — recycle the oldest rather than generating fresh.
+          ({ data: rows } = await supabase
+            .from('reading_articles').select('*')
+            .order('created_at', { ascending: true }).limit(1));
+        }
+        if (rows && rows.length > 0) {
+          const row = rows[0];
+          supabase.from('reading_articles').update({ served: true }).eq('id', row.id).then(() => {});
+          res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({
+            passage: row.passage, title: row.title, source: row.source,
+            author: row.author, date: row.date, link: row.link,
+            vocab: row.vocab || [], questions: row.questions || [],
+            grammar: row.grammar || [], conjugation: row.conjugation || [],
+          }));
+          return;
+        }
+      } catch (e) { console.warn('[reading] Supabase serve failed:', e.message); }
+    }
     try {
       // Step 1: fetch all RSS feeds in parallel
       const feedResults = await Promise.all(FRENCH_RSS_FEEDS.map(fetchRssFeed));
@@ -2007,7 +2033,7 @@ export default defineConfig(() => {
           server.middlewares.use(devStatsMiddleware());
           server.middlewares.use(lessonsMiddleware());
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
-          server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
+          server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY));
           server.middlewares.use(audioProxyMiddleware());
           server.middlewares.use(sessionAudioMiddleware());
           server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY, env.INNERFRENCH_COOKIE));
@@ -2027,7 +2053,7 @@ export default defineConfig(() => {
           server.middlewares.use(devStatsMiddleware());
           server.middlewares.use(lessonsMiddleware());
           server.middlewares.use(practiceMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
-          server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY));
+          server.middlewares.use(readingMiddleware(env.ANTHROPIC_API_KEY, env.OPENROUTER_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY));
           server.middlewares.use(audioProxyMiddleware());
           server.middlewares.use(sessionAudioMiddleware());
           server.middlewares.use(listeningMiddleware(env.ANTHROPIC_API_KEY, env.DEEPGRAM_API_KEY, env.ELEVENLABS_API_KEY, env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, env.OPENROUTER_API_KEY, env.INNERFRENCH_COOKIE));
