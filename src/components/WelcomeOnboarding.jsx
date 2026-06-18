@@ -310,7 +310,7 @@ export default function WelcomeOnboarding() {
                 <span className="font-display text-[12px] italic text-navy/60 leading-tight text-right">
                   by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span>
                   <br />
-                  <span className="text-[11px] text-navy/45 not-italic">certified French teacher</span>
+                  <span className="text-[11px] text-navy/45 not-italic">French teacher</span>
                 </span>
               </a>
             </div>
