@@ -5616,12 +5616,11 @@ function ReadingArticlePanel({
                 <div className="flex flex-col items-end gap-1">
                   <button
                     type="button"
-                    onClick={handleTranslateClick}
-                    className={`inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory px-4 py-2 text-[13px] font-medium font-display transition-colors duration-200 whitespace-nowrap ${translateActive ? 'ring-2 ring-wine/30 ring-offset-2 ring-offset-paper' : ''}`}
-                    aria-label="Translate hard words"
-                    aria-pressed={translateActive}
+                    onClick={() => onNextArticle?.()}
+                    className="inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory px-4 py-2 text-[13px] font-medium font-display transition-colors duration-200 whitespace-nowrap"
+                    aria-label="Skip article"
                   >
-                    Translate hard words
+                    Skip article
                   </button>
                   {translateActive && hasMoreHints && revealedBatchCount > 0 && (
                     <button
