@@ -933,7 +933,7 @@ export async function handleReading(body) {
     }
   }
 
-  // 2. Stock empty — generate on-demand
+  // 2. Cache empty — generate a fresh real article from RSS on-demand
   try {
     const bundle = await generateReadingBundle(ANTHROPIC_API_KEY);
     // Save to DB for future use (fire-and-forget)
@@ -942,7 +942,7 @@ export async function handleReading(body) {
     }
     return { statusCode: 200, body: bundle };
   } catch {
-    return { statusCode: 200, body: empty };
+    return stockFallback();
   }
 }
 
