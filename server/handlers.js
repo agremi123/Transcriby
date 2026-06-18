@@ -1570,6 +1570,6 @@ export async function handleListening(body) {
     };
   } catch (err) {
     console.error('[listening] error:', err.message);
-    return { statusCode: 200, body: empty };
+    return stockFallback();
   }
 }
