@@ -5710,9 +5710,9 @@ function ReadingArticlePanel({
                     type="button"
                     onClick={() => onNextArticle?.()}
                     className="inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory px-4 py-2 text-[13px] font-medium font-display transition-colors duration-200 whitespace-nowrap"
-                    aria-label="Skip article"
+                    aria-label="Next article"
                   >
-                    Skip article
+                    Next article
                   </button>
                   {translateActive && hasMoreHints && revealedBatchCount > 0 && (
                     <button
