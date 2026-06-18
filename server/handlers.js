@@ -1472,13 +1472,16 @@ export async function handleListening(body) {
 
   const empty = { title: '', audioUrl: null, transcript: '', source: '', date: null, vocabTheme: '', questions: [], vocab: [], grammar: [], conjugation: [] };
 
-  // Local stock first — recyclable transcripts + exercises at the learner's
-  // level. No API call. audioUrl may be null (the player handles that and shows
-  // the transcript + exercises); narration can be generated separately.
-  const localL = pickListening(level);
-  if (localL) return { statusCode: 200, body: localL };
+  // Listening uses REAL podcasts: episodes pulled from French podcast RSS feeds
+  // (RFI, InnerFrench, France Culture…) with transcript + exercises, cached in
+  // Supabase. The local Parisly stock is only a last-resort fallback so the
+  // panel is never blank when feeds are unreachable.
+  const stockFallback = () => {
+    const localL = pickListening(level);
+    return { statusCode: 200, body: localL || empty };
+  };
 
-  if (!ANTHROPIC_API_KEY) return { statusCode: 200, body: empty };
+  if (!ANTHROPIC_API_KEY) return stockFallback();
 
   // Service role so the fire-and-forget save can't be blocked by RLS
   const supabase = getSupabaseAdmin() || getSupabase();
