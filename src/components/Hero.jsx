@@ -6053,9 +6053,9 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
                     type="button"
                     onClick={() => onNextArticle?.()}
                     className="inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory px-4 py-2 text-[13px] font-medium font-display transition-colors duration-200 whitespace-nowrap"
-                    aria-label="Skip podcast"
+                    aria-label="Next podcast"
                   >
-                    Skip podcast
+                    Next podcast
                   </button>
                   {translateActive && hasMoreHints && revealedBatchCount > 0 && (
                     <button
