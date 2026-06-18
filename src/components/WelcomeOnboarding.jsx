@@ -540,12 +540,14 @@ export default function WelcomeOnboarding() {
                                 aria-label={`${label}, ${hint}`}
                                 exit={{ opacity: 0, scale: 0.88 }}
                                 transition={{ duration: 0.22 }}
-                                className="flex items-center justify-center aspect-square w-full max-w-[132px] mx-auto rounded-full border border-line bg-paper p-1.5 sm:p-2 shadow-sm hover:shadow-md hover:border-wine/35 hover:scale-[1.03] transition-all"
+                                className="group/badge relative flex items-center justify-center aspect-square w-full max-w-[150px] mx-auto hover:scale-[1.03] transition-transform"
                               >
+                                {/* Smaller circular frame sitting behind the badge */}
+                                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[72%] h-[72%] rounded-full border border-line bg-paper shadow-sm group-hover/badge:shadow-md group-hover/badge:border-wine/35 transition-all" />
                                 <img
                                   src={getLevelBadgeSrc(id)}
                                   alt=""
-                                  className={BADGE_IMG_CLASS}
+                                  className={`relative ${BADGE_IMG_CLASS}`}
                                 />
                               </motion.button>
                             ))}
