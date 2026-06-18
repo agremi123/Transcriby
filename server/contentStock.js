@@ -55,16 +55,23 @@ export function pickWritingPrompt(level = 'B1') {
 export function pickSpeakingPrompt(level = null) {
   const row = pickAtLevel(speakingPrompts, level);
   if (!row) return null;
+  // The stockpile stores targets as plain strings (grammar as a phrase, vocab as
+  // a comma-separated list). The "Ton défi" objectives card expects rich shapes
+  // ({point,hint} / [{word,meaning}]), so convert them here. English hints /
+  // meanings aren't stored, so they stay empty — the French point + words still
+  // drive the card and the "used target" detection.
+  const grammarStr = String(row.target_grammar || '').trim();
+  const vocabStr = String(row.target_vocab || '').trim();
+  const targetVocab = vocabStr
+    ? vocabStr.split(',').map((w) => ({ word: w.trim(), meaning: '' })).filter((v) => v.word).slice(0, 4)
+    : null;
   return {
     narratorId: row.narrator_id || 'lea',
     openingLine: row.opening_line,
     openingLineTranslation: row.opening_line_translation || '',
     topicLabel: row.topic_label || '',
-    // The conversation engine expects rich target shapes ({point,hint} /
-    // [{word,meaning}]); our stockpile stores plain strings as metadata, so we
-    // serve null targets here → a clean free-conversation opener (fully supported).
-    targetGrammar: null,
-    targetVocab: null,
+    targetGrammar: grammarStr ? { point: grammarStr, hint: '' } : null,
+    targetVocab,
   };
 }
 
