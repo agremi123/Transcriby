@@ -23,7 +23,7 @@ const LEA_AVATAR_SRC = '/avatars/avaturn.glb';
 const SHOW_3D_AVATAR = false;
 
 const BADGE_IMG_CLASS =
-  'w-[140px] h-[140px] sm:w-[168px] sm:h-[168px] object-contain object-center pointer-events-none';
+  'w-full h-full object-contain object-center pointer-events-none';
 const SELECTED_BADGE_LAYOUT = 'selected-welcome-badge';
 
 const WELCOME_LINES_BY_NARRATOR = Object.fromEntries(
