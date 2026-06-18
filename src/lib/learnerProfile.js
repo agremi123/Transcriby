@@ -173,6 +173,42 @@ export function markLevelExerciseDone(profile, level, type) {
   });
 }
 
+/**
+ * How many individual exercises (reading articles, listening podcasts, speaking
+ * or writing prompts) the learner has FINISHED at a given level, per skill:
+ * { [level]: { reading: n, listening: n, speaking: n, writing: n } }.
+ *
+ * Two finished exercises make one "challenge"; the mobile level-progress arrow
+ * fills a skill's line a notch (1/5) per completed challenge, and the ring
+ * around the level badge tracks the current half-finished challenge.
+ * `levelLastType` remembers the skill the learner last advanced, so that ring
+ * knows which challenge to show.
+ */
+export function getLevelArticleCounts(profile, level) {
+  const m = profile?.levelArticleCounts?.[level];
+  return (m && typeof m === 'object') ? m : {};
+}
+
+export function getLevelArticleCount(profile, level, type) {
+  return Math.max(0, Number(getLevelArticleCounts(profile, level)[type]) || 0);
+}
+
+export function getLevelLastType(profile, level) {
+  return profile?.levelLastType?.[level] || null;
+}
+
+export function incrementLevelArticle(profile, level, type, by = 1) {
+  const countsMap = (profile && profile.levelArticleCounts) || {};
+  const cur = (countsMap[level] && typeof countsMap[level] === 'object') ? countsMap[level] : {};
+  const nextCount = Math.max(0, (Number(cur[type]) || 0) + by);
+  const lastMap = (profile && profile.levelLastType) || {};
+  return saveLearnerProfile({
+    ...profile,
+    levelArticleCounts: { ...countsMap, [level]: { ...cur, [type]: nextCount } },
+    levelLastType: { ...lastMap, [level]: type },
+  });
+}
+
 export function mergeAssessedLevel(currentLevel, newLevel, sampleCount) {
   const next = normalizeLevel(newLevel);
   if (!next) return normalizeLevel(currentLevel);
