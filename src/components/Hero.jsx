@@ -3452,6 +3452,18 @@ export function AudioDemoCard({
               </div>
               {/* Exercise content */}
               <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3">
+                {currentSubProg?.done ? (
+                  <SubLevelProgressLine
+                    title={challengeTitle}
+                    level={effectiveLevel}
+                    doneSet={subTabDoneSet}
+                    justCompleted={exerciseSubTab}
+                    allDone={allSubTabsDone}
+                    onContinue={handleSubLevelContinue}
+                    continueLabel={allSubTabsDone ? (activeTab === 'listening' ? 'Prochain podcast' : 'Prochain article') : 'Continuer'}
+                  />
+                ) : (
+                <>
                 {/* COMPRÉHENSION — EXERCISE_GOAL correct answers to validate; a wrong answer adds another below */}
                 {exerciseSubTab === 'comprehension' && (
                   compProg.list.length === 0
