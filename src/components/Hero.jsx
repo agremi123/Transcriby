@@ -648,7 +648,7 @@ function LevelProgressArrow({ level, doneTypes = [], onPick }) {
         return (
           <g key={s.id} role="button" tabIndex={0}
             aria-label={`${s.label}${isDone ? ' — completed' : ''}`}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: 'pointer', outline: 'none' }}
             onClick={() => onPick?.(s.id)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick?.(s.id); } }}>
             <circle cx={s.x} cy="24" r="15" fill="transparent" />
