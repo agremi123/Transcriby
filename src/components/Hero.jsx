@@ -5753,6 +5753,11 @@ function ReadingArticlePanel({
             <div className="relative mb-5 shrink-0 mr-3 px-4 py-3 border-l-4 border-navy bg-navy/5" style={{ borderRadius: '0 4px 4px 0' }}>
               {/* Completion badge (right) — absolute overlay so it never pushes the title down */}
               <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5">
+                {targetLevel && (
+                  <span className="font-mono text-[10px] font-bold tracking-wide text-wine bg-wine/10 border border-wine/20 rounded px-1.5 py-0.5 leading-none" title={`You're working toward ${targetLevel}`}>
+                    {targetLevel}
+                  </span>
+                )}
                 <ThemeBadge achieved={themeAchieved} total={THEME_ARTICLE_TOTAL} label="article" />
               </div>
               {/* Theme of the reading challenge */}
