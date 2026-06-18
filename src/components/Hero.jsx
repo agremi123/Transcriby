@@ -3433,6 +3433,8 @@ export function AudioDemoCard({
           <LevelProgressArrow
             level={effectiveLevel}
             doneTypes={levelExercisesDone}
+            counts={levelArticleCounts}
+            lastType={levelLastType}
             onPick={(type) => {
               if (type === 'reading') setActiveTab('reading');
               else if (type === 'listening') setActiveTab('listening');
