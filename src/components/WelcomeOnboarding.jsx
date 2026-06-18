@@ -307,8 +307,10 @@ export default function WelcomeOnboarding() {
               <Logo className="shrink-0 pointer-events-none" />
               <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group">
                 <img src="/assets/remi-avatar.jpg" alt="Kru Rémi" className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all shrink-0" />
-                <span className="font-display text-[12px] italic text-navy/60 leading-none whitespace-nowrap">
-                  by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span> · certified French teacher
+                <span className="font-display text-[12px] italic text-navy/60 leading-tight text-right">
+                  by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span>
+                  <br />
+                  <span className="text-[11px] text-navy/45 not-italic">certified French teacher</span>
                 </span>
               </a>
             </div>
