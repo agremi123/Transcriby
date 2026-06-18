@@ -859,15 +859,14 @@ function readingMiddleware(apiKey, openrouterKey) {
     } catch {
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
     }
-    // Local stock first — recyclable passages + exercises. No API call.
-    {
+    // Reading uses REAL documents (live French-press RSS articles + generated
+    // exercises). Local Parisly stock is only a fallback so the panel is never
+    // blank if the feeds are unreachable.
+    const sendStockFallback = () => {
       const localR = pickReading(learnerLevel);
-      if (localR) { res.statusCode = 200; res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(localR)); return; }
-    }
-    if (!topic) {
       res.statusCode = 200; res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ passage: '', source: null, questions: [] })); return;
-    }
+      res.end(JSON.stringify(localR || { passage: '', source: null, questions: [] }));
+    };
     try {
       // Step 1: fetch all RSS feeds in parallel
       const feedResults = await Promise.all(FRENCH_RSS_FEEDS.map(fetchRssFeed));
