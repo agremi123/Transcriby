@@ -1473,11 +1473,17 @@ export function AudioDemoCard({
   const countedWriteRef = React.useRef(null);
   const countedSpeakRef = React.useRef('');
   // Reading / Listening: all four exercise tabs of the current article validated.
+  // When a fresh article loads its pool resets exerciseTabsDone below 4, which
+  // clears the guard so the NEXT completed article counts exactly once.
   React.useEffect(() => {
     if (activeTab !== 'reading' && activeTab !== 'listening') return;
-    if (exerciseTabsDone >= 4 && !countedArticleRef.current[activeTab]) {
-      countedArticleRef.current[activeTab] = true;
-      incrementArticle(activeTab);
+    if (exerciseTabsDone >= 4) {
+      if (!countedArticleRef.current[activeTab]) {
+        countedArticleRef.current[activeTab] = true;
+        incrementArticle(activeTab);
+      }
+    } else {
+      countedArticleRef.current[activeTab] = false;
     }
   }, [exerciseTabsDone, activeTab, incrementArticle]);
   // Writing: count one prompt per corrected submission (deduped by its text).
