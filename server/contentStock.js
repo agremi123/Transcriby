@@ -7,15 +7,15 @@
 // JSON is imported statically so the bundler (esbuild on Vercel, Vite in dev)
 // inlines it into the function — no runtime file reads that could 404 in prod.
 
-import conjugation from '../data/stock/conjugation.json';
-import grammar from '../data/stock/grammar.json';
-import vocabulary from '../data/stock/vocabulary.json';
-import writingPrompts from '../data/stock/writing-prompts.json';
-import speakingPrompts from '../data/stock/speaking-prompts.json';
-import practice from '../data/stock/practice.json';
-import words from '../data/stock/words.json';
-import reading from '../data/stock/reading.json';
-import listening from '../data/stock/listening.json';
+import conjugation from '../data/stock/conjugation.json' with { type: 'json' };
+import grammar from '../data/stock/grammar.json' with { type: 'json' };
+import vocabulary from '../data/stock/vocabulary.json' with { type: 'json' };
+import writingPrompts from '../data/stock/writing-prompts.json' with { type: 'json' };
+import speakingPrompts from '../data/stock/speaking-prompts.json' with { type: 'json' };
+import practice from '../data/stock/practice.json' with { type: 'json' };
+import words from '../data/stock/words.json' with { type: 'json' };
+import reading from '../data/stock/reading.json' with { type: 'json' };
+import listening from '../data/stock/listening.json' with { type: 'json' };
 
 const rnd = (arr) => (arr && arr.length ? arr[Math.floor(Math.random() * arr.length)] : null);
 const atLevel = (arr, level) => (level ? arr.filter((x) => x.level === level) : arr);
