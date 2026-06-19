@@ -233,6 +233,7 @@ export default function DevPanel() {
           <span className="text-[9px] tracking-widest uppercase">logout</span>
         </button>
         <PassTabButton />
+        <ResetGoalsButton />
         <AudioRecorderButton />
       </div>
 
