@@ -1224,13 +1224,13 @@ function useExerciseProgress(pool) {
 }
 
 // A single grammar fill-in question (one "___"), counted toward the grammar goal.
-function GrammarBlankItem({ ex, firePointsDelta, narratorId = 'lea', onAnswered = null }) {
+function GrammarBlankItem({ ex, narratorId = 'lea', onAnswered = null }) {
   const [ans, setAns] = React.useState('');
   const [submitted, setSubmitted] = React.useState(false);
   const ok = ans.trim().toLowerCase() === String(ex.answer || '').trim().toLowerCase();
   const correct = submitted && ok;
   const parts = String(ex.sentence || '').split('___');
-  const submit = () => { if (!submitted && ans.trim()) { setSubmitted(true); firePointsDelta(ok ? 1 : -1); onAnswered?.(ok); } };
+  const submit = () => { if (!submitted && ans.trim()) { setSubmitted(true); onAnswered?.(ok); } };
   return (
     <div className={`p-2.5 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
       {ex.point && <div className="mb-1"><span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 bg-wine/8 px-1.5 py-0.5">{ex.point}</span></div>}
