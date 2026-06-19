@@ -1274,7 +1274,13 @@ function useExerciseProgress(pool) {
     if (isCorrect) setCorrect((c) => c + 1);
   }, []);
   const reset = React.useCallback(() => setRunId((r) => r + 1), []);
-  return { list, correct, wrong, total, done, onAnswered, reset };
+  // DEV-only: instantly mark this single tab complete (all answers correct) so a
+  // developer can jump to its finished state without answering every question.
+  const complete = React.useCallback(() => {
+    setCorrect(list.length);
+    setAnsweredCount(list.length);
+  }, [list.length]);
+  return { list, correct, wrong, total, done, onAnswered, reset, complete };
 }
 
 // A single grammar fill-in question (one "___"), counted toward the grammar goal.
