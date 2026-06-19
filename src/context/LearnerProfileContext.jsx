@@ -71,6 +71,23 @@ export function LearnerProfileProvider({ children }) {
     setProfile(incrementLevelArticle(current, level, type));
   }, []);
 
+  // DEV-only: wipe all exercise-goal progress back to 0 — clears the completed
+  // exercise "stops", the per-skill finished-exercise counts, and the last-type
+  // marker for every level. The level-progress arrow empties out so a developer
+  // can re-test the filling flow from scratch. (Does not touch the Parisian XP
+  // meter, the assessed level, or selected targets.)
+  const devResetGoals = React.useCallback(() => {
+    const current = loadLearnerProfile();
+    const next = saveLearnerProfile({
+      ...current,
+      levelExercises: {},
+      levelArticleCounts: {},
+      levelLastType: {},
+    });
+    setProfile(next);
+    return next;
+  }, []);
+
   const gainDailyParisianPoints = React.useCallback((amount) => {
     const next = addDailyParisianPoints(amount);
     setDailyParisianPoints(next);
