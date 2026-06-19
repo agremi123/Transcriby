@@ -1530,8 +1530,20 @@ export async function handleListening(body) {
         // tab (grammaire + conjugaison) always has content.
         let g = row.grammar || [];
         let c = row.conjugation || [];
+        let q = row.questions || [];
+        let v = row.vocab || [];
         const txt = (row.transcript || '').slice(0, 2000);
         const jobs = [];
+        if (q.length === 0 && txt) {
+          jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 1600,
+            system: 'Create exactly 6 multiple-choice comprehension questions (in French) about the French transcript. For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}',
+            user: txt }).then((r) => { if (r.questions?.length) q = r.questions; }).catch(() => {}));
+        }
+        if (v.length === 0 && txt) {
+          jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 900,
+            system: 'French teacher. Create exactly 4 vocabulary fill-in-the-blank exercises from key words in the transcript. Raw JSON: {"vocab":[{"word":"...","definition":"English meaning","sentence":"...___..."}]}',
+            user: txt }).then((r) => { if (r.vocab?.length) v = r.vocab; }).catch(() => {}));
+        }
         if (c.length === 0 && txt) {
           jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 700,
             system: 'French teacher. Create exactly 4 conjugation fill-in-the-blank exercises using verbs from the transcript. One "___" per sentence; hint = the pronoun/subject (je/tu/il...). Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}',
