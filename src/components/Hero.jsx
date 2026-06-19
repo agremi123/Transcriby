@@ -623,52 +623,61 @@ const CHALLENGES_PER_SEGMENT = 5;
 // learner last advanced: half after 1 exercise, full after 2.
 // Mirrors the "My Parisian Progress" look, flattened into a straight arrow.
 function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = null, onPick }) {
-  const next = nextLevel(level);
-  if (!next) return null; // C2 — no next level to aim for
   const WINE = '#8B1E2D';
+  const SKILL_IDS = LEVEL_ARROW_STOPS.map((s) => s.id);
+  const skillCount = (s) => Math.max(0, Number(counts[s]) || 0);
 
-  // Fraction (0..1) of a skill's line that is filled, from completed challenges.
-  const segFrac = (type) => {
-    const n = Math.max(0, Number(counts[type]) || 0);
-    const challenges = Math.floor(n / EXERCISES_PER_CHALLENGE);
-    return Math.min(1, challenges / CHALLENGES_PER_SEGMENT);
-  };
-  const fracs = {
-    reading: segFrac('reading'), listening: segFrac('listening'),
-    speaking: segFrac('speaking'), writing: segFrac('writing'),
-  };
-  const allDone = LEVEL_ARROW_STOPS.every((s) => fracs[s.id] >= 1);
+  // A "sub-level" = one full round of all four skills. completedRounds = how many
+  // rounds are fully banked; a skill counts as done FOR THE CURRENT round once it
+  // has one more finished exercise than the rounds already banked.
+  const completedRounds = Math.min(...SKILL_IDS.map(skillCount));
+  const doneThisRound = (s) => skillCount(s) > completedRounds;
 
-  // The arrow runs from the current level (left badge) to the NEXT sub-level
-  // milestone (right badge): A2 → A2.1, then A2 → A2.2 … as exercises are
-  // completed. The destination is now a sub-level (e.g. A2.1) rather than the
-  // next full CEFR level (e.g. B1). This is the only place the process is shown.
-  const completedThisLevel = Object.values(counts).reduce((sum, n) => sum + (Number(n) || 0), 0);
-  const subLevelTarget = `${level}.${completedThisLevel + 1}`; // A2.1, A2.2, …
+  // Roll-forward: when a new sub-level is reached, the milestone badge slides from
+  // the right end to the left to become the new current level, and the line empties
+  // for the next sub-level. (Hooks must run before the C2 early-return below.)
+  const [traveler, setTraveler] = React.useState(null);
+  const prevRoundsRef = React.useRef(completedRounds);
+  React.useEffect(() => {
+    if (completedRounds > prevRoundsRef.current) {
+      setTraveler({ label: `${level}.${completedRounds}`, id: Date.now() });
+      const t = setTimeout(() => setTraveler(null), 800);
+      prevRoundsRef.current = completedRounds;
+      return () => clearTimeout(t);
+    }
+    prevRoundsRef.current = completedRounds;
+  }, [completedRounds, level]);
 
-  // The badge ring shows the current challenge of the last-advanced skill:
-  // 0 exercises → empty, 1 → half, 2 → full (challenge just banked into the line).
-  const ringType = lastType && counts[lastType] != null ? lastType : 'reading';
-  const ringCount = Math.max(0, Number(counts[ringType]) || 0);
-  const inChallenge = ringCount % EXERCISES_PER_CHALLENGE; // 0 or 1
-  const ringFrac = inChallenge === 1 ? 0.5 : (ringCount > 0 ? 1 : 0);
-  const ringLabel = `${inChallenge === 0 && ringCount > 0 ? EXERCISES_PER_CHALLENGE : inChallenge}/${EXERCISES_PER_CHALLENGE}`;
+  const next = nextLevel(level);
+  if (!next) return null; // C2 — no next CEFR level to aim for
+
+  const fracs = Object.fromEntries(SKILL_IDS.map((s) => [s, doneThisRound(s) ? 1 : 0]));
+  const allDone = SKILL_IDS.every((s) => fracs[s] >= 1);
+
+  // Left badge = where they are now (level, then level.N). Right badge = the next
+  // sub-level milestone (level.N+1): A2 → A2.1, then A2.1 → A2.2 …
+  const leftLabel = completedRounds > 0 ? `${level}.${completedRounds}` : level;
+  const leftFontSize = leftLabel.length > 2 ? 8 : 11;
+  const rightLabel = `${level}.${completedRounds + 1}`;
+
+  // Ring around the left badge = progress through the current round (skills done / 4).
+  const doneCount = SKILL_IDS.filter((s) => fracs[s] >= 1).length;
+  const ringFrac = doneCount / SKILL_IDS.length;
+  const ringLabel = `${doneCount}/${SKILL_IDS.length}`;
   const RING_R = 16;
   const RING_C = 2 * Math.PI * RING_R;
 
-  // A skill's line: a faint dashed track for the whole span + a solid wine
-  // overlay that grows from the left as challenges are completed.
+  // A skill's line: a faint dashed track + a solid wine overlay once that skill is
+  // done for the current round. Width + opacity animate so it visibly resets on roll.
   const fillSeg = (x1, x2, frac, key) => {
     const fx = x1 + Math.max(0, Math.min(1, frac)) * (x2 - x1);
     return (
       <g key={key}>
         <line x1={x1} y1="24" x2={x2} y2="24" stroke={WINE} strokeWidth="1.6"
           strokeLinecap="round" strokeDasharray="4 6" opacity="0.4" />
-        {frac > 0 && (
-          <line x1={x1} y1="24" x2={fx} y2="24" stroke={WINE} strokeWidth="2.6"
-            strokeLinecap="round" opacity="0.95"
-            style={{ transition: 'all 0.45s ease' }} />
-        )}
+        <line x1={x1} y1="24" x2={fx} y2="24" stroke={WINE} strokeWidth="2.6"
+          strokeLinecap="round" opacity={frac > 0 ? 0.95 : 0}
+          style={{ transition: 'all 0.45s ease' }} />
       </g>
     );
   };
