@@ -3558,15 +3558,25 @@ export function AudioDemoCard({
               {/* Exercise content */}
               <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3">
                 {currentSubProg?.done ? (
-                  <SubLevelProgressLine
-                    title={challengeTitle}
-                    level={effectiveLevel}
-                    doneSet={subTabDoneSet}
-                    justCompleted={exerciseSubTab}
-                    allDone={allSubTabsDone}
-                    onContinue={handleSubLevelContinue}
-                    continueLabel={allSubTabsDone ? (activeTab === 'listening' ? 'Prochain podcast' : 'Prochain article') : 'Continuer'}
-                  />
+                  // Lean completion panel — the progress bar lives only in the top
+                  // level arrow now; here we just confirm + offer the next step.
+                  <div className="flex flex-col items-center justify-center h-full px-3 py-6 text-center">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden className="mb-3">
+                      <circle cx="20" cy="20" r="18" fill="#8B1E2D" />
+                      <path d="M12 20.5l5 5L28 14.5" stroke="#F6F1E8" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <p className="font-display text-[20px] text-navy leading-none mb-1">{challengeTitle}</p>
+                    <p className="text-[12px] text-navy/55 mb-6">
+                      {allSubTabsDone ? 'Exercice terminé !' : 'Onglet validé !'}
+                    </p>
+                    <button type="button" onClick={handleSubLevelContinue}
+                      className="inline-flex items-center gap-2 rounded-full bg-wine hover:bg-wine2 text-ivory px-5 py-2 text-[13px] font-display transition-colors">
+                      {allSubTabsDone ? (activeTab === 'listening' ? 'Prochain podcast' : 'Prochain article') : 'Continuer'}
+                      <svg width="15" height="10" viewBox="0 0 18 10" fill="none" aria-hidden>
+                        <path d="M1 5h14M11 1.5L15 5l-4 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  </div>
                 ) : (
                 <>
                 {/* COMPRÉHENSION — EXERCISE_GOAL correct answers to validate; a wrong answer adds another below */}
