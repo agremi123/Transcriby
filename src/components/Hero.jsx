@@ -1090,7 +1090,7 @@ function ComprehensionItem({ q, qi, narratorId = 'lea', onAnswered = null }) {
             : 'border-line/50 text-navy/70 hover:border-wine/40 hover:bg-wine/5 cursor-pointer';
           return (
             <button key={oi} type="button" disabled={answered}
-              onClick={() => { if (!answered) { setAnsweredIdx(oi); firePointsDelta(oi === correctIdx ? 1 : -1); onAnswered?.(oi === correctIdx); } }}
+              onClick={() => { if (!answered) { setAnsweredIdx(oi); onAnswered?.(oi === correctIdx); } }}
               className={`w-full text-left px-2.5 py-1.5 border text-[12px] font-display transition-colors ${cls}`}>
               <TranslatableText text={opt} narratorId={narratorId} />
             </button>
