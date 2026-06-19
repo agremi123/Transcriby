@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLearnerProfile } from '../context/LearnerProfileContext';
 
 const LABEL_COLORS = {
   'listening': '#8b1e2d',
