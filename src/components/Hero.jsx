@@ -3531,7 +3531,7 @@ export function AudioDemoCard({
                     : (
                       <>
                         {vocabProg.list.map(({ item, key }, vi) => (
-                          <VocabItem key={key} v={item} vi={vi} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} onAnswered={vocabProg.onAnswered} />
+                          <VocabItem key={key} v={item} vi={vi} narratorId={exerciseNarrator} onAnswered={vocabProg.onAnswered} />
                         ))}
                         <ExerciseStatus prog={vocabProg} />
                       </>
