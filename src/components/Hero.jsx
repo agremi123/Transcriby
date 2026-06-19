@@ -5110,11 +5110,13 @@ export function AudioDemoCard({
           {/* Parisian reaction + correction now render inline in the transcript
               above (no separate bottom bar). */}
         </div>{/* end left column */}
-        {/* Right controls — desktop: per-mode points + action button */}
+        {/* Right controls — desktop: contextual reset + points + mic/pen double toggle */}
         <div className="hidden sm:block shrink-0">
-        {inputMode === 'write' ? (
+        {(inputMode === 'speak' || inputMode === 'write') && (
           <div className="shrink-0 flex items-center gap-1 sm:gap-2 pr-2 sm:pr-3 py-1">
-            {writeText.trim().length > 0 && (
+            {/* Contextual reset — recorded speech, or written text */}
+            {((inputMode === 'write' && writeText.trim().length > 0) ||
+              (inputMode === 'speak' && utterances.length > 0 && hasRecordedAudio && !isLive)) && (
               <button type="button" onClick={resetTranscript}
                 className="relative w-9 sm:w-11 h-9 sm:h-11 rounded-full border border-navy/20 text-navy/50 hover:border-wine/40 hover:text-wine/70 inline-flex items-center justify-center transition-colors shrink-0"
                 aria-label="Reset">
@@ -5138,21 +5140,10 @@ export function AudioDemoCard({
                 )}
               </div>
             </PointsBurst>
-            {/* Submit button — same size as mic */}
-            <button type="button" onClick={finishWriteInput}
-              disabled={!writeText.trim() || isDuplicateSubmit(writeText.trim())}
-              className="relative w-9 sm:w-11 h-9 sm:h-11 rounded-full bg-wine hover:bg-wine2 disabled:opacity-40 disabled:cursor-default inline-flex items-center justify-center transition-all hover:scale-105"
-              aria-label="Submit writing">
-              <svg width="13" height="13" viewBox="0 0 12 12" fill="none" aria-hidden>
-                <path d="M2 6.5l2.5 2.5L10 3" stroke="#F6F1E8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
+            {/* Mic / Pen double toggle */}
+            {desktopModeToggle}
           </div>
-        ) : inputMode === 'speak' ? (
-          <div className="shrink-0 pr-2 sm:pr-3 py-1">
-            {speakActionControls}
-          </div>
-        ) : null}
+        )}
         </div>
         {/* Mobile: Parisian points (left) + mic/pen mode toggle (right) */}
         {(inputMode === 'speak' || inputMode === 'write') && (
