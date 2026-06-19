@@ -114,6 +114,32 @@ function AudioRecorderButton() {
   );
 }
 
+function CompleteLevelButton() {
+  const { devCompleteLevel, effectiveLevel } = useLearnerProfile();
+  const [flash, setFlash] = React.useState(false);
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        devCompleteLevel();
+        setFlash(true);
+        setTimeout(() => setFlash(false), 1200);
+      }}
+      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg shadow-lg border backdrop-blur-sm transition-colors ${
+        flash
+          ? 'border-emerald-400 bg-emerald-50/95 text-emerald-600'
+          : 'border-navy/20 bg-ivory/95 text-navy/50 hover:text-emerald-700 hover:border-emerald-500/40'
+      }`}
+      title={`Dev: succeed all exercises in every tab for ${effectiveLevel} (fills the level-progress arrow)`}
+    >
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden>
+        <path d="M2.5 6.5L5 9l4.5-5.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <span className="text-[9px] tracking-widest uppercase">{flash ? 'done' : 'pass all'}</span>
+    </button>
+  );
+}
+
 export default function DevPanel() {
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState(null);
