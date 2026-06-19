@@ -1556,7 +1556,7 @@ export async function handleListening(body) {
         }
         if (jobs.length) {
           await Promise.all(jobs);
-          supabase.from('listening_episodes').update({ grammar: g, conjugation: c }).eq('id', row.id).then(() => {});
+          supabase.from('listening_episodes').update({ grammar: g, conjugation: c, questions: q, vocab: v }).eq('id', row.id).then(() => {});
         }
         return {
           statusCode: 200,
@@ -1570,8 +1570,8 @@ export async function handleListening(body) {
             source: row.source_name,
             date: row.pub_date,
             vocabTheme: row.vocab_theme,
-            questions: row.questions || [],
-            vocab: row.vocab || [],
+            questions: q,
+            vocab: v,
             grammar: g,
             conjugation: c,
           },
