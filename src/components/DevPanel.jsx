@@ -204,7 +204,7 @@ export default function DevPanel() {
           </svg>
           <span className="text-[9px] tracking-widest uppercase">logout</span>
         </button>
-        <CompleteLevelButton />
+        <PassTabButton />
         <AudioRecorderButton />
       </div>
 
