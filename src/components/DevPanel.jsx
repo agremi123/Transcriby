@@ -142,6 +142,34 @@ function PassTabButton() {
   );
 }
 
+function ResetGoalsButton() {
+  const { devResetGoals } = useLearnerProfile();
+  const [flash, setFlash] = React.useState(false);
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        devResetGoals();                                  // empties the level-progress arrow
+        window.dispatchEvent(new Event('dev-reset-subtabs')); // restarts the current article's tabs
+        setFlash(true);
+        setTimeout(() => setFlash(false), 1200);
+      }}
+      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg shadow-lg border backdrop-blur-sm transition-colors ${
+        flash
+          ? 'border-amber-400 bg-amber-50/95 text-amber-600'
+          : 'border-navy/20 bg-ivory/95 text-navy/50 hover:text-amber-700 hover:border-amber-500/40'
+      }`}
+      title="Dev: reset all goal progress back to 0 (empties the level-progress arrow and restarts the current exercise's tabs)"
+    >
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden>
+        <path d="M10 6A4 4 0 112 6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        <path d="M2 3v3h3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <span className="text-[9px] tracking-widest uppercase">{flash ? 'reset' : 'reset'}</span>
+    </button>
+  );
+}
+
 export default function DevPanel() {
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState(null);
