@@ -3444,6 +3444,63 @@ export function AudioDemoCard({
     </div>
   );
 
+  // Desktop mic/pen double toggle — the desktop twin of mobileModeToggle, sized
+  // up and keeping the mic's recording rings + "Start speaking" hint. Mic = Speak
+  // (tap to switch to speak, tap again to record/stop). Pen = Write (tap to
+  // switch to write, tap again to submit). Replaces the old Speak|Write text
+  // toggle and the separate per-mode action clusters.
+  const desktopModeToggle = (
+    <div className="relative flex items-center rounded-full p-0.5 bg-wine/10 shrink-0">
+      {/* Mic / Speak */}
+      <div className="relative flex flex-col items-center">
+        {(showStartHint || highlightMic || showRepeatHint) && !isRecording && inputMode === 'speak' && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: [0, -3, 0] }}
+            transition={{ delay: 0.6, duration: 0.5, y: { repeat: Infinity, duration: 1.8, ease: 'easeInOut', delay: 1.1 } }}
+            className="absolute bottom-full mb-3 flex flex-col items-center gap-1 pointer-events-none z-20"
+          >
+            <span className="font-display text-[12px] italic text-wine whitespace-nowrap">
+              {showRepeatHint ? 'Repeat to gain experience' : 'Start speaking'}
+            </span>
+            <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+              <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6"/>
+            </svg>
+          </motion.div>
+        )}
+        {isRecording && inputMode === 'speak' && (
+          <>
+            <span className="absolute inset-0 m-auto w-11 h-11 rounded-full bg-wine/25 animate-ping pointer-events-none" style={{ animationDuration: '1.1s' }} />
+            <span className="absolute inset-0 m-auto w-14 h-14 rounded-full bg-wine/12 animate-ping pointer-events-none" style={{ animationDuration: '1.1s', animationDelay: '0.4s' }} />
+          </>
+        )}
+        <button type="button"
+          onClick={() => { if (inputMode !== 'speak') activateSpeakMode(); else toggleRecording(); }}
+          disabled={status === 'connecting' || manualCorrecting || stoppingRecording || (isRecording && (source === 'tab' || source === 'system')) || (wordPlaying && !isRecording)}
+          className={`relative z-10 w-11 h-11 rounded-full inline-flex items-center justify-center transition-all disabled:opacity-60 ${inputMode === 'speak' ? 'bg-wine text-ivory shadow-md' : 'text-navy/45 hover:text-wine/70'} ${inputMode === 'speak' && (highlightMic || showRepeatHint) && !isRecording ? 'ring-2 ring-wine/35' : ''}`}
+          aria-label={inputMode === 'speak' ? (isRecording ? 'Stop recording' : 'Record') : 'Switch to speak'}>
+          {inputMode === 'speak' && isRecording ? (
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden><rect x="1" y="1" width="10" height="10" rx="2" fill="currentColor" /></svg>
+          ) : (
+            <svg width="13" height="16" viewBox="0 0 16 20" fill="none" aria-hidden>
+              <rect x="5" y="1" width="6" height="11" rx="3" fill="currentColor" />
+              <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            </svg>
+          )}
+        </button>
+      </div>
+      {/* Pen / Write */}
+      <button type="button"
+        onClick={() => { if (inputMode !== 'write') activateWriteMode(); else if (writeText.trim() && !isDuplicateSubmit(writeText.trim())) finishWriteInput(); }}
+        className={`relative z-10 w-11 h-11 rounded-full inline-flex items-center justify-center transition-all ${inputMode === 'write' ? 'bg-wine text-ivory shadow-md' : 'text-navy/45 hover:text-wine/70'}`}
+        aria-label={inputMode === 'write' ? 'Submit writing' : 'Switch to write'}>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden>
+          <path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+    </div>
+  );
+
   return (
     <>
     {fullscreen && <div className="fixed inset-0 bg-navy/40 backdrop-blur-sm z-40" onClick={onClose} />}
