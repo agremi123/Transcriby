@@ -1318,15 +1318,34 @@ function GrammarBlankItem({ ex, firePointsDelta, narratorId = 'lea', onAnswered 
 // Status line under an exercise tab's questions: progress toward the goal, or
 // a "validated" tick once reached.
 function ExerciseStatus({ prog }) {
-  return prog.done ? (
-    <p className="text-[12px] font-display italic text-green-700 mt-1 flex items-center gap-1.5">
-      <svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="#16a34a" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M42 12L18 36l-12-12" /></svg>
-      Validé ! ({EXERCISE_GOAL}/{EXERCISE_GOAL})
-    </p>
-  ) : (
-    <p className="text-[11px] font-mono text-navy/40 mt-1">
-      {prog.correct}/{EXERCISE_GOAL} bonnes réponses — il en faut {EXERCISE_GOAL} pour valider. Une mauvaise réponse ajoute une question.
-    </p>
+  return (
+    <div className="mt-1 space-y-1.5">
+      {prog.done ? (
+        <p className="text-[12px] font-display italic text-green-700 flex items-center gap-1.5">
+          <svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="#16a34a" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M42 12L18 36l-12-12" /></svg>
+          Validé ! ({EXERCISE_GOAL}/{EXERCISE_GOAL})
+        </p>
+      ) : (
+        <p className="text-[11px] font-mono text-navy/40">
+          {prog.correct}/{EXERCISE_GOAL} bonnes réponses — il en faut {EXERCISE_GOAL} pour valider. Une mauvaise réponse ajoute une question.
+        </p>
+      )}
+      {/* Once they've gotten at least one wrong, let them wipe their answers and
+          retry the set (reshuffled). */}
+      {prog.wrong > 0 && prog.reset && (
+        <button
+          type="button"
+          onClick={prog.reset}
+          className="inline-flex items-center gap-1.5 text-[11px] font-mono text-wine/70 hover:text-wine transition-colors"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+            <path d="M21 3v6h-6" />
+          </svg>
+          Recommencer les questions
+        </button>
+      )}
+    </div>
   );
 }
 
