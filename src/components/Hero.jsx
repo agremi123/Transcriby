@@ -639,6 +639,14 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
   };
   const allDone = LEVEL_ARROW_STOPS.every((s) => fracs[s.id] >= 1);
 
+  // Badge label = the sub-level the learner is at. Bare level until they finish
+  // their first exercise here, then level.N where N = exercises completed at this
+  // level (A2 → A2.1 → A2.2 …). This badge is now the ONLY place the in-level
+  // process is shown (the old speech-box progress line was removed).
+  const completedThisLevel = Object.values(counts).reduce((sum, n) => sum + (Number(n) || 0), 0);
+  const badgeLabel = completedThisLevel > 0 ? `${level}.${completedThisLevel}` : level;
+  const badgeFontSize = badgeLabel.length > 2 ? 8 : 11;
+
   // The badge ring shows the current challenge of the last-advanced skill:
   // 0 exercises → empty, 1 → half, 2 → full (challenge just banked into the line).
   const ringType = lastType && counts[lastType] != null ? lastType : 'reading';
