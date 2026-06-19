@@ -1249,39 +1249,32 @@ const EXERCISE_GOAL = 6;
 // Drives one exercise tab as a progress bar: a recyclable list of items, a count
 // of correct answers, and an onAnswered() that appends another (recycled) item
 // on a wrong answer so the goal stays reachable. Resets when the pool changes.
-function useExerciseProgress(pool, goal = EXERCISE_GOAL) {
+function useExerciseProgress(pool) {
   const [list, setList] = React.useState([]);
   const [correct, setCorrect] = React.useState(0);
-  const [wrong, setWrong] = React.useState(0);
+  const [answeredCount, setAnsweredCount] = React.useState(0);
   // Bumped by reset() — gives every item a fresh key so they remount with a
   // clean (un-answered) state, and reshuffles the order on a manual retry.
   const [runId, setRunId] = React.useState(0);
-  const correctRef = React.useRef(0);
-  const appendedRef = React.useRef(0);
-  React.useEffect(() => { correctRef.current = correct; }, [correct]);
   React.useEffect(() => {
-    const items = (pool || []).map((item) => item);
+    const items = pool || [];
     const ordered = runId > 0 ? [...items].sort(() => Math.random() - 0.5) : items;
     setList(ordered.map((item, i) => ({ item, key: `q-${runId}-${i}` })));
     setCorrect(0);
-    setWrong(0);
-    correctRef.current = 0;
-    appendedRef.current = 0;
+    setAnsweredCount(0);
   }, [pool, runId]);
-  const done = correct >= goal;
+  const total = list.length;
+  const wrong = answeredCount - correct;
+  // The set is fixed — no questions are appended on a wrong answer. The tab is
+  // validated only once every question has been answered correctly; a single
+  // wrong answer means the only way forward is to reset (Recommencer) the panel.
+  const done = total > 0 && correct === total;
   const onAnswered = React.useCallback((isCorrect) => {
-    if (isCorrect) { setCorrect((c) => Math.min(goal, c + 1)); return; }
-    setWrong((w) => w + 1);
-    setList((l) => {
-      if (correctRef.current >= goal) return l;
-      const p = pool || [];
-      if (p.length === 0) return l;
-      const n = appendedRef.current++;
-      return [...l, { item: p[(l.length + n) % p.length], key: `q-${runId}-extra-${n}` }];
-    });
-  }, [pool, goal, runId]);
+    setAnsweredCount((a) => a + 1);
+    if (isCorrect) setCorrect((c) => c + 1);
+  }, []);
   const reset = React.useCallback(() => setRunId((r) => r + 1), []);
-  return { list, correct, wrong, done, onAnswered, reset };
+  return { list, correct, wrong, total, done, onAnswered, reset };
 }
 
 // A single grammar fill-in question (one "___"), counted toward the grammar goal.
