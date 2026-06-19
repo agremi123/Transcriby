@@ -3518,7 +3518,7 @@ export function AudioDemoCard({
                     : (
                       <>
                         {compProg.list.map(({ item, key }, qi) => (
-                          <ComprehensionItem key={key} q={item} qi={qi} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} onAnswered={compProg.onAnswered} />
+                          <ComprehensionItem key={key} q={item} qi={qi} narratorId={exerciseNarrator} onAnswered={compProg.onAnswered} />
                         ))}
                         <ExerciseStatus prog={compProg} />
                       </>
