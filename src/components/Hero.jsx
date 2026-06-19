@@ -611,17 +611,11 @@ const LEVEL_ARROW_STOPS = [
   { id: 'writing',   label: 'Writing',   x: 276 },
 ];
 
-// Two finished exercises (e.g. 2 reading articles) make ONE challenge; it takes
-// CHALLENGES_PER_SEGMENT completed challenges to fully fill a skill's line.
-const EXERCISES_PER_CHALLENGE = 2;
-const CHALLENGES_PER_SEGMENT = 5;
-
-// Compact level-progress arrow (mobile): current level → next level, with four
-// tappable exercise stops. Each skill's line is fragmented (dashed) and creeps
-// forward one notch (1/CHALLENGES_PER_SEGMENT) per completed challenge. A ring
-// around the level badge tracks the half-finished challenge of the skill the
-// learner last advanced: half after 1 exercise, full after 2.
-// Mirrors the "My Parisian Progress" look, flattened into a straight arrow.
+// Compact level-progress arrow: current sub-level (left badge) → next sub-level
+// milestone (right badge), with four tappable skill stops between them. Doing one
+// exercise in every skill completes a "round" and advances the sub-level (A2 →
+// A2.1 → A2.2 …), at which point the milestone badge rolls left and the line
+// resets. A ring around the left badge tracks progress through the current round.
 function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = null, onPick }) {
   const WINE = '#8B1E2D';
   const SKILL_IDS = LEVEL_ARROW_STOPS.map((s) => s.id);
