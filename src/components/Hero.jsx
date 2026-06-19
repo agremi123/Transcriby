@@ -1055,7 +1055,7 @@ function wait(ms) {
   return new Promise((resolve) => { window.setTimeout(resolve, ms); });
 }
 
-function ComprehensionItem({ q, qi, firePointsDelta, narratorId = 'lea', onAnswered = null }) {
+function ComprehensionItem({ q, qi, narratorId = 'lea', onAnswered = null }) {
   const [answeredIdx, setAnsweredIdx] = React.useState(null);
   const options = q.options || [];
   // Robustly resolve the correct option index: the model may return the exact
