@@ -692,23 +692,44 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
       {fillSeg(276, 340, allDone ? 1 : 0, 's4')}
       <path d="M331 19 L341 24 L331 29 Z" fill={WINE} opacity={allDone ? 1 : 0.55} />
 
-      {/* Current-level badge with a challenge-progress ring around it */}
+      {/* Current-level badge with a round-progress ring around it */}
       <circle cx="20" cy="24" r={RING_R} fill="none" stroke={WINE} strokeWidth="2.6" opacity="0.16" />
       {ringFrac > 0 && (
         <circle cx="20" cy="24" r={RING_R} fill="none" stroke={WINE} strokeWidth="2.6"
           strokeLinecap="round" transform="rotate(-90 20 24)"
           strokeDasharray={`${ringFrac * RING_C} ${RING_C}`}
           style={{ transition: 'stroke-dasharray 0.45s ease' }}>
-          <title>{`Current challenge: ${ringLabel}`}</title>
+          <title>{`This round: ${ringLabel}`}</title>
         </circle>
       )}
       <circle cx="20" cy="24" r="12" fill={WINE} />
-      <text x="20" y="28" textAnchor="middle" fill="#F6F1E8"
-        fontFamily="'SF Mono',monospace" fontSize="11" fontWeight="700">{level}</text>
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.text key={leftLabel} x="20" y="27.5" textAnchor="middle" fill="#F6F1E8"
+          fontFamily="'SF Mono',monospace" fontSize={leftFontSize} fontWeight="700"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}>{leftLabel}</motion.text>
+      </AnimatePresence>
 
       <circle cx="340" cy="24" r="13" fill={allDone ? WINE : '#fff'} stroke={WINE} strokeWidth="1.5" />
-      <text x="340" y="27.5" textAnchor="middle" fill={allDone ? '#F6F1E8' : WINE}
-        fontFamily="'SF Mono',monospace" fontSize="8.5" fontWeight="700">{subLevelTarget}</text>
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.text key={rightLabel} x="340" y="27.5" textAnchor="middle" fill={allDone ? '#F6F1E8' : WINE}
+          fontFamily="'SF Mono',monospace" fontSize="8.5" fontWeight="700"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}>{rightLabel}</motion.text>
+      </AnimatePresence>
+
+      {/* Roll-forward traveler: the reached milestone sweeping right → left to
+          become the new current level. */}
+      {traveler && (
+        <motion.g key={traveler.id}
+          initial={{ x: 0, opacity: 1 }}
+          animate={{ x: -320, opacity: [1, 1, 0] }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
+          <circle cx="340" cy="24" r="13" fill={WINE} />
+          <text x="340" y="27.5" textAnchor="middle" fill="#F6F1E8"
+            fontFamily="'SF Mono',monospace" fontSize="8.5" fontWeight="700">{traveler.label}</text>
+        </motion.g>
+      )}
 
       {LEVEL_ARROW_STOPS.map((s) => {
         const frac = fracs[s.id] || 0;
