@@ -3556,7 +3556,7 @@ export function AudioDemoCard({
                         ))}
                         <span className="text-[9px] font-mono tracking-widest uppercase text-navy/35">À toi de jouer</span>
                         {grammarProg.list.map(({ item, key }) => (
-                          <GrammarBlankItem key={key} ex={item} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} onAnswered={grammarProg.onAnswered} />
+                          <GrammarBlankItem key={key} ex={item} narratorId={exerciseNarrator} onAnswered={grammarProg.onAnswered} />
                         ))}
                         <ExerciseStatus prog={grammarProg} />
                         <ProductionExercise
