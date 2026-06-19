@@ -1148,11 +1148,11 @@ function VocabItem({ v, vi, narratorId = 'lea', onAnswered = null }) {
   );
 }
 
-function ConjugationItem({ c, ci, firePointsDelta, narratorId = 'lea', onAnswered = null }) {
+function ConjugationItem({ c, ci, narratorId = 'lea', onAnswered = null }) {
   const [ans, setAns] = React.useState('');
   const [submitted, setSubmitted] = React.useState(false);
   const correct = submitted && ans.trim().toLowerCase() === (c.answer || '').toLowerCase();
-  const submit = () => { if (!submitted && ans.trim()) { const ok = ans.trim().toLowerCase() === c.answer.toLowerCase(); setSubmitted(true); firePointsDelta(ok ? 1 : -1); onAnswered?.(ok); } };
+  const submit = () => { if (!submitted && ans.trim()) { const ok = ans.trim().toLowerCase() === c.answer.toLowerCase(); setSubmitted(true); onAnswered?.(ok); } };
   return (
     <div className={`p-2.5 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
       <div className="flex items-center gap-1.5 mb-1">
