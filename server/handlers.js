@@ -940,14 +940,14 @@ export async function handleReading(body) {
       }
       if (jobs.length) {
         await Promise.all(jobs);
-        supabase.from('reading_articles').update({ grammar: g, conjugation: c }).eq('id', row.id).then(() => {});
+        supabase.from('reading_articles').update({ grammar: g, conjugation: c, questions: q, vocab: v }).eq('id', row.id).then(() => {});
       }
       return {
         statusCode: 200,
         body: {
           passage: row.passage, title: row.title, source: row.source,
           author: row.author, date: row.date, link: row.link,
-          vocab: row.vocab || [], questions: row.questions || [],
+          vocab: v, questions: q,
           grammar: g, conjugation: c,
         },
       };
