@@ -3500,24 +3500,8 @@ export function AudioDemoCard({
             }}
           />
         </div>
-        <div className="hidden sm:flex items-center justify-center gap-1.5 sm:gap-3 shrink-0 flex-wrap">
-          <div className="relative hidden sm:flex items-center rounded-full p-0.5 bg-wine/10">
-            <div
-              className="absolute top-0.5 bottom-0.5 rounded-full bg-wine transition-all duration-200"
-              style={(activeTab === 'writing' || activeTab === 'speaking') ? { width: 'calc(100% - 4px)', left: '2px' } : { width: 'calc((100% - 4px) / 2)', left: lastSpeakWriteMode === 'write' ? 'calc(2px + (100% - 4px) / 2)' : '2px' }}
-            />
-            {[
-              { id: 'speak', label: 'Speak' },
-              { id: 'write', label: 'Write' },
-            ].filter((m) => (activeTab !== 'writing' || m.id === 'write') && (activeTab !== 'speaking' || m.id === 'speak')).map((m) => (
-              <button key={m.id} type="button" onClick={() => (m.id === 'write' ? activateWriteMode() : activateSpeakMode())}
-                className={`relative z-10 font-display text-[12px] sm:text-[15px] tracking-wide px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full capitalize transition-colors duration-200 ${(lastSpeakWriteMode === m.id || activeTab === 'writing' || activeTab === 'speaking') ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'}`}>
-                {m.label}
-              </button>
-            ))}
-          </div>
-
-        </div>
+        {/* Desktop Speak/Write text toggle removed — switching now happens via the
+            mic/pen double toggle in the bottom action bar (mirrors mobile). */}
 
         <div ref={writeBoxRef} className="relative bg-ivory/60 border border-line/70 overflow-hidden flex-1 flex flex-col min-h-0">
           {isExerciseTab ? (
