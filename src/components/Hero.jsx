@@ -3573,7 +3573,7 @@ export function AudioDemoCard({
                     : (
                       <>
                         {conjProg.list.map(({ item, key }, ci) => (
-                          <ConjugationItem key={key} c={item} ci={ci} firePointsDelta={firePointsDelta} narratorId={exerciseNarrator} onAnswered={conjProg.onAnswered} />
+                          <ConjugationItem key={key} c={item} ci={ci} narratorId={exerciseNarrator} onAnswered={conjProg.onAnswered} />
                         ))}
                         <ExerciseStatus prog={conjProg} />
                         {(() => {
