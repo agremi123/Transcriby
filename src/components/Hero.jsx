@@ -2402,6 +2402,25 @@ export function AudioDemoCard({
     setTimeout(() => setPointsDelta(null), 1400);
   }, [gainDailyParisianPoints]);
 
+  // Points are earned per TAB completed (Compréhension / Vocabulaire / Grammaire /
+  // Conjugaison), NOT per individual answer — and there's no penalty for mistakes.
+  // When a tab is fully validated we award one point per question it held (so a
+  // clean run is worth the same as before, minus the risk of losing points). The
+  // ref re-arms when a tab resets, so redoing an article can pay out again.
+  const awardedTabsRef = React.useRef({});
+  React.useEffect(() => {
+    const tabs = { comprehension: compProg, vocabulary: vocabProg, grammar: grammarProg, conjugation: conjProg };
+    for (const [id, prog] of Object.entries(tabs)) {
+      if (prog.done && !awardedTabsRef.current[id]) {
+        awardedTabsRef.current[id] = true;
+        if (prog.total > 0) firePointsDelta(prog.total);
+      } else if (!prog.done && awardedTabsRef.current[id]) {
+        awardedTabsRef.current[id] = false;
+      }
+    }
+  }, [compProg.done, vocabProg.done, grammarProg.done, conjProg.done,
+      compProg.total, vocabProg.total, grammarProg.total, conjProg.total, firePointsDelta]);
+
   // Discover-a-Parisian-word flow. Extracted so it can also be triggered from
   // outside the card (the mobile button next to the points, in the Hero avatar
   // block) via discoverWordRef.
