@@ -1316,15 +1316,15 @@ function ExerciseStatus({ prog }) {
       {prog.done ? (
         <p className="text-[12px] font-display italic text-green-700 flex items-center gap-1.5">
           <svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="#16a34a" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M42 12L18 36l-12-12" /></svg>
-          Validé ! ({EXERCISE_GOAL}/{EXERCISE_GOAL})
+          Validé ! ({prog.correct}/{prog.total})
         </p>
       ) : (
         <p className="text-[11px] font-mono text-navy/40">
-          {prog.correct}/{EXERCISE_GOAL} bonnes réponses — il en faut {EXERCISE_GOAL} pour valider. Une mauvaise réponse ajoute une question.
+          {prog.correct}/{prog.total} bonnes réponses — {prog.wrong > 0 ? 'recommence la série pour valider.' : 'réussis-les toutes pour valider.'}
         </p>
       )}
-      {/* Once they've gotten at least one wrong, let them wipe their answers and
-          retry the set (reshuffled). */}
+      {/* A wrong answer can't be undone in place — the only way forward is to
+          wipe the answers and retry the set (reshuffled). */}
       {prog.wrong > 0 && prog.reset && (
         <button
           type="button"
