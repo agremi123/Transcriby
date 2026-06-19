@@ -1442,6 +1442,18 @@ export function AudioDemoCard({
   const conjProg = useExerciseProgress(exerciseConjugation);
   const TAB_PROGRESS = { comprehension: compProg, vocabulary: vocabProg, grammar: grammarProg, conjugation: conjProg };
   const exerciseTabsDone = [compProg, vocabProg, grammarProg, conjProg].filter((p) => p.done).length;
+  // DEV-only: the floating dev panel's "Pass tab" button dispatches this event;
+  // we complete ONLY the sub-tab the developer is currently viewing. Refs keep the
+  // listener stable while always reading the latest progress + active tab.
+  const tabProgressRef = React.useRef(TAB_PROGRESS);
+  tabProgressRef.current = TAB_PROGRESS;
+  const exerciseSubTabRef = React.useRef(exerciseSubTab);
+  exerciseSubTabRef.current = exerciseSubTab;
+  React.useEffect(() => {
+    const onDevPassTab = () => tabProgressRef.current[exerciseSubTabRef.current]?.complete?.();
+    window.addEventListener('dev-pass-subtab', onDevPassTab);
+    return () => window.removeEventListener('dev-pass-subtab', onDevPassTab);
+  }, []);
   // Report the count up so the article title box's "Next article" bar fills too.
   React.useEffect(() => { onExercisesProgress?.(exerciseTabsDone); }, [exerciseTabsDone]); // eslint-disable-line react-hooks/exhaustive-deps
   const [completedInBatch, setCompletedInBatch] = React.useState(new Set());
