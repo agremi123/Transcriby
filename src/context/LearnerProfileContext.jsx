@@ -71,6 +71,28 @@ export function LearnerProfileProvider({ children }) {
     setProfile(incrementLevelArticle(current, level, type));
   }, []);
 
+  // DEV-only shortcut: instantly "succeed" every exercise in every skill tab
+  // (reading / listening / speaking / writing) for the learner's current level,
+  // so the level-progress arrow fills completely and you can see the end state
+  // without grinding through real exercises. Mirrors the Hero progression rule:
+  // 2 finished exercises = 1 challenge, 5 challenges = a full skill line → 10
+  // finished exercises per skill fills the whole arrow (allDone).
+  const devCompleteLevel = React.useCallback(() => {
+    const current = loadLearnerProfile();
+    const level = getEffectiveLevel(current);
+    const types = ['reading', 'listening', 'speaking', 'writing'];
+    const FULL_PER_SKILL = 10; // EXERCISES_PER_CHALLENGE (2) × CHALLENGES_PER_SEGMENT (5)
+    const counts = Object.fromEntries(types.map((t) => [t, FULL_PER_SKILL]));
+    const next = saveLearnerProfile({
+      ...current,
+      levelExercises: { ...(current.levelExercises || {}), [level]: types },
+      levelArticleCounts: { ...(current.levelArticleCounts || {}), [level]: counts },
+      levelLastType: { ...(current.levelLastType || {}), [level]: 'writing' },
+    });
+    setProfile(next);
+    return next;
+  }, []);
+
   const gainDailyParisianPoints = React.useCallback((amount) => {
     const next = addDailyParisianPoints(amount);
     setDailyParisianPoints(next);
