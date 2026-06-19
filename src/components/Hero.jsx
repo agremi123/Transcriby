@@ -1183,7 +1183,7 @@ function VocabItem({ v, vi, firePointsDelta, narratorId = 'lea', onAnswered = nu
   const [ans, setAns] = React.useState('');
   const [submitted, setSubmitted] = React.useState(false);
   const correct = submitted && ans.trim().toLowerCase() === (v.word || '').toLowerCase();
-  const submit = () => { if (!submitted && ans.trim()) { const ok = ans.trim().toLowerCase() === v.word.toLowerCase(); setSubmitted(true); firePointsDelta(ok ? 2 : -1); onAnswered?.(ok); } };
+  const submit = () => { if (!submitted && ans.trim()) { const ok = ans.trim().toLowerCase() === v.word.toLowerCase(); setSubmitted(true); firePointsDelta(ok ? 1 : -1); onAnswered?.(ok); } };
   return (
     <div className={`p-2.5 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
       <p className="font-display text-[13px] leading-snug text-navy mb-1.5">
@@ -1212,7 +1212,7 @@ function ConjugationItem({ c, ci, firePointsDelta, narratorId = 'lea', onAnswere
   const [ans, setAns] = React.useState('');
   const [submitted, setSubmitted] = React.useState(false);
   const correct = submitted && ans.trim().toLowerCase() === (c.answer || '').toLowerCase();
-  const submit = () => { if (!submitted && ans.trim()) { const ok = ans.trim().toLowerCase() === c.answer.toLowerCase(); setSubmitted(true); firePointsDelta(ok ? 2 : -1); onAnswered?.(ok); } };
+  const submit = () => { if (!submitted && ans.trim()) { const ok = ans.trim().toLowerCase() === c.answer.toLowerCase(); setSubmitted(true); firePointsDelta(ok ? 1 : -1); onAnswered?.(ok); } };
   return (
     <div className={`p-2.5 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
       <div className="flex items-center gap-1.5 mb-1">
@@ -1282,7 +1282,7 @@ function GrammarBlankItem({ ex, firePointsDelta, narratorId = 'lea', onAnswered 
   const ok = ans.trim().toLowerCase() === String(ex.answer || '').trim().toLowerCase();
   const correct = submitted && ok;
   const parts = String(ex.sentence || '').split('___');
-  const submit = () => { if (!submitted && ans.trim()) { setSubmitted(true); firePointsDelta(ok ? 2 : -1); onAnswered?.(ok); } };
+  const submit = () => { if (!submitted && ans.trim()) { setSubmitted(true); firePointsDelta(ok ? 1 : -1); onAnswered?.(ok); } };
   return (
     <div className={`p-2.5 border ${correct ? 'border-green-400/50 bg-green-50/50' : submitted ? 'border-wine/30 bg-wine/5' : 'border-line/50'}`}>
       {ex.point && <div className="mb-1"><span className="text-[9px] font-mono tracking-widest uppercase text-wine/60 bg-wine/8 px-1.5 py-0.5">{ex.point}</span></div>}
@@ -4825,13 +4825,13 @@ export function AudioDemoCard({
                                   type="text"
                                   value={userAns === '__editing__' ? '' : userAns}
                                   onChange={(e) => setPracticeVocabAnswers((p) => ({ ...p, [vi]: e.target.value }))}
-                                  onKeyDown={(e) => { if (e.key === 'Enter' && userAns.trim()) { const ans = userAns.trim(); const isC = ans.toLowerCase() === v.word.toLowerCase(); setPracticeVocabAnswers((p) => ({ ...p, [vi]: ans })); firePointsDelta(isC ? 2 : -1); } }}
+                                  onKeyDown={(e) => { if (e.key === 'Enter' && userAns.trim()) { const ans = userAns.trim(); const isC = ans.toLowerCase() === v.word.toLowerCase(); setPracticeVocabAnswers((p) => ({ ...p, [vi]: ans })); firePointsDelta(isC ? 1 : -1); } }}
                                   placeholder="Votre réponse…"
                                   className="flex-1 border border-navy/20 px-2 py-1 text-[13px] font-display text-navy focus:outline-none focus:border-wine/50 bg-transparent"
                                 />
                               )}
                               {!submitted && userAns.trim() && (
-                                <button type="button" onClick={() => { const ans = userAns.trim(); const isC = ans.toLowerCase() === v.word.toLowerCase(); setPracticeVocabAnswers((p) => ({ ...p, [vi]: ans })); firePointsDelta(isC ? 2 : -1); }}
+                                <button type="button" onClick={() => { const ans = userAns.trim(); const isC = ans.toLowerCase() === v.word.toLowerCase(); setPracticeVocabAnswers((p) => ({ ...p, [vi]: ans })); firePointsDelta(isC ? 1 : -1); }}
                                   className="px-2 py-1 text-[11px] font-mono bg-wine text-ivory hover:bg-wine/80 transition-colors">
                                   OK
                                 </button>
@@ -6611,7 +6611,7 @@ function WritingPracticeExercise({ exercise, narratorId, onScoreDelta, context }
               : isPicked ? 'border-wine bg-wine/10' : 'border-navy/10 opacity-60';
             return (
               <button key={i} type="button" disabled={done}
-                onClick={() => { setPicked(i); setDone(true); onScoreDelta?.(correct ? 2 : -1); }}
+                onClick={() => { setPicked(i); setDone(true); onScoreDelta?.(correct ? 1 : -1); }}
                 className={`text-left text-[13px] font-display px-2.5 py-1.5 rounded border transition-colors ${cls}`}>
                 {opt}{done && correct ? ' ✓' : ''}
               </button>
@@ -6635,12 +6635,12 @@ function WritingPracticeExercise({ exercise, narratorId, onScoreDelta, context }
       )}
       <div className="flex items-center gap-2">
         <input value={ans} onChange={(e) => setAns(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter' && ans.trim()) { setDone(true); onScoreDelta?.(norm(ans) === norm(target) ? 2 : -1); } }}
+          onKeyDown={(e) => { if (e.key === 'Enter' && ans.trim()) { setDone(true); onScoreDelta?.(norm(ans) === norm(target) ? 1 : -1); } }}
           disabled={done && correct}
           placeholder="Ta réponse…"
           className="flex-1 min-w-0 text-[13px] font-display px-2.5 py-1.5 rounded border border-navy/15 bg-ivory/80 outline-none focus:border-wine/40" />
         {!correct && (
-          <button type="button" onClick={() => { if (ans.trim()) { setDone(true); onScoreDelta?.(norm(ans) === norm(target) ? 2 : -1); } }}
+          <button type="button" onClick={() => { if (ans.trim()) { setDone(true); onScoreDelta?.(norm(ans) === norm(target) ? 1 : -1); } }}
             className="shrink-0 text-[11px] font-mono uppercase tracking-wider px-3 py-1.5 rounded bg-wine text-ivory hover:bg-wine2 transition-colors">OK</button>
         )}
       </div>
