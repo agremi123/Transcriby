@@ -165,7 +165,7 @@ function ResetGoalsButton() {
         <path d="M10 6A4 4 0 112 6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
         <path d="M2 3v3h3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
-      <span className="text-[9px] tracking-widest uppercase">{flash ? 'reset' : 'reset'}</span>
+      <span className="text-[9px] tracking-widest uppercase">{flash ? 'cleared' : 'reset'}</span>
     </button>
   );
 }
