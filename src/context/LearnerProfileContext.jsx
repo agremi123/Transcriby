@@ -191,9 +191,10 @@ export function LearnerProfileProvider({ children }) {
     spendExperience,
     dailyParisianPoints,
     gainDailyParisianPoints,
+    devResetGoals,
     refreshProfile,
     resetWelcomeOnboarding,
-  }), [profile, effectiveLevel, experienceHighlightTick, dailyParisianPoints, setGender, completeOnboarding, setClaimedLevel, recordSample, mergeInterviewReport, gainExperience, spendExperience, markExerciseDone, incrementArticle, gainDailyParisianPoints, refreshProfile, resetWelcomeOnboarding]);
+  }), [profile, effectiveLevel, experienceHighlightTick, dailyParisianPoints, setGender, completeOnboarding, setClaimedLevel, recordSample, mergeInterviewReport, gainExperience, spendExperience, markExerciseDone, incrementArticle, gainDailyParisianPoints, devResetGoals, refreshProfile, resetWelcomeOnboarding]);
 
   return (
     <LearnerProfileContext.Provider value={value}>
