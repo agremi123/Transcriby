@@ -1252,27 +1252,36 @@ const EXERCISE_GOAL = 6;
 function useExerciseProgress(pool, goal = EXERCISE_GOAL) {
   const [list, setList] = React.useState([]);
   const [correct, setCorrect] = React.useState(0);
+  const [wrong, setWrong] = React.useState(0);
+  // Bumped by reset() — gives every item a fresh key so they remount with a
+  // clean (un-answered) state, and reshuffles the order on a manual retry.
+  const [runId, setRunId] = React.useState(0);
   const correctRef = React.useRef(0);
   const appendedRef = React.useRef(0);
   React.useEffect(() => { correctRef.current = correct; }, [correct]);
   React.useEffect(() => {
-    setList((pool || []).map((item, i) => ({ item, key: `q-${i}` })));
+    const items = (pool || []).map((item) => item);
+    const ordered = runId > 0 ? [...items].sort(() => Math.random() - 0.5) : items;
+    setList(ordered.map((item, i) => ({ item, key: `q-${runId}-${i}` })));
     setCorrect(0);
+    setWrong(0);
     correctRef.current = 0;
     appendedRef.current = 0;
-  }, [pool]);
+  }, [pool, runId]);
   const done = correct >= goal;
   const onAnswered = React.useCallback((isCorrect) => {
     if (isCorrect) { setCorrect((c) => Math.min(goal, c + 1)); return; }
+    setWrong((w) => w + 1);
     setList((l) => {
       if (correctRef.current >= goal) return l;
       const p = pool || [];
       if (p.length === 0) return l;
       const n = appendedRef.current++;
-      return [...l, { item: p[(l.length + n) % p.length], key: `q-extra-${n}` }];
+      return [...l, { item: p[(l.length + n) % p.length], key: `q-${runId}-extra-${n}` }];
     });
-  }, [pool, goal]);
-  return { list, correct, done, onAnswered };
+  }, [pool, goal, runId]);
+  const reset = React.useCallback(() => setRunId((r) => r + 1), []);
+  return { list, correct, wrong, done, onAnswered, reset };
 }
 
 // A single grammar fill-in question (one "___"), counted toward the grammar goal.
