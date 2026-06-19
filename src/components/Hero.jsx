@@ -695,8 +695,8 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
         </circle>
       )}
       <circle cx="20" cy="24" r="12" fill={WINE} />
-      <text x="20" y="28" textAnchor="middle" fill="#F6F1E8"
-        fontFamily="'SF Mono',monospace" fontSize="11" fontWeight="700">{level}</text>
+      <text x="20" y="27.5" textAnchor="middle" fill="#F6F1E8"
+        fontFamily="'SF Mono',monospace" fontSize={badgeFontSize} fontWeight="700">{badgeLabel}</text>
 
       <circle cx="340" cy="24" r="12" fill={allDone ? WINE : '#fff'} stroke={WINE} strokeWidth="1.5" />
       <text x="340" y="28" textAnchor="middle" fill={allDone ? '#F6F1E8' : WINE}
