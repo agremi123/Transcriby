@@ -3531,9 +3531,9 @@ export function AudioDemoCard({
                   { id: 'grammar',       label: 'Grammaire' },
                   { id: 'conjugation',   label: 'Conjugaison' },
                 ].map((t) => {
-                  // Each tab doubles as a progress bar (correct answers / goal).
+                  // Each tab doubles as a progress bar (correct answers / set size).
                   const prog = TAB_PROGRESS[t.id];
-                  const pct = Math.round((Math.min(prog.correct, EXERCISE_GOAL) / EXERCISE_GOAL) * 100);
+                  const pct = prog.total ? Math.round((prog.correct / prog.total) * 100) : 0;
                   return (
                     <button key={t.id} type="button" onClick={() => setExerciseSubTab(t.id)}
                       className={`relative overflow-hidden text-[9px] tracking-widest uppercase px-3 py-2.5 border-b-2 transition-colors whitespace-nowrap shrink-0 ${exerciseSubTab === t.id ? 'border-wine text-wine' : 'border-transparent text-navy/35 hover:text-navy/60'}`}>
