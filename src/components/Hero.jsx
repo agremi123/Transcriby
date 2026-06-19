@@ -1451,8 +1451,15 @@ export function AudioDemoCard({
   exerciseSubTabRef.current = exerciseSubTab;
   React.useEffect(() => {
     const onDevPassTab = () => tabProgressRef.current[exerciseSubTabRef.current]?.complete?.();
+    // "Reset goals" also clears the current article's four sub-tabs back to
+    // un-answered, so the exercise restarts from 0 alongside the emptied arrow.
+    const onDevReset = () => Object.values(tabProgressRef.current).forEach((p) => p?.reset?.());
     window.addEventListener('dev-pass-subtab', onDevPassTab);
-    return () => window.removeEventListener('dev-pass-subtab', onDevPassTab);
+    window.addEventListener('dev-reset-subtabs', onDevReset);
+    return () => {
+      window.removeEventListener('dev-pass-subtab', onDevPassTab);
+      window.removeEventListener('dev-reset-subtabs', onDevReset);
+    };
   }, []);
   // Report the count up so the article title box's "Next article" bar fills too.
   React.useEffect(() => { onExercisesProgress?.(exerciseTabsDone); }, [exerciseTabsDone]); // eslint-disable-line react-hooks/exhaustive-deps
