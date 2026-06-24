@@ -7,8 +7,12 @@ import { getNextLevel } from '../lib/levelTargets';
 
 const SCORE_ANIM_MS = 950;
 
+// Same four skills the Hero "Pick your challenge" arrow tracks. One finished
+// exercise in every skill = one full round = one sub-level step (A2 → A2.1 → A2.2 …).
+const SKILL_IDS = ['reading', 'listening', 'speaking', 'writing'];
+
 export function ParisianProfileSquare({ className = '', compact = false }) {
-  const { profile, effectiveLevel, experienceHighlightTick } = useLearnerProfile();
+  const { profile, effectiveLevel, experienceHighlightTick, levelArticleCounts } = useLearnerProfile();
   const prevPercentRef = React.useRef(null);
   const [scoreAnim, setScoreAnim] = React.useState(false);
   const scoreAnimTimerRef = React.useRef(null);
