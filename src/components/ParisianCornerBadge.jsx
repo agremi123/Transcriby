@@ -89,7 +89,7 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       className={`relative shrink-0 bg-transparent ${scoreAnim ? 'parisian-badge-score-pop' : ''} ${className}`}
       style={{ width: svgW, height: svgH }}
-      aria-label={`${profile.name}, level ${level}, ${parisianPercent}% Parisian progress`}
+      aria-label={`${profile.name}, level ${subLevelLabel}, ${parisianPercent}% Parisian progress`}
     >
       {/* Badge image — centered, arc overlays its left side */}
       <img
