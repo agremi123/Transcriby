@@ -661,20 +661,15 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
   const RING_R = 16;
   const RING_C = 2 * Math.PI * RING_R;
 
-  // A skill's line: a faint dashed track + a solid wine overlay once that skill is
-  // done for the current round. Width + opacity animate so it visibly resets on roll.
-  const fillSeg = (x1, x2, frac, key) => {
-    const fx = x1 + Math.max(0, Math.min(1, frac)) * (x2 - x1);
-    return (
-      <g key={key}>
-        <line x1={x1} y1="24" x2={x2} y2="24" stroke={WINE} strokeWidth="1.6"
-          strokeLinecap="round" strokeDasharray="4 6" opacity="0.4" />
-        <line x1={x1} y1="24" x2={fx} y2="24" stroke={WINE} strokeWidth="2.6"
-          strokeLinecap="round" opacity={frac > 0 ? 0.95 : 0}
-          style={{ transition: 'all 0.45s ease' }} />
-      </g>
-    );
-  };
+  // A skill's connector stays an intermittent (dashed) wine line at all times — it
+  // never becomes a solid line. Once that skill is done for the round it just grows
+  // a touch thicker and more opaque, so progress reads without "filling" the line.
+  const fillSeg = (x1, x2, frac, key) => (
+    <line key={key} x1={x1} y1="24" x2={x2} y2="24" stroke={WINE}
+      strokeWidth={frac > 0 ? 2.2 : 1.6} strokeLinecap="round" strokeDasharray="4 6"
+      opacity={frac > 0 ? 0.85 : 0.4}
+      style={{ transition: 'opacity 0.45s ease, stroke-width 0.45s ease' }} />
+  );
 
   return (
     <svg viewBox="0 0 360 60" width="100%" role="group"
