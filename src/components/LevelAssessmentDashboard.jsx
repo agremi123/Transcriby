@@ -1796,6 +1796,7 @@ function NarratorPair({
                         onClick={() => onToggleReplay?.(id)}
                         label={`Replay ${n.name}`}
                         isPlaying={highlightBubble}
+                        size="sm"
                       />
                     </div>
                   )}
