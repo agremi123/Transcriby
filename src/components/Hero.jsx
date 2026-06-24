@@ -3472,7 +3472,7 @@ export function AudioDemoCard({
           {/* "Pick your challenge" callout — points down to the arrow below.
               Plain text (no filled background) so it doesn't read as a button. */}
           <div className="flex flex-col items-center -mb-0.5">
-            <span className="font-display text-[13px] sm:text-[15px] font-bold uppercase tracking-[0.14em] text-wine">
+            <span className="font-display text-[13px] sm:text-[15px] uppercase tracking-[0.14em] text-wine" style={{ fontWeight: 700 }}>
               Pick your challenge
             </span>
             <svg width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden className="mt-0.5 text-wine/70">
