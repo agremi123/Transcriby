@@ -261,6 +261,17 @@ export function useSpeechmaticsTranscription() {
     }));
   }, []);
 
+  // If the live transcript ends with a spoken stop word ("stop"), end the
+  // recording automatically. Fires at most once per session.
+  const maybeVoiceStop = React.useCallback((text) => {
+    if (voiceStopTriggeredRef.current || !activeRef.current) return false;
+    const pattern = buildStopWordPattern(voiceStopWordsRef.current);
+    if (!pattern || !pattern.test(String(text || ''))) return false;
+    voiceStopTriggeredRef.current = true;
+    stop();
+    return true;
+  }, [stop]);
+
   const start = React.useCallback(async (options = {}) => {
     if (activeRef.current) return;
 
