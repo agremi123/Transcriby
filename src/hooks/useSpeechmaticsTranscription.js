@@ -450,6 +450,7 @@ export function useSpeechmaticsTranscription() {
   );
 
   const reset = React.useCallback(() => {
+    voiceStopTriggeredRef.current = false;
     stop();
     setUtterances((prev) => {
       prev.forEach((u) => {
