@@ -683,11 +683,11 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
   return (
     <svg viewBox="0 0 360 60" width="100%" role="group"
       aria-label={`Your level ${level}, next milestone ${rightLabel}. Tap an exercise to continue.`}>
-      {fillSeg(20, 84, fracs.reading, 's0')}
-      {fillSeg(84, 148, fracs.listening, 's1')}
-      {fillSeg(148, 212, fracs.speaking, 's2')}
-      {fillSeg(212, 276, fracs.writing, 's3')}
-      {fillSeg(276, 340, allDone ? 1 : 0, 's4')}
+      {fillSeg(20, 84, segFilled[0], 's0')}
+      {fillSeg(84, 148, segFilled[1], 's1')}
+      {fillSeg(148, 212, segFilled[2], 's2')}
+      {fillSeg(212, 276, segFilled[3], 's3')}
+      {fillSeg(276, 340, segFilled[4], 's4')}
       <path d="M331 19 L341 24 L331 29 Z" fill={WINE} opacity={allDone ? 1 : 0.55} />
 
       {/* Current-level badge with a round-progress ring around it */}
