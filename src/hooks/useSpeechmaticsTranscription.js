@@ -276,6 +276,14 @@ export function useSpeechmaticsTranscription() {
     if (activeRef.current) return;
 
     sessionOptionsRef.current = { speechFinalFired: false, ...options };
+    voiceStopTriggeredRef.current = false;
+    // Spoken "stop" command: on by default for mic recordings; off for captured
+    // streams (e.g. tab/system audio) unless the caller passes voiceStopWords.
+    voiceStopWordsRef.current = options.voiceStopWords !== undefined
+      ? normalizeStopWords(options.voiceStopWords)
+      : options.stream
+        ? []
+        : DEFAULT_VOICE_STOP_WORDS;
 
     setError(null);
     setAudioUrl(null);
