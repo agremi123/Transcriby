@@ -7,7 +7,6 @@ import {
   ButtonPrimary,
   Container,
   NAV_CTA_CLASS,
-  ParisianExperienceHint,
   Reveal,
   Star,
 } from './atoms';
