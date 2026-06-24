@@ -128,6 +128,8 @@ export function useSpeechmaticsTranscription() {
   const partialTranscriptRef = React.useRef('');
   const sessionOptionsRef = React.useRef({});
   const stopInFlightRef = React.useRef(null);
+  const voiceStopWordsRef = React.useRef([]);
+  const voiceStopTriggeredRef = React.useRef(false);
 
   // Pre-warm: fetch key + mic in background on mount
   const cachedKeyRef = React.useRef(null);
