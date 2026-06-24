@@ -2455,20 +2455,6 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
                 : null
             }
           />
-          {correctionDisplay?.text ? (
-            <CorrectionDisplayBar
-              text={correctionDisplay.text}
-              translation={correctionDisplay.translation}
-              onReplay={correctionDisplay.onReplay}
-              replayDisabled={correctionDisplay.replayDisabled}
-              playing={correctionDisplay.playing}
-              speechPlaybackTime={correctionDisplay.speechPlaybackTime}
-              speechTimings={correctionDisplay.speechTimings}
-              speechText={correctionDisplay.speechText}
-              replayLabel={correctionDisplay.replayLabel}
-              compact={embedded}
-            />
-          ) : null}
         </section>
         </>
       ) : null}
