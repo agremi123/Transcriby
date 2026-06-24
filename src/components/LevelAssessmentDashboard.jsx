@@ -1780,18 +1780,13 @@ function NarratorPair({
             </span>
             {lineText && !hideLineForCorrection && (() => {
               const useSpeechContainer = speechInContainer;
-              const lineRow = (
-                <div
-                  className={`flex w-full min-w-0 ${lineMetricsClass} ${
-                    useSpeechContainer
-                      ? 'items-center gap-2'
-                      : `inline-flex items-start gap-1.5 max-w-full ${
-                        isSoloHero || duoProminent ? 'max-w-lg' : 'max-w-[min(100%,320px)]'
-                      }`
-                  }`}
-                >
+              const lineRow = useSpeechContainer ? (
+                // Play button sits at the top-left; the text's FIRST line is indented
+                // to clear it, and every following line flows full-width underneath the
+                // button (no wasted column of empty space below it).
+                <div className={`relative w-full min-w-0 ${lineMetricsClass}`}>
                   {!replayDisabled && (
-                    <div className={`flex shrink-0 ${useSpeechContainer ? 'items-center self-start pt-0.5' : `items-center ${playAlignClass}`}`}>
+                    <div className="absolute left-0 top-0 z-10">
                       <NarratorLinePlayButton
                         onClick={() => onToggleReplay?.(id)}
                         label={`Replay ${n.name}`}
@@ -1809,14 +1804,38 @@ function NarratorPair({
                     speechTimings={speechTimings}
                     scrollable={isQuestionLine || useSpeechContainer}
                     scrollClassName="w-full"
-                    className={`font-display break-words ${lineBodyClass} ${
-                      useSpeechContainer ? 'text-left' : 'text-center'
-                    }`}
-                    wrapperClassName={`relative flex flex-col min-w-0 overflow-visible flex-1 w-full ${
-                      useSpeechContainer
-                        ? 'items-stretch text-left'
-                        : 'items-center text-center'
-                    }`}
+                    className={`font-display break-words text-left ${replayDisabled ? '' : '[text-indent:1.9rem]'} ${lineBodyClass}`}
+                    wrapperClassName="relative min-w-0 w-full text-left"
+                    tooltipClassName="top-[calc(100%+6px)] text-[11px] sm:text-[12px] z-[60]"
+                  />
+                </div>
+              ) : (
+                <div
+                  className={`inline-flex w-full min-w-0 items-start gap-1.5 max-w-full ${lineMetricsClass} ${
+                    isSoloHero || duoProminent ? 'max-w-lg' : 'max-w-[min(100%,320px)]'
+                  }`}
+                >
+                  {!replayDisabled && (
+                    <div className={`flex shrink-0 items-center ${playAlignClass}`}>
+                      <NarratorLinePlayButton
+                        onClick={() => onToggleReplay?.(id)}
+                        label={`Replay ${n.name}`}
+                        isPlaying={highlightBubble}
+                        size="sm"
+                      />
+                    </div>
+                  )}
+                  <NarratorHoverText
+                    text={lineText}
+                    translation={lineTranslation}
+                    quote={!isQuestionLine}
+                    highlightSpeech={highlightBubble}
+                    speechPlaybackTime={speechPlaybackTime}
+                    speechTimings={speechTimings}
+                    scrollable={isQuestionLine || useSpeechContainer}
+                    scrollClassName="w-full"
+                    className={`font-display break-words text-center ${lineBodyClass}`}
+                    wrapperClassName="relative flex flex-col min-w-0 overflow-visible flex-1 w-full items-center text-center"
                     tooltipClassName="top-[calc(100%+6px)] text-[11px] sm:text-[12px] z-[60]"
                   />
                 </div>
