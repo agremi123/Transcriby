@@ -729,18 +729,14 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
             onClick={() => onPick?.(s.id)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick?.(s.id); } }}>
             <circle cx={s.x} cy="24" r="15" fill="transparent" />
-            {/* "Tap me" hint: a hollow ring that pulses out of each not-yet-done
-                circle. All four pulse together (not staggered), and the ring stays
-                hollow so the circle itself never looks filled. */}
-            {!isDone && (
-              <motion.circle cx={s.x} cy="24" fill="none" stroke={WINE} strokeWidth="1.4"
-                initial={{ r: 6, opacity: 0 }}
-                animate={{ r: [6, 14], opacity: [0.6, 0] }}
-                transition={{ duration: 1.5, ease: 'easeOut', repeat: Infinity, repeatDelay: 1.1 }}
-                style={{ pointerEvents: 'none' }} />
-            )}
+            {/* "Tap me" hint: a hollow ring that pulses out of every circle. All four
+                pulse identically and together — no fill, no per-circle difference. */}
+            <motion.circle cx={s.x} cy="24" fill="none" stroke={WINE} strokeWidth="1.4"
+              initial={{ r: 6, opacity: 0 }}
+              animate={{ r: [6, 14], opacity: [0.6, 0] }}
+              transition={{ duration: 1.5, ease: 'easeOut', repeat: Infinity, repeatDelay: 1.1 }}
+              style={{ pointerEvents: 'none' }} />
             <circle cx={s.x} cy="24" r="6" fill="#fff" stroke={WINE} strokeWidth="1.6" />
-            {(isDone || started) && <circle cx={s.x} cy="24" r="2.6" fill={WINE} />}
             <text x={s.x} y="46" textAnchor="middle" fill={isDone || started ? WINE : '#1A2340'}
               fillOpacity={isDone ? 1 : started ? 0.8 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="11">{s.label}</text>
           </g>
