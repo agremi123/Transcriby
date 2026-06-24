@@ -173,6 +173,9 @@ export function useSpeechmaticsTranscription() {
     const finalizeStop = async () => {
       activeRef.current = false;
       sessionOptionsRef.current = {};
+      const stopWords = voiceStopWordsRef.current;
+      voiceStopWordsRef.current = [];
+      const stopWordPattern = buildStopWordPattern(stopWords);
 
       const ws = wsRef.current;
       if (ws && ws.readyState === WebSocket.OPEN) {
