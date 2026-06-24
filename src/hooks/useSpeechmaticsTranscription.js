@@ -236,6 +236,7 @@ export function useSpeechmaticsTranscription() {
         const needsPeriod = !endsWithSentencePunctuation(leftover);
         const text = ensureSentenceEnd(leftover);
         const words = [...currentWordsRef.current];
+        stripTrailingStopWordsFromWords(words, stopWords);
         if (needsPeriod) appendPeriodToWords(words);
         const utteranceStart = words[0]?.start ?? startTime;
         const utteranceEnd = words[words.length - 1]?.end ?? utteranceStart;
