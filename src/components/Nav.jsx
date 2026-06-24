@@ -25,7 +25,6 @@ function NavReachNextLevel() {
       <div className="absolute right-full pointer-events-none" style={{ marginTop: 65, marginRight: -20 }}>
         <ParisianProfileSquare compact className="pointer-events-none" />
       </div>
-      <ParisianExperienceHint />
       <div className="relative">
         <Link
           to="/targets"
