@@ -223,6 +223,7 @@ export function useSpeechmaticsTranscription() {
       if (!leftover) {
         leftover = joinTranscriptSegments(settledTextRef.current, partialTranscriptRef.current);
       }
+      leftover = stripTrailingStopWords(leftover, stopWordPattern).trim();
       const startTime = utteranceStartRef.current ?? 0;
 
       currentUtteranceRef.current = '';
