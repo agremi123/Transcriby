@@ -128,14 +128,14 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
           strokeDasharray={`${dash} ${halfCirc}`}
           style={{ transition: scoreAnim ? 'stroke-dasharray 0.7s ease-out' : 'stroke-dasharray 0.5s ease' }}
         />
-        {/* B1 label left of arc bottom endpoint */}
+        {/* Current sub-level (e.g. A2.3) left of arc bottom endpoint */}
         <text
           x={cx - 8} y={cy + r + 4}
-          textAnchor="end" fontSize={9}
+          textAnchor="end" fontSize={subLevelLabel.length > 2 ? 7.5 : 9}
           fill="#8b1e2d" fontFamily="'SF Mono','Fira Mono',monospace"
           fontWeight="600" opacity={0.65}
-        >{level}</text>
-        {/* B2 label left of arc top endpoint */}
+        >{subLevelLabel}</text>
+        {/* Next CEFR level (goal) left of arc top endpoint */}
         {nextLevel && (
           <text
             x={cx - 8} y={cy - r + 4}
