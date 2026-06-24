@@ -53,6 +53,13 @@ export function ParisianProfileSquare({ className = '', compact = false }) {
   const nextLevel = getNextLevel(level);
   const badgeSrc = getLevelBadgeSrc(level);
 
+  // Sub-level = how many full rounds (one exercise in each of the four skills)
+  // are banked at the current CEFR level: A2 → A2.1 → A2.2 … toward the next level.
+  const completedRounds = Math.min(
+    ...SKILL_IDS.map((s) => Math.max(0, Number(levelArticleCounts?.[s]) || 0))
+  );
+  const subLevelLabel = completedRounds > 0 ? `${level}.${completedRounds}` : level;
+
   // Arc wraps around the LEFT side of the badge image
   const badgeSize = compact ? 64 : 110;
   const imgSize = compact ? 134 : 130;  // image can be larger than the circle
