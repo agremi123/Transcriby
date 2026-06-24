@@ -2256,36 +2256,6 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
     setSubmitting(false);
   };
 
-  const handleMakeParisian = async () => {
-    if (playing || correcting || phase !== 'review' || !lastFeedback?.original) return;
-    if (!lastFeedback.hasMistake) {
-      setPhase('feedback');
-      return;
-    }
-
-    setCorrecting(true);
-    try {
-      // Get a fresh correction and then read the corrected sentence plainly.
-      const { corrected } = await fetchCorrection(lastFeedback.original, learnerLevel);
-      const correctedDisplay = prepareCorrectionForDisplay(lastFeedback.original, corrected);
-      setLastFeedback((prev) => ({
-        ...prev,
-        corrected: correctedDisplay,
-        correctionShown: true,
-      }));
-
-      clearNarratorLines();
-      await playLines([buildAskerCorrectionReadLine(
-        lastFeedback.original,
-        correctedDisplay,
-        currentQuestion?.narrator || 'lea',
-      )]);
-      setPhase('feedback');
-    } finally {
-      setCorrecting(false);
-    }
-  };
-
   const submitCurrentAnswer = async () => {
     if (submitting || playing || stoppingRecording) return;
     if (phase === 'answering') await handleDone();
