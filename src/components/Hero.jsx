@@ -661,12 +661,23 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
   const RING_R = 16;
   const RING_C = 2 * Math.PI * RING_R;
 
-  // Every connector is the same intermittent (dashed) wine line — identical weight
-  // and opacity for all segments, done or not. Progress is shown by the badge ring
-  // and the sub-level label, not by filling the row.
-  const fillSeg = (x1, x2, _frac, key) => (
-    <line key={key} x1={x1} y1="24" x2={x2} y2="24" stroke={WINE}
-      strokeWidth="1.6" strokeLinecap="round" strokeDasharray="4 6" opacity="0.4" />
+  // A connector FILLS (becomes a solid line) once every skill circle to its LEFT is
+  // done; until then it stays an intermittent (dashed) faint line. So the A2→Reading
+  // and Reading→Listening lines fill as soon as Reading is done; Listening→Speaking
+  // needs Reading+Listening; Speaking→Writing needs the first three; and the final
+  // Writing→A2.1 line needs all four.
+  const dR = fracs.reading >= 1;
+  const dL = fracs.listening >= 1;
+  const dS = fracs.speaking >= 1;
+  const dW = fracs.writing >= 1;
+  const segFilled = [dR, dR, dR && dL, dR && dL && dS, dR && dL && dS && dW];
+
+  const fillSeg = (x1, x2, filled, key) => (
+    <line key={key} x1={x1} y1="24" x2={x2} y2="24" stroke={WINE} strokeLinecap="round"
+      strokeWidth={filled ? 2.6 : 1.6}
+      strokeDasharray={filled ? undefined : '4 6'}
+      opacity={filled ? 0.95 : 0.4}
+      style={{ transition: 'opacity 0.45s ease, stroke-width 0.45s ease' }} />
   );
 
   return (
