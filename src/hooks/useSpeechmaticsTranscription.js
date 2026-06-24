@@ -439,7 +439,7 @@ export function useSpeechmaticsTranscription() {
       activeRef.current = false;
       stop();
     }
-  }, [stop, notifySpeechFinal]);
+  }, [stop, notifySpeechFinal, maybeVoiceStop]);
 
   React.useEffect(
     () => () => {
