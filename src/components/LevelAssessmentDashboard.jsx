@@ -32,7 +32,7 @@ const PARISIAN_MASCOTS = {
 };
 
 /** Shown on a fully correct answer; profile bar gains CORRECT_ANSWER_PERCENT_BUMP. */
-const CORRECT_ANSWER_PARISIAN_PTS = 50;
+const CORRECT_ANSWER_PARISIAN_PTS = 2;
 const CORRECT_ANSWER_PERCENT_BUMP = 5;
 
 const LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
