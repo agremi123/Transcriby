@@ -2582,9 +2582,11 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
               }
               parisianPointsAward={CORRECT_ANSWER_PARISIAN_PTS}
               rightInfo={
-                <div className="flex items-center gap-1.5 select-none">
-                  <span className="font-mono text-[9px] tracking-[0.14em] uppercase text-wine/50 leading-none">Parisian pts</span>
-                  <span className="font-display text-[15px] font-bold text-wine tabular-nums leading-none">{dailyParisianPoints}</span>
+                <div className="relative flex items-center justify-center w-11 h-11 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
+                  <div className="flex flex-col items-center gap-[3px] -mt-1.5">
+                    <span className="font-display text-[19px] font-bold text-wine leading-none tabular-nums">{dailyParisianPoints}</span>
+                    <span className="text-[6.5px] font-mono tracking-wide uppercase text-wine/60 leading-tight">points</span>
+                  </div>
                 </div>
               }
               leftAction={
