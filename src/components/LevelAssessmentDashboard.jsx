@@ -2186,6 +2186,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
     }
 
     setAnswerRejectedShort(false);
+    gainDailyParisianPoints(CORRECT_ANSWER_PARISIAN_PTS); // +2 Parisian points per answered question
 
     const { corrected, translation } = await fetchCorrection(trimmed, learnerLevel);
     const hasMistake = hasParisianMistake(trimmed, corrected);
