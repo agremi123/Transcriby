@@ -1808,12 +1808,8 @@ function NarratorPair({
                     speechPlaybackTime={speechPlaybackTime}
                     speechTimings={speechTimings}
                     scrollable={isQuestionLine || useSpeechContainer}
-                    scrollClassName={`overflow-y-auto scroll-premium overscroll-contain w-full ${
-                      compact ? 'max-h-[min(18dvh,100px)]' : useSpeechContainer
-                        ? 'max-h-[min(18dvh,100px)] sm:max-h-[min(26dvh,152px)]'
-                        : 'max-h-[min(28dvh,160px)]'
-                    }`}
-                    className={`font-display break-words [overflow-wrap:anywhere] [hyphens:auto] ${lineBodyClass} ${
+                    scrollClassName="w-full"
+                    className={`font-display break-words ${lineBodyClass} ${
                       useSpeechContainer ? 'text-left' : 'text-center'
                     }`}
                     wrapperClassName={`relative flex flex-col min-w-0 overflow-visible flex-1 w-full ${
