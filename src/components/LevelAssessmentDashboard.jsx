@@ -2600,6 +2600,21 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
               }
             />
 
+            {correctionDisplay?.text ? (
+              <CorrectionDisplayBar
+                text={correctionDisplay.text}
+                translation={correctionDisplay.translation}
+                onReplay={correctionDisplay.onReplay}
+                replayDisabled={correctionDisplay.replayDisabled}
+                playing={correctionDisplay.playing}
+                speechPlaybackTime={correctionDisplay.speechPlaybackTime}
+                speechTimings={correctionDisplay.speechTimings}
+                speechText={correctionDisplay.speechText}
+                replayLabel={correctionDisplay.replayLabel}
+                compact={embedded}
+              />
+            ) : null}
+
             {phase === 'feedback' && feedbackReady && !lastFeedback?.hasMistake && (
               <p className={`shrink-0 text-[12px] text-navy/50 italic text-center ${embedded ? 'mt-1' : 'mt-2'}`}>
                 {playing
