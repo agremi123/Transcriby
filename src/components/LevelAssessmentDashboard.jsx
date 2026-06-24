@@ -1604,22 +1604,24 @@ function AnswerInput({
   );
 }
 
-function NarratorLinePlayButton({ onClick, label, isPlaying = false, className = '' }) {
+function NarratorLinePlayButton({ onClick, label, isPlaying = false, size = 'md', className = '' }) {
+  const sm = size === 'sm';
+  const boxClass = sm ? 'w-5 h-5' : 'w-7 h-7';
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`shrink-0 w-7 h-7 rounded-full border border-wine/25 inline-flex items-center justify-center text-wine hover:bg-wine/5 transition-colors ${className}`.trim()}
+      className={`shrink-0 ${boxClass} rounded-full border border-wine/25 inline-flex items-center justify-center text-wine hover:bg-wine/5 transition-colors ${className}`.trim()}
       aria-label={isPlaying ? `Pause ${label}` : label}
       title={isPlaying ? 'Pause' : label}
     >
       {isPlaying ? (
-        <svg width="8" height="10" viewBox="0 0 10 12" fill="none" aria-hidden>
+        <svg width={sm ? 7 : 8} height={sm ? 9 : 10} viewBox="0 0 10 12" fill="none" aria-hidden>
           <rect x="1" y="1" width="3" height="10" rx="0.75" fill="currentColor" opacity="0.8" />
           <rect x="6" y="1" width="3" height="10" rx="0.75" fill="currentColor" opacity="0.8" />
         </svg>
       ) : (
-        <svg width="9" height="11" viewBox="0 0 11 13" fill="none" aria-hidden>
+        <svg width={sm ? 8 : 9} height={sm ? 10 : 11} viewBox="0 0 11 13" fill="none" aria-hidden>
           <path d="M0 0 L11 6.5 L0 13 Z" fill="currentColor" opacity="0.75" />
         </svg>
       )}
