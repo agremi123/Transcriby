@@ -416,6 +416,7 @@ export function useSpeechmaticsTranscription() {
             setPartialTranscript('');
             settledTextRef.current = currentUtteranceRef.current;
             partialTranscriptRef.current = '';
+            maybeVoiceStop(currentUtteranceRef.current);
             return;
           }
 
