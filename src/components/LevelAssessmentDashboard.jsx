@@ -2237,10 +2237,21 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
     await playLines(feedbackLines);
     recordSample(trimmed);
 
-    if (!hasMistake) {
+    if (hasMistake) {
+      // Auto-reveal the Parisian correction below the answer (no button) and read the
+      // corrected version aloud — the effect the old "Make it Parisian" button had.
+      const correctedDisplay = prepareCorrectionForDisplay(trimmed, corrected);
+      setLastFeedback((prev) => ({ ...prev, corrected: correctedDisplay, correctionShown: true }));
+      clearNarratorLines();
+      await playLines([buildAskerCorrectionReadLine(
+        trimmed,
+        correctedDisplay,
+        currentQuestion?.narrator || 'lea',
+      )]);
+    } else {
       gainExperience(CORRECT_ANSWER_PERCENT_BUMP);
-      setPhase('feedback');
     }
+    setPhase('feedback');
 
     setSubmitting(false);
   };
