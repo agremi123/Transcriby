@@ -68,6 +68,51 @@ function appendPeriodToWords(words) {
   last.punctuated_word = `${visible}.`;
 }
 
+// Spoken stop-command: when the learner finishes by saying "stop", we end the
+// recording for them (no need to click). Configurable per session via the
+// `voiceStopWords` option passed to start(); defaults to ["stop"].
+const DEFAULT_VOICE_STOP_WORDS = ['stop'];
+
+function normalizeStopWords(words) {
+  if (!Array.isArray(words)) return [];
+  return words.map((w) => String(w || '').trim()).filter(Boolean);
+}
+
+// Matches a stop word ONLY when it's the final spoken word of the text (allowing
+// trailing punctuation), so "stop" mid-sentence doesn't cut the recording short.
+function buildStopWordPattern(stopWords) {
+  const cleaned = normalizeStopWords(stopWords)
+    .map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  if (!cleaned.length) return null;
+  const SEP = `[\\s.,;:!?…«»"'\\-]`;
+  return new RegExp(`(?:^|${SEP})(?:${cleaned.join('|')})${SEP}*$`, 'iu');
+}
+
+// Remove any trailing spoken stop word(s) from the captured text so the command
+// itself never ends up in the learner's answer.
+function stripTrailingStopWords(text, pattern) {
+  if (!pattern || !text) return text;
+  let out = String(text);
+  let prev;
+  do {
+    prev = out;
+    out = out.replace(pattern, '').replace(/\s+$/, '');
+  } while (out && out !== prev);
+  return out;
+}
+
+function stripTrailingStopWordsFromWords(words, stopWords) {
+  const set = new Set(normalizeStopWords(stopWords).map((w) => w.toLowerCase()));
+  if (!words?.length || !set.size) return;
+  while (words.length) {
+    const norm = String(words[words.length - 1].word || '')
+      .toLowerCase()
+      .replace(/[.,;:!?…«»"'\s-]/g, '');
+    if (set.has(norm)) words.pop();
+    else break;
+  }
+}
+
 export function useSpeechmaticsTranscription() {
   const wsRef = React.useRef(null);
   const mediaRecorderRef = React.useRef(null);
