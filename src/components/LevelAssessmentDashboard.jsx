@@ -2589,18 +2589,6 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
                   </div>
                 </div>
               }
-              leftAction={
-                phase === 'review' && !lastFeedback?.correctionShown && lastFeedback?.hasMistake ? (
-                  <button
-                    type="button"
-                    onClick={handleMakeParisian}
-                    disabled={playing || correcting}
-                    className="font-display italic text-[13px] px-4 py-2 rounded-full transition-colors whitespace-nowrap shadow-[0_10px_28px_-16px_rgba(139,30,45,0.38)] bg-wine hover:bg-wine2 text-ivory disabled:opacity-50"
-                  >
-                    Make it Parisian
-                  </button>
-                ) : null
-              }
               headerRightAction={
                 showFeedbackCompris ? (
                   <NarratorHoverText
