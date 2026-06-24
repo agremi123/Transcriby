@@ -389,11 +389,13 @@ export function useSpeechmaticsTranscription() {
             if (!partial) return;
             if (utteranceStartRef.current === null) utteranceStartRef.current = data.results?.[0]?.start_time ?? 0;
             // partialTranscript is ONLY the new unstable words — settled text is shown separately
-            lastPartialRef.current = joinTranscriptSegments(currentUtteranceRef.current, partial);
+            const combined = joinTranscriptSegments(currentUtteranceRef.current, partial);
+            lastPartialRef.current = combined;
             setSettledText(currentUtteranceRef.current);
             setPartialTranscript(partial);
             settledTextRef.current = currentUtteranceRef.current;
             partialTranscriptRef.current = partial;
+            maybeVoiceStop(combined);
             return;
           }
 
