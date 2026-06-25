@@ -3475,8 +3475,9 @@ export function AudioDemoCard({
             used to live in the bottom bar). Capped width on desktop so it stays tidy. */}
         <div className="shrink-0 px-1 pb-0.5 sm:max-w-[440px] sm:mx-auto sm:w-full">
           {/* "Pick your challenge" callout — points down to the arrow below.
-              Plain text (no filled background) so it doesn't read as a button. */}
-          <div className="flex flex-col items-center -mb-0.5">
+              Plain text (no filled background) so it doesn't read as a button.
+              Hidden on mobile: there it lives inside the "Click for Léa" button. */}
+          <div className="hidden sm:flex flex-col items-center -mb-0.5">
             <span className="font-display text-[13px] sm:text-[15px] uppercase tracking-[0.14em] text-wine" style={{ fontWeight: 700 }}>
               Pick your challenge
             </span>
