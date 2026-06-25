@@ -7884,12 +7884,6 @@ export default function Hero() {
             </Reveal>
             )}
 
-            <Reveal delay={0.35}>
-              <p className="mt-6 max-w-[min(500px,calc(100vw-3rem))] text-[15px] leading-[1.6] text-navy/70">
-                Parisly listens as you speak and correct your French in real time,
-                helping you express yourself with fluency and confidence.
-              </p>
-            </Reveal>
             <Reveal delay={0.42} className="hidden sm:block">
               <div className="mt-8 flex items-center">
                 <div className="relative inline-flex">
