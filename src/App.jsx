@@ -97,7 +97,7 @@ export default function App() {
         {/* Kru Rémi credit — fixed bottom-left. Low z + pointer-events guard so it
             never steals clicks from the demo / modals layered above it. */}
         <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer"
-          className="fixed top-3 left-3 sm:top-auto sm:bottom-3 z-20 flex items-center gap-2 group pointer-events-none [&>*]:pointer-events-auto"
+          className="fixed top-[80px] left-3 sm:top-auto sm:bottom-3 z-20 flex items-center gap-2 group pointer-events-none [&>*]:pointer-events-auto"
         >
           <img src="/assets/remi-avatar.jpg" alt="Kru Rémi"
             className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all shrink-0" />
