@@ -1318,6 +1318,7 @@ function AnswerInput({
   parisianPointsAward = CORRECT_ANSWER_PARISIAN_PTS,
   rightInfo = null,
   compact = false,
+  correctionContent = null,
 }) {
   const hasSpeakContent = getSpeakText(utterances, settledText, partialTranscript).length > 0;
   const micActive = isRecording || isStoppingRecording;
