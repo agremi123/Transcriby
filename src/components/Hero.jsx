@@ -7779,9 +7779,6 @@ export default function Hero() {
               <p className="text-[12.5px] leading-[1.45] text-navy/70 sm:mt-6 sm:max-w-[min(500px,calc(100vw-3rem))] sm:text-[15px] sm:leading-[1.6]">
                 Learn Parisian French with 2 Parisians who'll guide you to your next milestone{' '}
                 <span className="font-semibold not-italic text-wine">{nextLevel(effectiveLevel) || 'B1'}</span>.
-                <span className="block mt-1.5 sm:mt-2 text-navy/50">
-                  A unique French learning experience designed by French teacher Kru Rémi.
-                </span>
               </p>
             </Reveal>
             </div>
