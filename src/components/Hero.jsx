@@ -7783,10 +7783,9 @@ export default function Hero() {
             </Reveal>
             </div>
 
-            {/* Jules et Léa — always mounted (just hidden on practice tabs) so the
-                Reveal never re-animates and the portrait never disappears/moves when
-                Léa starts speaking or state changes. */}
-            <Reveal delay={0.25} className={`order-last lg:order-none -mb-3 lg:mb-0 relative z-20 overflow-visible ${['speaking','listening','reading','writing'].includes(heroActiveTab) ? 'hidden' : ''}`}>
+            {/* Jules et Léa — hidden on practice tabs */}
+            {!['speaking','listening','reading','writing'].includes(heroActiveTab) && (
+            <Reveal delay={0.25} className="order-last lg:order-none -mb-3 lg:mb-0 relative z-20 overflow-visible">
               <div className="-mt-4 sm:mt-6 flex items-center justify-center gap-8 sm:gap-10 relative z-20 overflow-visible">
                 {narrators.filter((n) => n.id === 'lea').map((n) => {
                   const isPlaying = introPlaying === n.id;
