@@ -7783,9 +7783,11 @@ export default function Hero() {
             </Reveal>
             </div>
 
-            {/* Jules et Léa — hidden on practice tabs */}
+            {/* Jules et Léa — hidden on practice tabs. w-full on mobile so the row
+                keeps a fixed width (it lives in an items-center column); otherwise the
+                portrait shifts sideways when Léa's speech bubble replaces the CTA. */}
             {!['speaking','listening','reading','writing'].includes(heroActiveTab) && (
-            <Reveal delay={0.25} className="order-last lg:order-none -mb-3 lg:mb-0 relative z-20 overflow-visible">
+            <Reveal delay={0.25} className="w-full sm:w-auto order-last lg:order-none -mb-3 lg:mb-0 relative z-20 overflow-visible">
               <div className="-mt-4 sm:mt-6 flex items-center justify-center gap-8 sm:gap-10 relative z-20 overflow-visible">
                 {narrators.filter((n) => n.id === 'lea').map((n) => {
                   const isPlaying = introPlaying === n.id;
