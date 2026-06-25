@@ -1540,7 +1540,6 @@ function AnswerInput({
             <div className="relative flex flex-col items-center">
               <div className={`absolute left-1/2 -translate-x-1/2 ${compact ? '-top-[46px]' : '-top-[56px]'}`}>
                 {micHighlighted && micHint(micHintText)}
-                {stopHighlighted && micHint(stopHintText)}
               </div>
               <button
                 type="button"
