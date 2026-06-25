@@ -7601,7 +7601,7 @@ export default function Hero() {
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0" style={{ background: 'radial-gradient(60% 80% at 80% 30%, rgba(217,196,162,0.30), transparent 60%), linear-gradient(180deg, #F6F1E8 0%, #F2EBDA 100%)' }} />
         <img src="/assets/paris-skyline.jpg" alt=""
-          className="absolute right-0 bottom-0 w-[1280px] max-w-[125%] sm:max-w-[70%] translate-x-[-6%] sm:translate-x-0 object-contain object-bottom-right select-none"
+          className="absolute right-0 bottom-0 w-[1280px] max-w-[70%] object-contain object-bottom-right select-none"
           style={{ opacity: 0.85, mixBlendMode: 'multiply' }} />
         <div
           className="absolute inset-0"
