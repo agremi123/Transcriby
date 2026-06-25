@@ -7798,7 +7798,7 @@ export default function Hero() {
                     aria-label={`Listen to ${n.name}'s introduction`}
                     aria-pressed={isPlaying}
                   >
-                    <div className="relative w-24 h-24 sm:w-48 sm:h-48 overflow-visible">
+                    <div className="relative w-20 h-20 sm:w-48 sm:h-48 overflow-visible">
                       <AnimatePresence>
                         {isPlaying && (
                           <motion.div
