@@ -7879,7 +7879,7 @@ export default function Hero() {
                   </button>
                   {/* Mobile-only: Léa's live speech takes this spot; the assessment CTA
                       relocates to the top-right header (fixed) once she has spoken. */}
-                  <div className="sm:hidden flex-1 min-w-0 self-center text-left flex flex-col gap-2">
+                  <div className="sm:hidden flex-1 min-w-0 self-center text-left flex flex-col gap-2 translate-y-[44px] sm:translate-y-0">
                     <AnimatePresence>
                       {leaSpeech?.text && (
                         <motion.div
