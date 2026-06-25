@@ -3448,7 +3448,7 @@ export function AudioDemoCard({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={fullscreen
         ? 'fixed inset-6 z-50 bg-paper flex overflow-hidden rounded-2xl'
-        : 'relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 h-[440px] sm:min-h-[500px] sm:max-h-[500px]'}
+        : 'relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 h-[400px] sm:min-h-[500px] sm:max-h-[500px]'}
       style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)' }}
     >
       {/* Close button in fullscreen */}
@@ -4014,7 +4014,21 @@ export function AudioDemoCard({
             </div>
           ) : !isExerciseTab && activeTab !== 'practice' ? (
           <div className={`${transcriptHeight} flex flex-col min-h-0 overflow-hidden`}>
-          <div ref={scrollRef} className="scroll-premium flex-1 min-h-0 max-h-full px-3.5 pt-3 pb-6 overflow-y-auto overscroll-contain">
+          <div
+            ref={scrollRef}
+            onClick={(e) => {
+              // Mobile-only: tapping anywhere in the speech box starts recording,
+              // so learners don't have to aim for the small mic button. Desktop
+              // keeps the explicit mic button. Ignore taps on inner controls and
+              // taps while already recording / connecting.
+              if (window.matchMedia('(min-width: 640px)').matches) return;
+              if (inputMode !== 'speak') return;
+              if (isRecording || stoppingRecording || status === 'connecting') return;
+              if (e.target.closest('button, a, textarea, input, [role="button"]')) return;
+              toggleRecording();
+            }}
+            className="scroll-premium flex-1 min-h-0 max-h-full px-3.5 pt-3 pb-6 overflow-y-auto overscroll-contain sm:cursor-auto cursor-pointer"
+          >
             {activeTab === 'transcript' ? (
               /* ── Chat conversation thread ── */
               <div className="flex flex-col gap-4">
@@ -7724,7 +7738,7 @@ export default function Hero() {
               (heroActiveTab === 'speaking' && speakingActive) ||
               (heroActiveTab === 'writing' && writingActive) ? 'hidden' : ''
             }`}>
-            <h1 className="font-display text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-2">
+            <h1 className="font-display text-[32px] sm:text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-1.5 sm:gap-2">
               <Reveal delay={0.08}>Learn French</Reveal>
               <Reveal delay={0.18} className="text-wine italic">From Parisiens.</Reveal>
             </h1>
@@ -7887,8 +7901,8 @@ export default function Hero() {
 
           </div>
 
-          <div className={`flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 h-[440px] sm:min-h-[500px] sm:max-h-[500px] ${exercisePanelActive ? 'order-1 lg:order-none' : ''}`}>
-            <div className="relative shrink-0 w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] h-[440px] sm:min-h-[500px] sm:max-h-[500px]">
+          <div className={`flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 h-[400px] sm:min-h-[500px] sm:max-h-[500px] ${exercisePanelActive ? 'order-1 lg:order-none' : ''}`}>
+            <div className="relative shrink-0 w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] h-[400px] sm:min-h-[500px] sm:max-h-[500px]">
             <AudioDemoCard
               onOpenFullscreen={(topic) => goToDashboard(topic)}
               initialTopic={practiceType === 'reading' ? null : practiceTopic}
