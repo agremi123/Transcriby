@@ -7777,8 +7777,11 @@ export default function Hero() {
             <div className="w-px self-stretch bg-navy/15 shrink-0 sm:hidden" aria-hidden />
             <Reveal delay={0.35} className="flex-1 min-w-0 self-center sm:self-auto sm:flex-none">
               <p className="text-[12.5px] leading-[1.45] text-navy/70 sm:mt-6 sm:max-w-[min(500px,calc(100vw-3rem))] sm:text-[15px] sm:leading-[1.6]">
-                Parisly listens as you speak and correct your French in real time,
-                helping you express yourself with fluency and confidence.
+                Learn Parisian French with 2 Parisians who'll guide you to your next milestone{' '}
+                <span className="font-semibold not-italic text-wine">{nextLevel(effectiveLevel) || 'B1'}</span>.
+                <span className="block mt-1.5 sm:mt-2 text-navy/50">
+                  A unique French learning experience designed by French teacher Kru Rémi.
+                </span>
               </p>
             </Reveal>
             </div>
