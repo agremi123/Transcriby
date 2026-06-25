@@ -90,18 +90,6 @@ const INTRO_QUESTIONS = [
     question: "Tu fais quoi dans la vie, au quotidien ?",
     translation: 'What do you do in life, day to day?',
   },
-  {
-    id: 'why',
-    narrator: 'jules',
-    question: "Pourquoi tu apprends le français, et pourquoi le parler comme à Paris ?",
-    translation: 'Why are you learning French, and why speak it like in Paris?',
-  },
-  {
-    id: 'day',
-    narrator: 'lea',
-    question: "Raconte-moi ta journée type, du réveil au coucher.",
-    translation: 'Tell me about a typical day, from waking up to going to bed.',
-  },
 ];
 
 function formatQuestionCounter(step, total = INTRO_QUESTIONS.length) {
@@ -204,8 +192,8 @@ function buildIntroScript() {
   return [
     scriptLine(
       'lea',
-      "Salut — cinq questions perso pour voir si ton français est assez parisien.",
-      'Hi — five personal questions to see if your French is Parisian enough.',
+      "Salut — trois questions perso pour voir si ton français est assez parisien.",
+      'Hi — three personal questions to see if your French is Parisian enough.',
     ),
     scriptLine(
       'jules',
@@ -1231,6 +1219,7 @@ function CorrectionDisplayBar({
   speechText,
   replayLabel = 'Replay correction',
   compact = false,
+  inline = false,
 }) {
   const highlightBubble = playing && speechText && speechText === text;
   const lineMetricsClass = compact
@@ -1240,13 +1229,21 @@ function CorrectionDisplayBar({
 
   return (
     <div
-      className={`w-full shrink-0 pointer-events-auto ${compact ? 'mb-1' : 'mb-1.5'}`}
+      className={`w-full shrink-0 pointer-events-auto ${
+        inline
+          ? `${compact ? 'mt-2.5 pt-2.5' : 'mt-3 pt-3'} border-t border-line/50`
+          : compact ? 'mb-1' : 'mb-1.5'
+      }`}
       aria-live="polite"
     >
       <div
-        className={`rounded-xl bg-ivory/40 border border-line/60 shadow-[0_2px_12px_-8px_rgba(26,35,64,0.12)] w-full min-w-0 overflow-visible ${
-          compact ? 'px-3 py-3' : 'px-4 py-3.5'
-        }`}
+        className={
+          inline
+            ? 'w-full min-w-0 overflow-visible'
+            : `rounded-xl bg-ivory/40 border border-line/60 shadow-[0_2px_12px_-8px_rgba(26,35,64,0.12)] w-full min-w-0 overflow-visible ${
+                compact ? 'px-3 py-3' : 'px-4 py-3.5'
+              }`
+        }
       >
         <div className={`flex items-start w-full min-w-0 ${compact ? 'gap-3' : 'gap-4'}`}>
           <div
@@ -1321,6 +1318,7 @@ function AnswerInput({
   parisianPointsAward = CORRECT_ANSWER_PARISIAN_PTS,
   rightInfo = null,
   compact = false,
+  correctionContent = null,
 }) {
   const hasSpeakContent = getSpeakText(utterances, settledText, partialTranscript).length > 0;
   const micActive = isRecording || isStoppingRecording;
@@ -1395,7 +1393,7 @@ function AnswerInput({
           <div className="rounded-xl bg-ivory/40 border border-line/60">
             <div
               className={`px-4 overflow-y-auto scroll-premium ${
-                compact ? 'pt-3 pb-5 min-h-[7.5rem] max-h-[7.5rem]' : 'pt-3 pb-6 min-h-[9.75rem] max-h-[9.75rem]'
+                compact ? 'pt-3 pb-5 min-h-[10.5rem] max-h-[10.5rem]' : 'pt-3 pb-6 min-h-[13rem] max-h-[13rem]'
               }`}
             >
               {disabled ? (
@@ -1440,6 +1438,7 @@ function AnswerInput({
                   />
                 </>
               )}
+              {disabled && correctionContent}
             </div>
           </div>
 
@@ -1494,7 +1493,7 @@ function AnswerInput({
             }`}
           >
             <div className={`px-4 overflow-y-auto scroll-premium ${
-              compact ? 'pt-3 pb-5 min-h-[7.5rem] max-h-[7.5rem]' : 'pt-3 pb-6 min-h-[9.75rem] max-h-[9.75rem]'
+              compact ? 'pt-3 pb-5 min-h-[10.5rem] max-h-[10.5rem]' : 'pt-3 pb-6 min-h-[13rem] max-h-[13rem]'
             }`}>
               <p className={`font-display leading-[1.4] text-navy break-words ${
                 compact ? 'text-[16px] sm:text-[17px]' : 'text-[18px] sm:text-[19px] leading-[1.45]'
@@ -1532,6 +1531,7 @@ function AnswerInput({
                   <ProcessDots />
                 ) : null}
               </p>
+              {correctionContent}
             </div>
           </div>
 
@@ -1552,7 +1552,6 @@ function AnswerInput({
             <div className="relative flex flex-col items-center">
               <div className={`absolute left-1/2 -translate-x-1/2 ${compact ? '-top-[46px]' : '-top-[56px]'}`}>
                 {micHighlighted && micHint(micHintText)}
-                {stopHighlighted && micHint(stopHintText)}
               </div>
               <button
                 type="button"
@@ -2532,6 +2531,21 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
           >
             <AnswerInput
               compact={embedded}
+              correctionContent={correctionDisplay?.text ? (
+                <CorrectionDisplayBar
+                  inline
+                  text={correctionDisplay.text}
+                  translation={correctionDisplay.translation}
+                  onReplay={correctionDisplay.onReplay}
+                  replayDisabled={correctionDisplay.replayDisabled}
+                  playing={correctionDisplay.playing}
+                  speechPlaybackTime={correctionDisplay.speechPlaybackTime}
+                  speechTimings={correctionDisplay.speechTimings}
+                  speechText={correctionDisplay.speechText}
+                  replayLabel={correctionDisplay.replayLabel}
+                  compact={embedded}
+                />
+              ) : null}
               inputMode={inputMode}
               onInputModeChange={setInputMode}
               writeText={writeText}
@@ -2599,21 +2613,6 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
                 ) : null
               }
             />
-
-            {correctionDisplay?.text ? (
-              <CorrectionDisplayBar
-                text={correctionDisplay.text}
-                translation={correctionDisplay.translation}
-                onReplay={correctionDisplay.onReplay}
-                replayDisabled={correctionDisplay.replayDisabled}
-                playing={correctionDisplay.playing}
-                speechPlaybackTime={correctionDisplay.speechPlaybackTime}
-                speechTimings={correctionDisplay.speechTimings}
-                speechText={correctionDisplay.speechText}
-                replayLabel={correctionDisplay.replayLabel}
-                compact={embedded}
-              />
-            ) : null}
 
             {phase === 'feedback' && feedbackReady && !lastFeedback?.hasMistake && (
               <p className={`shrink-0 text-[12px] text-navy/50 italic text-center ${embedded ? 'mt-1' : 'mt-2'}`}>

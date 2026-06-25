@@ -1606,6 +1606,9 @@ export function AudioDemoCard({
   // Chat tab intro (Léa introduces herself and asks a question)
   const chatIntroPlayedRef = React.useRef(false);
   const [chatIntroLine, setChatIntroLine] = React.useState(null); // { text, narratorId }
+  // Mobile: has the learner tapped "chat with Léa" yet? Once true, Léa has asked
+  // her opening question and the box becomes a normal tap-to-record surface.
+  const [chatInvited, setChatInvited] = React.useState(false);
 
   // Chat conversation history
   const [chatHistory, setChatHistory] = React.useState([]); // [{ id, role:'lea'|'user', text, narratorId?, loading? }]
@@ -3467,7 +3470,7 @@ export function AudioDemoCard({
       {/* Mode controls + speech box — small top padding on mobile so the speech
           box sits just under the floating points / Discover row that overlaps the
           card's top edge (the Speak/Write + Discover controls are hidden on mobile). */}
-      <div className="px-3 sm:px-7 pt-2 sm:pt-3 flex flex-col gap-2 flex-1 min-h-0">
+      <div className="px-3 sm:px-7 pt-7 sm:pt-3 flex flex-col gap-2 flex-1 min-h-0">
         {/* Level-progress arrow — the clickable exercise picker (the practice tabs
             used to live in the bottom bar). Capped width on desktop so it stays tidy. */}
         <div className="shrink-0 px-1 pb-0.5 sm:max-w-[440px] sm:mx-auto sm:w-full">
@@ -4199,6 +4202,31 @@ export function AudioDemoCard({
                     <div className="w-3 h-3 rounded-full border-2 border-wine/20 border-t-wine animate-spin" />
                     Discovering a Parisian word…
                   </div>
+                )}
+                {/* Mobile: Léa's lines play next to her portrait (not in this box), so
+                    the empty chat box gets a clear CTA. Tapping it makes Léa ask her
+                    opening question; after that the box becomes a tap-to-record surface. */}
+                {!chatInvited && !isRecording && utterances.length === 0 && !chatHistory.some(m => m.role === 'user') && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setChatInvited(true);
+                      const line = chatIntroLine || chatHistoryRef.current.find(m => m.role === 'lea');
+                      if (line?.text) playNarratorLine({ id: line.narratorId || 'lea', text: line.text });
+                    }}
+                    className="sm:hidden flex flex-col items-center justify-center gap-3 text-center w-full min-h-[220px] py-8 group"
+                  >
+                    <span className="relative w-16 h-16 rounded-full overflow-hidden ring-2 ring-wine/30 group-hover:ring-wine/60 transition-all">
+                      <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
+                    </span>
+                    <span className="font-display text-[16px] italic text-navy/60 leading-snug">
+                      Tap here to chat with Léa
+                    </span>
+                    <span className="font-display text-[12px] text-navy/35 leading-snug max-w-[220px]">
+                      She'll ask you a question — answer her out loud
+                    </span>
+                  </button>
                 )}
               </div>
             ) : hasContent ? (
@@ -7738,27 +7766,41 @@ export default function Hero() {
               (heroActiveTab === 'speaking' && speakingActive) ||
               (heroActiveTab === 'writing' && writingActive) ? 'hidden' : ''
             }`}>
-            <h1 className="font-display text-[32px] sm:text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-1.5 sm:gap-2">
+            {/* Mobile: heading + intro side by side, split by a vertical divider, to
+                save vertical space so the demo box fits. Desktop (sm:contents) keeps
+                the original stacked layout untouched. */}
+            <div className="w-full flex flex-row items-stretch gap-3 text-left sm:contents">
+            <h1 className="font-display text-[28px] sm:text-[48px] leading-[1.02] sm:leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-1 sm:gap-2 shrink-0 self-center sm:self-auto">
               <Reveal delay={0.08}>Learn French</Reveal>
               <Reveal delay={0.18} className="text-wine italic">From Parisiens.</Reveal>
             </h1>
+            <div className="w-px self-stretch bg-navy/15 shrink-0 sm:hidden" aria-hidden />
+            <Reveal delay={0.35} className="flex-1 min-w-0 self-center sm:self-auto sm:flex-none">
+              <p className="text-[12.5px] leading-[1.45] text-navy/70 sm:mt-6 sm:max-w-[min(500px,calc(100vw-3rem))] sm:text-[15px] sm:leading-[1.6]">
+                Learn Parisian French with 2 Parisians who'll guide you to your next milestone{' '}
+                <span className="font-semibold not-italic text-wine">{nextLevel(effectiveLevel) || 'B1'}</span>.
+              </p>
+            </Reveal>
+            </div>
 
-            {/* Jules et Léa — hidden on practice tabs */}
+            {/* Jules et Léa — hidden on practice tabs. w-full on mobile so the row
+                keeps a fixed width (it lives in an items-center column); otherwise the
+                portrait shifts sideways when Léa's speech bubble replaces the CTA. */}
             {!['speaking','listening','reading','writing'].includes(heroActiveTab) && (
-            <Reveal delay={0.25} className="order-last lg:order-none -mb-3 lg:mb-0 relative z-20 overflow-visible">
-              <div className="mt-6 flex items-center justify-center gap-8 sm:gap-10 relative z-20 overflow-visible">
+            <Reveal delay={0.25} className="w-full sm:w-auto order-last lg:order-none -mb-3 lg:mb-0 relative z-20 overflow-visible">
+              <div className="-mt-4 sm:mt-6 flex items-center justify-center gap-8 sm:gap-10 relative z-20 overflow-visible">
                 {narrators.filter((n) => n.id === 'lea').map((n) => {
                   const isPlaying = introPlaying === n.id;
                   return (
-                  <div key={n.id} className="flex items-center gap-3 w-full px-2 sm:contents">
+                  <div key={n.id} className="flex items-start gap-3 w-full px-2 sm:contents">
                   <button
                     type="button"
                     onClick={() => playNarratorIntro(n)}
-                    className="group relative flex flex-col items-center gap-2"
+                    className="group relative z-20 flex flex-col items-center gap-2 translate-y-[44px] sm:translate-y-0"
                     aria-label={`Listen to ${n.name}'s introduction`}
                     aria-pressed={isPlaying}
                   >
-                    <div className="relative w-24 h-24 sm:w-48 sm:h-48 overflow-visible">
+                    <div className="relative w-20 h-20 sm:w-48 sm:h-48 overflow-visible">
                       <AnimatePresence>
                         {isPlaying && (
                           <motion.div
@@ -7839,7 +7881,7 @@ export default function Hero() {
                   </button>
                   {/* Mobile-only: Léa's live speech takes this spot; the assessment CTA
                       relocates to the top-right header (fixed) once she has spoken. */}
-                  <div className="sm:hidden flex-1 min-w-0 self-center text-left flex flex-col gap-2">
+                  <div className="sm:hidden flex-1 min-w-0 self-center text-left flex flex-col gap-2 translate-y-[44px] sm:translate-y-0">
                     <AnimatePresence>
                       {leaSpeech?.text && (
                         <motion.div
@@ -7872,12 +7914,6 @@ export default function Hero() {
             </Reveal>
             )}
 
-            <Reveal delay={0.35}>
-              <p className="mt-6 max-w-[min(500px,calc(100vw-3rem))] text-[15px] leading-[1.6] text-navy/70">
-                Parisly listens as you speak and correct your French in real time,
-                helping you express yourself with fluency and confidence.
-              </p>
-            </Reveal>
             <Reveal delay={0.42} className="hidden sm:block">
               <div className="mt-8 flex items-center">
                 <div className="relative inline-flex">
