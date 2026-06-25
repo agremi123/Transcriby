@@ -7738,7 +7738,7 @@ export default function Hero() {
               (heroActiveTab === 'speaking' && speakingActive) ||
               (heroActiveTab === 'writing' && writingActive) ? 'hidden' : ''
             }`}>
-            <h1 className="font-display text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-2">
+            <h1 className="font-display text-[32px] sm:text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-1.5 sm:gap-2">
               <Reveal delay={0.08}>Learn French</Reveal>
               <Reveal delay={0.18} className="text-wine italic">From Parisiens.</Reveal>
             </h1>
