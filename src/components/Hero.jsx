@@ -7794,7 +7794,7 @@ export default function Hero() {
                   <button
                     type="button"
                     onClick={() => playNarratorIntro(n)}
-                    className="group relative flex flex-col items-center gap-2"
+                    className="group relative z-20 flex flex-col items-center gap-2 translate-y-[44px] sm:translate-y-0"
                     aria-label={`Listen to ${n.name}'s introduction`}
                     aria-pressed={isPlaying}
                   >
