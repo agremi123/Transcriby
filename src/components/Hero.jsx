@@ -1606,6 +1606,9 @@ export function AudioDemoCard({
   // Chat tab intro (Léa introduces herself and asks a question)
   const chatIntroPlayedRef = React.useRef(false);
   const [chatIntroLine, setChatIntroLine] = React.useState(null); // { text, narratorId }
+  // Mobile: has the learner tapped "chat with Léa" yet? Once true, Léa has asked
+  // her opening question and the box becomes a normal tap-to-record surface.
+  const [chatInvited, setChatInvited] = React.useState(false);
 
   // Chat conversation history
   const [chatHistory, setChatHistory] = React.useState([]); // [{ id, role:'lea'|'user', text, narratorId?, loading? }]
