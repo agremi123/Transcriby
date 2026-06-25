@@ -2530,6 +2530,21 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
           >
             <AnswerInput
               compact={embedded}
+              correctionContent={correctionDisplay?.text ? (
+                <CorrectionDisplayBar
+                  inline
+                  text={correctionDisplay.text}
+                  translation={correctionDisplay.translation}
+                  onReplay={correctionDisplay.onReplay}
+                  replayDisabled={correctionDisplay.replayDisabled}
+                  playing={correctionDisplay.playing}
+                  speechPlaybackTime={correctionDisplay.speechPlaybackTime}
+                  speechTimings={correctionDisplay.speechTimings}
+                  speechText={correctionDisplay.speechText}
+                  replayLabel={correctionDisplay.replayLabel}
+                  compact={embedded}
+                />
+              ) : null}
               inputMode={inputMode}
               onInputModeChange={setInputMode}
               writeText={writeText}
