@@ -7738,10 +7738,22 @@ export default function Hero() {
               (heroActiveTab === 'speaking' && speakingActive) ||
               (heroActiveTab === 'writing' && writingActive) ? 'hidden' : ''
             }`}>
-            <h1 className="font-display text-[32px] sm:text-[48px] leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-1.5 sm:gap-2">
+            {/* Mobile: heading + intro side by side, split by a vertical divider, to
+                save vertical space so the demo box fits. Desktop (sm:contents) keeps
+                the original stacked layout untouched. */}
+            <div className="w-full flex flex-row items-stretch gap-3 text-left sm:contents">
+            <h1 className="font-display text-[28px] sm:text-[48px] leading-[1.02] sm:leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-1 sm:gap-2 shrink-0 self-center sm:self-auto">
               <Reveal delay={0.08}>Learn French</Reveal>
               <Reveal delay={0.18} className="text-wine italic">From Parisiens.</Reveal>
             </h1>
+            <div className="w-px self-stretch bg-navy/15 shrink-0 sm:hidden" aria-hidden />
+            <Reveal delay={0.35} className="flex-1 min-w-0 self-center sm:self-auto sm:flex-none">
+              <p className="text-[12.5px] leading-[1.45] text-navy/70 sm:mt-6 sm:max-w-[min(500px,calc(100vw-3rem))] sm:text-[15px] sm:leading-[1.6]">
+                Parisly listens as you speak and correct your French in real time,
+                helping you express yourself with fluency and confidence.
+              </p>
+            </Reveal>
+            </div>
 
             {/* Jules et Léa — hidden on practice tabs */}
             {!['speaking','listening','reading','writing'].includes(heroActiveTab) && (
