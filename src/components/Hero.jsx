@@ -7911,7 +7911,6 @@ export default function Hero() {
                 })}
               </div>
             </Reveal>
-            )}
 
             <Reveal delay={0.42} className="hidden sm:block">
               <div className="mt-8 flex items-center">
