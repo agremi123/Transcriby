@@ -7792,7 +7792,7 @@ export default function Hero() {
                 {narrators.filter((n) => n.id === 'lea').map((n) => {
                   const isPlaying = introPlaying === n.id;
                   return (
-                  <div key={n.id} className="flex items-center gap-3 w-full px-2 sm:contents">
+                  <div key={n.id} className="flex items-start gap-3 w-full px-2 sm:contents">
                   <button
                     type="button"
                     onClick={() => playNarratorIntro(n)}
