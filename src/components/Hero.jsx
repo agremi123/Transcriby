@@ -4203,6 +4203,31 @@ export function AudioDemoCard({
                     Discovering a Parisian word…
                   </div>
                 )}
+                {/* Mobile: Léa's lines play next to her portrait (not in this box), so
+                    the empty chat box gets a clear CTA. Tapping it makes Léa ask her
+                    opening question; after that the box becomes a tap-to-record surface. */}
+                {!chatInvited && !isRecording && utterances.length === 0 && !chatHistory.some(m => m.role === 'user') && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setChatInvited(true);
+                      const line = chatIntroLine || chatHistoryRef.current.find(m => m.role === 'lea');
+                      if (line?.text) playNarratorLine({ id: line.narratorId || 'lea', text: line.text });
+                    }}
+                    className="sm:hidden flex flex-col items-center justify-center gap-3 text-center w-full min-h-[220px] py-8 group"
+                  >
+                    <span className="relative w-16 h-16 rounded-full overflow-hidden ring-2 ring-wine/30 group-hover:ring-wine/60 transition-all">
+                      <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
+                    </span>
+                    <span className="font-display text-[16px] italic text-navy/60 leading-snug">
+                      Tap here to chat with Léa
+                    </span>
+                    <span className="font-display text-[12px] text-navy/35 leading-snug max-w-[220px]">
+                      She'll ask you a question — answer her out loud
+                    </span>
+                  </button>
+                )}
               </div>
             ) : hasContent ? (
               <>
