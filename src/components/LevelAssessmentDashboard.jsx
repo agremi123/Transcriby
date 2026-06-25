@@ -1530,6 +1530,7 @@ function AnswerInput({
                   <ProcessDots />
                 ) : null}
               </p>
+              {correctionContent}
             </div>
           </div>
 
