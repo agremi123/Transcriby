@@ -90,18 +90,6 @@ const INTRO_QUESTIONS = [
     question: "Tu fais quoi dans la vie, au quotidien ?",
     translation: 'What do you do in life, day to day?',
   },
-  {
-    id: 'why',
-    narrator: 'jules',
-    question: "Pourquoi tu apprends le français, et pourquoi le parler comme à Paris ?",
-    translation: 'Why are you learning French, and why speak it like in Paris?',
-  },
-  {
-    id: 'day',
-    narrator: 'lea',
-    question: "Raconte-moi ta journée type, du réveil au coucher.",
-    translation: 'Tell me about a typical day, from waking up to going to bed.',
-  },
 ];
 
 function formatQuestionCounter(step, total = INTRO_QUESTIONS.length) {
