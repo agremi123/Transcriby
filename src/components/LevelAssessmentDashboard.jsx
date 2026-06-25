@@ -1219,6 +1219,7 @@ function CorrectionDisplayBar({
   speechText,
   replayLabel = 'Replay correction',
   compact = false,
+  inline = false,
 }) {
   const highlightBubble = playing && speechText && speechText === text;
   const lineMetricsClass = compact
@@ -1228,13 +1229,21 @@ function CorrectionDisplayBar({
 
   return (
     <div
-      className={`w-full shrink-0 pointer-events-auto ${compact ? 'mb-1' : 'mb-1.5'}`}
+      className={`w-full shrink-0 pointer-events-auto ${
+        inline
+          ? `${compact ? 'mt-2.5 pt-2.5' : 'mt-3 pt-3'} border-t border-line/50`
+          : compact ? 'mb-1' : 'mb-1.5'
+      }`}
       aria-live="polite"
     >
       <div
-        className={`rounded-xl bg-ivory/40 border border-line/60 shadow-[0_2px_12px_-8px_rgba(26,35,64,0.12)] w-full min-w-0 overflow-visible ${
-          compact ? 'px-3 py-3' : 'px-4 py-3.5'
-        }`}
+        className={
+          inline
+            ? 'w-full min-w-0 overflow-visible'
+            : `rounded-xl bg-ivory/40 border border-line/60 shadow-[0_2px_12px_-8px_rgba(26,35,64,0.12)] w-full min-w-0 overflow-visible ${
+                compact ? 'px-3 py-3' : 'px-4 py-3.5'
+              }`
+        }
       >
         <div className={`flex items-start w-full min-w-0 ${compact ? 'gap-3' : 'gap-4'}`}>
           <div
