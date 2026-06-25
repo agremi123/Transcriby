@@ -4014,7 +4014,21 @@ export function AudioDemoCard({
             </div>
           ) : !isExerciseTab && activeTab !== 'practice' ? (
           <div className={`${transcriptHeight} flex flex-col min-h-0 overflow-hidden`}>
-          <div ref={scrollRef} className="scroll-premium flex-1 min-h-0 max-h-full px-3.5 pt-3 pb-6 overflow-y-auto overscroll-contain">
+          <div
+            ref={scrollRef}
+            onClick={(e) => {
+              // Mobile-only: tapping anywhere in the speech box starts recording,
+              // so learners don't have to aim for the small mic button. Desktop
+              // keeps the explicit mic button. Ignore taps on inner controls and
+              // taps while already recording / connecting.
+              if (window.matchMedia('(min-width: 640px)').matches) return;
+              if (inputMode !== 'speak') return;
+              if (isRecording || stoppingRecording || status === 'connecting') return;
+              if (e.target.closest('button, a, textarea, input, [role="button"]')) return;
+              toggleRecording();
+            }}
+            className="scroll-premium flex-1 min-h-0 max-h-full px-3.5 pt-3 pb-6 overflow-y-auto overscroll-contain sm:cursor-auto cursor-pointer"
+          >
             {activeTab === 'transcript' ? (
               /* ── Chat conversation thread ── */
               <div className="flex flex-col gap-4">
