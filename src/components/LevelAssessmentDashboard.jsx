@@ -1383,7 +1383,7 @@ function AnswerInput({
           <div className="rounded-xl bg-ivory/40 border border-line/60">
             <div
               className={`px-4 overflow-y-auto scroll-premium ${
-                compact ? 'pt-3 pb-5 min-h-[7.5rem] max-h-[7.5rem]' : 'pt-3 pb-6 min-h-[9.75rem] max-h-[9.75rem]'
+                compact ? 'pt-3 pb-5 min-h-[10.5rem] max-h-[10.5rem]' : 'pt-3 pb-6 min-h-[13rem] max-h-[13rem]'
               }`}
             >
               {disabled ? (
@@ -1482,7 +1482,7 @@ function AnswerInput({
             }`}
           >
             <div className={`px-4 overflow-y-auto scroll-premium ${
-              compact ? 'pt-3 pb-5 min-h-[7.5rem] max-h-[7.5rem]' : 'pt-3 pb-6 min-h-[9.75rem] max-h-[9.75rem]'
+              compact ? 'pt-3 pb-5 min-h-[10.5rem] max-h-[10.5rem]' : 'pt-3 pb-6 min-h-[13rem] max-h-[13rem]'
             }`}>
               <p className={`font-display leading-[1.4] text-navy break-words ${
                 compact ? 'text-[16px] sm:text-[17px]' : 'text-[18px] sm:text-[19px] leading-[1.45]'
