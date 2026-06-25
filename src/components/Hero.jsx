@@ -7900,9 +7900,10 @@ export default function Hero() {
                       <button
                         type="button"
                         onClick={() => goToDashboard()}
-                        className="inline-flex items-center text-left font-display text-[13.5px] leading-snug text-ivory bg-wine hover:bg-wine2 rounded-2xl px-3.5 py-2.5 shadow-sm self-start"
+                        className="flex flex-col items-start text-left text-ivory bg-wine hover:bg-wine2 rounded-2xl px-3.5 py-2.5 shadow-sm self-start"
                       >
-                        Click for Léa to judge your French
+                        <span className="font-display text-[13.5px] leading-snug">Click for Léa to judge your French</span>
+                        <span className="mt-1 font-display text-[10px] uppercase tracking-[0.16em] text-ivory/70">Pick your challenge</span>
                       </button>
                     )}
                   </div>
