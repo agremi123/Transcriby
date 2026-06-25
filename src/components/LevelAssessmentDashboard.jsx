@@ -192,8 +192,8 @@ function buildIntroScript() {
   return [
     scriptLine(
       'lea',
-      "Salut — cinq questions perso pour voir si ton français est assez parisien.",
-      'Hi — five personal questions to see if your French is Parisian enough.',
+      "Salut — trois questions perso pour voir si ton français est assez parisien.",
+      'Hi — three personal questions to see if your French is Parisian enough.',
     ),
     scriptLine(
       'jules',
