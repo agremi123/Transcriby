@@ -712,9 +712,15 @@ function CircledLevel({ level, size = 'sm', compact = false }) {
   );
 }
 
-function TraitGaugeRow({ label, score, tone = 'neutral', compact = false }) {
+function TraitGaugeRow({ label, score, tone = 'neutral', compact = false, maxLevel = null }) {
   const barColor = tone === 'strength' ? 'bg-green-600' : tone === 'weakness' ? 'bg-wine' : 'bg-navy/60';
-  const { level: traitLevel, nextLevel, progressInBand } = getTraitProgressToNextLevel(score);
+  const raw = getTraitProgressToNextLevel(score);
+  // A trait can never read above the learner's real assessed level — e.g. an A2
+  // learner must not show a B2/C1 strength. Cap the badge (and the bar) at maxLevel.
+  const capped = maxLevel && LEVEL_ORDER.indexOf(raw.level) >= LEVEL_ORDER.indexOf(maxLevel);
+  const traitLevel = capped ? maxLevel : raw.level;
+  const nextLevel = capped ? null : raw.nextLevel;
+  const progressInBand = capped ? 1 : raw.progressInBand;
   const improveMode = TRAIT_IMPROVE_MODE[label] || 'speak';
   const reachHref = nextLevel ? buildLearnPathUrl(improveMode, nextLevel) : null;
   const percentReached = Math.round(progressInBand * 100);
