@@ -6518,7 +6518,11 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
   const handleClick = React.useCallback(async (raw, rect) => {
     const clean = raw.replace(/[^a-zA-ZÀ-ÿœæ'-]/g, '').toLowerCase();
     if (!clean || clean.length < 2) return;
-    setTooltipPos({ top: rect.top, left: rect.left + rect.width / 2 });
+    // Clamp horizontally so the tooltip never spills past the screen edges.
+    const half = 130, pad = 10;
+    const cx = rect.left + rect.width / 2;
+    const clampedLeft = Math.min(Math.max(cx, half + pad), window.innerWidth - half - pad);
+    setTooltipPos({ top: rect.top, left: clampedLeft });
     setActiveWord(clean);
     if (cacheRef.current[clean] !== undefined) return;
     setLoadingWord(clean);
