@@ -1162,7 +1162,7 @@ function SpeakWriteToggle({ mode, onChange, disabled, compact = false, className
           disabled={disabled}
           onClick={() => onChange(m.id)}
           className={`relative z-10 font-display tracking-wide rounded-full capitalize transition-colors duration-200 disabled:opacity-40 ${
-            compact ? 'text-[12px] px-3 py-1' : 'text-[13px] px-4 py-1.5'
+            compact ? 'text-[15px] px-3.5 py-1' : 'text-[16px] px-4 py-1.5'
           } ${mode === m.id ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'}`}
         >
           {m.label}
