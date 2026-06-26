@@ -14,19 +14,6 @@
       ],
       "port": 5188,
       "autoPort": false
-    },
-    {
-      "name": "dev-verify",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "dev",
-        "--",
-        "--port",
-        "5199"
-      ],
-      "port": 5199,
-      "autoPort": true
     }
   ]
 }
