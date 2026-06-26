@@ -966,13 +966,13 @@ function readingMiddleware(apiKey, openrouterKey, supabaseUrl, supabaseKey) {
         claudeCall('reading/questions', apiKey, {
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 1600,
-          system: `Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. Each has 4 options and one correct answer. For each, add "explanation": one or two clear ENGLISH sentences explaining why the correct answer is right and why the other options are wrong. Return ONLY raw JSON, no markdown: {"questions":[{"question":"Question en français ?","options":["A","B","C","D"],"answer":"A","explanation":"In English: A is correct because…; the others are wrong because…"}]}`,
+          system: `Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. ${readingExerciseDirective(normalizeLevel(learnerLevel))} Each has 4 options and one correct answer. For each, add "explanation": one or two clear ENGLISH sentences explaining why the correct answer is right and why the other options are wrong. Return ONLY raw JSON, no markdown: {"questions":[{"question":"Question en français ?","options":["A","B","C","D"],"answer":"A","explanation":"In English: A is correct because…; the others are wrong because…"}]}`,
           messages: [{ role: 'user', content: passage }],
         }),
         claudeCall('reading/vocab', apiKey, {
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 700,
-          system: `From the given French passage, pick exactly 5 difficult or interesting vocabulary words. For each: "definition" MUST be the English translation/meaning (in English, not French), and write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"French word","definition":"English meaning","sentence":"...___..."}]}`,
+          system: `From the given French passage, pick exactly 5 vocabulary words. ${readingExerciseDirective(normalizeLevel(learnerLevel))} For each: "definition" MUST be the English translation/meaning (in English, not French), and write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"French word","definition":"English meaning","sentence":"...___..."}]}`,
           messages: [{ role: 'user', content: passage }],
         }),
         claudeCall('reading/grammar', apiKey, {
