@@ -1316,7 +1316,7 @@ export async function handleSpeakingReaction(body) {
       apiKey: ANTHROPIC_API_KEY,
       system: buildSpeakingReactionSystem({ name, gender, topic, openingLine, grammarPoint, grammarHint, vocabWords, allTurns, hasTargets, level }),
       user: `L'étudiant vient de dire: "${utterance}"`,
-      maxTokens: 320,
+      maxTokens: 520,
     });
     const sentenceCorrect = result.sentenceCorrect !== false;
     return { statusCode: 200, body: {
