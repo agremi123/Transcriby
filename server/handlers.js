@@ -55,16 +55,9 @@ function normalizeLearnerLevel(level) {
   return CEFR_LEVELS.includes(v) ? v : 'A2';
 }
 
+// Richer per-level context now lives in server/levelAdapt.js (shared with dev).
 function learnerLevelContext(level) {
-  const l = normalizeLearnerLevel(level);
-  const idx = CEFR_LEVELS.indexOf(l);
-  if (idx <= 1) {
-    return `The learner's approximate level is ${l} (beginner). Use simple, encouraging French. Avoid slang they won't understand. Explain briefly when needed.`;
-  }
-  if (idx <= 3) {
-    return `The learner's approximate level is ${l} (intermediate). Balance clarity with natural Parisian expressions.`;
-  }
-  return `The learner's approximate level is ${l} (advanced). Be demanding — expect nuance, idioms, and authentic Parisian register.`;
+  return buildLearnerLevelContext(normalizeLearnerLevel(level));
 }
 
 export const ELEVENLABS_VOICES = {
