@@ -112,9 +112,9 @@ export function conversationDirective(level) {
   const s = spec(l);
   switch (l) {
     case 'A1':
-      return `NIVEAU DE L'ÉTUDIANT : ${s.label}. Parle TRÈS simplement : ${s.sentences}. Grammaire : ${s.grammar}. Vocabulaire : ${s.vocab}. ${s.slang}. Articule comme à un débutant total et pose des questions très simples (oui/non, ou « A ou B ? »). IMPORTANT : juste après chaque mot ou expression qui peut être difficile, ajoute sa traduction anglaise entre parenthèses, ex. « On y va (let's go) ». Sois extrêmement encourageant(e) ; ne corrige jamais durement, redonne plutôt la bonne phrase en modèle.`;
+      return `NIVEAU DE L'ÉTUDIANT : ${s.label}. Réponds TRÈS court (1 phrase, max ~12 mots) et TRÈS simplement : ${s.sentences}. Grammaire : ${s.grammar}. Vocabulaire : ${s.vocab}. ${s.slang}. Pose des questions très simples (oui/non, ou « A ou B ? »). Pour 1 ou 2 mots difficiles SEULEMENT, ajoute la traduction anglaise entre parenthèses juste après, ex. « On y va (let's go) » — n'abuse pas des parenthèses. Sois très encourageant(e) ; ne corrige jamais durement, redonne plutôt la bonne phrase en modèle.`;
     case 'A2':
-      return `NIVEAU DE L'ÉTUDIANT : ${s.label}. Parle simplement : ${s.sentences}. Grammaire : ${s.grammar}. Vocabulaire : ${s.vocab}. ${s.slang}. Si tu emploies un mot difficile ou un argot, glose-le brièvement en anglais entre parenthèses. Pose des questions simples et reste chaleureux(se) et patient(e).`;
+      return `NIVEAU DE L'ÉTUDIANT : ${s.label}. Réponds court (1-2 phrases simples) : ${s.sentences}. Grammaire : ${s.grammar}. Vocabulaire : ${s.vocab}. ${s.slang}. Si tu emploies UN mot difficile, glose-le brièvement en anglais entre parenthèses (un seul par réponse). Pose des questions simples et reste chaleureux(se).`;
     case 'B1':
       return `NIVEAU DE L'ÉTUDIANT : ${s.label}. Parle à un rythme naturel mais clair : ${s.sentences}. Tu peux employer ${s.slang}. Reste en français (plus de traduction anglaise). Pousse l'étudiant à développer ses réponses.`;
     case 'B2':
