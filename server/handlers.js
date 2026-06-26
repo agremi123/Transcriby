@@ -648,16 +648,17 @@ async function generateReadingBundle(apiKey, level = 'B1') {
   const passage = extractData.passage?.trim() || '';
   if (!passage) throw new Error('No passage extracted');
 
-  // Run questions + exercises in parallel
+  // Run questions + exercises in parallel, tuned to the learner's level.
+  const exDir = readingExerciseDirective(lvl);
   const [qParsed, exParsed] = await Promise.all([
     claudeJSON({
       apiKey, maxTokens: 1600,
-      system: 'Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}',
+      system: `Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. ${exDir} For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}`,
       user: passage,
     }),
     claudeJSON({
       apiKey, maxTokens: 2400,
-      system: `French language teacher. From the passage generate:
+      system: `French language teacher. ${exDir} From the passage generate:
 1. 4 vocabulary fill-in-the-blank (key words from article)
 2. 1 grammar point with explanation, example, exactly 6 fill-in-the-blank practice exercises (one "___" per sentence; hint = base form of answer), AND a "production" task: an instruction (in French) telling the learner to write their own sentence using this grammar, plus a correct model sentence
 3. 4 conjugation fill-in-the-blank (verbs from article)
@@ -669,10 +670,11 @@ Raw JSON only:
 
   return {
     title: chosen.title || '',
-    source: chosen.feedName || null,
+    source: chosen.source || null,
     author: chosen.author || null,
-    date: chosen.pubDate || null,
+    date: chosen.date || null,
     link: chosen.link || null,
+    level: lvl,
     passage,
     questions: qParsed.questions || [],
     vocab: exParsed.vocab || [],
