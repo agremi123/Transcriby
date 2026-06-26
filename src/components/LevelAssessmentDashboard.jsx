@@ -1433,7 +1433,7 @@ function AnswerInput({
                     placeholder="Écris ta réponse en français…"
                     rows={compact ? 4 : 5}
                     className={`w-full bg-transparent font-display leading-[1.45] text-navy placeholder:text-navy/25 outline-none resize-none ${
-                      compact ? 'text-[16px] sm:text-[17px] min-h-[6.5rem]' : 'text-[18px] sm:text-[19px] min-h-[8.25rem]'
+                      compact ? 'text-[19px] sm:text-[21px] min-h-[6.5rem]' : 'text-[21px] sm:text-[23px] min-h-[8.25rem]'
                     }`}
                   />
                 </>
