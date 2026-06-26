@@ -955,6 +955,16 @@ function FrenchOpinionReport({
             }`}>
               {mood}
             </p>
+            {nextLevel ? (
+              <a
+                href={reachListeningHref}
+                className={`mt-0.5 inline-flex items-center justify-center rounded-full bg-wine text-ivory font-display whitespace-nowrap hover:bg-wine2 hover:shadow-sm transition-all duration-200 ${
+                  compact ? 'text-[11px] px-3 py-1.5' : 'text-[12px] sm:text-[13px] px-3.5 py-2'
+                }`}
+              >
+                Click to reach {nextLevel}
+              </a>
+            ) : null}
           </div>
           <VerdictNarratorColumn
             narratorId="jules"
