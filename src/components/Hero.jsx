@@ -1815,6 +1815,7 @@ export function AudioDemoCard({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         type: 'word-challenge',
+        learnerLevel: effectiveLevel,
         utterance: userText,
         word: challenge.word,
         meaning: challenge.meaning,
