@@ -1691,8 +1691,9 @@ function speakingPromptMiddleware(apiKey) {
         const hasTargets = Boolean(grammarPoint || vocabWords.length);
         const correctionRule = `Évalue aussi la correction du DERNIER tour de l'étudiant (français naturel et correct ?). Ignore la ponctuation, les majuscules et le bruit de transcription orale. S'il y a la moindre faute (grammaire, conjugaison, accord, mot mal employé, ordre des mots), mets sentenceCorrect=false et donne dans correction la phrase corrigée en français naturel + sa traduction anglaise. Sinon sentenceCorrect=true et correction=null.`;
         const system = !hasTargets
-          ? `Tu es ${name}, ${gender} natif(ve) qui aide un étudiant à pratiquer le français oral.\nLe sujet de conversation: "${topic || 'conversation libre'}"\nTu as lancé la conversation en disant: "${openingLine}"\nL'étudiant vient de parler. Réponds naturellement en 1-2 phrases courtes en français.\nSois curieux(se), encourageant(e), et rebondis sur ce qu'il a dit.\n${correctionRule}\nJSON: {"text":"...","translation":"...","usedGrammar":true,"usedVocab":[],"complete":false,"sentenceCorrect":bool,"correction":{"corrected":"...","translation":"..."}|null}`
+          ? `Tu es ${name}, ${gender} natif(ve) qui aide un étudiant à pratiquer le français oral.\n${levelDir}\nLe sujet de conversation: "${topic || 'conversation libre'}"\nTu as lancé la conversation en disant: "${openingLine}"\nL'étudiant vient de parler. Réponds naturellement en 1-2 phrases courtes en français.\nSois curieux(se), encourageant(e), et rebondis sur ce qu'il a dit.\n${correctionRule}\nJSON: {"text":"...","translation":"...","usedGrammar":true,"usedVocab":[],"complete":false,"sentenceCorrect":bool,"correction":{"corrected":"...","translation":"..."}|null}`
           : `Tu es ${name}, ${gender} natif(ve) qui fait pratiquer le français oral à un étudiant dans une conversation guidée.
+${levelDir}
 Sujet : "${topic || 'conversation libre'}". Tu as lancé la conversation par : "${openingLine}".
 Au fil de la discussion, l'étudiant doit employer :
 ${grammarPoint ? `- Grammaire : ${grammarPoint}${grammarHint ? ` (${grammarHint})` : ''}` : '- (pas de grammaire imposée)'}
