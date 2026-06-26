@@ -1319,6 +1319,7 @@ function AnswerInput({
   rightInfo = null,
   compact = false,
   correctionContent = null,
+  answerNarratorName = 'Léa',
 }) {
   const hasSpeakContent = getSpeakText(utterances, settledText, partialTranscript).length > 0;
   const micActive = isRecording || isStoppingRecording;
