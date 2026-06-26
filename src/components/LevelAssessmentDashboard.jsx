@@ -1162,7 +1162,7 @@ function SpeakWriteToggle({ mode, onChange, disabled, compact = false, className
           disabled={disabled}
           onClick={() => onChange(m.id)}
           className={`relative z-10 font-display tracking-wide rounded-full capitalize transition-colors duration-200 disabled:opacity-40 ${
-            compact ? 'text-[12px] px-3 py-1' : 'text-[13px] px-4 py-1.5'
+            compact ? 'text-[15px] px-3.5 py-1' : 'text-[16px] px-4 py-1.5'
           } ${mode === m.id ? 'text-ivory' : 'text-navy/45 hover:text-navy/70'}`}
         >
           {m.label}
@@ -1175,12 +1175,12 @@ function SpeakWriteToggle({ mode, onChange, disabled, compact = false, className
 function questionLineTypography(question, translation) {
   const totalChars = question.length + (translation?.length || 0);
   if (totalChars > 100 || question.length > 58) {
-    return 'text-[13px] sm:text-[14px] leading-[1.35]';
+    return 'text-[16px] sm:text-[17px] leading-[1.35]';
   }
   if (totalChars > 70 || question.length > 44) {
-    return 'text-[14px] sm:text-[15px] leading-[1.35]';
+    return 'text-[17px] sm:text-[18px] leading-[1.35]';
   }
-  return 'text-[15px] sm:text-[17px] leading-[1.3]';
+  return 'text-[18px] sm:text-[20px] leading-[1.3]';
 }
 
 function getNarratorSpeechContainerClass(compact = false) {
@@ -1319,6 +1319,7 @@ function AnswerInput({
   rightInfo = null,
   compact = false,
   correctionContent = null,
+  answerNarratorName = 'Léa',
 }) {
   const hasSpeakContent = getSpeakText(utterances, settledText, partialTranscript).length > 0;
   const micActive = isRecording || isStoppingRecording;
@@ -1393,13 +1394,13 @@ function AnswerInput({
           <div className="rounded-xl bg-ivory/40 border border-line/60">
             <div
               className={`px-4 overflow-y-auto scroll-premium ${
-                compact ? 'pt-3 pb-5 min-h-[10.5rem] max-h-[10.5rem]' : 'pt-3 pb-6 min-h-[13rem] max-h-[13rem]'
+                compact ? 'pt-3 pb-5 min-h-[12.5rem] max-h-[12.5rem]' : 'pt-3 pb-6 min-h-[15rem] max-h-[15rem]'
               }`}
             >
               {disabled ? (
                 <p
                   className={`font-display leading-[1.45] text-navy break-words whitespace-pre-wrap ${
-                    compact ? 'text-[16px] sm:text-[17px]' : 'text-[18px] sm:text-[19px]'
+                    compact ? 'text-[19px] sm:text-[21px]' : 'text-[21px] sm:text-[23px]'
                   }`}
                 >
                   {showCorrectionUnderline ? (
@@ -1433,7 +1434,7 @@ function AnswerInput({
                     placeholder="Écris ta réponse en français…"
                     rows={compact ? 4 : 5}
                     className={`w-full bg-transparent font-display leading-[1.45] text-navy placeholder:text-navy/25 outline-none resize-none ${
-                      compact ? 'text-[16px] sm:text-[17px] min-h-[6.5rem]' : 'text-[18px] sm:text-[19px] min-h-[8.25rem]'
+                      compact ? 'text-[19px] sm:text-[21px] min-h-[6.5rem]' : 'text-[21px] sm:text-[23px] min-h-[8.25rem]'
                     }`}
                   />
                 </>
@@ -1486,17 +1487,17 @@ function AnswerInput({
       ) : (
         <div className={`relative overflow-visible ${compact ? 'mt-3' : 'mt-3.5'} ${compact ? 'pb-12' : 'pb-14'}`}>
           <div
-            className={`rounded-xl bg-ivory/40 border transition-colors duration-300 ${
+            className={`relative rounded-xl bg-ivory/40 border transition-colors duration-300 ${
               micHighlighted || stopHighlighted
                 ? 'border-wine/45'
                 : 'border-line/60'
             }`}
           >
             <div className={`px-4 overflow-y-auto scroll-premium ${
-              compact ? 'pt-3 pb-5 min-h-[10.5rem] max-h-[10.5rem]' : 'pt-3 pb-6 min-h-[13rem] max-h-[13rem]'
+              compact ? 'pt-3 pb-5 min-h-[12.5rem] max-h-[12.5rem]' : 'pt-3 pb-6 min-h-[15rem] max-h-[15rem]'
             }`}>
               <p className={`font-display leading-[1.4] text-navy break-words ${
-                compact ? 'text-[16px] sm:text-[17px]' : 'text-[18px] sm:text-[19px] leading-[1.45]'
+                compact ? 'text-[19px] sm:text-[21px]' : 'text-[21px] sm:text-[23px] leading-[1.45]'
               }`}>
                 {hasVisibleSpeakContent ? (
                   <>
@@ -1533,6 +1534,20 @@ function AnswerInput({
               </p>
               {correctionContent}
             </div>
+            {/* Blinking call-to-action — appears whenever a narrator has asked and
+                we're waiting for a spoken answer. Tapping it starts recording. */}
+            {micHighlighted && (
+              <button
+                type="button"
+                onClick={onToggleRecording}
+                className="absolute inset-0 z-[1] flex items-center justify-center px-5 text-center rounded-xl"
+                aria-label={`Tap to answer ${answerNarratorName}`}
+              >
+                <span className={`font-display italic text-wine animate-pulse ${compact ? 'text-[17px]' : 'text-[19px]'}`}>
+                  Tap here to answer {answerNarratorName}
+                </span>
+              </button>
+            )}
           </div>
 
           {leftAction ? (
@@ -1550,9 +1565,8 @@ function AnswerInput({
           {/* Mic is absolutely positioned so it never moves */}
           <div className="absolute left-1/2 -translate-x-1/2 bottom-0 z-10">
             <div className="relative flex flex-col items-center">
-              <div className={`absolute left-1/2 -translate-x-1/2 ${compact ? '-top-[46px]' : '-top-[56px]'}`}>
-                {micHighlighted && micHint(micHintText)}
-              </div>
+              <div className={`absolute left-1/2 -translate-x-1/2 ${compact ? '-top-[46px]' : '-top-[56px]'}`} />
+
               <button
                 type="button"
                 onClick={onToggleRecording}
@@ -2531,6 +2545,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
           >
             <AnswerInput
               compact={embedded}
+              answerNarratorName={currentQuestion ? NARRATORS[currentQuestion.narrator].name : 'Léa'}
               correctionContent={correctionDisplay?.text ? (
                 <CorrectionDisplayBar
                   inline

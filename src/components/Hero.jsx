@@ -751,7 +751,7 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
             {/* Circle fills solid once the user has completed that skill this round. */}
             <circle cx={s.x} cy="24" r="6" fill={isDone ? WINE : '#fff'} stroke={WINE} strokeWidth="1.6" />
             <text x={s.x} y="46" textAnchor="middle" fill={isDone || started ? WINE : '#1A2340'}
-              fillOpacity={isDone ? 1 : started ? 0.8 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="11">{s.label}</text>
+              fillOpacity={isDone ? 1 : started ? 0.8 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="13">{s.label}</text>
           </g>
         );
       })}
@@ -1325,6 +1325,7 @@ function ExerciseStatus({ prog }) {
 
 export function AudioDemoCard({
   fullscreen = false,
+  tall = false,
   onClose,
   onOpenFullscreen,
   initialTopic,
@@ -3451,7 +3452,7 @@ export function AudioDemoCard({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={fullscreen
         ? 'fixed inset-6 z-50 bg-paper flex overflow-hidden rounded-2xl'
-        : 'relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 h-[400px] sm:min-h-[500px] sm:max-h-[500px]'}
+        : `relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 ${tall ? 'h-[calc(100dvh-205px)]' : 'h-[400px]'} sm:min-h-[500px] sm:max-h-[500px]`}
       style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)' }}
     >
       {/* Close button in fullscreen */}
@@ -5068,7 +5069,7 @@ export function AudioDemoCard({
           <div className="ml-2 sm:ml-7 flex items-center gap-1.5 sm:gap-2 border-t border-line/50 py-2">
             {/* Chat — now a pill button (the practice tabs live in the progress line on top) */}
             <button type="button" onClick={() => setActiveTab('transcript')}
-              className={`inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 font-display text-[12px] sm:text-[15px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap shrink-0 ${
+              className={`inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 font-display text-[14px] sm:text-[17px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap shrink-0 ${
                 activeTab === 'transcript'
                   ? 'bg-wine text-ivory ring-2 ring-wine/30'
                   : 'bg-wine text-ivory hover:bg-wine2'
@@ -5078,7 +5079,7 @@ export function AudioDemoCard({
             {/* Discover a Parisian word — moved here, next to Chat */}
             <div className="relative group shrink-0">
               <button type="button" disabled={dailyParisianPoints < DISCOVER_WORD_COST} onClick={handleDiscoverWord}
-                className={`relative inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 font-display text-[12px] sm:text-[15px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap ${
+                className={`relative inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 font-display text-[14px] sm:text-[17px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap ${
                   dailyParisianPoints < DISCOVER_WORD_COST
                     ? 'bg-wine/30 text-ivory/70 cursor-not-allowed'
                     : inputMode === 'discover'
@@ -5116,10 +5117,10 @@ export function AudioDemoCard({
             <PointsBurst points={dailyParisianPoints} className="mr-1">
               <div className="relative flex items-center justify-center w-9 sm:w-11 h-9 sm:h-11 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
                 <div className="flex flex-col items-center gap-[3px] -mt-1.5">
-                  <span className="font-display text-[14px] sm:text-[19px] font-bold text-wine leading-none tabular-nums">
+                  <span className="font-display text-[16px] sm:text-[20px] font-bold text-wine leading-none tabular-nums">
                     {dailyParisianPoints}
                   </span>
-                  <span className="text-[6.5px] font-mono tracking-wide uppercase text-wine/60 leading-tight">points</span>
+                  <span className="text-[8px] font-mono tracking-wide uppercase text-wine/60 leading-tight">points</span>
                 </div>
                 {pointsDelta && (
                   <span key={pointsDelta.id} className="absolute -top-4 left-1/2 -translate-x-1/2 font-display font-bold text-[13px] whitespace-nowrap pointer-events-none"
@@ -5140,8 +5141,8 @@ export function AudioDemoCard({
             <PointsBurst points={dailyParisianPoints}>
               <div className="relative flex items-center justify-center w-9 h-9 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
                 <div className="flex flex-col items-center gap-[2px] -mt-0.5">
-                  <span className="font-display text-[13px] font-bold text-wine leading-none tabular-nums">{dailyParisianPoints}</span>
-                  <span className="text-[6px] font-mono tracking-wide uppercase text-wine/60 leading-none">pts</span>
+                  <span className="font-display text-[15px] font-bold text-wine leading-none tabular-nums">{dailyParisianPoints}</span>
+                  <span className="text-[8px] font-mono tracking-wide uppercase text-wine/60 leading-none">pts</span>
                 </div>
                 {pointsDelta && (
                   <span key={pointsDelta.id} className="absolute -top-4 left-1/2 -translate-x-1/2 font-display font-bold text-[13px] whitespace-nowrap pointer-events-none"
@@ -6331,7 +6332,7 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
   };
 
   return (
-    <div className="flex flex-col pr-4 h-[calc(100svh-6.5rem)] sm:h-[520px]">
+    <div className="flex flex-col pr-4 sm:h-[520px]">
       {loading ? (
         <div className="flex items-center gap-3 mt-auto mb-auto">
           <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
@@ -6392,8 +6393,9 @@ function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '',
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col justify-end gap-3 pb-4">
-            {/* Your challenge — grammar + vocab targets the opening question elicits */}
+          <div className="flex flex-col gap-3 pb-4">
+            {/* Your challenge — grammar + vocab targets the opening question elicits.
+                Sits directly under the Parisian's spoken challenge line. */}
             {(targetGrammar || (targetVocab && targetVocab.length > 0)) ? (
               <div className="border border-wine/25 bg-wine/[0.04] px-4 py-3 space-y-3" style={{ borderRadius: 4 }}>
                 <div className="flex items-center justify-between gap-2">
@@ -6890,7 +6892,7 @@ function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wo
   }, [prompt, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="flex flex-col pr-4 overflow-y-auto h-[calc(100svh-6.5rem)] sm:h-[520px]">
+    <div className="flex flex-col pr-4 sm:h-[520px]">
       {loading ? (
         <div className="flex items-center gap-3 mt-auto mb-auto">
           <div className="w-4 h-4 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
@@ -6931,16 +6933,7 @@ function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wo
             </div>
           </div>
 
-          {/* Word target */}
-          <div className="mb-4 shrink-0 flex items-center gap-2">
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
-              <circle cx="7" cy="7" r="6" stroke="#8B1E2D" strokeWidth="1.2" opacity="0.4"/>
-              <path d="M7 4v3.5l2 1.5" stroke="#8B1E2D" strokeWidth="1.2" strokeLinecap="round" opacity="0.4"/>
-            </svg>
-            <span className="text-[11px] font-mono text-navy/40">Objectif : ~{wordTarget} mots</span>
-          </div>
-
-          {/* Goals */}
+          {/* Goals — directly under the Parisian's spoken challenge */}
           {hasTips && (
             <div className="border border-line/40 bg-paper/60 px-4 py-3 shrink-0">
               <div className="flex items-center justify-between gap-2 mb-3">
@@ -7014,6 +7007,15 @@ function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wo
               </div>
             </div>
           )}
+
+          {/* Word target — moved below the goals so the goals sit under the challenge */}
+          <div className="mt-3 shrink-0 flex items-center gap-2">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
+              <circle cx="7" cy="7" r="6" stroke="#8B1E2D" strokeWidth="1.2" opacity="0.4"/>
+              <path d="M7 4v3.5l2 1.5" stroke="#8B1E2D" strokeWidth="1.2" strokeLinecap="round" opacity="0.4"/>
+            </svg>
+            <span className="text-[11px] font-mono text-navy/40">Objectif : ~{wordTarget} mots</span>
+          </div>
 
           {/* All conseils used → level badge earned (progress toward levelling up) */}
           {badge && (
@@ -7893,7 +7895,7 @@ export default function Hero() {
                           className="relative rounded-2xl bg-white/90 border border-wine/15 shadow-sm px-3 py-2"
                         >
                           <span className="absolute top-1/2 -left-1 -translate-y-1/2 w-2.5 h-2.5 rotate-45 border-l border-b bg-white/90 border-wine/15" aria-hidden />
-                          <p className="font-display text-[13px] italic text-navy/80 leading-snug">{leaSpeech.text}</p>
+                          <p className="font-display text-[15px] italic text-navy/80 leading-snug">{leaSpeech.text}</p>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -7937,9 +7939,10 @@ export default function Hero() {
 
           </div>
 
-          <div className={`flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 h-[400px] sm:min-h-[500px] sm:max-h-[500px] ${exercisePanelActive ? 'order-1 lg:order-none' : ''}`}>
-            <div className="relative shrink-0 w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] h-[400px] sm:min-h-[500px] sm:max-h-[500px]">
+          <div className={`flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 ${exercisePanelActive ? 'h-[calc(100dvh-205px)]' : 'h-[400px]'} sm:min-h-[500px] sm:max-h-[500px] ${exercisePanelActive ? 'order-1 lg:order-none' : ''}`}>
+            <div className={`relative shrink-0 w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] ${exercisePanelActive ? 'h-[calc(100dvh-205px)]' : 'h-[400px]'} sm:min-h-[500px] sm:max-h-[500px]`}>
             <AudioDemoCard
+              tall={exercisePanelActive}
               onOpenFullscreen={(topic) => goToDashboard(topic)}
               initialTopic={practiceType === 'reading' ? null : practiceTopic}
               initialLearnMode={speakingActive ? 'speak' : writingActive ? 'write' : learnMode}
