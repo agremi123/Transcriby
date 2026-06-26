@@ -1296,6 +1296,7 @@ export async function handleSpeakingReaction(body) {
     utterance = '', narratorId = 'lea', topic = '', openingLine = '',
     targetGrammar = null, targetVocab = null, history = [],
   } = body || {};
+  const level = normalizeLearnerLevel(body?.learnerLevel);
   const empty = { text: '', translation: '', usedGrammar: false, usedVocab: [], complete: false };
   if (!ANTHROPIC_API_KEY || !utterance.trim()) return { statusCode: 200, body: empty };
 
