@@ -1026,10 +1026,11 @@ function readingMiddleware(apiKey, openrouterKey, supabaseUrl, supabaseKey) {
 function practiceMiddleware(apiKey, openrouterKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/practice' || req.method !== 'POST') { next(); return; }
-    let topic = '';
+    let topic = '', learnerLevel = 'A2';
     try {
       const body = JSON.parse(await readBody(req));
       topic = body.topic || '';
+      learnerLevel = body.learnerLevel || 'A2';
     } catch {
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
     }
