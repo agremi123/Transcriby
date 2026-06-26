@@ -99,7 +99,7 @@ function formatQuestionCounter(step, total = INTRO_QUESTIONS.length) {
 function QuestionProgressBadge({ step, total = INTRO_QUESTIONS.length, className = '', align = 'left', overlay = false, compact = false }) {
   const pill = (
     <div className={`inline-flex items-center rounded-full border border-line/70 bg-paper ${
-      compact ? 'gap-2 pl-2.5 pr-3 py-1' : 'gap-2.5 pl-3 pr-3.5 py-1.5'
+      compact ? 'gap-2 pl-3 pr-3.5 py-1.5' : 'gap-2.5 pl-3.5 pr-4 py-2'
     }`}>
       <span className={`tracking-[0.22em] uppercase text-wine font-semibold leading-none ${
         compact ? 'text-[8px]' : 'text-[9px]'
