@@ -1738,6 +1738,7 @@ N'utilise JAMAIS de markdown ni d'astérisques. Réponds uniquement en JSON :
 
     // Prompt mode (opening line)
     const topic = body.topic || '';
+    const learnerLevel = normalizeLevel(body.learnerLevel);
     // Local stock first — recyclable openers. No API call (matches production).
     {
       const localSP = pickSpeakingPrompt(body.learnerLevel || null);
