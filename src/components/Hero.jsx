@@ -1713,6 +1713,7 @@ export function AudioDemoCard({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         type: 'reaction',
+        learnerLevel: effectiveLevel,
         utterance: latestText,
         narratorId: speakingNarratorId,
         topic: speakingTopicLabel,
