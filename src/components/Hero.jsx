@@ -5523,9 +5523,11 @@ function VocabWordHighlight({ word, definition }) {
   const updatePosition = React.useCallback(() => {
     const rect = anchorRef.current?.getBoundingClientRect();
     if (!rect) return;
+    const half = 135, pad = 10;
+    const cx = rect.left + rect.width / 2;
     setTooltipPos({
       top: rect.top,
-      left: rect.left + rect.width / 2,
+      left: Math.min(Math.max(cx, half + pad), window.innerWidth - half - pad),
     });
   }, []);
 
