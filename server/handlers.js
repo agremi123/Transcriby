@@ -397,6 +397,7 @@ export function handleInterviewFeedbackPost(body) {
 export async function handlePractice(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
+  const level = normalizeLearnerLevel(body?.learnerLevel);
 
   // Local stock first — recyclable MCQ sets matched to the topic. No API call.
   const localExercises = pickPractice(topic);
