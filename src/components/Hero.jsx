@@ -7645,13 +7645,9 @@ export default function Hero() {
                     {isPlaying && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-35 pointer-events-none" />}
                   </div>
                 </button>
-                <div className={`relative flex-1 min-w-0 rounded-2xl border px-3.5 py-2.5 transition-colors duration-300 ${
-                  isPlaying ? 'bg-wine/5 border-wine/25' : 'bg-white/90 border-wine/15 shadow-sm'
-                }`}>
+                <div className="relative flex-1 min-w-0 rounded-2xl border px-3.5 py-2.5 transition-colors duration-300 bg-white/90 border-wine/15 shadow-sm">
                   {/* little pointer toward the portrait */}
-                  <span className={`absolute top-1/2 -left-1 -translate-y-1/2 w-2.5 h-2.5 rotate-45 border-l border-b ${
-                    isPlaying ? 'bg-wine/5 border-wine/25' : 'bg-white/90 border-wine/15'
-                  }`} aria-hidden />
+                  <span className="absolute top-1/2 -left-1 -translate-y-1/2 w-2.5 h-2.5 rotate-45 border-l border-b bg-white/90 border-wine/15" aria-hidden />
                   {/* Tap the line to reveal the English translation (same as other Parisian speech boxes) */}
                   <NarratorHoverText
                     text={exerciseLine}
@@ -7659,7 +7655,7 @@ export default function Hero() {
                     highlightSpeech={isPlaying}
                     speechPlaybackTime={introPlaybackTime}
                     speechTimings={introTimings}
-                    className={`font-display text-[13px] italic leading-snug ${isPlaying ? 'text-wine' : 'text-navy/80'}`}
+                    className="font-display text-[15.5px] italic leading-snug text-navy/80"
                     wrapperClassName="relative w-full"
                   />
                 </div>
