@@ -6567,7 +6567,7 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
 
   const tooltip = activeWord ? createPortal(
     <div
-      className="fixed z-[300] min-w-[7rem] max-w-[15rem] rounded-md border border-navy/10 bg-navy px-3 py-2 shadow-[0_8px_28px_rgba(26,35,64,0.32)]"
+      className="fixed z-[300] min-w-[7rem] max-w-[min(15rem,calc(100vw-1.25rem))] rounded-md border border-navy/10 bg-navy px-3 py-2 shadow-[0_8px_28px_rgba(26,35,64,0.32)]"
       style={{ top: tooltipPos.top, left: tooltipPos.left, transform: 'translate(-50%, calc(-100% - 9px))' }}
       onMouseDown={(e) => e.stopPropagation()}
     >
