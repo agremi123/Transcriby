@@ -943,13 +943,16 @@ function getSupabase() {
 export async function handleReading(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
+  const level = normalizeLearnerLevel(body?.learnerLevel);
+  const isBeginner = CEFR_LEVELS.indexOf(level) <= 2; // A1–B1 must get easier text
   const empty = { passage: '', source: null, title: '', author: null, date: null, vocab: [], questions: [], grammar: [], conjugation: [] };
 
-  // Reading uses REAL documents: live French-press articles (RSS) with exercises
-  // generated around them, cached in Supabase. The local Parisly stock is only a
+  // Reading uses REAL documents: graded stories (Fabulang) for beginners and live
+  // French-press articles (RSS) for higher levels, with exercises generated around
+  // them, cached per level in Supabase. The local Parisly stock is only a
   // last-resort fallback so the panel is never blank when feeds are unreachable.
   const stockFallback = () => {
-    const localR = pickReading(body?.learnerLevel || null);
+    const localR = pickReading(level);
     return { statusCode: 200, body: localR || empty };
   };
 
@@ -957,17 +960,28 @@ export async function handleReading(body) {
 
   const supabase = getSupabase();
 
-  // 1. Serve a REAL cached article from the DB (Le Monde, L'Obs…). Prefer an
-  // unserved one; once all are served, recycle the oldest rather than generating
-  // fresh — the library already holds plenty of real articles.
+  // 1. Serve a cached article AT the learner's level. (Level column added in
+  // migration 011 — if it's missing, the level query returns nothing and we
+  // fall through.) For beginners we NEVER serve an off-level (harder) cached
+  // article — better to generate a fresh graded one — so we only widen the
+  // fallback to any-level for intermediate/advanced learners.
   if (supabase) {
     let { data: rows } = await supabase
       .from('reading_articles')
       .select('*')
       .eq('served', false)
+      .eq('level', level)
       .order('created_at', { ascending: true })
       .limit(1);
-    if (!rows || rows.length === 0) {
+    if ((!rows || rows.length === 0) && !isBeginner) {
+      ({ data: rows } = await supabase
+        .from('reading_articles')
+        .select('*')
+        .eq('served', false)
+        .order('created_at', { ascending: true })
+        .limit(1));
+    }
+    if ((!rows || rows.length === 0) && !isBeginner) {
       ({ data: rows } = await supabase
         .from('reading_articles')
         .select('*')
@@ -980,7 +994,9 @@ export async function handleReading(body) {
       supabase.from('reading_articles').update({ served: true }).eq('id', row.id).then(() => {});
       // Replenish stock in background so we never run dry
       triggerReplenish();
-      // Backfill exercise types missing from older cached articles.
+      // Backfill exercise types missing from older cached articles, tuned to the
+      // article's level (fall back to the learner's level if not stored).
+      const exDir = readingExerciseDirective(normalizeLearnerLevel(row.level || level));
       let g = row.grammar || [];
       let c = row.conjugation || [];
       let q = row.questions || [];
@@ -989,22 +1005,22 @@ export async function handleReading(body) {
       const jobs = [];
       if (q.length === 0 && txt) {
         jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 1600,
-          system: 'Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}',
+          system: `Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. ${exDir} For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}`,
           user: txt }).then((r) => { if (r.questions?.length) q = r.questions; }).catch(() => {}));
       }
       if (v.length === 0 && txt) {
         jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 900,
-          system: 'French teacher. Create exactly 4 vocabulary fill-in-the-blank exercises from key words in the passage. Raw JSON: {"vocab":[{"word":"...","definition":"English meaning","sentence":"...___..."}]}',
+          system: `French teacher. ${exDir} Create exactly 4 vocabulary fill-in-the-blank exercises from key words in the passage. Raw JSON: {"vocab":[{"word":"...","definition":"English meaning","sentence":"...___..."}]}`,
           user: txt }).then((r) => { if (r.vocab?.length) v = r.vocab; }).catch(() => {}));
       }
       if (c.length === 0 && txt) {
         jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 700,
-          system: 'French teacher. Create exactly 4 conjugation fill-in-the-blank exercises using verbs from the passage. One "___" per sentence; hint = the pronoun/subject (je/tu/il...). Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}',
+          system: `French teacher. ${exDir} Create exactly 4 conjugation fill-in-the-blank exercises using verbs from the passage. One "___" per sentence; hint = the pronoun/subject (je/tu/il...). Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}`,
           user: txt }).then((r) => { if (r.conjugation?.length) c = r.conjugation; }).catch(() => {}));
       }
       if (g.length === 0 && txt) {
         jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 2000,
-          system: 'French grammar teacher. Exactly 1 grammar point from the passage with 6 fill-in-the-blank exercises ("___" per sentence; hint = base form) AND a "production" task (a French instruction to write a sentence using it, plus a model sentence). Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}',
+          system: `French grammar teacher. ${exDir} Exactly 1 grammar point from the passage with 6 fill-in-the-blank exercises ("___" per sentence; hint = base form) AND a "production" task (a French instruction to write a sentence using it, plus a model sentence). Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}`,
           user: txt }).then((r) => { if (r.grammar?.length) g = r.grammar; }).catch(() => {}));
       }
       if (jobs.length) {
@@ -1023,10 +1039,10 @@ export async function handleReading(body) {
     }
   }
 
-  // 2. Cache empty — generate a fresh real article from RSS on-demand
+  // 2. No cached article at this level — generate a fresh one graded to the level
   try {
-    const bundle = await generateReadingBundle(ANTHROPIC_API_KEY);
-    // Save to DB for future use (fire-and-forget)
+    const bundle = await generateReadingBundle(ANTHROPIC_API_KEY, level);
+    // Save to DB for future use (fire-and-forget). bundle carries its level.
     if (supabase) {
       supabase.from('reading_articles').insert([{ ...bundle, served: true }]).then(() => {});
     }
