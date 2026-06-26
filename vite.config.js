@@ -1929,7 +1929,7 @@ function writingPromptMiddleware(apiKey, openrouterKey) {
       const avoidBlock = recentPrompts.length
         ? `\nAlready-used prompts — your prompt MUST be clearly different in scenario, angle and wording from ALL of these:\n${recentPrompts.map(p => `- ${p.slice(0, 120)}`).join('\n')}`
         : '';
-      const sys = `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss. Be creative and vary the scenario type (a letter, an opinion, a story, a description, a message to a friend…).${avoidBlock}
+      const sys = `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. ${writingDirective(learnerLevel)} Make it cultural, societal, or fun — something a Parisian would actually discuss. Be creative and vary the scenario type (a letter, an opinion, a story, a description, a message to a friend…).${avoidBlock}
 CRITICAL: Write EVERYTHING in French only. Use ONLY the Latin alphabet with French accents. NEVER include Chinese, Japanese, Korean, Cyrillic, Arabic or any other non-Latin characters — not a single one.
 Return ONLY raw JSON (no markdown):
 {
