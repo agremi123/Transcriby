@@ -882,10 +882,22 @@ function readingMiddleware(apiKey, openrouterKey, supabaseUrl, supabaseKey) {
     // This is the common path — no API call, no generation. Mirrors production.
     if (supabase) {
       try {
+        const lvl = normalizeLevel(learnerLevel);
+        const isBeginner = ['A1', 'A2', 'B1'].includes(lvl);
+        // Prefer an unserved article AT the learner's level. For beginners we never
+        // serve an off-level (harder) cached article — generate fresh graded text
+        // instead — so only widen to any-level for intermediate/advanced learners.
+        // (Level column added in migration 011; if missing, the level query simply
+        // returns nothing and beginners fall through to graded generation.)
         let { data: rows } = await supabase
           .from('reading_articles').select('*')
-          .eq('served', false).order('created_at', { ascending: true }).limit(1);
-        if (!rows || rows.length === 0) {
+          .eq('served', false).eq('level', lvl).order('created_at', { ascending: true }).limit(1);
+        if ((!rows || rows.length === 0) && !isBeginner) {
+          ({ data: rows } = await supabase
+            .from('reading_articles').select('*')
+            .eq('served', false).order('created_at', { ascending: true }).limit(1));
+        }
+        if ((!rows || rows.length === 0) && !isBeginner) {
           // All served — recycle the oldest rather than generating fresh.
           ({ data: rows } = await supabase
             .from('reading_articles').select('*')
