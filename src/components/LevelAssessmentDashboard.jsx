@@ -1475,46 +1475,17 @@ function AnswerInput({
             </div>
           </div>
 
-          {leftAction ? (
-            <div className={`absolute left-0 bottom-0 z-10 ${compact ? 'pl-2 pb-1' : 'pl-2.5 pb-1.5'}`}>
-              {leftAction}
-            </div>
-          ) : null}
-
+          {/* Points — bottom-left (toggle sits on the right, like the landing box) */}
           {rightInfo ? (
-            <div className={`absolute right-0 bottom-0 z-10 ${compact ? 'pr-2 pb-1.5' : 'pr-2.5 pb-2'}`}>
+            <div className={`absolute left-0 bottom-0 z-10 ${compact ? 'pl-2 pb-1.5' : 'pl-2.5 pb-2'}`}>
               {rightInfo}
             </div>
           ) : null}
 
-          {!disabled && (
-            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 z-10">
-              <button
-                type="button"
-                onClick={onWriteFinish}
-                disabled={writeFinishDisabled}
-                className={`inline-flex items-center gap-1.5 rounded-full border-2 border-paper font-display italic transition-colors shadow-[0_2px_10px_-4px_rgba(26,35,64,0.18)] ${
-                  compact ? 'px-3.5 h-10 text-[15px]' : 'px-4 h-11 text-[16px]'
-                } ${
-                  writeFinishDisabled
-                    ? 'bg-wine/15 text-wine/35 cursor-default'
-                    : 'bg-wine text-ivory hover:bg-wine2'
-                }`}
-                aria-label="Fini"
-              >
-                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
-                  <path
-                    d="M2 6.5l2.5 2.5L10 3"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Fini
-              </button>
-            </div>
-          )}
+          {/* Mic / pen toggle — bottom-right */}
+          <div className={`absolute right-0 bottom-0 z-10 ${compact ? 'pr-2 pb-1' : 'pr-2.5 pb-1.5'}`}>
+            {modeToggle}
+          </div>
         </div>
       ) : (
         <div className={`relative overflow-visible ${compact ? 'mt-3' : 'mt-3.5'} ${compact ? 'pb-12' : 'pb-14'}`}>
