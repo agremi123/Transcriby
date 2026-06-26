@@ -888,7 +888,7 @@ async function generateWritingBundle(apiKey, level = 'B1', topic = '') {
   topic = topic || pickPromptTopic();
   const data = deepStripNonFrench(await claudeJSON({
     apiKey, maxTokens: 1000,
-    system: `French writing teacher. Create a writing challenge for a ${level} learner${topic ? ` on: ${topic}` : ''}. Include useful vocab, expressions, grammar tips, conjugation helpers, and connectors.
+    system: `French writing teacher. Create a writing challenge for a ${level} learner${topic ? ` on: ${topic}` : ''}. ${writingDirective(level)} Include useful vocab, expressions, grammar tips, conjugation helpers, and connectors.
 CRITICAL: Write EVERYTHING in French only. Use ONLY the Latin alphabet with French accents. NEVER include Chinese, Japanese, Korean, Cyrillic, Arabic or any other non-Latin characters — not a single one.
 Raw JSON: {"prompt":"Write a paragraph about...","wordTarget":80,"tips":{"vocab":["mot1","mot2"],"expressions":["expr1"],"grammar":["tip1"],"conjugation":["verb: je ___"],"connecteurs":["d'abord","ensuite"]}}`,
     user: topic || 'choose an everyday Parisian topic',
