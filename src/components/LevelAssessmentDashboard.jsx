@@ -1399,7 +1399,7 @@ function AnswerInput({
               {disabled ? (
                 <p
                   className={`font-display leading-[1.45] text-navy break-words whitespace-pre-wrap ${
-                    compact ? 'text-[16px] sm:text-[17px]' : 'text-[18px] sm:text-[19px]'
+                    compact ? 'text-[19px] sm:text-[21px]' : 'text-[21px] sm:text-[23px]'
                   }`}
                 >
                   {showCorrectionUnderline ? (
