@@ -615,7 +615,7 @@ const LEVEL_ARROW_STOPS = [
 // exercise in every skill completes a "round" and advances the sub-level (A2 →
 // A2.1 → A2.2 …), at which point the milestone badge rolls left and the line
 // resets. A ring around the left badge tracks progress through the current round.
-function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = null, onPick }) {
+function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = null, onPick, current = null }) {
   const WINE = '#8B1E2D';
   const SKILL_IDS = LEVEL_ARROW_STOPS.map((s) => s.id);
   const skillCount = (s) => Math.max(0, Number(counts[s]) || 0);
@@ -750,6 +750,10 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
             )}
             {/* Circle fills solid once the user has completed that skill this round. */}
             <circle cx={s.x} cy="24" r="6" fill={isDone ? WINE : '#fff'} stroke={WINE} strokeWidth="1.6" />
+            {/* Current skill indicator: a dot inside the circle for the active tab. */}
+            {s.id === current && (
+              <circle cx={s.x} cy="24" r="2.6" fill={isDone ? '#F6F1E8' : WINE} style={{ pointerEvents: 'none' }} />
+            )}
             <text x={s.x} y="46" textAnchor="middle" fill={isDone || started ? WINE : '#1A2340'}
               fillOpacity={isDone ? 1 : started ? 0.8 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="13">{s.label}</text>
           </g>
@@ -3452,7 +3456,7 @@ export function AudioDemoCard({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={fullscreen
         ? 'fixed inset-6 z-50 bg-paper flex overflow-hidden rounded-2xl'
-        : `relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 ${tall ? 'h-[calc(100dvh-205px)]' : 'h-[400px]'} sm:min-h-[500px] sm:max-h-[500px]`}
+        : `relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 ${tall ? 'h-[calc(100dvh-205px)]' : 'h-[400px]'} sm:min-h-[500px] sm:max-h-[500px] max-lg:landscape:!h-full max-lg:landscape:!min-h-0 max-lg:landscape:!max-h-full`}
       style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)' }}
     >
       {/* Close button in fullscreen */}
@@ -3490,6 +3494,7 @@ export function AudioDemoCard({
             doneTypes={levelExercisesDone}
             counts={levelArticleCounts}
             lastType={levelLastType}
+            current={inputMode === 'write' ? 'writing' : (['reading', 'listening', 'speaking'].includes(activeTab) ? activeTab : null)}
             onPick={(type) => {
               if (type === 'reading') setActiveTab('reading');
               else if (type === 'listening') setActiveTab('listening');
@@ -7587,7 +7592,7 @@ export default function Hero() {
     (heroActiveTab === 'writing' && writingActive);
 
   return (
-    <section className="relative pt-24 lg:pt-12 pb-12 min-h-screen overflow-visible">
+    <section className="relative pt-24 lg:pt-12 max-lg:landscape:pt-16 pb-12 min-h-screen overflow-visible">
       {/* Mobile-only: assessment CTA relocated to the top-right header (opposite the
           Parisly logo) once Léa's text has taken its place next to her portrait.
           Plain (CSS) fade-in so it never gets stuck mid-animation in throttled tabs. */}
@@ -7617,7 +7622,7 @@ export default function Hero() {
       </div>
 
       <Container className="relative">
-        <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[1fr_680px] gap-8 items-stretch lg:h-[calc(100vh-96px)]">
+        <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[1fr_680px] max-lg:landscape:grid-cols-[1fr_minmax(0,46%)] gap-8 max-lg:landscape:gap-5 items-stretch lg:h-[calc(100vh-96px)] max-lg:landscape:h-[calc(100dvh-5rem)]">
           {/* Mobile-only: Léa portrait + tab-specific line — stacks ON TOP of the speech box on mobile */}
           {exercisePanelActive && (() => {
             const entry = EXERCISE_TAB_LINES[heroActiveTab] || {};
@@ -7640,13 +7645,9 @@ export default function Hero() {
                     {isPlaying && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-35 pointer-events-none" />}
                   </div>
                 </button>
-                <div className={`relative flex-1 min-w-0 rounded-2xl border px-3.5 py-2.5 transition-colors duration-300 ${
-                  isPlaying ? 'bg-wine/5 border-wine/25' : 'bg-white/90 border-wine/15 shadow-sm'
-                }`}>
+                <div className="relative flex-1 min-w-0 rounded-2xl border px-3.5 py-2.5 transition-colors duration-300 bg-white/90 border-wine/15 shadow-sm">
                   {/* little pointer toward the portrait */}
-                  <span className={`absolute top-1/2 -left-1 -translate-y-1/2 w-2.5 h-2.5 rotate-45 border-l border-b ${
-                    isPlaying ? 'bg-wine/5 border-wine/25' : 'bg-white/90 border-wine/15'
-                  }`} aria-hidden />
+                  <span className="absolute top-1/2 -left-1 -translate-y-1/2 w-2.5 h-2.5 rotate-45 border-l border-b bg-white/90 border-wine/15" aria-hidden />
                   {/* Tap the line to reveal the English translation (same as other Parisian speech boxes) */}
                   <NarratorHoverText
                     text={exerciseLine}
@@ -7654,7 +7655,7 @@ export default function Hero() {
                     highlightSpeech={isPlaying}
                     speechPlaybackTime={introPlaybackTime}
                     speechTimings={introTimings}
-                    className={`font-display text-[13px] italic leading-snug ${isPlaying ? 'text-wine' : 'text-navy/80'}`}
+                    className="font-display text-[15.5px] italic leading-snug text-navy/80"
                     wrapperClassName="relative w-full"
                   />
                 </div>
@@ -7895,7 +7896,7 @@ export default function Hero() {
                           className="relative rounded-2xl bg-white/90 border border-wine/15 shadow-sm px-3 py-2"
                         >
                           <span className="absolute top-1/2 -left-1 -translate-y-1/2 w-2.5 h-2.5 rotate-45 border-l border-b bg-white/90 border-wine/15" aria-hidden />
-                          <p className="font-display text-[15px] italic text-navy/80 leading-snug">{leaSpeech.text}</p>
+                          <p className="font-display text-[16.5px] italic text-navy/80 leading-snug">{leaSpeech.text}</p>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -7939,8 +7940,8 @@ export default function Hero() {
 
           </div>
 
-          <div className={`flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 ${exercisePanelActive ? 'h-[calc(100dvh-205px)]' : 'h-[400px]'} sm:min-h-[500px] sm:max-h-[500px] ${exercisePanelActive ? 'order-1 lg:order-none' : ''}`}>
-            <div className={`relative shrink-0 w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] ${exercisePanelActive ? 'h-[calc(100dvh-205px)]' : 'h-[400px]'} sm:min-h-[500px] sm:max-h-[500px]`}>
+          <div className={`flex justify-center lg:justify-end self-center shrink-0 w-full lg:w-[680px] lg:min-w-[680px] lg:max-w-[680px] lg:pr-10 ${exercisePanelActive ? 'h-[calc(100dvh-205px)]' : 'h-[400px]'} sm:min-h-[500px] sm:max-h-[500px] max-lg:landscape:!h-full max-lg:landscape:!min-h-0 max-lg:landscape:!max-h-full ${exercisePanelActive ? 'order-1 lg:order-none max-lg:landscape:!order-none' : ''}`}>
+            <div className={`relative shrink-0 w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] ${exercisePanelActive ? 'h-[calc(100dvh-205px)]' : 'h-[400px]'} sm:min-h-[500px] sm:max-h-[500px] max-lg:landscape:!h-full max-lg:landscape:!min-h-0 max-lg:landscape:!max-h-full`}>
             <AudioDemoCard
               tall={exercisePanelActive}
               onOpenFullscreen={(topic) => goToDashboard(topic)}
