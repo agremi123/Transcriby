@@ -6933,16 +6933,7 @@ function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wo
             </div>
           </div>
 
-          {/* Word target */}
-          <div className="mb-4 shrink-0 flex items-center gap-2">
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
-              <circle cx="7" cy="7" r="6" stroke="#8B1E2D" strokeWidth="1.2" opacity="0.4"/>
-              <path d="M7 4v3.5l2 1.5" stroke="#8B1E2D" strokeWidth="1.2" strokeLinecap="round" opacity="0.4"/>
-            </svg>
-            <span className="text-[11px] font-mono text-navy/40">Objectif : ~{wordTarget} mots</span>
-          </div>
-
-          {/* Goals */}
+          {/* Goals — directly under the Parisian's spoken challenge */}
           {hasTips && (
             <div className="border border-line/40 bg-paper/60 px-4 py-3 shrink-0">
               <div className="flex items-center justify-between gap-2 mb-3">
