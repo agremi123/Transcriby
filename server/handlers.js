@@ -557,26 +557,81 @@ async function claudeJSON({ apiKey, system, user, maxTokens = 800 }) {
   }
 }
 
-// ── Generate a full reading bundle (article + 4 exercise types) ─────────────
-async function generateReadingBundle(apiKey) {
-  const feedResults = await Promise.all(FRENCH_RSS_FEEDS.map(fetchRssItems));
-  const allItems = feedResults.flat().filter(i => i.title && (i.description || i.content));
-  if (allItems.length === 0) throw new Error('No RSS items');
+// Native French-press RSS feeds for the learner's level (B1–C2 graded ranges).
+// pickSourcesForLevel puts in-range sources first, the rest as fallback — so an
+// A1 learner still gets a feed to grade down when no graded source is reachable.
+function readingRssFeedsForLevel(level) {
+  return pickSourcesForLevel(READING_SOURCES.filter((s) => s.type === 'rss'), level)
+    .map((s) => ({ name: s.name, url: s.rssUrl }));
+}
 
-  // Shuffle candidates, fetch the top few article bodies IN PARALLEL, and pick a
-  // FULL one (>= 1500 chars) so we never serve a half-baked / stub article.
-  const withDesc = allItems.filter(i => (i.description || i.content || '').length > 120);
-  const pool = (withDesc.length ? withDesc : allItems).slice().sort(() => Math.random() - 0.5);
-  const MIN_BODY = 1500;
-  const fetched = await Promise.all(pool.slice(0, 5).map(async (c) => {
-    let body = '';
-    if (c.link) { try { body = await fetchArticleBody(c.link); } catch { body = ''; } }
-    if (body.length < 200) body = c.content || c.description || '';
-    return { c, body };
-  }));
-  const fullOnes = fetched.filter(f => f.body.length >= MIN_BODY);
-  const picked = fullOnes[0] || fetched.slice().sort((a, b) => b.body.length - a.body.length)[0];
-  const chosen = picked.c;
+// Fabulang — free graded short-story site (no RSS). Scrape the per-level index
+// page (`/en/fr/a1`, `/a2`…) for story links, then pull one story's French text.
+// Best-effort: returns null on any hiccup so reading falls back to graded native
+// press. The text is ALREADY at the right level, so we use it as-is.
+async function fetchFabulangStory(level) {
+  const src = READING_SOURCES.find((s) => s.type === 'fabulang');
+  if (!src) return null;
+  const lvl = String(level || 'a1').toLowerCase();
+  try {
+    const idxRes = await fetch(`${src.base}/${lvl}`, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(6000) });
+    if (!idxRes.ok) return null;
+    const html = await idxRes.text();
+    const slugs = [...new Set([...html.matchAll(/\/en\/fr\/stories\/([a-z0-9-]+)/gi)].map((m) => m[1]))];
+    if (!slugs.length) return null;
+    const slug = slugs[Math.floor(Math.random() * slugs.length)];
+    const storyUrl = `${src.base}/stories/${slug}`;
+    const body = await fetchArticleBody(storyUrl);
+    if (!body || body.length < 180) return null;
+    const title = slug.replace(/^[abc][12]-/, '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    return { title, body: body.slice(0, 4000), link: storyUrl, source: src.name };
+  } catch {
+    return null;
+  }
+}
+
+// ── Generate a full reading bundle (article + 4 exercise types), graded to level
+async function generateReadingBundle(apiKey, level = 'B1') {
+  const lvl = normalizeLearnerLevel(level);
+  const isBeginner = CEFR_LEVELS.indexOf(lvl) <= 2; // A1–B1 get easier text
+
+  let chosen = null;     // { title, link, source, author, date }
+  let picked = { body: '' };
+  let preGraded = false;  // true when the source is already at the learner's level
+
+  // 1. Beginners: try a real graded story first (Fabulang). Already at level.
+  if (isBeginner) {
+    const story = await fetchFabulangStory(lvl);
+    if (story) {
+      chosen = { title: story.title, link: story.link, source: story.source, author: null, date: null };
+      picked = { body: story.body };
+      preGraded = true;
+    }
+  }
+
+  // 2. Otherwise (or as fallback): native French press, gated by level.
+  if (!chosen) {
+    const feeds = readingRssFeedsForLevel(lvl);
+    const feedResults = await Promise.all(feeds.map(fetchRssItems));
+    const allItems = feedResults.flat().filter(i => i.title && (i.description || i.content));
+    if (allItems.length === 0) throw new Error('No RSS items');
+
+    // Shuffle candidates, fetch the top few article bodies IN PARALLEL, and pick
+    // a FULL one (>= 1500 chars) so we never serve a half-baked / stub article.
+    const withDesc = allItems.filter(i => (i.description || i.content || '').length > 120);
+    const pool = (withDesc.length ? withDesc : allItems).slice().sort(() => Math.random() - 0.5);
+    const MIN_BODY = 1500;
+    const fetched = await Promise.all(pool.slice(0, 5).map(async (c) => {
+      let body = '';
+      if (c.link) { try { body = await fetchArticleBody(c.link); } catch { body = ''; } }
+      if (body.length < 200) body = c.content || c.description || '';
+      return { c, body };
+    }));
+    const fullOnes = fetched.filter(f => f.body.length >= MIN_BODY);
+    picked = fullOnes[0] || fetched.slice().sort((a, b) => b.body.length - a.body.length)[0];
+    chosen = { title: picked.c.title || '', link: picked.c.link || null, source: picked.c.feedName || null, author: picked.c.author || null, date: picked.c.pubDate || null };
+  }
+
   // Strip CJK characters that can appear in scraped page sidebars/ads
   let rawText = (picked.body || '').replace(/[　-鿿가-힯豈-﫿]/g, '').slice(0, 6000);
 
