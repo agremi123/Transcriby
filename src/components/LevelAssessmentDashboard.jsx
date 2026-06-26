@@ -1413,9 +1413,13 @@ function AnswerInput({
         onClick={() => { if (inputMode !== 'write') onInputModeChange('write'); else onWriteFinish?.(); }}
         disabled={disabled || (inputMode === 'write' && writeFinishDisabled)}
         className={`relative z-10 w-10 h-10 rounded-full inline-flex items-center justify-center transition-colors disabled:opacity-50 ${inputMode === 'write' ? 'bg-wine text-ivory' : 'text-navy/45'}`}
-        aria-label={inputMode === 'write' ? 'Submit writing' : 'Switch to write'}
+        aria-label={inputMode === 'write' ? 'Confirm sentence' : 'Switch to write'}
       >
-        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        {inputMode === 'write' ? (
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none" aria-hidden><rect x="2" y="2" width="10" height="10" rx="1.5" fill="currentColor" /></svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        )}
       </button>
     </div>
   );
