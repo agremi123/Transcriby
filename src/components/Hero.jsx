@@ -7896,7 +7896,7 @@ export default function Hero() {
                           className="relative rounded-2xl bg-white/90 border border-wine/15 shadow-sm px-3 py-2"
                         >
                           <span className="absolute top-1/2 -left-1 -translate-y-1/2 w-2.5 h-2.5 rotate-45 border-l border-b bg-white/90 border-wine/15" aria-hidden />
-                          <p className="font-display text-[15px] italic text-navy/80 leading-snug">{leaSpeech.text}</p>
+                          <p className="font-display text-[16.5px] italic text-navy/80 leading-snug">{leaSpeech.text}</p>
                         </motion.div>
                       )}
                     </AnimatePresence>
