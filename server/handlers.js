@@ -1362,13 +1362,18 @@ export async function handleReplenish() {
 
   const tasks = [];
 
+  // Spread background stock across levels so every CEFR cache fills over time
+  // (beginners get graded/slow content, not just default B1).
+  const randomLevel = () => CEFR_LEVELS[Math.floor(Math.random() * CEFR_LEVELS.length)];
+
   for (let i = readCount; i < MIN_STOCK; i++) {
-    tasks.push(generateReadingBundle(ANTHROPIC_API_KEY).then(b => supabase.from('reading_articles').insert([{ ...b, served: false }])).catch(() => {}));
+    tasks.push(generateReadingBundle(ANTHROPIC_API_KEY, randomLevel()).then(b => supabase.from('reading_articles').insert([{ ...b, served: false }])).catch(() => {}));
   }
   for (let i = listenCount; i < MIN_STOCK; i++) {
-    tasks.push(generateListeningBundle(ANTHROPIC_API_KEY).then(async b => {
+    const lvl = randomLevel();
+    tasks.push(generateListeningBundle(ANTHROPIC_API_KEY, lvl).then(async b => {
       return supabase.from('listening_episodes').insert([{
-        level: 'B1', title: b.title, audio_url: b.audioUrl,
+        level: lvl, title: b.title, audio_url: b.audioUrl,
         clip_start: b.clipStart ?? 0,
         clip_end: b.clipEnd ?? CLIP_DURATION,
         transcript: b.transcript,
@@ -1379,10 +1384,10 @@ export async function handleReplenish() {
     }).catch(() => {}));
   }
   for (let i = writeCount; i < MIN_STOCK; i++) {
-    tasks.push(generateWritingBundle(ANTHROPIC_API_KEY).then(b => supabase.from('writing_prompts').insert([{ ...b, served: false }])).catch(() => {}));
+    tasks.push(generateWritingBundle(ANTHROPIC_API_KEY, randomLevel()).then(b => supabase.from('writing_prompts').insert([{ ...b, served: false }])).catch(() => {}));
   }
   for (let i = speakCount; i < MIN_STOCK; i++) {
-    tasks.push(generateSpeakingBundle(ANTHROPIC_API_KEY).then(b => supabase.from('speaking_prompts').insert([{ ...b, served: false }])).catch(() => {}));
+    tasks.push(generateSpeakingBundle(ANTHROPIC_API_KEY, '', randomLevel()).then(b => supabase.from('speaking_prompts').insert([{ ...b, served: false }])).catch(() => {}));
   }
 
   // Run up to 4 tasks concurrently to avoid timeout
