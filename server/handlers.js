@@ -1603,7 +1603,9 @@ export async function handleListening(body) {
       if (cached && cached.length > 0) {
         const row = cached[Math.floor(Math.random() * cached.length)];
         // Backfill exercise types missing from older cached episodes so every
-        // tab (grammaire + conjugaison) always has content.
+        // tab (grammaire + conjugaison) always has content — tuned to the
+        // episode's level (fall back to the learner's level if not stored).
+        const exDir = listeningExerciseDirective(normalizeLearnerLevel(row.level || level));
         let g = row.grammar || [];
         let c = row.conjugation || [];
         let q = row.questions || [];
@@ -1612,22 +1614,22 @@ export async function handleListening(body) {
         const jobs = [];
         if (q.length === 0 && txt) {
           jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 1600,
-            system: 'Create exactly 6 multiple-choice comprehension questions (in French) about the French transcript. For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}',
+            system: `Create exactly 6 multiple-choice comprehension questions (in French) about the French transcript. ${exDir} For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}`,
             user: txt }).then((r) => { if (r.questions?.length) q = r.questions; }).catch(() => {}));
         }
         if (v.length === 0 && txt) {
           jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 900,
-            system: 'French teacher. Create exactly 4 vocabulary fill-in-the-blank exercises from key words in the transcript. Raw JSON: {"vocab":[{"word":"...","definition":"English meaning","sentence":"...___..."}]}',
+            system: `French teacher. ${exDir} Create exactly 4 vocabulary fill-in-the-blank exercises from key words in the transcript. Raw JSON: {"vocab":[{"word":"...","definition":"English meaning","sentence":"...___..."}]}`,
             user: txt }).then((r) => { if (r.vocab?.length) v = r.vocab; }).catch(() => {}));
         }
         if (c.length === 0 && txt) {
           jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 700,
-            system: 'French teacher. Create exactly 4 conjugation fill-in-the-blank exercises using verbs from the transcript. One "___" per sentence; hint = the pronoun/subject (je/tu/il...). Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}',
+            system: `French teacher. ${exDir} Create exactly 4 conjugation fill-in-the-blank exercises using verbs from the transcript. One "___" per sentence; hint = the pronoun/subject (je/tu/il...). Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}`,
             user: txt }).then((r) => { if (r.conjugation?.length) c = r.conjugation; }).catch(() => {}));
         }
         if (g.length === 0 && txt) {
           jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 2000,
-            system: 'French grammar teacher. Exactly 2 grammar structures from the transcript. Each has 6 fill-in-the-blank exercises ("___" per sentence; hint = base form) AND a "production" task (a French instruction to write a sentence using it, plus a model sentence). Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}',
+            system: `French grammar teacher. ${exDir} Exactly 2 grammar structures from the transcript. Each has 6 fill-in-the-blank exercises ("___" per sentence; hint = base form) AND a "production" task (a French instruction to write a sentence using it, plus a model sentence). Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}`,
             user: txt }).then((r) => { if (r.grammar?.length) g = r.grammar; }).catch(() => {}));
         }
         if (jobs.length) {
