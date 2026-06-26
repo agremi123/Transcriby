@@ -3494,6 +3494,7 @@ export function AudioDemoCard({
             doneTypes={levelExercisesDone}
             counts={levelArticleCounts}
             lastType={levelLastType}
+            current={inputMode === 'write' ? 'writing' : (['reading', 'listening', 'speaking'].includes(activeTab) ? activeTab : null)}
             onPick={(type) => {
               if (type === 'reading') setActiveTab('reading');
               else if (type === 'listening') setActiveTab('listening');
