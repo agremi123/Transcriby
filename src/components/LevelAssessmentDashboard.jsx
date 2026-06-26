@@ -1175,12 +1175,12 @@ function SpeakWriteToggle({ mode, onChange, disabled, compact = false, className
 function questionLineTypography(question, translation) {
   const totalChars = question.length + (translation?.length || 0);
   if (totalChars > 100 || question.length > 58) {
-    return 'text-[13px] sm:text-[14px] leading-[1.35]';
+    return 'text-[16px] sm:text-[17px] leading-[1.35]';
   }
   if (totalChars > 70 || question.length > 44) {
-    return 'text-[14px] sm:text-[15px] leading-[1.35]';
+    return 'text-[17px] sm:text-[18px] leading-[1.35]';
   }
-  return 'text-[15px] sm:text-[17px] leading-[1.3]';
+  return 'text-[18px] sm:text-[20px] leading-[1.3]';
 }
 
 function getNarratorSpeechContainerClass(compact = false) {
