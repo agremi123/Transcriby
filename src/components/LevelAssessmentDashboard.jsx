@@ -2545,6 +2545,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
           >
             <AnswerInput
               compact={embedded}
+              answerNarratorName={currentQuestion ? NARRATORS[currentQuestion.narrator].name : 'Léa'}
               correctionContent={correctionDisplay?.text ? (
                 <CorrectionDisplayBar
                   inline
