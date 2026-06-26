@@ -3496,10 +3496,14 @@ export function AudioDemoCard({
             lastType={levelLastType}
             current={inputMode === 'write' ? 'writing' : (['reading', 'listening', 'speaking'].includes(activeTab) ? activeTab : null)}
             onPick={(type) => {
+              if (type === 'writing') { activateWriteMode(); return; }
+              // Leaving the writing tab: drop out of write mode so the picked tab
+              // (especially Speaking) actually takes over instead of staying stuck
+              // showing the write textarea.
+              if (inputMode === 'write') activateSpeakMode();
               if (type === 'reading') setActiveTab('reading');
               else if (type === 'listening') setActiveTab('listening');
               else if (type === 'speaking') setActiveTab('speaking');
-              else if (type === 'writing') activateWriteMode();
             }}
           />
         </div>
