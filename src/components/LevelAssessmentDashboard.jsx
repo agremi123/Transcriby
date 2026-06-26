@@ -1370,6 +1370,39 @@ function AnswerInput({
     ? prepareCorrectionForDisplay(underlineCorrection.original, underlineCorrection.corrected)
     : '';
 
+  // Mic / pen toggle (mirrors the landing speech box): mic = speak (tap again to
+  // record/stop), pen = write (tap again to submit). Replaces the Speak|Write text
+  // toggle + the separate centred mic button.
+  const modeToggle = (
+    <div className="relative flex items-center rounded-full p-0.5 bg-wine/10 border-2 border-paper shadow-[0_2px_10px_-4px_rgba(26,35,64,0.18)] shrink-0">
+      {micActive && (
+        <span className="absolute left-[3px] top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-wine/25 animate-ping pointer-events-none" style={{ animationDuration: '1.1s' }} />
+      )}
+      <button
+        type="button"
+        onClick={() => { if (inputMode !== 'speak') onInputModeChange('speak'); else onToggleRecording(); }}
+        disabled={disabled || status === 'connecting' || isStoppingRecording}
+        className={`relative z-10 w-10 h-10 rounded-full inline-flex items-center justify-center transition-colors disabled:opacity-50 ${inputMode === 'speak' ? 'bg-wine text-ivory' : 'text-navy/45'}`}
+        aria-label={inputMode === 'speak' ? (micActive ? 'Stop recording' : 'Record') : 'Switch to speak'}
+      >
+        {micActive ? (
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none" aria-hidden><rect x="2" y="2" width="10" height="10" rx="1.5" fill="currentColor" /></svg>
+        ) : (
+          <svg width="12" height="15" viewBox="0 0 16 20" fill="none" aria-hidden><rect x="5" y="1" width="6" height="11" rx="3" fill="currentColor" /><path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
+        )}
+      </button>
+      <button
+        type="button"
+        onClick={() => { if (inputMode !== 'write') onInputModeChange('write'); else onWriteFinish?.(); }}
+        disabled={disabled || (inputMode === 'write' && writeFinishDisabled)}
+        className={`relative z-10 w-10 h-10 rounded-full inline-flex items-center justify-center transition-colors disabled:opacity-50 ${inputMode === 'write' ? 'bg-wine text-ivory' : 'text-navy/45'}`}
+        aria-label={inputMode === 'write' ? 'Submit writing' : 'Switch to write'}
+      >
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </button>
+    </div>
+  );
+
   return (
     <div className="flex flex-col shrink-0 w-full">
       <div className="flex items-center justify-between gap-3 w-full shrink-0">
