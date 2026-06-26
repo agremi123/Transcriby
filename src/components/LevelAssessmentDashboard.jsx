@@ -1560,51 +1560,16 @@ function AnswerInput({
             )}
           </div>
 
-          {leftAction ? (
-            <div className={`absolute left-0 bottom-0 z-10 ${compact ? 'pl-2 pb-1' : 'pl-2.5 pb-1.5'}`}>
-              {leftAction}
-            </div>
-          ) : null}
-
+          {/* Points — bottom-left (toggle sits on the right, like the landing box) */}
           {rightInfo ? (
-            <div className={`absolute right-0 bottom-0 z-10 ${compact ? 'pr-2 pb-1.5' : 'pr-2.5 pb-2'}`}>
+            <div className={`absolute left-0 bottom-0 z-10 ${compact ? 'pl-2 pb-1.5' : 'pl-2.5 pb-2'}`}>
               {rightInfo}
             </div>
           ) : null}
 
-          {/* Mic is absolutely positioned so it never moves */}
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-0 z-10">
-            <div className="relative flex flex-col items-center">
-              <div className={`absolute left-1/2 -translate-x-1/2 ${compact ? '-top-[46px]' : '-top-[56px]'}`} />
-
-              <button
-                type="button"
-                onClick={onToggleRecording}
-                disabled={disabled || status === 'connecting' || isStoppingRecording}
-                className={`relative w-11 h-11 rounded-full inline-flex items-center justify-center border-2 border-paper text-ivory transition-colors duration-300 shadow-[0_2px_10px_-4px_rgba(26,35,64,0.18)] ${
-                  micActive || stopHighlighted
-                    ? 'bg-wine'
-                    : micHighlighted
-                      ? 'bg-wine2'
-                      : 'bg-wine hover:bg-wine2'
-                } disabled:opacity-40`}
-                aria-label={micActive ? 'Stop recording' : 'Start recording'}
-              >
-                {micActive ? (
-                  <svg width="10" height="10" viewBox="0 0 14 14" fill="none" aria-hidden>
-                    <rect x="2" y="2" width="10" height="10" rx="1.5" fill="currentColor" />
-                  </svg>
-                ) : (
-                  <svg width="11" height="14" viewBox="0 0 16 20" fill="none" aria-hidden>
-                    <rect x="5" y="1" width="6" height="11" rx="3" fill="currentColor" />
-                    <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                  </svg>
-                )}
-                {(micHighlighted || stopHighlighted) && (
-                  <span className="absolute inset-0 rounded-full border border-wine/40 animate-ping-narrator pointer-events-none" />
-                )}
-              </button>
-            </div>
+          {/* Mic / pen toggle — bottom-right */}
+          <div className={`absolute right-0 bottom-0 z-10 ${compact ? 'pr-2 pb-1' : 'pr-2.5 pb-1.5'}`}>
+            {modeToggle}
           </div>
         </div>
       )}
