@@ -1533,6 +1533,20 @@ function AnswerInput({
               </p>
               {correctionContent}
             </div>
+            {/* Blinking call-to-action — appears whenever a narrator has asked and
+                we're waiting for a spoken answer. Tapping it starts recording. */}
+            {micHighlighted && (
+              <button
+                type="button"
+                onClick={onToggleRecording}
+                className="absolute inset-0 z-[1] flex items-center justify-center px-5 text-center rounded-xl"
+                aria-label={`Tap to answer ${answerNarratorName}`}
+              >
+                <span className={`font-display italic text-wine animate-pulse ${compact ? 'text-[17px]' : 'text-[19px]'}`}>
+                  Tap here to answer {answerNarratorName}
+                </span>
+              </button>
+            )}
           </div>
 
           {leftAction ? (
