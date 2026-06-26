@@ -1675,13 +1675,14 @@ function speakingPromptMiddleware(apiKey) {
     if (isCombined && body.type === 'reaction') {
       const {
         utterance = '', narratorId = 'lea', topic = '', openingLine = '',
-        targetGrammar = null, targetVocab = null, history = [],
+        targetGrammar = null, targetVocab = null, history = [], learnerLevel = 'A2',
       } = body;
       const emptyReaction = { text: '', translation: '', usedGrammar: false, usedVocab: [], complete: false };
       if (!apiKey || !utterance.trim()) { res.end(JSON.stringify(emptyReaction)); return; }
       try {
         const name = narratorId === 'lea' ? 'Léa' : 'Jules';
         const gender = narratorId === 'lea' ? 'une Parisienne' : 'un Parisien';
+        const levelDir = conversationDirective(normalizeLevel(learnerLevel));
         const vocabWords = Array.isArray(targetVocab) ? targetVocab.map(v => v?.word).filter(Boolean) : [];
         const grammarPoint = targetGrammar?.point || '';
         const grammarHint = targetGrammar?.hint || '';
