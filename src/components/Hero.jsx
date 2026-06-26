@@ -5068,7 +5068,7 @@ export function AudioDemoCard({
           <div className="ml-2 sm:ml-7 flex items-center gap-1.5 sm:gap-2 border-t border-line/50 py-2">
             {/* Chat — now a pill button (the practice tabs live in the progress line on top) */}
             <button type="button" onClick={() => setActiveTab('transcript')}
-              className={`inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 font-display text-[12px] sm:text-[15px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap shrink-0 ${
+              className={`inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 font-display text-[14px] sm:text-[17px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap shrink-0 ${
                 activeTab === 'transcript'
                   ? 'bg-wine text-ivory ring-2 ring-wine/30'
                   : 'bg-wine text-ivory hover:bg-wine2'
@@ -5078,7 +5078,7 @@ export function AudioDemoCard({
             {/* Discover a Parisian word — moved here, next to Chat */}
             <div className="relative group shrink-0">
               <button type="button" disabled={dailyParisianPoints < DISCOVER_WORD_COST} onClick={handleDiscoverWord}
-                className={`relative inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 font-display text-[12px] sm:text-[15px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap ${
+                className={`relative inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 font-display text-[14px] sm:text-[17px] tracking-wide rounded-full transition-all duration-300 whitespace-nowrap ${
                   dailyParisianPoints < DISCOVER_WORD_COST
                     ? 'bg-wine/30 text-ivory/70 cursor-not-allowed'
                     : inputMode === 'discover'
