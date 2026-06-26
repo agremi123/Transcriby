@@ -750,6 +750,10 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
             )}
             {/* Circle fills solid once the user has completed that skill this round. */}
             <circle cx={s.x} cy="24" r="6" fill={isDone ? WINE : '#fff'} stroke={WINE} strokeWidth="1.6" />
+            {/* Current skill indicator: a dot inside the circle for the active tab. */}
+            {s.id === current && (
+              <circle cx={s.x} cy="24" r="2.6" fill={isDone ? '#F6F1E8' : WINE} style={{ pointerEvents: 'none' }} />
+            )}
             <text x={s.x} y="46" textAnchor="middle" fill={isDone || started ? WINE : '#1A2340'}
               fillOpacity={isDone ? 1 : started ? 0.8 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="13">{s.label}</text>
           </g>
