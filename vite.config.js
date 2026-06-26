@@ -1299,7 +1299,7 @@ function sourceMatchesLevel(sourceLevel, learnerLevel) {
   const lo = order.indexOf(parts[0]);
   const hi = order.indexOf(parts[parts.length - 1]);
   if (lo < 0 || hi < 0) return true;
-  return li >= lo && li <= hi + 1; // +1 gives some stretch
+  return li >= lo - 1 && li <= hi + 1; // stretch one notch each way (matches server/levelAdapt.js)
 }
 
 function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseUrl, supabaseKey, openrouterKey, innerfrenchCookie) {
