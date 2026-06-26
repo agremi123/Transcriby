@@ -7008,6 +7008,15 @@ function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wo
             </div>
           )}
 
+          {/* Word target — moved below the goals so the goals sit under the challenge */}
+          <div className="mt-3 shrink-0 flex items-center gap-2">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
+              <circle cx="7" cy="7" r="6" stroke="#8B1E2D" strokeWidth="1.2" opacity="0.4"/>
+              <path d="M7 4v3.5l2 1.5" stroke="#8B1E2D" strokeWidth="1.2" strokeLinecap="round" opacity="0.4"/>
+            </svg>
+            <span className="text-[11px] font-mono text-navy/40">Objectif : ~{wordTarget} mots</span>
+          </div>
+
           {/* All conseils used → level badge earned (progress toward levelling up) */}
           {badge && (
             <div className="mt-4 shrink-0 flex items-center gap-3 rounded-xl border border-navy/15 bg-navy/[0.04] px-4 py-3.5">
