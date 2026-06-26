@@ -635,9 +635,14 @@ async function generateReadingBundle(apiKey, level = 'B1') {
   // Strip CJK characters that can appear in scraped page sidebars/ads
   let rawText = (picked.body || '').replace(/[　-鿿가-힯豈-﫿]/g, '').slice(0, 6000);
 
+  // Graded sources are used as-is (just cleaned); native press is rewritten DOWN
+  // to the learner's level for A1–B1, or kept authentic for B2+.
+  const extractSystem = preGraded
+    ? 'Clean up this French story into a coherent passage entirely in French (omit any non-French text, navigation, or ads). Keep it as written; do not add difficulty. Return ONLY raw JSON: {"passage":"..."}'
+    : `${gradePassageDirective(lvl)} The passage must be entirely in French — omit any non-French text. Natural paragraphs. Return ONLY raw JSON: {"passage":"..."}`;
   const extractData = await claudeJSON({
-    apiKey, maxTokens: 1000,
-    system: 'Extract a coherent readable passage from this French article. The passage must be entirely in French — omit any non-French text. At least 15 sentences, 400-600 words, natural paragraphs. Return ONLY raw JSON: {"passage":"..."}',
+    apiKey, maxTokens: 1100,
+    system: extractSystem,
     user: `Title: ${chosen.title}\n\n${rawText}`,
   });
   const passage = extractData.passage?.trim() || '';
