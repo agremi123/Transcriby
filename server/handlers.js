@@ -781,7 +781,7 @@ async function generateListeningBundle(apiKey, level = 'B1') {
   const { DEEPGRAM_API_KEY } = getEnv();
 
   // 1. Pick a random podcast episode
-  const episode = await fetchPodcastEpisode();
+  const episode = await fetchPodcastEpisode(level);
 
   // 2. Download first ~8 min of audio
   const audioRes = await fetch(episode.audioUrl, {
