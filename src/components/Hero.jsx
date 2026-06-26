@@ -7622,7 +7622,7 @@ export default function Hero() {
       </div>
 
       <Container className="relative">
-        <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[1fr_680px] gap-8 items-stretch lg:h-[calc(100vh-96px)]">
+        <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[1fr_680px] max-lg:landscape:grid-cols-[1fr_minmax(0,46%)] gap-8 max-lg:landscape:gap-5 items-stretch lg:h-[calc(100vh-96px)] max-lg:landscape:h-[calc(100dvh-5rem)]">
           {/* Mobile-only: Léa portrait + tab-specific line — stacks ON TOP of the speech box on mobile */}
           {exercisePanelActive && (() => {
             const entry = EXERCISE_TAB_LINES[heroActiveTab] || {};
