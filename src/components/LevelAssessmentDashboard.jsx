@@ -1529,7 +1529,14 @@ function AnswerInput({
                     )}
                   </>
                 ) : status === 'connecting' ? (
-                  <ProcessDots />
+                  <span className="inline-flex items-center gap-2.5 font-display italic text-navy/45 text-[14px] sm:text-[15px]">
+                    <span className="block h-1.5 w-20 overflow-hidden rounded-full bg-wine/15">
+                      <span className="block h-full w-1/2 rounded-full bg-wine/50 animate-pulse" />
+                    </span>
+                    Setting up the mic…
+                  </span>
+                ) : isRecording ? (
+                  <span className="font-display italic text-wine/70 text-[15px] sm:text-[16px]">Ready! You can start speaking.</span>
                 ) : null}
               </p>
               {correctionContent}
