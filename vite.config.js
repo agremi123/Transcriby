@@ -1552,7 +1552,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       // Step 5: generate vocabulary list targeted to theme + level
       const vData = await openrouterCall('listening/vocab', openrouterKey, {
         max_tokens: 700,
-        system: `You are a French language teacher. From the given French transcript, pick exactly 5 vocabulary words relevant to a ${level} learner${vocabTheme ? ` studying the theme "${vocabTheme}"` : ''}. Choose words appropriate for ${level} level — not too easy, not too advanced. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"English definition","sentence":"...___..."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
+        system: `You are a French language teacher. From the given French transcript, pick exactly 5 vocabulary words relevant to a ${level} learner${vocabTheme ? ` studying the theme "${vocabTheme}"` : ''}. ${listeningExerciseDirective(level)} Choose words appropriate for ${level} level — not too easy, not too advanced. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"English definition","sentence":"...___..."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
         messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
       });
       let vRaw = vData.content?.[0]?.text?.trim() || '{}';
