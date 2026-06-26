@@ -5556,7 +5556,7 @@ function VocabWordHighlight({ word, definition }) {
   const tooltip = hovered ? createPortal(
     <div
       role="tooltip"
-      className="pointer-events-none fixed z-[250] min-w-[11.5rem] max-w-[16rem] rounded-md border border-navy/10 bg-navy px-3 py-2.5 text-left text-[12px] leading-snug text-ivory shadow-[0_10px_32px_rgba(26,35,64,0.35)]"
+      className="pointer-events-none fixed z-[250] min-w-[11.5rem] max-w-[min(16rem,calc(100vw-1.25rem))] rounded-md border border-navy/10 bg-navy px-3 py-2.5 text-left text-[12px] leading-snug text-ivory shadow-[0_10px_32px_rgba(26,35,64,0.35)]"
       style={{
         top: tooltipPos.top,
         left: tooltipPos.left,
