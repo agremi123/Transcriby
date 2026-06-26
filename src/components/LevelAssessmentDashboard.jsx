@@ -1372,8 +1372,8 @@ function AnswerInput({
 
   return (
     <div className="flex flex-col shrink-0 w-full">
-      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 w-full shrink-0">
-        <div className="justify-self-start min-w-0">
+      <div className="flex items-center justify-between gap-3 w-full shrink-0">
+        <div className="min-w-0">
           {showQuestionProgress && questionStep ? (
             <QuestionProgressBadge
               step={questionStep}
@@ -1383,8 +1383,7 @@ function AnswerInput({
             />
           ) : null}
         </div>
-        <SpeakWriteToggle mode={inputMode} onChange={onInputModeChange} disabled={disabled} compact={compact} />
-        <div className="justify-self-end min-w-0 flex justify-end">
+        <div className="min-w-0 flex justify-end">
           {headerRightAction}
         </div>
       </div>
