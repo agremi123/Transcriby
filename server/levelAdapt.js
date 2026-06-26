@@ -242,12 +242,17 @@ function parseRange(range) {
   return (lo == null || hi == null) ? null : [lo, hi];
 }
 
-/** Does a source's level range cover the learner's level (with a little stretch)? */
+/**
+ * Does a source's level range cover the learner's level (with a little stretch)?
+ * Stretch one notch each way: a slow A2-B1 source still suits an A1 learner, and
+ * a learner can reach one level up. Keeps beginners on graded/slow material while
+ * giving enough sources to rotate through.
+ */
 export function sourceMatchesLevel(sourceLevel, learnerLevel) {
   const r = parseRange(sourceLevel);
   if (!r) return true;
   const li = LEVEL_RANK[normalizeLevel(learnerLevel)];
-  return li >= r[0] && li <= r[1] + 1; // +1 = mild stretch upward
+  return li >= r[0] - 1 && li <= r[1] + 1;
 }
 
 const shuffle = (arr) => arr.slice().sort(() => Math.random() - 0.5);
