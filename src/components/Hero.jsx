@@ -1957,6 +1957,7 @@ export function AudioDemoCard({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         type: 'reaction',
+        learnerLevel: effectiveLevel,
         utterance: userText,
         narratorId: 'lea',
         topic: 'conversation générale en français',
