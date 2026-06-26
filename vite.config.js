@@ -940,12 +940,13 @@ function readingMiddleware(apiKey, openrouterKey, supabaseUrl, supabaseKey) {
       const chosen = picked.c;
       let rawText = (picked.body || '').slice(0, 6000);
 
-      // Extract a long verbatim passage — enough for 2 reading pages (~400-600 words).
+      // Extract the passage, graded to the learner's level: beginners (A1–B1) get
+      // a simplified retelling, B2+ keeps the authentic article verbatim.
       // Uses fast Claude Haiku (DeepSeek was ~10-15s/call and made reading feel endless).
       const extractData = await claudeCall('reading/extract', apiKey, {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 900,
-        system: 'Extract the most coherent and readable passage from this real French article. Copy sentences verbatim — do NOT rephrase, summarise or add anything. The passage must be at least 15 sentences long (aim for 400-600 words). Organise it into natural paragraphs separated by a blank line (\\n\\n): one short intro paragraph, then 2-3 body paragraphs. Return only the extracted French text with paragraph breaks. If the article is shorter than that, simply extract everything available — NEVER apologize, comment, or add headers/separators; output ONLY French article text.',
+        system: `${gradePassageDirective(normalizeLevel(learnerLevel))} Organise it into natural paragraphs separated by a blank line (\\n\\n). Return ONLY the French text with paragraph breaks — NEVER apologize, comment, or add headers/separators.`,
         messages: [{ role: 'user', content: `Title: ${chosen.title}\n\n${rawText}` }],
       });
       // Clean the extraction: drop markdown headers, "---" separators, and any
