@@ -973,8 +973,8 @@ function FrenchOpinionReport({
         </div>
       </div>
 
-      <div className={`grid grid-cols-1 sm:grid-cols-2 ${
-        compact ? 'gap-4 px-4 sm:px-6 py-4 sm:py-5' : 'gap-5 px-5 py-5'
+      <div className={`grid grid-cols-2 ${
+        compact ? 'gap-3 px-3 sm:px-6 py-4 sm:py-5' : 'gap-5 px-5 py-5'
       }`}>
         {report.strengths?.length > 0 ? (
           <div className="min-w-0">
@@ -989,6 +989,7 @@ function FrenchOpinionReport({
                   score={t.score}
                   tone="strength"
                   compact={compact}
+                  maxLevel={level}
                 />
               ))}
             </div>
@@ -996,7 +997,7 @@ function FrenchOpinionReport({
         ) : null}
 
         {report.weaknesses?.length > 0 ? (
-          <div className={`min-w-0 sm:border-l sm:border-wine/10 ${compact ? 'sm:pl-3.5' : 'sm:pl-5'}`}>
+          <div className={`min-w-0 border-l border-wine/10 ${compact ? 'pl-3' : 'pl-5'}`}>
             <p className={`text-[10px] tracking-[0.14em] uppercase text-wine/80 font-semibold ${compact ? 'mb-2' : 'mb-3'}`}>
               Weaknesses
             </p>
@@ -1008,6 +1009,7 @@ function FrenchOpinionReport({
                   score={t.score}
                   tone="weakness"
                   compact={compact}
+                  maxLevel={level}
                 />
               ))}
             </div>
