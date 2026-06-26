@@ -11,6 +11,19 @@ import {
 import { getSupabaseAdmin } from './supabase.js';
 import { getStoredWritingExample, saveWritingExample } from './writing-examples.js';
 import { pickWord, pickWritingPrompt, pickSpeakingPrompt, pickPractice, pickReading, pickListening, getLessons } from './contentStock.js';
+import {
+  conversationDirective,
+  exerciseDirective,
+  readingExerciseDirective,
+  listeningExerciseDirective,
+  writingDirective,
+  speakingPromptDirective,
+  gradePassageDirective,
+  learnerLevelContext as buildLearnerLevelContext,
+  LISTENING_SOURCES,
+  READING_SOURCES,
+  pickSourcesForLevel,
+} from './levelAdapt.js';
 
 // Log every spoken narrator line (text + cached audio URL) to narrator_lines.
 // Fire-and-forget; duplicate lines are ignored via the (narrator, texthash) key.
