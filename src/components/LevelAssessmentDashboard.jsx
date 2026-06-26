@@ -1323,7 +1323,7 @@ function AnswerInput({
 }) {
   const hasSpeakContent = getSpeakText(utterances, settledText, partialTranscript).length > 0;
   const micActive = isRecording || isStoppingRecording;
-  const micHighlighted = showMicHint && inputMode === 'speak' && !micActive && !hasSpeakContent;
+  const micHighlighted = showMicHint && inputMode === 'speak' && !micActive && !hasSpeakContent && status !== 'connecting';
   const stopHighlighted = showMicHint && inputMode === 'speak' && micActive;
 
   const micHint = (text) => (
