@@ -1715,13 +1715,17 @@ N'utilise JAMAIS de markdown ni d'astérisques. Réponds uniquement en JSON :
 {"text":"...","translation":"...","usedGrammar":bool,"usedVocab":["..."],"complete":bool,"sentenceCorrect":bool,"correction":{"corrected":"...","translation":"..."}|null}`;
         const d = await claudeCall('speaking/reaction', apiKey, {
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 360,
+          max_tokens: 520,
           system,
           messages: [{ role: 'user', content: `L'étudiant vient de dire: "${utterance}"` }],
         });
         let raw = d.content?.[0]?.text?.trim() || '{}';
         raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-        const parsed = JSON.parse(raw);
+        // Tolerant parse: fall back to the first {...} block if there's any
+        // stray text around the JSON (mirrors the robust server-side helper).
+        let parsed;
+        try { parsed = JSON.parse(raw); }
+        catch { parsed = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || '{}'); }
         const sentenceCorrect = parsed.sentenceCorrect !== false;
         res.end(JSON.stringify({
           text: parsed.text || '',
