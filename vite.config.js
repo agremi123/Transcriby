@@ -1021,7 +1021,7 @@ function readingMiddleware(apiKey, openrouterKey, supabaseUrl, supabaseKey) {
       const sb = getSupabaseAdmin();
       if (sb) {
         sb.from('reading_articles')
-          .insert([{ title, passage, source, author, date, link, questions, vocab, grammar, conjugation }])
+          .insert([{ title, passage, source, author, date, link, questions, vocab, grammar, conjugation, level: normalizeLevel(learnerLevel) }])
           .then(({ error }) => { if (error) console.error('[reading] Supabase insert error:', error.message); });
       } else {
         console.warn('[reading] Supabase not configured, article not saved to DB');
