@@ -684,25 +684,16 @@ Raw JSON only:
 }
 
 // ── Podcast sources ───────────────────────────────────────────────────────────
-const PODCAST_SOURCES = [
-  // Dedicated French-learning podcasts
-  { name: 'InnerFrench',                      rss: 'https://podcast.innerfrench.com/feed.xml' },
-  { name: 'Français Authentique',              rss: 'https://www.francaisauthentique.com/feed/podcast/' },
-  { name: 'RFI — Journal en Français Facile',  rss: 'https://www.rfi.fr/fr/podcasts/journal-en-francais-facile/feed/' },
-  // Authentic French content
-  { name: 'France Culture — Avec philosophie', rss: 'https://radiofrance-podcast.net/podcast09/rss_56107.xml' },
-  { name: 'France Culture — Le cours de l\'histoire', rss: 'https://radiofrance-podcast.net/podcast09/rss_11549.xml' },
-  { name: 'France Inter — Le grand entretien', rss: 'https://radiofrance-podcast.net/podcast09/rss_13963.xml' },
-  { name: 'Choses à Savoir',                   rss: 'https://podcast.ausha.co/choses-a-savoir/rss.xml' },
-  { name: 'Les Chemins de la philosophie',     rss: 'https://radiofrance-podcast.net/podcast09/rss_14400.xml' },
-];
+// Podcast sources now live in server/levelAdapt.js (LISTENING_SOURCES) — tagged
+// by level and shared with the dev backend so the two can't drift.
 
-async function fetchPodcastEpisode() {
-  // Shuffle so we rotate across sources
-  const sources = PODCAST_SOURCES.slice().sort(() => Math.random() - 0.5);
+async function fetchPodcastEpisode(level = 'B1') {
+  // Sources whose level range fits the learner first, then the rest as fallback,
+  // so A1–A2 get slow/easy podcasts (Duolingo, RFI facile) before native ones.
+  const sources = pickSourcesForLevel(LISTENING_SOURCES, level);
   for (const src of sources) {
     try {
-      const res = await fetch(src.rss, {
+      const res = await fetch(src.rssUrl, {
         headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/rss+xml,application/xml,text/xml,*/*' },
         signal: AbortSignal.timeout(7000),
       });
