@@ -7592,7 +7592,7 @@ export default function Hero() {
     (heroActiveTab === 'writing' && writingActive);
 
   return (
-    <section className="relative pt-24 lg:pt-12 pb-12 min-h-screen overflow-visible">
+    <section className="relative pt-24 lg:pt-12 max-lg:landscape:pt-16 pb-12 min-h-screen overflow-visible">
       {/* Mobile-only: assessment CTA relocated to the top-right header (opposite the
           Parisly logo) once Léa's text has taken its place next to her portrait.
           Plain (CSS) fade-in so it never gets stuck mid-animation in throttled tabs. */}
