@@ -909,7 +909,7 @@ async function generateSpeakingBundle(apiKey, topic = '', level = 'B1') {
   const narratorId = narrators[Math.floor(Math.random() * narrators.length)];
   const data = await claudeJSON({
     apiKey, maxTokens: 600,
-    system: `You are a Parisian French speaking coach designing a practice challenge for a ${level} learner. For the topic, design:
+    system: `You are a Parisian French speaking coach designing a practice challenge for a ${level} learner. ${speakingPromptDirective(level)} For the topic, design:
 1. ONE grammar structure to practice (e.g. passé composé, subjonctif, pronoms relatifs, comparatifs, futur proche).
 2. THREE useful French vocabulary words/expressions to use.
 3. A warm, natural opening QUESTION in French that naturally pushes the learner to use that grammar and those words in their spoken answer.
