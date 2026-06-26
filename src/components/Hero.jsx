@@ -615,7 +615,7 @@ const LEVEL_ARROW_STOPS = [
 // exercise in every skill completes a "round" and advances the sub-level (A2 →
 // A2.1 → A2.2 …), at which point the milestone badge rolls left and the line
 // resets. A ring around the left badge tracks progress through the current round.
-function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = null, onPick }) {
+function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = null, onPick, current = null }) {
   const WINE = '#8B1E2D';
   const SKILL_IDS = LEVEL_ARROW_STOPS.map((s) => s.id);
   const skillCount = (s) => Math.max(0, Number(counts[s]) || 0);
