@@ -636,13 +636,18 @@ async function fetchInterviewReport(answers, levelId, assessments) {
 
     const fallback = buildFallbackReport(answers, assessments, levelId);
 
+    // The displayed level must match what Léa & Jules actually said per question
+    // (their per-answer verdicts → `assessments`), not a separate holistic API
+    // guess — otherwise an A2 learner can confusingly see a B2/C1 verdict.
+    const assessedLevel = computeFinalLevel(levelId, assessments);
+
     const report = {
-      overallLevel: data.overallLevel || computeFinalLevel(levelId, assessments),
+      overallLevel: assessedLevel,
       overallScore: clampScore(data.overallScore, 55),
       summary: data.summary?.trim() || buildFallbackSummary(
         strengths.length ? strengths : fallback.strengths,
         weaknesses.length ? weaknesses : fallback.weaknesses,
-        data.overallLevel || fallback.overallLevel,
+        assessedLevel,
       ),
       learnerGender: resolveLearnerGender(data.learnerGender, answers),
       strengths: strengths.length ? strengths : fallback.strengths,
