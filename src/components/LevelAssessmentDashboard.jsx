@@ -500,10 +500,13 @@ function enrichReportForVerdict(report, claimedLevel, assessments) {
   const lines = buildFinalVerdictLines(claimedLevel, assessments);
   const lea = lines.find((l) => l.narrator === 'lea');
   const jules = lines.find((l) => l.narrator === 'jules');
+  // The level shown must be exactly what Léa & Jules state in their verdict lines.
+  const assessedLevel = computeFinalLevel(claimedLevel, assessments);
   return normalizeVerdictTraits({
     ...report,
+    overallLevel: assessedLevel,
     summary: null,
-    verdictMood: getVerdictMood(claimedLevel, report.overallLevel, report.overallScore),
+    verdictMood: getVerdictMood(claimedLevel, assessedLevel, report.overallScore),
     leaVerdict: lea?.text ?? '',
     julesVerdict: jules?.text ?? '',
     leaVerdictTranslation: lea?.translation ?? null,
