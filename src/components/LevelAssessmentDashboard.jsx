@@ -724,45 +724,32 @@ function TraitGaugeRow({ label, score, tone = 'neutral', compact = false, maxLev
   const barColor = tone === 'strength' ? 'bg-green-600' : tone === 'weakness' ? 'bg-wine' : 'bg-navy/60';
   const raw = getTraitProgressToNextLevel(score);
   // A trait can never read above the learner's real assessed level — e.g. an A2
-  // learner must not show a B2/C1 strength. Cap the badge (and the bar) at maxLevel.
+  // learner must not show a B2/C1 strength. Cap the badge at maxLevel.
   const capped = maxLevel && LEVEL_ORDER.indexOf(raw.level) >= LEVEL_ORDER.indexOf(maxLevel);
   const traitLevel = capped ? maxLevel : raw.level;
   const nextLevel = capped ? null : raw.nextLevel;
-  const progressInBand = capped ? 1 : raw.progressInBand;
   const improveMode = TRAIT_IMPROVE_MODE[label] || 'speak';
   const reachHref = nextLevel ? buildLearnPathUrl(improveMode, nextLevel) : null;
-  const percentReached = Math.round(progressInBand * 100);
-  const barFillWidth = nextLevel ? percentReached : 100;
+  // Plausible fill from the trait score — between 0 and 100, never a flat 100%.
+  const barPct = Math.min(94, Math.max(12, clampScore(score)));
 
   return (
     <div className="space-y-1.5">
-      <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-          <span className={`font-medium text-navy leading-snug ${compact ? 'text-[13px]' : 'text-[13px]'}`}>{label}</span>
-          <CircledLevel level={traitLevel} size="sm" compact={compact} />
-        </div>
+      {/* Name on the left, level circle to its right */}
+      <div className="flex items-center gap-2">
+        <span className={`flex-1 min-w-0 font-medium text-navy leading-snug ${compact ? 'text-[13px]' : 'text-[13px]'}`}>{label}</span>
+        <CircledLevel level={traitLevel} size="sm" compact={compact} />
       </div>
       <div className="flex items-center gap-2">
         <div className={`relative flex-1 min-w-0 rounded-full bg-navy/8 overflow-hidden ${compact ? 'h-3.5' : 'h-3.5 sm:h-4'}`}>
-          {nextLevel ? (
-            <div
-              className={`absolute inset-y-0 left-0 flex items-center justify-end rounded-full px-2 transition-all duration-700 ${barColor}`}
-              style={{ width: `${Math.max(barFillWidth, percentReached > 0 ? 16 : 0)}%` }}
-            >
-              {percentReached > 0 ? (
-                <span className="text-[10px] sm:text-[11px] font-semibold text-ivory tabular-nums leading-none">
-                  {percentReached}%
-                </span>
-              ) : null}
-            </div>
-          ) : (
-            <>
-              <div className={`absolute inset-0 rounded-full ${barColor}`} />
-              <span className="absolute inset-0 flex items-center justify-center text-[10px] sm:text-[11px] font-semibold text-ivory tabular-nums leading-none">
-                100%
-              </span>
-            </>
-          )}
+          <div
+            className={`absolute inset-y-0 left-0 flex items-center justify-end rounded-full px-2 transition-all duration-700 ${barColor}`}
+            style={{ width: `${Math.max(barPct, 22)}%` }}
+          >
+            <span className="text-[10px] sm:text-[11px] font-semibold text-ivory tabular-nums leading-none">
+              {barPct}%
+            </span>
+          </div>
         </div>
         {nextLevel && reachHref ? (
           <a
