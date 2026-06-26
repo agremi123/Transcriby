@@ -1233,6 +1233,7 @@ function isBoilerplateContent(text) {
 
 // French podcast sources for listening exercises
 const FRENCH_PODCAST_SOURCES = [
+  { id: 'duolingo', name: 'Duolingo French Podcast', level: 'A1-B1', rssUrl: 'https://frpodcast.libsyn.com/rss' },
   { id: 'rfi', name: 'RFI — Journal en Français Facile', level: 'A2-B1', rssUrl: 'https://www.rfi.fr/fr/podcasts/journal-en-francais-facile/feed/' },
   { id: 'innerfrench', name: 'InnerFrench', level: 'B1-B2', rssUrl: 'https://podcast.innerfrench.com/feed.xml' },
   { id: 'littletalk', name: 'Little Talk in Slow French', level: 'A2-B1', rssUrl: 'https://www.spreaker.com/show/6084166/episodes/feed', hasBuiltinTranscript: true },
