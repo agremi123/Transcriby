@@ -1486,7 +1486,7 @@ function AnswerInput({
       ) : (
         <div className={`relative overflow-visible ${compact ? 'mt-3' : 'mt-3.5'} ${compact ? 'pb-12' : 'pb-14'}`}>
           <div
-            className={`rounded-xl bg-ivory/40 border transition-colors duration-300 ${
+            className={`relative rounded-xl bg-ivory/40 border transition-colors duration-300 ${
               micHighlighted || stopHighlighted
                 ? 'border-wine/45'
                 : 'border-line/60'
