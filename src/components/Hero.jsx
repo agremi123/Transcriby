@@ -1325,6 +1325,7 @@ function ExerciseStatus({ prog }) {
 
 export function AudioDemoCard({
   fullscreen = false,
+  tall = false,
   onClose,
   onOpenFullscreen,
   initialTopic,
