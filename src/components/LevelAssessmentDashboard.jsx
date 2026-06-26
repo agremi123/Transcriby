@@ -918,6 +918,10 @@ function FrenchOpinionReport({
   const level = report.overallLevel || claimedLevel || 'B1';
   const mood = report.verdictMood || getVerdictMood(claimedLevel, level, report.overallScore);
   const moodClass = mood === 'Pas mal !' ? 'text-wine' : 'text-navy/70';
+  // Next CEFR level up — the goal we nudge the learner toward via a listening défi.
+  const nextLevelIdx = LEVEL_ORDER.indexOf(level) + 1;
+  const nextLevel = nextLevelIdx < LEVEL_ORDER.length ? LEVEL_ORDER[nextLevelIdx] : null;
+  const reachListeningHref = `/?ptype=listening#nativa-demo`;
 
   return (
     <motion.div
