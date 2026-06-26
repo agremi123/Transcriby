@@ -693,14 +693,14 @@ const TRAIT_IMPROVE_MODE = {
 function CircledLevel({ level, size = 'sm', compact = false }) {
   const sizeClass = size === 'lg'
     ? compact
-      ? 'w-[4.25rem] h-[4.25rem] sm:w-[4.75rem] sm:h-[4.75rem] text-[1.65rem] sm:text-[1.8rem] text-navy'
-      : 'w-[4.75rem] h-[4.75rem] sm:w-[5.25rem] sm:h-[5.25rem] text-[1.85rem] sm:text-[2rem] text-navy'
+      ? 'w-[4.25rem] h-[4.25rem] sm:w-[4.75rem] sm:h-[4.75rem] text-[1.65rem] sm:text-[1.8rem] text-wine'
+      : 'w-[4.75rem] h-[4.75rem] sm:w-[5.25rem] sm:h-[5.25rem] text-[1.85rem] sm:text-[2rem] text-wine'
     : size === 'md'
-      ? 'w-9 h-9 text-[13px] text-navy'
+      ? 'w-9 h-9 text-[13px] text-wine'
       : compact
-        ? 'w-6 h-6 text-[9px] text-navy'
-        : 'w-6 h-6 text-[10px] text-navy';
-  const borderClass = size === 'lg' ? 'border-2 border-navy' : 'border border-navy/20';
+        ? 'w-6 h-6 text-[9px] text-wine'
+        : 'w-6 h-6 text-[10px] text-wine';
+  const borderClass = size === 'lg' ? 'border-2 border-wine' : 'border border-wine/30';
 
   return (
     <span
