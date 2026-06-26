@@ -4030,11 +4030,11 @@ export function AudioDemoCard({
           <div
             ref={scrollRef}
             onClick={(e) => {
-              // Touch devices: tapping anywhere in the speech box starts recording,
-              // so learners don't have to aim for the small mic button (works in
-              // portrait AND landscape). Desktop (mouse) keeps the explicit mic
-              // button. Ignore taps on inner controls and while already recording.
-              if (!window.matchMedia('(pointer: coarse)').matches) return;
+              // Tapping anywhere in the speech box starts recording, so learners
+              // don't have to aim for the small mic button — works on phones in
+              // BOTH portrait and landscape. Only a true desktop (large screen +
+              // mouse) is excluded, keeping its explicit mic button.
+              if (window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches) return;
               if (inputMode !== 'speak') return;
               if (isRecording || stoppingRecording || status === 'connecting') return;
               if (e.target.closest('button, a, textarea, input, [role="button"]')) return;
