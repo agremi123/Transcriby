@@ -99,7 +99,7 @@ function formatQuestionCounter(step, total = INTRO_QUESTIONS.length) {
 function QuestionProgressBadge({ step, total = INTRO_QUESTIONS.length, className = '', align = 'left', overlay = false, compact = false }) {
   const pill = (
     <div className={`inline-flex items-center rounded-full border border-line/70 bg-paper ${
-      compact ? 'gap-2 pl-2.5 pr-3 py-1' : 'gap-2.5 pl-3 pr-3.5 py-1.5'
+      compact ? 'gap-2 pl-3 pr-3.5 py-1.5' : 'gap-2.5 pl-3.5 pr-4 py-2'
     }`}>
       <span className={`tracking-[0.22em] uppercase text-wine font-semibold leading-none ${
         compact ? 'text-[8px]' : 'text-[9px]'
@@ -500,10 +500,13 @@ function enrichReportForVerdict(report, claimedLevel, assessments) {
   const lines = buildFinalVerdictLines(claimedLevel, assessments);
   const lea = lines.find((l) => l.narrator === 'lea');
   const jules = lines.find((l) => l.narrator === 'jules');
+  // The level shown must be exactly what Léa & Jules state in their verdict lines.
+  const assessedLevel = computeFinalLevel(claimedLevel, assessments);
   return normalizeVerdictTraits({
     ...report,
+    overallLevel: assessedLevel,
     summary: null,
-    verdictMood: getVerdictMood(claimedLevel, report.overallLevel, report.overallScore),
+    verdictMood: getVerdictMood(claimedLevel, assessedLevel, report.overallScore),
     leaVerdict: lea?.text ?? '',
     julesVerdict: jules?.text ?? '',
     leaVerdictTranslation: lea?.translation ?? null,
@@ -636,13 +639,18 @@ async function fetchInterviewReport(answers, levelId, assessments) {
 
     const fallback = buildFallbackReport(answers, assessments, levelId);
 
+    // The displayed level must match what Léa & Jules actually said per question
+    // (their per-answer verdicts → `assessments`), not a separate holistic API
+    // guess — otherwise an A2 learner can confusingly see a B2/C1 verdict.
+    const assessedLevel = computeFinalLevel(levelId, assessments);
+
     const report = {
-      overallLevel: data.overallLevel || computeFinalLevel(levelId, assessments),
+      overallLevel: assessedLevel,
       overallScore: clampScore(data.overallScore, 55),
       summary: data.summary?.trim() || buildFallbackSummary(
         strengths.length ? strengths : fallback.strengths,
         weaknesses.length ? weaknesses : fallback.weaknesses,
-        data.overallLevel || fallback.overallLevel,
+        assessedLevel,
       ),
       learnerGender: resolveLearnerGender(data.learnerGender, answers),
       strengths: strengths.length ? strengths : fallback.strengths,
@@ -693,14 +701,14 @@ const TRAIT_IMPROVE_MODE = {
 function CircledLevel({ level, size = 'sm', compact = false }) {
   const sizeClass = size === 'lg'
     ? compact
-      ? 'w-[4.25rem] h-[4.25rem] sm:w-[4.75rem] sm:h-[4.75rem] text-[1.65rem] sm:text-[1.8rem] text-navy'
-      : 'w-[4.75rem] h-[4.75rem] sm:w-[5.25rem] sm:h-[5.25rem] text-[1.85rem] sm:text-[2rem] text-navy'
+      ? 'w-[4.25rem] h-[4.25rem] sm:w-[4.75rem] sm:h-[4.75rem] text-[1.65rem] sm:text-[1.8rem] text-wine'
+      : 'w-[4.75rem] h-[4.75rem] sm:w-[5.25rem] sm:h-[5.25rem] text-[1.85rem] sm:text-[2rem] text-wine'
     : size === 'md'
-      ? 'w-9 h-9 text-[13px] text-navy'
+      ? 'w-9 h-9 text-[13px] text-wine'
       : compact
-        ? 'w-6 h-6 text-[9px] text-navy'
-        : 'w-6 h-6 text-[10px] text-navy';
-  const borderClass = size === 'lg' ? 'border-2 border-navy' : 'border border-navy/20';
+        ? 'w-6 h-6 text-[9px] text-wine'
+        : 'w-6 h-6 text-[10px] text-wine';
+  const borderClass = size === 'lg' ? 'border-2 border-wine' : 'border border-wine/30';
 
   return (
     <span
@@ -712,43 +720,36 @@ function CircledLevel({ level, size = 'sm', compact = false }) {
   );
 }
 
-function TraitGaugeRow({ label, score, tone = 'neutral', compact = false }) {
+function TraitGaugeRow({ label, score, tone = 'neutral', compact = false, maxLevel = null }) {
   const barColor = tone === 'strength' ? 'bg-green-600' : tone === 'weakness' ? 'bg-wine' : 'bg-navy/60';
-  const { level: traitLevel, nextLevel, progressInBand } = getTraitProgressToNextLevel(score);
+  const raw = getTraitProgressToNextLevel(score);
+  // A trait can never read above the learner's real assessed level — e.g. an A2
+  // learner must not show a B2/C1 strength. Cap the badge at maxLevel.
+  const capped = maxLevel && LEVEL_ORDER.indexOf(raw.level) >= LEVEL_ORDER.indexOf(maxLevel);
+  const traitLevel = capped ? maxLevel : raw.level;
+  const nextLevel = capped ? null : raw.nextLevel;
   const improveMode = TRAIT_IMPROVE_MODE[label] || 'speak';
   const reachHref = nextLevel ? buildLearnPathUrl(improveMode, nextLevel) : null;
-  const percentReached = Math.round(progressInBand * 100);
-  const barFillWidth = nextLevel ? percentReached : 100;
+  // Plausible fill from the trait score — between 0 and 100, never a flat 100%.
+  const barPct = Math.min(94, Math.max(12, clampScore(score)));
 
   return (
     <div className="space-y-1.5">
-      <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-          <span className={`font-medium text-navy leading-snug ${compact ? 'text-[13px]' : 'text-[13px]'}`}>{label}</span>
-          <CircledLevel level={traitLevel} size="sm" compact={compact} />
-        </div>
+      {/* Name on the left, level circle to its right */}
+      <div className="flex items-center gap-2">
+        <span className={`flex-1 min-w-0 font-medium text-navy leading-snug ${compact ? 'text-[13px]' : 'text-[13px]'}`}>{label}</span>
+        <CircledLevel level={traitLevel} size="sm" compact={compact} />
       </div>
       <div className="flex items-center gap-2">
         <div className={`relative flex-1 min-w-0 rounded-full bg-navy/8 overflow-hidden ${compact ? 'h-3.5' : 'h-3.5 sm:h-4'}`}>
-          {nextLevel ? (
-            <div
-              className={`absolute inset-y-0 left-0 flex items-center justify-end rounded-full px-2 transition-all duration-700 ${barColor}`}
-              style={{ width: `${Math.max(barFillWidth, percentReached > 0 ? 16 : 0)}%` }}
-            >
-              {percentReached > 0 ? (
-                <span className="text-[10px] sm:text-[11px] font-semibold text-ivory tabular-nums leading-none">
-                  {percentReached}%
-                </span>
-              ) : null}
-            </div>
-          ) : (
-            <>
-              <div className={`absolute inset-0 rounded-full ${barColor}`} />
-              <span className="absolute inset-0 flex items-center justify-center text-[10px] sm:text-[11px] font-semibold text-ivory tabular-nums leading-none">
-                100%
-              </span>
-            </>
-          )}
+          <div
+            className={`absolute inset-y-0 left-0 flex items-center justify-end rounded-full px-2 transition-all duration-700 ${barColor}`}
+            style={{ width: `${Math.max(barPct, 22)}%` }}
+          >
+            <span className="text-[10px] sm:text-[11px] font-semibold text-ivory tabular-nums leading-none">
+              {barPct}%
+            </span>
+          </div>
         </div>
         {nextLevel && reachHref ? (
           <a
@@ -967,8 +968,8 @@ function FrenchOpinionReport({
         </div>
       </div>
 
-      <div className={`grid grid-cols-1 sm:grid-cols-2 ${
-        compact ? 'gap-4 px-4 sm:px-6 py-4 sm:py-5' : 'gap-5 px-5 py-5'
+      <div className={`grid grid-cols-2 ${
+        compact ? 'gap-3 px-3 sm:px-6 py-4 sm:py-5' : 'gap-5 px-5 py-5'
       }`}>
         {report.strengths?.length > 0 ? (
           <div className="min-w-0">
@@ -983,6 +984,7 @@ function FrenchOpinionReport({
                   score={t.score}
                   tone="strength"
                   compact={compact}
+                  maxLevel={level}
                 />
               ))}
             </div>
@@ -990,7 +992,7 @@ function FrenchOpinionReport({
         ) : null}
 
         {report.weaknesses?.length > 0 ? (
-          <div className={`min-w-0 sm:border-l sm:border-wine/10 ${compact ? 'sm:pl-3.5' : 'sm:pl-5'}`}>
+          <div className={`min-w-0 border-l border-wine/10 ${compact ? 'pl-3' : 'pl-5'}`}>
             <p className={`text-[10px] tracking-[0.14em] uppercase text-wine/80 font-semibold ${compact ? 'mb-2' : 'mb-3'}`}>
               Weaknesses
             </p>
@@ -1002,6 +1004,7 @@ function FrenchOpinionReport({
                   score={t.score}
                   tone="weakness"
                   compact={compact}
+                  maxLevel={level}
                 />
               ))}
             </div>
@@ -1323,7 +1326,7 @@ function AnswerInput({
 }) {
   const hasSpeakContent = getSpeakText(utterances, settledText, partialTranscript).length > 0;
   const micActive = isRecording || isStoppingRecording;
-  const micHighlighted = showMicHint && inputMode === 'speak' && !micActive && !hasSpeakContent;
+  const micHighlighted = showMicHint && inputMode === 'speak' && !micActive && !hasSpeakContent && status !== 'connecting';
   const stopHighlighted = showMicHint && inputMode === 'speak' && micActive;
 
   const micHint = (text) => (
@@ -1370,10 +1373,43 @@ function AnswerInput({
     ? prepareCorrectionForDisplay(underlineCorrection.original, underlineCorrection.corrected)
     : '';
 
+  // Mic / pen toggle (mirrors the landing speech box): mic = speak (tap again to
+  // record/stop), pen = write (tap again to submit). Replaces the Speak|Write text
+  // toggle + the separate centred mic button.
+  const modeToggle = (
+    <div className="relative flex items-center rounded-full p-0.5 bg-wine/10 border-2 border-paper shadow-[0_2px_10px_-4px_rgba(26,35,64,0.18)] shrink-0">
+      {micActive && (
+        <span className="absolute left-[3px] top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-wine/25 animate-ping pointer-events-none" style={{ animationDuration: '1.1s' }} />
+      )}
+      <button
+        type="button"
+        onClick={() => { if (inputMode !== 'speak') onInputModeChange('speak'); else onToggleRecording(); }}
+        disabled={disabled || status === 'connecting' || isStoppingRecording}
+        className={`relative z-10 w-10 h-10 rounded-full inline-flex items-center justify-center transition-colors disabled:opacity-50 ${inputMode === 'speak' ? 'bg-wine text-ivory' : 'text-navy/45'}`}
+        aria-label={inputMode === 'speak' ? (micActive ? 'Stop recording' : 'Record') : 'Switch to speak'}
+      >
+        {micActive ? (
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none" aria-hidden><rect x="2" y="2" width="10" height="10" rx="1.5" fill="currentColor" /></svg>
+        ) : (
+          <svg width="12" height="15" viewBox="0 0 16 20" fill="none" aria-hidden><rect x="5" y="1" width="6" height="11" rx="3" fill="currentColor" /><path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
+        )}
+      </button>
+      <button
+        type="button"
+        onClick={() => { if (inputMode !== 'write') onInputModeChange('write'); else onWriteFinish?.(); }}
+        disabled={disabled || (inputMode === 'write' && writeFinishDisabled)}
+        className={`relative z-10 w-10 h-10 rounded-full inline-flex items-center justify-center transition-colors disabled:opacity-50 ${inputMode === 'write' ? 'bg-wine text-ivory' : 'text-navy/45'}`}
+        aria-label={inputMode === 'write' ? 'Submit writing' : 'Switch to write'}
+      >
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </button>
+    </div>
+  );
+
   return (
     <div className="flex flex-col shrink-0 w-full">
-      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 w-full shrink-0">
-        <div className="justify-self-start min-w-0">
+      <div className="flex items-center justify-between gap-3 w-full shrink-0">
+        <div className="min-w-0">
           {showQuestionProgress && questionStep ? (
             <QuestionProgressBadge
               step={questionStep}
@@ -1383,8 +1419,7 @@ function AnswerInput({
             />
           ) : null}
         </div>
-        <SpeakWriteToggle mode={inputMode} onChange={onInputModeChange} disabled={disabled} compact={compact} />
-        <div className="justify-self-end min-w-0 flex justify-end">
+        <div className="min-w-0 flex justify-end">
           {headerRightAction}
         </div>
       </div>
@@ -1443,46 +1478,17 @@ function AnswerInput({
             </div>
           </div>
 
-          {leftAction ? (
-            <div className={`absolute left-0 bottom-0 z-10 ${compact ? 'pl-2 pb-1' : 'pl-2.5 pb-1.5'}`}>
-              {leftAction}
-            </div>
-          ) : null}
-
+          {/* Points — bottom-left (toggle sits on the right, like the landing box) */}
           {rightInfo ? (
-            <div className={`absolute right-0 bottom-0 z-10 ${compact ? 'pr-2 pb-1.5' : 'pr-2.5 pb-2'}`}>
+            <div className={`absolute left-0 bottom-0 z-10 ${compact ? 'pl-2 pb-1.5' : 'pl-2.5 pb-2'}`}>
               {rightInfo}
             </div>
           ) : null}
 
-          {!disabled && (
-            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 z-10">
-              <button
-                type="button"
-                onClick={onWriteFinish}
-                disabled={writeFinishDisabled}
-                className={`inline-flex items-center gap-1.5 rounded-full border-2 border-paper font-display italic transition-colors shadow-[0_2px_10px_-4px_rgba(26,35,64,0.18)] ${
-                  compact ? 'px-3.5 h-10 text-[15px]' : 'px-4 h-11 text-[16px]'
-                } ${
-                  writeFinishDisabled
-                    ? 'bg-wine/15 text-wine/35 cursor-default'
-                    : 'bg-wine text-ivory hover:bg-wine2'
-                }`}
-                aria-label="Fini"
-              >
-                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
-                  <path
-                    d="M2 6.5l2.5 2.5L10 3"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Fini
-              </button>
-            </div>
-          )}
+          {/* Mic / pen toggle — bottom-right */}
+          <div className={`absolute right-0 bottom-0 z-10 ${compact ? 'pr-2 pb-1' : 'pr-2.5 pb-1.5'}`}>
+            {modeToggle}
+          </div>
         </div>
       ) : (
         <div className={`relative overflow-visible ${compact ? 'mt-3' : 'mt-3.5'} ${compact ? 'pb-12' : 'pb-14'}`}>
@@ -1529,7 +1535,14 @@ function AnswerInput({
                     )}
                   </>
                 ) : status === 'connecting' ? (
-                  <ProcessDots />
+                  <span className="inline-flex items-center gap-2.5 font-display italic text-navy/45 text-[14px] sm:text-[15px]">
+                    <span className="block h-1.5 w-20 overflow-hidden rounded-full bg-wine/15">
+                      <span className="block h-full w-1/2 rounded-full bg-wine/50 animate-pulse" />
+                    </span>
+                    Setting up the mic…
+                  </span>
+                ) : isRecording ? (
+                  <span className="font-display italic text-wine/70 text-[15px] sm:text-[16px]">Ready! You can start speaking.</span>
                 ) : null}
               </p>
               {correctionContent}
@@ -1550,51 +1563,16 @@ function AnswerInput({
             )}
           </div>
 
-          {leftAction ? (
-            <div className={`absolute left-0 bottom-0 z-10 ${compact ? 'pl-2 pb-1' : 'pl-2.5 pb-1.5'}`}>
-              {leftAction}
-            </div>
-          ) : null}
-
+          {/* Points — bottom-left (toggle sits on the right, like the landing box) */}
           {rightInfo ? (
-            <div className={`absolute right-0 bottom-0 z-10 ${compact ? 'pr-2 pb-1.5' : 'pr-2.5 pb-2'}`}>
+            <div className={`absolute left-0 bottom-0 z-10 ${compact ? 'pl-2 pb-1.5' : 'pl-2.5 pb-2'}`}>
               {rightInfo}
             </div>
           ) : null}
 
-          {/* Mic is absolutely positioned so it never moves */}
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-0 z-10">
-            <div className="relative flex flex-col items-center">
-              <div className={`absolute left-1/2 -translate-x-1/2 ${compact ? '-top-[46px]' : '-top-[56px]'}`} />
-
-              <button
-                type="button"
-                onClick={onToggleRecording}
-                disabled={disabled || status === 'connecting' || isStoppingRecording}
-                className={`relative w-11 h-11 rounded-full inline-flex items-center justify-center border-2 border-paper text-ivory transition-colors duration-300 shadow-[0_2px_10px_-4px_rgba(26,35,64,0.18)] ${
-                  micActive || stopHighlighted
-                    ? 'bg-wine'
-                    : micHighlighted
-                      ? 'bg-wine2'
-                      : 'bg-wine hover:bg-wine2'
-                } disabled:opacity-40`}
-                aria-label={micActive ? 'Stop recording' : 'Start recording'}
-              >
-                {micActive ? (
-                  <svg width="10" height="10" viewBox="0 0 14 14" fill="none" aria-hidden>
-                    <rect x="2" y="2" width="10" height="10" rx="1.5" fill="currentColor" />
-                  </svg>
-                ) : (
-                  <svg width="11" height="14" viewBox="0 0 16 20" fill="none" aria-hidden>
-                    <rect x="5" y="1" width="6" height="11" rx="3" fill="currentColor" />
-                    <path d="M2 9.5a6 6 0 0012 0M8 16v3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                  </svg>
-                )}
-                {(micHighlighted || stopHighlighted) && (
-                  <span className="absolute inset-0 rounded-full border border-wine/40 animate-ping-narrator pointer-events-none" />
-                )}
-              </button>
-            </div>
+          {/* Mic / pen toggle — bottom-right */}
+          <div className={`absolute right-0 bottom-0 z-10 ${compact ? 'pr-2 pb-1' : 'pr-2.5 pb-1.5'}`}>
+            {modeToggle}
           </div>
         </div>
       )}

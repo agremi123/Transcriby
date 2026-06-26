@@ -3496,10 +3496,14 @@ export function AudioDemoCard({
             lastType={levelLastType}
             current={inputMode === 'write' ? 'writing' : (['reading', 'listening', 'speaking'].includes(activeTab) ? activeTab : null)}
             onPick={(type) => {
+              if (type === 'writing') { activateWriteMode(); return; }
+              // Leaving the writing tab: drop out of write mode so the picked tab
+              // (especially Speaking) actually takes over instead of staying stuck
+              // showing the write textarea.
+              if (inputMode === 'write') activateSpeakMode();
               if (type === 'reading') setActiveTab('reading');
               else if (type === 'listening') setActiveTab('listening');
               else if (type === 'speaking') setActiveTab('speaking');
-              else if (type === 'writing') activateWriteMode();
             }}
           />
         </div>
@@ -4026,11 +4030,11 @@ export function AudioDemoCard({
           <div
             ref={scrollRef}
             onClick={(e) => {
-              // Mobile-only: tapping anywhere in the speech box starts recording,
-              // so learners don't have to aim for the small mic button. Desktop
-              // keeps the explicit mic button. Ignore taps on inner controls and
-              // taps while already recording / connecting.
-              if (window.matchMedia('(min-width: 640px)').matches) return;
+              // Tapping anywhere in the speech box starts recording, so learners
+              // don't have to aim for the small mic button — works on phones in
+              // BOTH portrait and landscape. Only a true desktop (large screen +
+              // mouse) is excluded, keeping its explicit mic button.
+              if (window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches) return;
               if (inputMode !== 'speak') return;
               if (isRecording || stoppingRecording || status === 'connecting') return;
               if (e.target.closest('button, a, textarea, input, [role="button"]')) return;
@@ -5519,9 +5523,11 @@ function VocabWordHighlight({ word, definition }) {
   const updatePosition = React.useCallback(() => {
     const rect = anchorRef.current?.getBoundingClientRect();
     if (!rect) return;
+    const half = 135, pad = 10;
+    const cx = rect.left + rect.width / 2;
     setTooltipPos({
       top: rect.top,
-      left: rect.left + rect.width / 2,
+      left: Math.min(Math.max(cx, half + pad), window.innerWidth - half - pad),
     });
   }, []);
 
@@ -5550,7 +5556,7 @@ function VocabWordHighlight({ word, definition }) {
   const tooltip = hovered ? createPortal(
     <div
       role="tooltip"
-      className="pointer-events-none fixed z-[250] min-w-[11.5rem] max-w-[16rem] rounded-md border border-navy/10 bg-navy px-3 py-2.5 text-left text-[12px] leading-snug text-ivory shadow-[0_10px_32px_rgba(26,35,64,0.35)]"
+      className="pointer-events-none fixed z-[250] min-w-[11.5rem] max-w-[min(16rem,calc(100vw-1.25rem))] rounded-md border border-navy/10 bg-navy px-3 py-2.5 text-left text-[12px] leading-snug text-ivory shadow-[0_10px_32px_rgba(26,35,64,0.35)]"
       style={{
         top: tooltipPos.top,
         left: tooltipPos.left,
@@ -6514,7 +6520,11 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
   const handleClick = React.useCallback(async (raw, rect) => {
     const clean = raw.replace(/[^a-zA-ZÀ-ÿœæ'-]/g, '').toLowerCase();
     if (!clean || clean.length < 2) return;
-    setTooltipPos({ top: rect.top, left: rect.left + rect.width / 2 });
+    // Clamp horizontally so the tooltip never spills past the screen edges.
+    const half = 130, pad = 10;
+    const cx = rect.left + rect.width / 2;
+    const clampedLeft = Math.min(Math.max(cx, half + pad), window.innerWidth - half - pad);
+    setTooltipPos({ top: rect.top, left: clampedLeft });
     setActiveWord(clean);
     if (cacheRef.current[clean] !== undefined) return;
     setLoadingWord(clean);
@@ -6559,7 +6569,7 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
 
   const tooltip = activeWord ? createPortal(
     <div
-      className="fixed z-[300] min-w-[7rem] max-w-[15rem] rounded-md border border-navy/10 bg-navy px-3 py-2 shadow-[0_8px_28px_rgba(26,35,64,0.32)]"
+      className="fixed z-[300] min-w-[7rem] max-w-[min(15rem,calc(100vw-1.25rem))] rounded-md border border-navy/10 bg-navy px-3 py-2 shadow-[0_8px_28px_rgba(26,35,64,0.32)]"
       style={{ top: tooltipPos.top, left: tooltipPos.left, transform: 'translate(-50%, calc(-100% - 9px))' }}
       onMouseDown={(e) => e.stopPropagation()}
     >
