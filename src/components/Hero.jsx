@@ -5140,8 +5140,8 @@ export function AudioDemoCard({
             <PointsBurst points={dailyParisianPoints}>
               <div className="relative flex items-center justify-center w-9 h-9 rounded-full bg-wine/[0.06] border-2 border-wine/20 select-none">
                 <div className="flex flex-col items-center gap-[2px] -mt-0.5">
-                  <span className="font-display text-[13px] font-bold text-wine leading-none tabular-nums">{dailyParisianPoints}</span>
-                  <span className="text-[6px] font-mono tracking-wide uppercase text-wine/60 leading-none">pts</span>
+                  <span className="font-display text-[15px] font-bold text-wine leading-none tabular-nums">{dailyParisianPoints}</span>
+                  <span className="text-[8px] font-mono tracking-wide uppercase text-wine/60 leading-none">pts</span>
                 </div>
                 {pointsDelta && (
                   <span key={pointsDelta.id} className="absolute -top-4 left-1/2 -translate-x-1/2 font-display font-bold text-[13px] whitespace-nowrap pointer-events-none"
