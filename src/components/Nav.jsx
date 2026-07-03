@@ -70,8 +70,15 @@ function NavLogout() {
       const { supabase } = await import('../lib/supabaseClient');
       await supabase.auth.signOut();
     } catch {}
-    // Recharge pour repartir d'un état propre (progression locale conservée).
-    window.location.reload();
+    try {
+      // Efface l'identité (nom/email/compte) mais garde le niveau et la
+      // progression : la fenêtre d'accueil réapparaît sur le choix du compte.
+      const { loadLearnerProfile, saveLearnerProfile } = await import('../lib/learnerProfile');
+      const p = loadLearnerProfile();
+      saveLearnerProfile({ ...p, name: '', email: '', authMethod: null });
+    } catch {}
+    // Retour à la racine de l'app → la fenêtre d'accueil (welcome) s'affiche.
+    window.location.href = import.meta.env.BASE_URL || '/';
   };
 
   return (
