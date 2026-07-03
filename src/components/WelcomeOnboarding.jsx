@@ -425,7 +425,7 @@ export default function WelcomeOnboarding() {
 
             {/* Auth CTAs — always visible */}
             {!showLevelPicker && !levelLocked && (
-              <div className="flex flex-col items-center gap-4 mt-6 mb-1 w-full max-w-[300px] mx-auto">
+              <div className="flex flex-col items-center gap-4 sm:gap-2.5 mt-6 sm:mt-3 mb-1 w-full max-w-[300px] mx-auto">
 
                 {/* I'm new — primary path */}
                 <button
