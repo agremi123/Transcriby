@@ -115,6 +115,7 @@ export default function Nav() {
         <div />
         <div className="flex items-center gap-2.5 sm:gap-3 mr-16">
           <NavReachNextLevel />
+          <NavLogout />
         </div>
       </Container>
     </motion.nav>
