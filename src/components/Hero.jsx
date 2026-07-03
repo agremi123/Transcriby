@@ -18,6 +18,7 @@ import { NarratorHoverText } from '../lib/NarratorHoverText';
 import { lookupNarratorTranslation } from '../lib/narratorTranslations';
 import { SpellcheckUnderline } from '../lib/SpellcheckUnderline';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
+import { uiText } from '../lib/uiLevelText';
 import { matchesCorrectionTarget, isStrictCorrectionMatch, wordDiff, buildCorrectionNarrationText } from '../lib/correctionFormat';
 import { DiffText } from '../lib/DiffText';
 import { registerCorrectionKeyterms } from '../lib/deepgramKeyterms';
@@ -755,7 +756,7 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
               <circle cx={s.x} cy="24" r="2.6" fill={isDone ? '#F6F1E8' : WINE} style={{ pointerEvents: 'none' }} />
             )}
             <text x={s.x} y="46" textAnchor="middle" fill={isDone || started ? WINE : '#1A2340'}
-              fillOpacity={isDone ? 1 : started ? 0.8 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="13">{s.label}</text>
+              fillOpacity={isDone ? 1 : started ? 0.8 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="13">{uiText(s.id, level)}</text>
           </g>
         );
       })}
@@ -1399,7 +1400,7 @@ export function AudioDemoCard({
   const [practiceVocabAnswers, setPracticeVocabAnswers] = React.useState({});
   const [practiceAnsweredQ, setPracticeAnsweredQ] = React.useState({});
   const [pointsDelta, setPointsDelta] = React.useState(null); // { value: +3 | -1, id: number } for animation
-  const { dailyParisianPoints, levelExercisesDone, markExerciseDone, levelArticleCounts, levelLastType, incrementArticle } = useLearnerProfile();
+  const { dailyParisianPoints, levelExercisesDone, markExerciseDone, levelArticleCounts, levelLastType, incrementArticle, effectiveLevel: uiLevel } = useLearnerProfile();
   const [assessingLevel, setAssessingLevel] = React.useState(false);
   const [activeTabInternal, setActiveTabInternal] = React.useState('transcript');
   const activeTab = activeTabProp ?? activeTabInternal;
@@ -3409,7 +3410,7 @@ export function AudioDemoCard({
             className="absolute bottom-full mb-3 flex flex-col items-center gap-1 pointer-events-none z-20"
           >
             <span className="font-display text-[12px] italic text-wine whitespace-nowrap">
-              {showRepeatHint ? 'Repeat to gain experience' : 'Start speaking'}
+              {showRepeatHint ? 'Repeat to gain experience' : uiText('startSpeaking', effectiveLevel)}
             </span>
             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
               <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6"/>
@@ -3486,7 +3487,7 @@ export function AudioDemoCard({
               Plain text (no filled background) so it doesn't read as a button. */}
           <div className="flex flex-col items-center -mb-0.5">
             <span className="font-display text-[13px] sm:text-[15px] uppercase tracking-[0.14em] text-wine" style={{ fontWeight: 700 }}>
-              Pick your challenge
+              {uiText('pickChallenge', effectiveLevel)}
             </span>
             <svg width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden className="mt-0.5 text-wine/70">
               <path d="M5.5 7L0.5 0.5h10L5.5 7z" fill="currentColor" />
@@ -5100,7 +5101,7 @@ export function AudioDemoCard({
                         ? 'bg-wine text-ivory ring-[3px] ring-wine/45 shadow-md scale-[1.03]'
                         : 'bg-wine text-ivory hover:bg-wine2'
                 }`}>
-                Discover a Parisian word
+                {uiText('discoverWord', uiLevel)}
               </button>
               <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 z-30 w-56 text-center rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
                 {dailyParisianPoints < DISCOVER_WORD_COST
@@ -7787,13 +7788,13 @@ export default function Hero() {
                 the original stacked layout untouched. */}
             <div className="w-full flex flex-row items-stretch gap-3 text-left sm:contents">
             <h1 className="font-display text-[28px] sm:text-[48px] leading-[1.02] sm:leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-1 sm:gap-2 shrink-0 self-center sm:self-auto">
-              <Reveal delay={0.08}>Speak French</Reveal>
-              <Reveal delay={0.18} className="text-wine italic">Like a Parisien.</Reveal>
+              <Reveal delay={0.08}>{uiText('heroTitle1', effectiveLevel)}</Reveal>
+              <Reveal delay={0.18} className="text-wine italic">{uiText('heroTitle2', effectiveLevel)}</Reveal>
             </h1>
             <div className="w-px self-stretch bg-navy/15 shrink-0 sm:hidden" aria-hidden />
             <Reveal delay={0.35} className="flex-1 min-w-0 self-center sm:self-auto sm:flex-none">
               <p className="text-center text-[12.5px] leading-[1.45] text-navy/70 sm:mt-6 sm:max-w-[min(500px,calc(100vw-3rem))] sm:text-[15px] sm:leading-[1.6]">
-                Learn Parisian French with Kru Rémi, who'll guide you to your next milestone{' '}
+                {uiText('heroSubtitle', effectiveLevel)}{' '}
                 <span className="font-semibold not-italic text-wine">{nextLevel(effectiveLevel) || 'B1'}</span>.
               </p>
             </Reveal>
@@ -7939,7 +7940,7 @@ export default function Hero() {
                       showArrow={false}
                       className="relative z-[1] rounded-full"
                     >
-                      Judge my French
+                      {uiText('judgeMyFrench', effectiveLevel)}
                     </ButtonPrimary>
                     <span
                       className="absolute inset-0 rounded-full border-2 border-wine animate-ping-tight opacity-35 pointer-events-none"
