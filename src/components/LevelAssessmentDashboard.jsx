@@ -963,19 +963,6 @@ function FrenchOpinionReport({
               </a>
             ) : null}
           </div>
-          <VerdictNarratorColumn
-            narratorId="jules"
-            line={report.julesVerdict}
-            translation={report.julesVerdictTranslation}
-            compact={compact}
-            isSpeaking={playing && activeNarrator === 'jules'}
-            isOtherSpeaking={playing && activeNarrator === 'lea'}
-            onToggleReplay={onToggleReplay}
-            replayDisabled={replayDisabled}
-            speechPlaybackTime={speechPlaybackTime}
-            speechTimings={speechTimings}
-            speechText={speechText}
-          />
         </div>
       </div>
 
