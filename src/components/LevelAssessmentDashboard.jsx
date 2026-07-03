@@ -928,16 +928,17 @@ function FrenchOpinionReport({
       <div className={`border-b border-wine/10 bg-gradient-to-b from-ivory/50 to-paper/80 overflow-visible ${
         compact ? 'px-4 sm:px-6 py-4 sm:py-5' : 'px-4 sm:px-6 py-7 sm:py-8'
       }`}>
-        <div className={`grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end ${
+        <div className={`grid grid-cols-[minmax(0,1fr)_auto] items-end ${
           compact ? 'gap-3 sm:gap-4' : 'gap-4 sm:gap-6'
         }`}>
+          {/* Un seul instructeur (Rémi) : un portrait + les deux répliques fusionnées. */}
           <VerdictNarratorColumn
-            narratorId="lea"
-            line={report.leaVerdict}
-            translation={report.leaVerdictTranslation}
+            narratorId="jules"
+            line={[report.leaVerdict, report.julesVerdict].filter(Boolean).join(' ')}
+            translation={[report.leaVerdictTranslation, report.julesVerdictTranslation].filter(Boolean).join(' ') || null}
             compact={compact}
-            isSpeaking={playing && activeNarrator === 'lea'}
-            isOtherSpeaking={playing && activeNarrator === 'jules'}
+            isSpeaking={playing && (activeNarrator === 'lea' || activeNarrator === 'jules')}
+            isOtherSpeaking={false}
             onToggleReplay={onToggleReplay}
             replayDisabled={replayDisabled}
             speechPlaybackTime={speechPlaybackTime}
