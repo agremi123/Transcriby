@@ -199,10 +199,16 @@ export function learnerLevelContext(level) {
 
 /** Podcast/audio sources for the Listening pillar, tagged by level range. */
 export const LISTENING_SOURCES = [
+  // A1–A2 — vrais débutants : leçons lentes, phrases courtes (flux vérifiés 2026-07)
+  { id: 'coffeebreak',       name: 'Coffee Break French',                  level: 'A1-A2', rssUrl: 'https://feeds.acast.com/public/shows/coffee-break-french' },
+  { id: 'alexa',             name: 'Learn French with Alexa',              level: 'A1-A2', rssUrl: 'https://learnfrenchwithalexa.libsyn.com/rss' },
   // A1–B1 — slow, clear, learner-made
   { id: 'duolingo',          name: 'Duolingo French Podcast',              level: 'A1-B1', rssUrl: 'https://frpodcast.libsyn.com/rss' },
-  { id: 'rfi-facile',        name: 'RFI — Journal en Français Facile',     level: 'A2-B1', rssUrl: 'https://www.rfi.fr/fr/podcasts/journal-en-francais-facile/feed/' },
+  { id: 'onething',          name: 'One Thing In A French Day',            level: 'A2-B1', rssUrl: 'https://onethinginafrenchday.podbean.com/feed.xml' },
+  { id: 'avecpierre',        name: 'Français avec Pierre',                 level: 'A2-B1', rssUrl: 'https://www.francaisavecpierre.com/feed/podcast/' },
   { id: 'littletalk',        name: 'Little Talk in Slow French',           level: 'A2-B1', rssUrl: 'https://www.spreaker.com/show/6084166/episodes/feed', hasBuiltinTranscript: true },
+  // (RFI Journal en français facile retiré — son flux RSS est mort, et en cas
+  // d'échec le code retombait sur France Culture… du C2 servi à des A1.)
   // B1–B2 — graded but natural
   { id: 'innerfrench',       name: 'InnerFrench',                          level: 'B1-B2', rssUrl: 'https://podcast.innerfrench.com/feed.xml' },
   { id: 'francaisauthentique', name: 'Français Authentique',              level: 'B1-B2', rssUrl: 'https://www.francaisauthentique.com/feed/podcast/' },
