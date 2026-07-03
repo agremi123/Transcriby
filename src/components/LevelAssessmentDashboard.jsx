@@ -189,16 +189,12 @@ function buildDevSkipInterviewData(levelId, existingAnswers = [], existingAssess
 }
 
 function buildIntroScript() {
+  // Un seul instructeur (Rémi) : une seule réplique d'intro.
   return [
     scriptLine(
-      'lea',
-      "Salut — trois questions perso pour voir si ton français est assez parisien.",
-      'Hi — three personal questions to see if your French is Parisian enough.',
-    ),
-    scriptLine(
       'jules',
-      "Réponds en français, naturellement ; après chaque réponse, on te dit où tu en es.",
-      'Answer in French, naturally; after each answer, we tell you where you stand.',
+      "Salut — trois questions perso pour voir si ton français est assez parisien. Réponds en français, naturellement ; après chaque réponse, je te dis où tu en es.",
+      'Hi — three personal questions to see if your French is Parisian enough. Answer in French, naturally; after each answer, I tell you where you stand.',
     ),
   ];
 }
