@@ -326,8 +326,8 @@ export default function WelcomeOnboarding() {
               const isSpeaking = activeNarrator === id;
               const highlightSpeech = isSpeaking && speechText === line.text && speechPlaybackTime != null;
               return (
-                <div className="flex flex-col items-center gap-3 mb-6 max-w-[400px] mx-auto">
-                  <div className={`relative w-[150px] h-[150px] sm:w-[190px] sm:h-[190px] rounded-full overflow-hidden shadow-lg bg-ivory2 transition-all duration-300 ${
+                <div className="flex flex-col items-center gap-3 sm:gap-2 mb-6 sm:mb-3 max-w-[400px] mx-auto">
+                  <div className={`relative w-[150px] h-[150px] sm:w-[124px] sm:h-[124px] rounded-full overflow-hidden shadow-lg bg-ivory2 transition-all duration-300 ${
                     isSpeaking ? 'ring-4 ring-wine scale-[1.04] shadow-xl' : 'ring-2 ring-line/60'
                   }`}>
                     {(!SHOW_3D_AVATAR || import.meta.env.DEV) ? (
