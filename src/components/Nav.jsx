@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Logo, ButtonPrimary, Container, NAV_CTA_CLASS } from './atoms';
 import { ParisianProfileSquare } from './ParisianCornerBadge';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
+import { uiText } from '../lib/uiLevelText';
 import { getNextLevel } from '../lib/levelTargets';
 
 function NavReachNextLevel() {
@@ -13,11 +14,11 @@ function NavReachNextLevel() {
 
   const pill = nextLevel ? (
     <span className={`${NAV_CTA_CLASS} gap-2`}>
-      <span>How to reach</span>
+      <span>{uiText('navReach', effectiveLevel)}</span>
       <span className="font-semibold tabular-nums">{nextLevel}</span>
     </span>
   ) : (
-    <span className={NAV_CTA_CLASS}>How to keep improving</span>
+    <span className={NAV_CTA_CLASS}>{uiText('navKeepImproving', effectiveLevel)}</span>
   );
 
   return (

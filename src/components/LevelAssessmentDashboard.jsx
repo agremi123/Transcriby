@@ -22,6 +22,7 @@ import { DiffText } from '../lib/DiffText';
 import { registerCorrectionKeyterms } from '../lib/deepgramKeyterms';
 import { detectLearnerGenderFromFrench, normalizeLearnerGender } from '../lib/learnerGender';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
+import { uiText } from '../lib/uiLevelText';
 import { getEffectiveLevel } from '../lib/learnerProfile';
 import { Logo } from './atoms';
 import { joinTranscriptSegments, segmentNeedsLeadingSpace } from '../lib/transcriptJoin';
@@ -2589,7 +2590,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
               headerRightAction={
                 showFeedbackCompris ? (
                   <NarratorHoverText
-                    text={isLastQuestion ? 'See my rating' : 'Next question'}
+                    text={isLastQuestion ? uiText('seeRating', effectiveLevel) : uiText('nextQuestion', effectiveLevel)}
                     translation={isLastQuestion ? 'View your level rating' : 'Continue to the next question'}
                     tooltipPosition="below"
                     wrapperClassName="relative inline-flex"
@@ -2604,7 +2605,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
                           : 'px-5 py-2 text-[14px] sm:text-[15px]'
                       }`}
                     >
-                      {isLastQuestion ? 'See my rating' : 'Next question'}
+                      {isLastQuestion ? uiText('seeRating', effectiveLevel) : uiText('nextQuestion', effectiveLevel)}
                     </button>
                   </NarratorHoverText>
                 ) : null

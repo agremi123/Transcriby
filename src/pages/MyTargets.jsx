@@ -6,6 +6,11 @@ import { useLearnerProfile } from '../context/LearnerProfileContext';
 import { getLevelTargets, groupTargetsByPath, PATH_CATEGORIES } from '../lib/levelTargets';
 import { loadTargetProgress, PARISIAN_XP_EVENT } from '../lib/targetProgress';
 import { loadThemeBadges, THEME_BADGE_EVENT } from '../lib/themeBadges';
+import { uiText } from '../lib/uiLevelText';
+import { loadLearnerProfile, getEffectiveLevel } from '../lib/learnerProfile';
+
+// Niveau courant pour les libellés (lecture directe : pas besoin d'être réactif).
+const uiLvl = () => getEffectiveLevel(loadLearnerProfile());
 
 function practiceUrl(topic, themeInfo, category) {
   const base = `/?practice=${encodeURIComponent(topic)}`;
@@ -587,7 +592,7 @@ function LevelBanner({ levelInfo, grouped, progressMap }) {
     <div className="mb-8 border border-line/60 bg-ivory/30 pt-5 pb-5">
       <div className="mb-3 ml-6 sm:ml-8 inline-block border border-line/60 bg-ivory/60 px-4 py-2.5">
         <h1 className="font-display text-[22px] sm:text-[26px] leading-tight text-navy">
-          My Parisian <span className="text-wine italic">Progress</span>
+          {uiText('progressTitlePre', uiLvl())} <span className="text-wine italic">{uiText('progressTitleAccent', uiLvl())}</span>
         </h1>
       </div>
       {!levelInfo.atMaxLevel && (
@@ -666,7 +671,7 @@ function PracticeNow({ levelInfo, progressMap }) {
                             group-hover:bg-wine2
                             group-hover:shadow-[0_6px_28px_rgba(139,30,45,0.5)]
                             group-hover:gap-4">
-              {resume ? 'Continue' : 'Practice now'}
+              {resume ? uiText('continueLabel', uiLvl()) : uiText('practiceNow', uiLvl())}
               <Arrow />
             </div>
           </div>
@@ -732,7 +737,7 @@ function LessonCard({ target: t, progress: p, idx, anyProgress }) {
                         border-t border-line/50 bg-wine/[0.03]
                         group-hover:bg-wine/[0.07] transition-colors duration-150">
           <span className="font-display text-[12.5px] italic font-semibold text-wine group-hover:text-wine2 transition-colors">
-            {s === 'active' ? 'Continue' : 'Practice'} →
+            {s === 'active' ? uiText('continueLabel', uiLvl()) : uiText('practiceNow', uiLvl())} →
           </span>
           <span className="text-[10px] font-mono text-navy/25">{dur(t)}</span>
         </div>
@@ -830,7 +835,7 @@ function ThemeBadgesSection() {
   return (
     <section className="mb-10">
       <h2 className="font-display text-[18px] sm:text-[20px] text-navy mb-1">
-        Badges to <span className="text-wine italic">attain</span>
+        {uiText('badgesTitlePre', uiLvl())} <span className="text-wine italic">{uiText('badgesTitleAccent', uiLvl())}</span>
       </h2>
       <p className="text-[12px] text-navy/45 mb-4 max-w-xl">
         Complete a whole theme to earn its badge — one for every reading, listening,

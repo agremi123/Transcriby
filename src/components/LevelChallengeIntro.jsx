@@ -135,7 +135,7 @@ export function LevelChallengeIntro({ levelId, levelTitle, onStart, onBack }) {
           transition={{ delay: 0.08 }}
           className="font-display text-[44px] md:text-[52px] leading-[1.05] text-navy mb-3"
         >
-          Léa & Jules say <span className="italic text-wine">bonjour</span>
+          Rémi & Rémi say <span className="italic text-wine">bonjour</span>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }}

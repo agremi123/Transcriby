@@ -46,7 +46,7 @@ const NARRATOR_QUIPS = {
       { text: 'Presque — il manque le côté spontané du 11e.', translation: 'Almost — it\'s missing the spontaneous 11th arrondissement vibe.' },
       { text: 'Ton français est solide, mais pas encore café parisien.', translation: 'Your French is solid, but not yet café Parisian.' },
       { text: 'On peut affiner le ton, c\'est subtil.', translation: 'We can refine the tone, it\'s subtle.' },
-      { text: 'Bien, mais Léa entend encore le manuel.', translation: 'Good, but Léa still hears the textbook.' },
+      { text: 'Bien, mais Rémi entend encore le manuel.', translation: 'Good, but Rémi still hears the textbook.' },
     ],
     jules: [
       { text: 'Solide, mais trop propre pour un vrai Parisien.', translation: 'Solid, but too clean for a real Parisian.' },
@@ -287,7 +287,7 @@ export function flattenNarratorLinesForRegistry() {
 
   lines.push(
     { text: "Grammaticalement, celle-là elle passe. Rien à redire.", translation: 'Grammar-wise, that one works. Nothing to fix.' },
-    { text: 'Rien à corriger, Léa valide celle-là.', translation: 'Nothing to fix — Léa approves that one.' },
+    { text: 'Rien à corriger, Rémi valide celle-là.', translation: 'Nothing to fix — Rémi approves that one.' },
   );
 
   return lines;
@@ -314,8 +314,8 @@ export function getLevelChallengeScript(levelId) {
     },
     {
       narrator: 'jules',
-      text: "Exactement. Léa et moi, on veut savoir si ton français est vraiment à ce niveau.",
-      translation: 'Exactly. Léa and I want to know if your French is really at that level.',
+      text: "Exactement. Rémi et moi, on veut savoir si ton français est vraiment à ce niveau.",
+      translation: 'Exactly. Rémi and I want to know if your French is really at that level.',
     },
     {
       narrator: 'lea',
@@ -355,20 +355,20 @@ export function getNarratorIntro(narratorId, level) {
     };
     const ending = endings[band] || endings.intermediate;
     return {
-      text: `Bonjour ! Moi c'est Léa, j'ai 24 ans et je suis parisienne. Je suis là pour t'aider à parler un français vrai, celui qu'on entend dans les cafés du 11e. ${ending.text}`,
-      translation: `Hi! I'm Léa, I'm 24 and Parisian. I'm here to help you speak real French, the kind you hear in cafés in the 11th. ${ending.translation}`,
+      text: `Bonjour ! Moi c'est Rémi, j'ai 24 ans et je suis parisienne. Je suis là pour t'aider à parler un français vrai, celui qu'on entend dans les cafés du 11e. ${ending.text}`,
+      translation: `Hi! I'm Rémi, I'm 24 and Parisian. I'm here to help you speak real French, the kind you hear in cafés in the 11th. ${ending.translation}`,
     };
   }
 
   return {
-    text: "Salut ! Moi c'est Jules, 26 ans, né à Paris. Je vais t'accompagner pour que ton français sonne naturel, pas comme dans les manuels. Allez, on y va !",
-    translation: "Hey! I'm Jules, 26, born in Paris. I'll help your French sound natural, not like textbooks. Let's go!",
+    text: "Salut ! Moi c'est Rémi, 26 ans, né à Paris. Je vais t'accompagner pour que ton français sonne naturel, pas comme dans les manuels. Allez, on y va !",
+    translation: "Hey! I'm Rémi, 26, born in Paris. I'll help your French sound natural, not like textbooks. Let's go!",
   };
 }
 
 /** @deprecated use getNarratorIntro */
 export function adaptNarratorIntro(intro, level) {
-  const id = intro.includes('Jules') ? 'jules' : 'lea';
+  const id = intro.includes('Rémi') ? 'jules' : 'lea';
   return getNarratorIntro(id, level).text;
 }
 
