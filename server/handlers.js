@@ -62,7 +62,7 @@ function learnerLevelContext(level) {
 }
 
 export const ELEVENLABS_VOICES = {
-  lea: 'ebRwkdEFVZIx2A6YucFh',
+  lea: 'n1u6R6yj3qEpDLH3liBh', // voix de Rémi partout (ancienne voix Léa retirée)
   alex: 'n1u6R6yj3qEpDLH3liBh',
 };
 
