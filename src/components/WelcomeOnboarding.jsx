@@ -255,8 +255,13 @@ export default function WelcomeOnboarding() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       // Reviens sur l'app là où elle est servie (racine en standalone,
-      // /digital-clone/ sous kruremi.com) — pas sur la racine du site hôte.
-      options: { redirectTo: window.location.origin + import.meta.env.BASE_URL },
+      // /parislyplatform/ sous kruremi.com) — pas sur la racine du site hôte.
+      // prompt: 'select_account' force Google à toujours afficher le choix du
+      // compte (sinon il connecte direct la session Google déjà ouverte).
+      options: {
+        redirectTo: window.location.origin + import.meta.env.BASE_URL,
+        queryParams: { prompt: 'select_account' },
+      },
     });
     if (error) setAuthError(error.message);
   };
