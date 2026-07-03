@@ -8,7 +8,9 @@
 const BAND = { A1: 'beginner', A2: 'beginner', B1: 'mid', B2: 'mid', C1: 'adv', C2: 'adv' };
 
 export function uiBand(level) {
-  return BAND[String(level || '').trim().toUpperCase()] || 'beginner';
+  // Accepte aussi les sous-niveaux ("A2.1", "B1.2") : on lit le code CEFR de tête.
+  const m = String(level || '').trim().toUpperCase().match(/^([ABC][12])/);
+  return (m && BAND[m[1]]) || 'beginner';
 }
 
 // beginner / mid / adv — si une variante manque, on retombe sur la précédente.
