@@ -143,7 +143,7 @@ function TtsPlayButton({ text }) {
   );
 }
 
-// Pulsing dots while Léa / Jules load a correction
+// Pulsing dots while Rémi / Rémi load a correction
 function CorrectionLoading({ className = '' }) {
   return (
     <div className={`flex items-center gap-1.5 py-1 ${className}`} aria-label="Loading">
@@ -764,8 +764,8 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
 }
 
 const DEMO_NARRATORS = {
-  lea: { id: 'lea', name: 'Léa', src: '/assets/lea.jpg' },
-  jules: { id: 'jules', name: 'Jules', src: '/assets/jules.jpg' },
+  lea: { id: 'lea', name: 'Rémi', src: '/assets/remi-avatar.jpg' },
+  jules: { id: 'jules', name: 'Rémi', src: '/assets/remi-avatar.jpg' },
 };
 
 // Little play icon shown over a clickable portrait on hover (parent needs `group`)
@@ -1608,10 +1608,10 @@ export function AudioDemoCard({
   const [parisianChallengeAttempt, setParisianChallengeAttempt] = React.useState(0);
   const parisianChallengeAttemptRef = React.useRef(0);
 
-  // Chat tab intro (Léa introduces herself and asks a question)
+  // Chat tab intro (Rémi introduces herself and asks a question)
   const chatIntroPlayedRef = React.useRef(false);
   const [chatIntroLine, setChatIntroLine] = React.useState(null); // { text, narratorId }
-  // Mobile: has the learner tapped "chat with Léa" yet? Once true, Léa has asked
+  // Mobile: has the learner tapped "chat with Rémi" yet? Once true, Rémi has asked
   // her opening question and the box becomes a normal tap-to-record surface.
   const [chatInvited, setChatInvited] = React.useState(false);
 
@@ -1784,9 +1784,9 @@ export function AudioDemoCard({
 
   // Chat tab intro — play once on first load when no conversation yet
   const CHAT_INTROS = [
-    "Bonjour ! Je suis Léa, ta coach de français parisien. Dis-moi, pourquoi tu apprends le français ?",
-    "Salut ! Moi c'est Léa. Tu as déjà visité Paris ? Raconte-moi !",
-    "Bonjour ! Je m'appelle Léa. Pour commencer, dis-moi une chose que tu aimes en France !",
+    "Bonjour ! Je suis Rémi, ta coach de français parisien. Dis-moi, pourquoi tu apprends le français ?",
+    "Salut ! Moi c'est Rémi. Tu as déjà visité Paris ? Raconte-moi !",
+    "Bonjour ! Je m'appelle Rémi. Pour commencer, dis-moi une chose que tu aimes en France !",
   ];
   React.useEffect(() => {
     const alreadyHasContent = utterances.length > 0 || !!partialTranscript || !!settledText;
@@ -1829,7 +1829,7 @@ export function AudioDemoCard({
 
         // Green tick ONLY when the Parisian judge approved the sentence.
         // If wrong: attach the grammar correction when we have one, otherwise
-        // leave the bubble unmarked (no tick, no popup) — Léa's reply explains.
+        // leave the bubble unmarked (no tick, no popup) — Rémi's reply explains.
         if (isCorrect) {
           chatHistoryRef.current = chatHistoryRef.current.map(m =>
             m.id === userId ? { ...m, correctionOk: true } : m
@@ -1921,7 +1921,7 @@ export function AudioDemoCard({
     return true;
   };
 
-  // Chat tab: on recording stop, commit utterances as user bubble then get Léa's reply
+  // Chat tab: on recording stop, commit utterances as user bubble then get Rémi's reply
   React.useEffect(() => {
     const justStopped = chatWasRecordingRef.current && !isRecording;
     chatWasRecordingRef.current = isRecording;
@@ -1935,7 +1935,7 @@ export function AudioDemoCard({
     const leaId = `lea-${Date.now()}`;
     const userId = `user-${Date.now()}`;
     const lastLeaText = [...chatHistoryRef.current].reverse().find(m => m.role === 'lea' && !m.loading)?.text || '';
-    // Reply comes from the active challenge narrator (Léa or Jules), else Léa
+    // Reply comes from the active challenge narrator (Rémi or Rémi), else Rémi
     const replyNarrator = parisianWordChallengeRef.current?.narratorId || 'lea';
 
     const updated = [
@@ -1951,7 +1951,7 @@ export function AudioDemoCard({
     if (submitParisianChallengeAttempt(userText, userId, leaId)) return; // skip normal flow
 
     // ── Normal chat reaction ──────────────────────────────────────────────────
-    // Fetch Léa's reply + correction in parallel
+    // Fetch Rémi's reply + correction in parallel
     fetch('/api/speaking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -2494,7 +2494,7 @@ export function AudioDemoCard({
       parisianWordChallengeRef.current = challenge;
       setParisianChallengeAttempt(0);
       parisianChallengeAttemptRef.current = 0;
-      // Append the word card + Léa's intro inline, below existing chat
+      // Append the word card + Rémi's intro inline, below existing chat
       const cardId = `word-card-${Date.now()}`;
       const introId = `lea-intro-${Date.now()}`;
       const withCard = [
@@ -3702,8 +3702,8 @@ export function AudioDemoCard({
                       {/* Portrait buttons — click to play/stop */}
                       <div className="flex gap-3">
                         {[
-                          { id: 'jules', src: '/assets/jules.jpg', label: 'Jules' },
-                          { id: 'lea',   src: '/assets/lea.jpg',   label: 'Léa'   },
+                          { id: 'jules', src: '/assets/remi-avatar.jpg', label: 'Rémi' },
+                          { id: 'lea',   src: '/assets/remi-avatar.jpg',   label: 'Rémi'   },
                         ].map((n) => (
                           <div key={n.id} className="flex flex-col items-center gap-1">
                             <button type="button"
@@ -3921,8 +3921,8 @@ export function AudioDemoCard({
                     <div className="flex items-center gap-2.5 shrink-0">
                       <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/30 shrink-0 parisian-exp-bump">
                         <img
-                          src={narratorReaction?.id === 'jules' ? '/assets/jules.jpg' : '/assets/lea.jpg'}
-                          alt={narratorReaction?.id === 'jules' ? 'Jules' : 'Léa'}
+                          src={narratorReaction?.id === 'jules' ? '/assets/remi-avatar.jpg' : '/assets/remi-avatar.jpg'}
+                          alt={narratorReaction?.id === 'jules' ? 'Rémi' : 'Rémi'}
                           className="w-full h-full object-cover object-top"
                         />
                       </div>
@@ -3964,9 +3964,9 @@ export function AudioDemoCard({
                         type="button"
                         onClick={() => chatIntroLine && playNarratorLine({ id: 'lea', text: chatIntroLine.text })}
                         className="group relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
-                        aria-label="Replay Léa's intro"
+                        aria-label="Replay Rémi's intro"
                       >
-                        <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
+                        <img src="/assets/remi-avatar.jpg" alt="Rémi" className="w-full h-full object-cover object-top" />
                         <PortraitHoverPlay />
                         {wordPlaying && parisianSpeakingText === chatIntroLine?.text && (
                           <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
@@ -4014,8 +4014,8 @@ export function AudioDemoCard({
                 <div className="absolute bottom-3 left-4 flex items-center gap-2 pointer-events-none">
                   <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0">
                     <img
-                      src={narratorReaction?.id === 'jules' ? '/assets/jules.jpg' : '/assets/lea.jpg'}
-                      alt={narratorReaction?.id === 'jules' ? 'Jules' : 'Léa'}
+                      src={narratorReaction?.id === 'jules' ? '/assets/remi-avatar.jpg' : '/assets/remi-avatar.jpg'}
+                      alt={narratorReaction?.id === 'jules' ? 'Rémi' : 'Rémi'}
                       className="w-full h-full object-cover object-top"
                     />
                   </div>
@@ -4061,7 +4061,7 @@ export function AudioDemoCard({
                       <p className="text-[12px] text-navy/55 italic mt-0.5 leading-snug">« {msg.example} »</p>
                     </div>
                   ) : msg.role === 'lea' ? (
-                    /* Mobile: Léa's lines live next to her portrait (hero), not in the box */
+                    /* Mobile: Rémi's lines live next to her portrait (hero), not in the box */
                     <div key={msg.id} className="hidden sm:flex items-start gap-2.5">
                       <button
                         type="button"
@@ -4069,7 +4069,7 @@ export function AudioDemoCard({
                         className="group relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105 mt-0.5"
                         aria-label="Replay"
                       >
-                        <img src={(msg.narratorId === 'jules') ? '/assets/jules.jpg' : '/assets/lea.jpg'} alt={(msg.narratorId === 'jules') ? 'Jules' : 'Léa'} className="w-full h-full object-cover object-top" />
+                        <img src={(msg.narratorId === 'jules') ? '/assets/remi-avatar.jpg' : '/assets/remi-avatar.jpg'} alt={(msg.narratorId === 'jules') ? 'Rémi' : 'Rémi'} className="w-full h-full object-cover object-top" />
                         <PortraitHoverPlay />
                         {wordPlaying && parisianSpeakingText === msg.text && (
                           <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
@@ -4216,8 +4216,8 @@ export function AudioDemoCard({
                     Discovering a Parisian word…
                   </div>
                 )}
-                {/* Mobile: Léa's lines play next to her portrait (not in this box), so
-                    the empty chat box gets a clear CTA. Tapping it makes Léa ask her
+                {/* Mobile: Rémi's lines play next to her portrait (not in this box), so
+                    the empty chat box gets a clear CTA. Tapping it makes Rémi ask her
                     opening question; after that the box becomes a tap-to-record surface. */}
                 {!chatInvited && !isRecording && utterances.length === 0 && !chatHistory.some(m => m.role === 'user') && (
                   <button
@@ -4231,10 +4231,10 @@ export function AudioDemoCard({
                     className="sm:hidden flex flex-col items-center justify-center gap-3 text-center w-full min-h-[220px] py-8 group"
                   >
                     <span className="relative w-16 h-16 rounded-full overflow-hidden ring-2 ring-wine/30 group-hover:ring-wine/60 transition-all">
-                      <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
+                      <img src="/assets/remi-avatar.jpg" alt="Rémi" className="w-full h-full object-cover object-top" />
                     </span>
                     <span className="font-display text-[16px] italic text-navy/60 leading-snug">
-                      Tap here to chat with Léa
+                      Tap here to chat with Rémi
                     </span>
                     <span className="font-display text-[12px] text-navy/35 leading-snug max-w-[220px]">
                       She'll ask you a question — answer her out loud
@@ -4653,9 +4653,9 @@ export function AudioDemoCard({
                     type="button"
                     onClick={() => chatIntroLine && playNarratorLine({ id: 'lea', text: chatIntroLine.text })}
                     className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
-                    aria-label="Replay Léa's intro"
+                    aria-label="Replay Rémi's intro"
                   >
-                    <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
+                    <img src="/assets/remi-avatar.jpg" alt="Rémi" className="w-full h-full object-cover object-top" />
                     {wordPlaying && parisianSpeakingText === chatIntroLine?.text && (
                       <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
                     )}
@@ -4711,7 +4711,7 @@ export function AudioDemoCard({
                   ) : (
                     <div className="text-center py-6 space-y-2">
                       <p className="font-display text-[15px] text-navy/50 italic">No speaking session yet.</p>
-                      <p className="text-[12px] text-navy/35">Press the mic button and start speaking French — Léa will assess your level.</p>
+                      <p className="text-[12px] text-navy/35">Press the mic button and start speaking French — Rémi will assess your level.</p>
                     </div>
                   )}
                   <div className="pt-1 border-t border-line/40">
@@ -4798,7 +4798,7 @@ export function AudioDemoCard({
                   <h3 className="text-[9px] font-mono tracking-widest uppercase text-navy/40">My Writing Progress</h3>
                   <div className="text-center py-6 space-y-2">
                     <p className="font-display text-[15px] text-navy/50 italic">No writing session yet.</p>
-                    <p className="text-[12px] text-navy/35">Switch to Write mode and start composing — Léa will correct you.</p>
+                    <p className="text-[12px] text-navy/35">Switch to Write mode and start composing — Rémi will correct you.</p>
                   </div>
                 </div>
               )}
@@ -6237,7 +6237,7 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
   );
 }
 
-const NARRATOR_PORTRAITS = { lea: '/assets/lea.jpg', jules: '/assets/jules.jpg' };
+const NARRATOR_PORTRAITS = { lea: '/assets/remi-avatar.jpg', jules: '/assets/remi-avatar.jpg' };
 
 // Normalize a vocab item for loose matching (strip articles, accents, case).
 function normVocab(s) {
@@ -6277,7 +6277,7 @@ function allTipsFulfilled(tips, usedTips) {
 }
 
 function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null, usedVocab = [], usedGrammar = false, challengeIndex = 1, onNextChallenge = null }) {
-  const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+  const name = narratorId === 'lea' ? 'Rémi' : 'Rémi';
 
   // Défi progress drives the "Next challenge" button (a progress bar, like the
   // other tabs): it fills as the learner uses each target, and only becomes
@@ -6553,7 +6553,7 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
     try {
       let url = audioCacheRef.current[clean];
       if (!url) {
-        // ElevenLabs Parisian voice (Léa/Jules), cached across levels
+        // ElevenLabs Parisian voice (Rémi/Rémi), cached across levels
         const buf = await fetchNarratorAudio(clean, narratorId);
         url = URL.createObjectURL(new Blob([buf], { type: 'audio/mpeg' }));
         audioCacheRef.current[clean] = url;
@@ -6627,8 +6627,8 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
 
 // ── Guided writing review thread (Writing tab) ───────────────────────────────
 function WriteBubble({ narratorId, children, onReplay, text }) {
-  const portrait = narratorId === 'jules' ? '/assets/jules.jpg' : '/assets/lea.jpg';
-  const alt = narratorId === 'jules' ? 'Jules' : 'Léa';
+  const portrait = narratorId === 'jules' ? '/assets/remi-avatar.jpg' : '/assets/remi-avatar.jpg';
+  const alt = narratorId === 'jules' ? 'Rémi' : 'Rémi';
   return (
     <div className="flex items-start gap-2.5">
       <button type="button" onClick={() => text && onReplay?.(text, narratorId)}
@@ -6844,7 +6844,7 @@ function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wo
   const { done: goalsDoneCount, total: goalsTotal } = tipsProgress(tips, usedTips);
   const goalsDone = goalsTotal > 0 && goalsDoneCount === goalsTotal;
   const goalsPct = goalsTotal ? Math.round((goalsDoneCount / goalsTotal) * 100) : 0;
-  const name = narratorId === 'jules' ? 'Jules' : 'Léa';
+  const name = narratorId === 'jules' ? 'Rémi' : 'Rémi';
 
   // Theme badge unlocks once all writing challenges of the theme are complete.
   const themeAchieved = challengeIndex >= THEME_CHALLENGE_TOTAL && goalsDone;
@@ -7069,7 +7069,7 @@ export default function Hero() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [heroActiveTab, setHeroActiveTab] = React.useState('transcript');
-  // Léa's latest spoken line — shown next to her portrait on mobile (not in the box).
+  // Rémi's latest spoken line — shown next to her portrait on mobile (not in the box).
   const [leaSpeech, setLeaSpeech] = React.useState(null); // { text, narratorId } | null
   const learnMode = searchParams.get('learn');
   const learnLevel = searchParams.get('level');
@@ -7477,7 +7477,7 @@ export default function Hero() {
     }
   };
 
-  // Auto-play Léa's tab-specific line on mobile when user picks an exercise tab
+  // Auto-play Rémi's tab-specific line on mobile when user picks an exercise tab
   React.useEffect(() => {
     const entry = EXERCISE_TAB_LINES[heroActiveTab];
     if (!entry) return;
@@ -7492,8 +7492,8 @@ export default function Hero() {
       const intro = getNarratorIntro(id, effectiveLevel);
       return {
         id,
-        name: id === 'lea' ? 'Léa' : 'Jules',
-        src: id === 'lea' ? '/assets/lea.jpg' : '/assets/jules.jpg',
+        name: id === 'lea' ? 'Rémi' : 'Rémi',
+        src: id === 'lea' ? '/assets/remi-avatar.jpg' : '/assets/remi-avatar.jpg',
         intro: intro.text,
         introTranslation: intro.translation,
       };
@@ -7607,7 +7607,7 @@ export default function Hero() {
   return (
     <section className="relative pt-24 lg:pt-12 max-lg:landscape:pt-16 pb-12 min-h-screen overflow-visible">
       {/* Mobile-only: assessment CTA relocated to the top-right header (opposite the
-          Parisly logo) once Léa's text has taken its place next to her portrait.
+          Parisly logo) once Rémi's text has taken its place next to her portrait.
           Plain (CSS) fade-in so it never gets stuck mid-animation in throttled tabs. */}
       {leaSpeech?.text && (
         <button
@@ -7615,7 +7615,7 @@ export default function Hero() {
           onClick={() => goToDashboard()}
           className="sm:hidden fixed top-[36px] -translate-y-1/2 right-4 z-50 inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory font-display text-[11px] leading-none px-3 py-2 shadow-md max-w-[55vw] text-right"
         >
-          Click for Léa to judge your French
+          Click for Rémi to judge your French
         </button>
       )}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -7636,7 +7636,7 @@ export default function Hero() {
 
       <Container className="relative">
         <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[1fr_680px] max-lg:landscape:grid-cols-[1fr_minmax(0,46%)] gap-8 max-lg:landscape:gap-5 items-stretch lg:h-[calc(100vh-96px)] max-lg:landscape:h-[calc(100dvh-5rem)]">
-          {/* Mobile-only: Léa portrait + tab-specific line — stacks ON TOP of the speech box on mobile */}
+          {/* Mobile-only: Rémi portrait + tab-specific line — stacks ON TOP of the speech box on mobile */}
           {exercisePanelActive && (() => {
             const entry = EXERCISE_TAB_LINES[heroActiveTab] || {};
             const exerciseLine = entry.text || '';
@@ -7648,13 +7648,13 @@ export default function Hero() {
                   type="button"
                   onClick={() => playNarratorIntro({ id: 'lea', intro: exerciseLine })}
                   className="group relative flex-shrink-0"
-                  aria-label="Rejouer le message de Léa"
+                  aria-label="Rejouer le message de Rémi"
                   aria-pressed={isPlaying}
                 >
                   <div className={`relative w-20 h-20 rounded-full overflow-hidden transition-all duration-300 ${
                     isPlaying ? 'ring-[3px] ring-wine shadow-lg' : 'ring-2 ring-wine/40 group-hover:ring-wine shadow-sm'
                   }`}>
-                    <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
+                    <img src="/assets/remi-avatar.jpg" alt="Rémi" className="w-full h-full object-cover object-top" />
                     {isPlaying && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-35 pointer-events-none" />}
                   </div>
                 </button>
@@ -7787,8 +7787,8 @@ export default function Hero() {
                 the original stacked layout untouched. */}
             <div className="w-full flex flex-row items-stretch gap-3 text-left sm:contents">
             <h1 className="font-display text-[28px] sm:text-[48px] leading-[1.02] sm:leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-1 sm:gap-2 shrink-0 self-center sm:self-auto">
-              <Reveal delay={0.08}>Learn French</Reveal>
-              <Reveal delay={0.18} className="text-wine italic">From Parisiens.</Reveal>
+              <Reveal delay={0.08}>Speak French</Reveal>
+              <Reveal delay={0.18} className="text-wine italic">Like a Parisien.</Reveal>
             </h1>
             <div className="w-px self-stretch bg-navy/15 shrink-0 sm:hidden" aria-hidden />
             <Reveal delay={0.35} className="flex-1 min-w-0 self-center sm:self-auto sm:flex-none">
@@ -7799,9 +7799,9 @@ export default function Hero() {
             </Reveal>
             </div>
 
-            {/* Jules et Léa — hidden on practice tabs. w-full on mobile so the row
+            {/* Rémi et Rémi — hidden on practice tabs. w-full on mobile so the row
                 keeps a fixed width (it lives in an items-center column); otherwise the
-                portrait shifts sideways when Léa's speech bubble replaces the CTA. */}
+                portrait shifts sideways when Rémi's speech bubble replaces the CTA. */}
             {!['speaking','listening','reading','writing'].includes(heroActiveTab) && (
             <Reveal delay={0.25} className="w-full sm:w-auto order-last lg:order-none -mb-3 lg:mb-0 relative z-20 overflow-visible">
               <div className="-mt-4 sm:mt-6 flex items-center justify-center gap-8 sm:gap-10 relative z-20 overflow-visible">
@@ -7895,7 +7895,7 @@ export default function Hero() {
                       isPlaying ? 'text-wine italic' : 'text-wine'
                     }`}>{n.name}</span>
                   </button>
-                  {/* Mobile-only: Léa's live speech takes this spot; the assessment CTA
+                  {/* Mobile-only: Rémi's live speech takes this spot; the assessment CTA
                       relocates to the top-right header (fixed) once she has spoken. */}
                   <div className="sm:hidden flex-1 min-w-0 self-center text-left flex flex-col gap-2 translate-y-[44px] sm:translate-y-0">
                     <AnimatePresence>
@@ -7919,7 +7919,7 @@ export default function Hero() {
                         onClick={() => goToDashboard()}
                         className="inline-flex items-center text-left font-display text-[13.5px] leading-snug text-ivory bg-wine hover:bg-wine2 rounded-2xl px-3.5 py-2.5 shadow-sm self-start"
                       >
-                        Click for Léa to judge your French
+                        Click for Rémi to judge your French
                       </button>
                     )}
                   </div>
