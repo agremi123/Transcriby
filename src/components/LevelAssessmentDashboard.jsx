@@ -500,7 +500,7 @@ function enrichReportForVerdict(report, claimedLevel, assessments) {
   const lines = buildFinalVerdictLines(claimedLevel, assessments);
   const lea = lines.find((l) => l.narrator === 'lea');
   const jules = lines.find((l) => l.narrator === 'jules');
-  // The level shown must be exactly what Léa & Jules state in their verdict lines.
+  // The level shown must be exactly what Rémi & Rémi state in their verdict lines.
   const assessedLevel = computeFinalLevel(claimedLevel, assessments);
   return normalizeVerdictTraits({
     ...report,
@@ -639,7 +639,7 @@ async function fetchInterviewReport(answers, levelId, assessments) {
 
     const fallback = buildFallbackReport(answers, assessments, levelId);
 
-    // The displayed level must match what Léa & Jules actually said per question
+    // The displayed level must match what Rémi & Rémi actually said per question
     // (their per-answer verdicts → `assessments`), not a separate holistic API
     // guess — otherwise an A2 learner can confusingly see a B2/C1 verdict.
     const assessedLevel = computeFinalLevel(levelId, assessments);
@@ -1064,11 +1064,11 @@ function CorrectionPanel({
         {same ? (
           <div className="flex items-start gap-2.5">
             <NarratorHoverText
-              text={highlightSpeech ? speechText : 'Rien à corriger, Léa valide celle-là.'}
+              text={highlightSpeech ? speechText : 'Rien à corriger, Rémi valide celle-là.'}
               translation={
                 highlightSpeech
                   ? lookupNarratorTranslation(speechText)
-                  : 'Nothing to fix — Léa approves that one.'
+                  : 'Nothing to fix — Rémi approves that one.'
               }
               highlightSpeech={highlightSpeech}
               speechPlaybackTime={speechPlaybackTime}
@@ -1336,7 +1336,7 @@ function AnswerInput({
   rightInfo = null,
   compact = false,
   correctionContent = null,
-  answerNarratorName = 'Léa',
+  answerNarratorName = 'Rémi',
 }) {
   const hasSpeakContent = getSpeakText(utterances, settledText, partialTranscript).length > 0;
   const micActive = isRecording || isStoppingRecording;
@@ -1658,12 +1658,14 @@ function NarratorPair({
   duoProminent = false,
 }) {
   const hasFeatured = Boolean(featuredId);
-  const narratorIds = heroMode && featuredId ? [featuredId] : ['lea', 'jules'];
+  // Un seul instructeur (Rémi) : on n'affiche qu'un portrait, jamais deux.
+  const narratorIds = heroMode && featuredId ? [featuredId] : ['jules'];
   const largePortrait = (heroMode && hasFeatured) || duoProminent;
+  const singlePortrait = narratorIds.length === 1;
 
   return (
     <div className={`shrink-0 justify-items-center w-full overflow-visible ${
-      heroMode
+      heroMode || singlePortrait
         ? 'flex flex-col items-center'
         : `grid grid-cols-2 ${
             duoProminent
@@ -2361,7 +2363,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
   const questionStep = questionIndex + 1;
   const feedbackAskerName = currentQuestion
     ? NARRATORS[currentQuestion.narrator].name
-    : 'Léa';
+    : 'Rémi';
   const isIntroFlow = phase === 'intro' || phase === 'intro_ack';
   const showHeroPortrait = Boolean(
     currentQuestion
@@ -2541,7 +2543,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
           >
             <AnswerInput
               compact={embedded}
-              answerNarratorName={currentQuestion ? NARRATORS[currentQuestion.narrator].name : 'Léa'}
+              answerNarratorName={currentQuestion ? NARRATORS[currentQuestion.narrator].name : 'Rémi'}
               correctionContent={correctionDisplay?.text ? (
                 <CorrectionDisplayBar
                   inline
@@ -2642,7 +2644,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
             animate={{ opacity: 1 }}
             className={`text-center text-[13px] text-navy/45 italic shrink-0 ${embedded ? 'mt-2' : 'mt-4'}`}
           >
-            Léa & Jules are getting ready…
+            Rémi & Rémi are getting ready…
           </motion.p>
         )}
 
