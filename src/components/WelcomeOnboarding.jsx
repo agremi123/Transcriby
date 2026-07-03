@@ -254,7 +254,9 @@ export default function WelcomeOnboarding() {
     const { supabase } = await import('../lib/supabaseClient');
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin },
+      // Reviens sur l'app là où elle est servie (racine en standalone,
+      // /digital-clone/ sous kruremi.com) — pas sur la racine du site hôte.
+      options: { redirectTo: window.location.origin + import.meta.env.BASE_URL },
     });
     if (error) setAuthError(error.message);
   };
@@ -316,7 +318,7 @@ export default function WelcomeOnboarding() {
             </div>
 
             {/* Narrator portraits row */}
-            {/* Phase 1: only Léa, centered */}
+            {/* Phase 1: only Rémi, centered */}
             {!showLevelPicker && !levelLocked && (() => {
               const id = 'lea';
               const n = NARRATORS[id];
@@ -373,7 +375,7 @@ export default function WelcomeOnboarding() {
               );
             })()}
 
-            {/* Phase 2: Jules appears with his taunt + badge picker */}
+            {/* Phase 2: Rémi appears with his taunt + badge picker */}
             {(showLevelPicker || levelLocked) && (() => {
               const julesLine = linesByNarrator['jules'] ?? JULES_LEVEL_PICKER_LINE;
               const isSpeaking = activeNarrator === 'jules';
