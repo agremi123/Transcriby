@@ -90,7 +90,9 @@ function GoogleAuthHandler() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    // basename suit la base Vite : "/" en standalone, "/digital-clone" quand
+    // l'app est servie sous kruremi.com (build avec --base=/digital-clone/).
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || '/'}>
       <LearnerProfileProvider>
         <GoogleAuthHandler />
         <WelcomeOnboarding />
