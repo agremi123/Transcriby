@@ -43,27 +43,13 @@ function NavReachNextLevel() {
 }
 
 
-// Bouton de déconnexion — visible seulement si une session Supabase est active
-// (après login Google/email). Termine la session puis recharge l'app.
+// Bouton de déconnexion — visible dès que l'utilisateur est connecté à un
+// compte (authMethod = google ou email, le même signal que le reste de l'app,
+// pas la session Supabase qui n'existe pas pour un login email). Termine la
+// session Supabase, efface l'identité, et renvoie vers la fenêtre d'accueil.
 function NavLogout() {
-  const [signedIn, setSignedIn] = React.useState(false);
-
-  React.useEffect(() => {
-    let active = true;
-    let subscription;
-    (async () => {
-      const { supabase } = await import('../lib/supabaseClient');
-      const { data: { session } } = await supabase.auth.getSession();
-      if (active) setSignedIn(Boolean(session?.user));
-      const { data } = supabase.auth.onAuthStateChange((_event, s) => {
-        if (active) setSignedIn(Boolean(s?.user));
-      });
-      subscription = data?.subscription;
-    })();
-    return () => { active = false; subscription?.unsubscribe?.(); };
-  }, []);
-
-  if (!signedIn) return null;
+  const { profile } = useLearnerProfile();
+  if (!profile?.authMethod) return null;
 
   const handleLogout = async () => {
     try {
