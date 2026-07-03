@@ -343,7 +343,7 @@ export default function WelcomeOnboarding() {
                   <span className={`text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${isSpeaking ? 'text-wine' : 'text-navy/60'}`}>
                     {n.name}
                   </span>
-                  <div className={`w-full rounded-xl px-4 py-4 border transition-colors duration-300 flex items-start gap-3 ${
+                  <div className={`w-full rounded-xl px-4 py-4 sm:py-3 border transition-colors duration-300 flex items-start gap-3 ${
                     isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
                   }`}>
                     <button
