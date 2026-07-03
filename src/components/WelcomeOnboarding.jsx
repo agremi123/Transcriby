@@ -302,10 +302,10 @@ export default function WelcomeOnboarding() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           className="w-full max-w-[820px] max-h-[92vh] rounded-2xl border border-line/80 bg-paper shadow-[0_24px_64px_rgba(26,35,64,0.18)] overflow-y-auto"
         >
-          <div className="px-3 sm:px-10 pt-6 pb-3">
+          <div className="px-3 sm:px-10 pt-6 sm:pt-4 pb-3">
 
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 sm:mb-3">
               <Logo className="shrink-0 pointer-events-none" />
               <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group">
                 <img src="/assets/remi-avatar.jpg" alt="Kru Rémi" className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all shrink-0" />
