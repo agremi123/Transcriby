@@ -46,7 +46,8 @@ function logNarratorLine(slug, text, audioUrl) {
 import { buildCorrectionSystemPrompts } from './correctionPrompts.js';
 import { sanitizeParisianCorrection, parseCorrectionResponse } from '../src/lib/correctionFormat.js';
 
-export const NARRATOR_ALIASES = { jules: 'alex', lea: 'lea', stella: 'lea' };
+// Une seule voix pour tous les narrateurs : celle de Rémi (ex-voix de Jules).
+export const NARRATOR_ALIASES = { jules: 'alex', lea: 'alex', stella: 'alex' };
 
 const CEFR_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 
