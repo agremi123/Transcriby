@@ -43,6 +43,53 @@ function NavReachNextLevel() {
 }
 
 
+// Bouton de déconnexion — visible seulement si une session Supabase est active
+// (après login Google/email). Termine la session puis recharge l'app.
+function NavLogout() {
+  const [signedIn, setSignedIn] = React.useState(false);
+
+  React.useEffect(() => {
+    let active = true;
+    let subscription;
+    (async () => {
+      const { supabase } = await import('../lib/supabaseClient');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (active) setSignedIn(Boolean(session?.user));
+      const { data } = supabase.auth.onAuthStateChange((_event, s) => {
+        if (active) setSignedIn(Boolean(s?.user));
+      });
+      subscription = data?.subscription;
+    })();
+    return () => { active = false; subscription?.unsubscribe?.(); };
+  }, []);
+
+  if (!signedIn) return null;
+
+  const handleLogout = async () => {
+    try {
+      const { supabase } = await import('../lib/supabaseClient');
+      await supabase.auth.signOut();
+    } catch {}
+    // Recharge pour repartir d'un état propre (progression locale conservée).
+    window.location.reload();
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleLogout}
+      aria-label="Log out"
+      className="hidden sm:inline-flex items-center gap-1.5 mt-1 px-3.5 py-2 rounded-full border border-navy/15 text-navy/55 hover:text-wine hover:border-wine/35 transition-colors text-[13px] font-medium font-display whitespace-nowrap"
+    >
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
+        <path d="M5 2H2a1 1 0 00-1 1v6a1 1 0 001 1h3M8 9l3-3-3-3M11 6H5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      Log out
+    </button>
+  );
+}
+
+
 export default function Nav() {
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = React.useState(false);
