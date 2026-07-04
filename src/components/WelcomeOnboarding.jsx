@@ -45,6 +45,7 @@ export default function WelcomeOnboarding() {
   // First-run hint on Rémi's opening line: tells the learner they can reveal the
   // English (hover on desktop / tap on mobile). Dismisses once they try it.
   const [translationHintDone, setTranslationHintDone] = React.useState(false);
+  const canHover = useCanHover();
   const [playing, setPlaying] = React.useState(false);
   const [audioError, setAudioError] = React.useState(null);
   const [speechPlaybackTime, setSpeechPlaybackTime] = React.useState(null);
