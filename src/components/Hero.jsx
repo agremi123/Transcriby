@@ -3500,7 +3500,10 @@ export function AudioDemoCard({
             lastType={levelLastType}
             current={inputMode === 'write' ? 'writing' : (['reading', 'listening', 'speaking'].includes(activeTab) ? activeTab : null)}
             onPick={(type) => {
-              if (type === 'writing') { activateWriteMode(); return; }
+              // Writing must also switch the active tab to 'writing' — that's what
+              // triggers the challenge load (topic + prompt fetch), just like the
+              // other tabs. Without it, write mode opened but no challenge started.
+              if (type === 'writing') { activateWriteMode(); setActiveTab('writing'); return; }
               // Leaving the writing tab: drop out of write mode so the picked tab
               // (especially Speaking) actually takes over instead of staying stuck
               // showing the write textarea.
