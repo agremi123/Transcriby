@@ -10,7 +10,7 @@ import { LEVEL_PICKER, WELCOME_LEVEL_LINES, JULES_LEVEL_PICKER_LINE, getLevelPic
 import { fetchNarratorAudio, connectNarratorSource, NARRATORS } from '../lib/narratorAudio';
 import { buildWordTimings, playDecodedBuffer } from '../lib/speechHighlight';
 import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from '../lib/siteAudio';
-import { NarratorHoverText } from '../lib/NarratorHoverText';
+import { NarratorHoverText, useCanHover } from '../lib/NarratorHoverText';
 import { startLine, setPlaybackTime, stopLine } from '../lib/lipSync';
 import { Logo, NAV_CTA_CLASS } from './atoms';
 
