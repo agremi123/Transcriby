@@ -72,6 +72,7 @@ export function NarratorHoverText({
   tooltipPosition = 'below',
 }) {
   const cursorControls = useAnimation();
+  const canHover = useCanHover();
   const [showDemoTranslation, setShowDemoTranslation] = React.useState(false);
   const demoRunRef = React.useRef(0);
 
