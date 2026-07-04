@@ -65,7 +65,10 @@ function GoogleAuthHandler() {
         || user.user_metadata?.name?.split(' ')[0]
         || user.email?.split('@')[0]
         || 'Ami';
-      completeOnboarding(profile.claimedLevel || 'B1', {
+      // No level picked → default to A2 (elementary), NOT B1. Beginners drowning
+      // in intermediate content is far worse than a false-beginner finding A2 easy;
+      // they can always raise their level. Matches getEffectiveLevel's A2 default.
+      completeOnboarding(profile.claimedLevel || 'A2', {
         authMethod: 'google',
         email: user.email,
         name,
