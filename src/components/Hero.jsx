@@ -7497,15 +7497,9 @@ export default function Hero() {
     }
   };
 
-  // Auto-play Rémi's tab-specific line on mobile when user picks an exercise tab
-  React.useEffect(() => {
-    const entry = EXERCISE_TAB_LINES[heroActiveTab];
-    if (!entry) return;
-    const t = window.setTimeout(() => {
-      playNarratorIntro({ id: 'lea', intro: entry.text });
-    }, 350);
-    return () => window.clearTimeout(t);
-  }, [heroActiveTab]); // eslint-disable-line react-hooks/exhaustive-deps
+  // NOTE: the "Tu as lancé le challenge…" line is no longer auto-played when a
+  // challenge opens (it was noisy). The text stays visible, and the mobile
+  // portrait button still plays it on demand.
 
   const narrators = React.useMemo(() => (
     ['lea', 'jules'].map((id) => {
