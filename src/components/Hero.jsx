@@ -3384,11 +3384,17 @@ export function AudioDemoCard({
       </div>
       <button type="button"
         onClick={() => { if (inputMode !== 'write') activateWriteMode(); else if (writeText.trim()) finishWriteInput(); }}
-        className={`relative z-10 w-9 h-9 rounded-full inline-flex items-center justify-center transition-colors ${inputMode === 'write' ? 'bg-wine text-ivory' : 'text-navy/45'}`}
-        aria-label={inputMode === 'write' ? 'Submit writing' : 'Switch to write'}>
-        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden>
-          <path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        className={`relative z-10 w-9 h-9 rounded-full inline-flex items-center justify-center transition-colors ${inputMode === 'write' ? 'bg-wine text-ivory' : 'text-navy/45'} ${inputMode === 'write' && writeText.trim() ? 'ring-2 ring-wine/40' : ''}`}
+        aria-label={inputMode === 'write' ? (writeText.trim() ? 'Send writing' : 'Write') : 'Switch to write'}>
+        {inputMode === 'write' && writeText.trim() ? (
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden>
+            <path d="M4 10.5l4 4 8-9.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden>
+            <path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
       </button>
     </div>
   );
