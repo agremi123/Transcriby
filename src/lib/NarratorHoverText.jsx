@@ -174,6 +174,7 @@ export function NarratorHoverText({
       <div
         className="group relative w-full"
         onMouseEnter={onFirstHover}
+        onTouchStart={onFirstHover}
       >
         {enableHoverDemo && showTutorialHint && (
           <motion.div
@@ -182,15 +183,15 @@ export function NarratorHoverText({
             animate={cursorControls}
             aria-hidden
           >
-            <TutorialMouseCursor />
+            {canHover ? <TutorialMouseCursor /> : <TutorialTapIndicator />}
           </motion.div>
         )}
 
         {body}
 
         {showTutorialHint && (
-          <p className="mt-1.5 text-[9px] tracking-wide text-wine/55 text-center animate-pulse">
-            Hover for English
+          <p className="mt-1.5 text-[10px] tracking-wide text-wine/60 text-center animate-pulse">
+            👆 {canHover ? 'Hover the text to see the English' : 'Tap the text to see the English'}
           </p>
         )}
 
