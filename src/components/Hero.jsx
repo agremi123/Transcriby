@@ -3100,9 +3100,13 @@ export function AudioDemoCard({
         body: JSON.stringify({ step: 'example', prompt: writingPrompt, tips: writingTips, wordTarget: writingWordTarget, narratorId: writeReview.narratorId || 'lea', level: effectiveLevel || 'B1' }),
       });
       const data = await r.json();
-      setWriteReviewExample(data.example || '');
+      const ex = (data.example || '').trim();
+      // Empty (e.g. the AI is unreachable) → stay null so the button remains
+      // clickable and the learner can retry, instead of locking into a
+      // "shown" state that displays nothing.
+      setWriteReviewExample(ex || null);
     } catch {
-      setWriteReviewExample('');
+      setWriteReviewExample(null);
     }
     setWriteReviewExampleLoading(false);
   }, [writeReviewExampleLoading, writeReviewExample, writingPrompt, writingTips, writingWordTarget, writeReview.narratorId, effectiveLevel]);
