@@ -146,10 +146,6 @@ export function NarratorHoverText({
     ? 'opacity-100 visible'
     : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible';
 
-  const hintClass = showTutorialHint
-    ? 'rounded-lg px-2.5 py-2 bg-wine/[0.08] ring-1 ring-wine/20'
-    : '';
-
   const hasCustomContent = children != null && children !== false;
   const content = hasCustomContent ? children : (
     <HighlightedSpeech
@@ -157,7 +153,7 @@ export function NarratorHoverText({
       playbackTime={highlightSpeech ? speechPlaybackTime : null}
       timings={speechTimings}
       quote={quote}
-      className={`${className} ${hintClass}`.trim()}
+      className={className}
     />
   );
 
