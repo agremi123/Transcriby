@@ -42,6 +42,9 @@ export default function WelcomeOnboarding() {
   const [authError, setAuthError] = React.useState(null);
   const [linesByNarrator, setLinesByNarrator] = React.useState(WELCOME_LINES_BY_NARRATOR);
   const [activeSpeakingNarrator, setActiveSpeakingNarrator] = React.useState(null);
+  // First-run hint on Rémi's opening line: tells the learner they can reveal the
+  // English (hover on desktop / tap on mobile). Dismisses once they try it.
+  const [translationHintDone, setTranslationHintDone] = React.useState(false);
   const [playing, setPlaying] = React.useState(false);
   const [audioError, setAudioError] = React.useState(null);
   const [speechPlaybackTime, setSpeechPlaybackTime] = React.useState(null);
