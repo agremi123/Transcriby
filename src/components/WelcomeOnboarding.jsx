@@ -287,9 +287,11 @@ export default function WelcomeOnboarding() {
     }
     const local = email.split('@')[0].replace(/[._-]+/g, ' ').trim();
     const name = (local.split(/\s+/)[0] || 'Ami').replace(/^\w/, (c) => c.toUpperCase());
-    // Use existing level or default — skip level picker entirely
+    // Use existing level or default — skip level picker entirely.
+    // Default to A2 (elementary), NOT B1: beginners must not be dropped into
+    // intermediate content. They can raise their level anytime.
     stopAudio();
-    completeOnboarding(profile.claimedLevel || 'B1', { authMethod: 'email', email, name });
+    completeOnboarding(profile.claimedLevel || 'A2', { authMethod: 'email', email, name });
   };
 
   const activeNarrator = activeSpeakingNarrator;
