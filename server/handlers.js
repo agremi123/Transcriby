@@ -17,6 +17,7 @@ import {
   readingExerciseDirective,
   listeningExerciseDirective,
   writingDirective,
+  writingFeedbackDirective,
   speakingPromptDirective,
   gradePassageDirective,
   learnerLevelContext as buildLearnerLevelContext,
