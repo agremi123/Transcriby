@@ -35,7 +35,7 @@ function TutorialTapIndicator() {
 }
 
 /** True on devices that can actually hover (desktop mouse), false on touch. */
-function useCanHover() {
+export function useCanHover() {
   const [canHover, setCanHover] = React.useState(true);
   React.useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return undefined;
