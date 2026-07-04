@@ -354,33 +354,43 @@ export default function WelcomeOnboarding() {
                   <span className={`text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${isSpeaking ? 'text-wine' : 'text-navy/60'}`}>
                     {n.name}
                   </span>
-                  <div className={`w-full rounded-xl px-4 py-4 sm:py-3 border transition-colors duration-300 flex items-start gap-3 ${
-                    isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
-                  }`}>
-                    <button
-                      type="button"
-                      onClick={() => { if (playing && activeSpeakingNarrator === id) stopAudio(); else playNarratorLine(line); }}
-                      className="relative mt-[3px] w-7 h-7 rounded-full border border-wine/30 text-wine/60 hover:text-wine hover:border-wine/60 flex items-center justify-center transition-colors shrink-0"
-                      aria-label={isSpeaking ? 'Stop' : 'Replay'}
-                    >
-                      {isSpeaking ? (
-                        <svg width="8" height="8" viewBox="0 0 14 14" fill="currentColor" aria-hidden><rect x="2" y="2" width="10" height="10" rx="1.5" /></svg>
-                      ) : (
-                        <svg width="7" height="9" viewBox="0 0 10 12" fill="currentColor" aria-hidden><path d="M0 0 L10 6 L0 12 Z" /></svg>
-                      )}
-                      {isSpeaking && <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-40 pointer-events-none" />}
-                    </button>
-                    <NarratorHoverText
-                      text={line.text}
-                      translation={line.translation}
-                      showTutorialHint={!translationHintDone}
-                      enableHoverDemo={!translationHintDone}
-                      onFirstHover={() => setTranslationHintDone(true)}
-                      highlightSpeech={highlightSpeech}
-                      speechPlaybackTime={speechPlaybackTime}
-                      speechTimings={speechTimings}
-                      className="font-display text-[16px] sm:text-[18px] leading-[1.5] text-navy/85 italic"
-                    />
+                  <div className="relative w-full">
+                    <div className={`w-full rounded-xl px-4 py-4 sm:py-3 border transition-colors duration-300 flex items-start gap-3 ${
+                      isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
+                    }`}>
+                      <button
+                        type="button"
+                        onClick={() => { if (playing && activeSpeakingNarrator === id) stopAudio(); else playNarratorLine(line); }}
+                        className="relative mt-[3px] w-7 h-7 rounded-full border border-wine/30 text-wine/60 hover:text-wine hover:border-wine/60 flex items-center justify-center transition-colors shrink-0"
+                        aria-label={isSpeaking ? 'Stop' : 'Replay'}
+                      >
+                        {isSpeaking ? (
+                          <svg width="8" height="8" viewBox="0 0 14 14" fill="currentColor" aria-hidden><rect x="2" y="2" width="10" height="10" rx="1.5" /></svg>
+                        ) : (
+                          <svg width="7" height="9" viewBox="0 0 10 12" fill="currentColor" aria-hidden><path d="M0 0 L10 6 L0 12 Z" /></svg>
+                        )}
+                        {isSpeaking && <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-40 pointer-events-none" />}
+                      </button>
+                      <NarratorHoverText
+                        text={line.text}
+                        translation={line.translation}
+                        showTutorialHint={!translationHintDone}
+                        enableHoverDemo={!translationHintDone}
+                        onFirstHover={() => setTranslationHintDone(true)}
+                        highlightSpeech={highlightSpeech}
+                        speechPlaybackTime={speechPlaybackTime}
+                        speechTimings={speechTimings}
+                        className="font-display text-[16px] sm:text-[18px] leading-[1.5] text-navy/85 italic"
+                      />
+                    </div>
+                    {/* Instruction sits OUTSIDE the box: to the right on desktop, below on mobile. */}
+                    {!translationHintDone && (
+                      <p className="mt-2 text-center text-[11px] leading-snug text-wine/70 animate-pulse sm:mt-0 sm:text-left sm:absolute sm:left-full sm:top-1/2 sm:-translate-y-1/2 sm:ml-4 sm:w-[132px]">
+                        <span className="hidden sm:inline">← </span>
+                        <span className="sm:hidden">👆 </span>
+                        {canHover ? 'Hover the text to see the English' : 'Tap the text to see the English'}
+                      </p>
+                    )}
                   </div>
                 </div>
               );
