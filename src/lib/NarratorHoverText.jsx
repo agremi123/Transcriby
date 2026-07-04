@@ -189,12 +189,6 @@ export function NarratorHoverText({
 
         {body}
 
-        {showTutorialHint && (
-          <p className="mt-1.5 text-[10px] tracking-wide text-wine/60 text-center animate-pulse">
-            👆 {canHover ? 'Hover the text to see the English' : 'Tap the text to see the English'}
-          </p>
-        )}
-
         {translation && (
           <p
             role="tooltip"
