@@ -155,6 +155,28 @@ export function writingDirective(level) {
   return `Niveau ${s.label}. Vise un texte d'environ ${s.writeWords}. Grammaire attendue : ${s.grammar}. Vocabulaire : ${s.vocab}. Les consignes, le vocabulaire et les exemples doivent rester à ce niveau.`;
 }
 
+/**
+ * How the coach's WRITTEN FEEDBACK / correction / explanation to the learner
+ * should itself be phrased. The feedback is read BY the learner, so at A1–A2 it
+ * must be as simple as the content we ask them to produce — short sentences,
+ * frequent words, no abstract "développe tes idées" phrasing, English gloss for
+ * hard words. Higher levels get richer, more demanding feedback.
+ */
+export function writingFeedbackDirective(level) {
+  const l = normalizeLevel(level);
+  const rank = LEVEL_RANK[l];
+  if (rank === 0) { // A1
+    return `TON RETOUR EST LU PAR UN GRAND DÉBUTANT (A1) : il doit être ULTRA SIMPLE. Écris 1 à 2 phrases très courtes (max ~8 mots chacune), une seule idée par phrase, avec des mots très simples et fréquents. Pas de subordonnées, pas de mots abstraits (n'écris PAS « développe », « détails », « il faut vraiment »). Sois gentil(le) et encourageant(e). Pour tout mot un peu difficile, ajoute sa traduction anglaise entre parenthèses. Termine par UNE question très simple. Exemple du ton attendu : « Bravo ! C'est un bon début. Ton texte est court. Écris plus, s'il te plaît ! Qu'est-ce que tu aimes ? (What do you like?) »`;
+  }
+  if (rank === 1) { // A2
+    return `TON RETOUR EST LU PAR UN DÉBUTANT (A2) : il doit rester SIMPLE. Écris 2 phrases courtes et claires (max ~12 mots chacune), avec du vocabulaire courant du quotidien. Évite les tournures abstraites et les longues subordonnées. Sois chaleureux(se) et encourageant(e). Termine par une question simple. Si un mot est difficile, ajoute sa traduction anglaise entre parenthèses.`;
+  }
+  if (rank <= 3) { // B1–B2
+    return `Écris 2-3 phrases naturelles. Termine par une relance (question ou mini-défi) qui pousse à réutiliser 2-3 conseils non encore employés.`;
+  }
+  return `Écris 2-3 phrases riches et précises. Termine par une relance exigeante qui pousse à approfondir et à réutiliser les conseils.`;
+}
+
 /** Speaking-challenge opener + target grammar/vocab difficulty. */
 export function speakingPromptDirective(level) {
   const s = spec(level);
