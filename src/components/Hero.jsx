@@ -598,7 +598,7 @@ function LevelSidebar({ currentLevel }) {
 }
 
 const CEFR = ['A1','A2','B1','B2','C1','C2'];
-function nextLevel(level) {
+export function nextLevel(level) {
   const i = CEFR.indexOf(level);
   return i >= 0 && i < CEFR.length - 1 ? CEFR[i + 1] : null;
 }
