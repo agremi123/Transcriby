@@ -108,7 +108,7 @@ export default function App() {
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || '/'}>
       <LearnerProfileProvider>
         <GoogleAuthHandler />
-        <WelcomeOnboarding />
+        <WelcomeOnboardingGate />
         {/* Kru Rémi credit. Mobile: top-right, level with the Parisly logo (mirror
             position, opposite side). Desktop: bottom-left. z-50 keeps it above the
             nav bar so its scroll-triggered backdrop-blur doesn't blur the credit;
