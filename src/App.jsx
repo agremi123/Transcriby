@@ -20,6 +20,8 @@ import { isProfileSetupComplete, loadLearnerProfile } from './lib/learnerProfile
 // Lazy so the 3D libraries (Three.js) load ONLY on /avatar-test and never
 // weigh down the main app bundle.
 const AvatarTest = React.lazy(() => import('./pages/AvatarTest'));
+// The "live" welcome landing (moving avatar + chatbox) — also 3D, also lazy.
+const WelcomeLive = React.lazy(() => import('./pages/WelcomeLive'));
 
 
 
