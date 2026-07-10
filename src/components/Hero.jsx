@@ -6296,7 +6296,7 @@ export function allTipsFulfilled(tips, usedTips) {
   return total > 0 && done === total;
 }
 
-function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null, usedVocab = [], usedGrammar = false, challengeIndex = 1, onNextChallenge = null }) {
+export function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null, usedVocab = [], usedGrammar = false, challengeIndex = 1, onNextChallenge = null }) {
   const name = narratorId === 'lea' ? 'Rémi' : 'Rémi';
 
   // Défi progress drives the "Next challenge" button (a progress bar, like the
