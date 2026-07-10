@@ -42,6 +42,14 @@ function LandingPage() {
   );
 }
 
+// On /welcome the moving avatar IS the welcome — don't cover it with the
+// onboarding modal. Everywhere else the modal behaves exactly as before.
+function WelcomeOnboardingGate() {
+  const { pathname } = useLocation();
+  if (pathname.startsWith('/welcome')) return null;
+  return <WelcomeOnboarding />;
+}
+
 function GoogleAuthHandler() {
   const { completeOnboarding } = useLearnerProfile();
   const handledRef = React.useRef(false);
