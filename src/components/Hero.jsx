@@ -54,7 +54,7 @@ export const DEFI_COMPLETE_XP = 15;
 export const THEME_CHALLENGE_TOTAL = 5;
 
 // How many reading/listening articles make up one theme (shown on "Next article").
-const THEME_ARTICLE_TOTAL = 3;
+export const THEME_ARTICLE_TOTAL = 3;
 
 // Parisian points it costs to discover a new Parisian word.
 const DISCOVER_WORD_COST = 5;
