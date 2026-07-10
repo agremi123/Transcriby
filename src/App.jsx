@@ -1,5 +1,5 @@
 import React from 'react'; // v2
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
 import { UniversitiesBar, Features } from './components/Features';
