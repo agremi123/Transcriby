@@ -5739,7 +5739,7 @@ function ThemeBadge({ achieved = false, total = THEME_ARTICLE_TOTAL, label = 'ar
   );
 }
 
-function ReadingArticlePanel({
+export function ReadingArticlePanel({
   loading,
   title,
   theme = '',
