@@ -126,6 +126,14 @@ export default function App() {
         {import.meta.env.DEV && <DevPanel />}
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route
+            path="/welcome"
+            element={
+              <React.Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-paper text-navy/40 font-display italic">Rémi arrive…</div>}>
+                <WelcomeLive />
+              </React.Suspense>
+            }
+          />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/expressions" element={<MyExpressions />} />
           <Route path="/targets" element={<MyTargets />} />
