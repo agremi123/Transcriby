@@ -48,7 +48,7 @@ const SHOW_3D_AVATAR = false;
 
 // Parisian-meter progress awarded for completing a speaking défi (≈7 défis to
 // fill the meter and level up to the next CEFR level).
-const DEFI_COMPLETE_XP = 15;
+export const DEFI_COMPLETE_XP = 15;
 
 // How many challenges make up one theme (shown on the "Next challenge" button).
 const THEME_CHALLENGE_TOTAL = 5;
