@@ -6859,7 +6859,7 @@ const TIPS_SECTIONS = [
   { key: 'connecteurs', label: 'Connecteurs',  icon: '🔗', pill: true  },
 ];
 
-function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wordTarget = 80, narratorId = 'lea', usedTips = {}, badge = null, onNewChallenge = null, challengeIndex = 1 }) {
+export function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wordTarget = 80, narratorId = 'lea', usedTips = {}, badge = null, onNewChallenge = null, challengeIndex = 1 }) {
   const hasTips = TIPS_SECTIONS.some(s => (tips[s.key] || []).length > 0);
   const { done: goalsDoneCount, total: goalsTotal } = tipsProgress(tips, usedTips);
   const goalsDone = goalsTotal > 0 && goalsDoneCount === goalsTotal;
