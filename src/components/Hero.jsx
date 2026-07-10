@@ -6291,7 +6291,7 @@ function tipsProgress(tips, usedTips) {
   }
   return { done, total };
 }
-function allTipsFulfilled(tips, usedTips) {
+export function allTipsFulfilled(tips, usedTips) {
   const { done, total } = tipsProgress(tips, usedTips);
   return total > 0 && done === total;
 }
