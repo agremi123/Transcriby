@@ -6257,7 +6257,7 @@ export function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart
   );
 }
 
-const NARRATOR_PORTRAITS = { lea: '/assets/remi-avatar.jpg', jules: '/assets/remi-avatar.jpg' };
+const NARRATOR_PORTRAITS = { lea: '/assets/lea.jpg', jules: '/assets/remi-avatar.jpg' };
 
 // Normalize a vocab item for loose matching (strip articles, accents, case).
 function normVocab(s) {
