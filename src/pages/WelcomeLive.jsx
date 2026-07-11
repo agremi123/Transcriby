@@ -648,14 +648,40 @@ export default function WelcomeLive() {
                   ? 'border-wine/40 ring-[3px] ring-wine/70 shadow-[0_28px_72px_-18px_rgba(139,30,45,0.38)]'
                   : 'border-line/70 ring-1 ring-line/40 shadow-[0_24px_64px_-24px_rgba(26,35,64,0.32)]'
               }`}>
-                <React.Suspense fallback={
-                  <img src="/assets/remi-avatar.jpg" alt="Rémi" className="w-full h-full object-cover object-top" />
-                }>
-                  <TalkingAvatar3D src={AVATAR_SRC} controls={false} />
-                </React.Suspense>
+                {/* Paris behind her. Deliberately STYLIZED and defocused, never a
+                    photo: a sharp photograph behind a CGI face is what makes these
+                    heads look pasted-on. Softened + pushed back, it reads as depth.
+                    Layers, back to front: warm sky → skyline → key light from the
+                    upper right (same side as the 3D directional light, so her lit
+                    cheek matches the brightest part of the room) → vignette. */}
+                <div className="absolute inset-0" aria-hidden>
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, #F7E9D6 0%, #EFD8C3 45%, #E0C0AC 100%)' }} />
+                  <img
+                    src="/assets/paris-skyline.jpg"
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover object-bottom select-none"
+                    style={{
+                      transform: 'scale(1.3)',
+                      transformOrigin: '50% 92%',
+                      filter: 'blur(3px) saturate(0.8) contrast(1.12)',
+                      mixBlendMode: 'multiply',
+                      opacity: 0.92,
+                    }}
+                  />
+                  <div className="absolute inset-0" style={{ background: 'radial-gradient(66% 62% at 76% 16%, rgba(255,232,197,0.62), rgba(255,232,197,0) 62%)' }} />
+                  <div className="absolute inset-0" style={{ background: 'radial-gradient(78% 74% at 50% 46%, rgba(60,42,36,0) 38%, rgba(60,42,36,0.30) 100%)' }} />
+                </div>
+
+                <div className="absolute inset-0">
+                  <React.Suspense fallback={
+                    <img src="/assets/remi-avatar.jpg" alt="Rémi" className="w-full h-full object-cover object-top" />
+                  }>
+                    <TalkingAvatar3D src={AVATAR_SRC} controls={false} />
+                  </React.Suspense>
+                </div>
 
                 {/* LIVE pill */}
-                <div className="absolute top-3.5 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/85 backdrop-blur-sm border border-wine/20 px-2.5 py-1 shadow-sm">
+                <div className="absolute z-10 top-3.5 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/85 backdrop-blur-sm border border-wine/20 px-2.5 py-1 shadow-sm">
                   <span className="relative flex w-2 h-2">
                     <span className="absolute inline-flex w-full h-full rounded-full bg-wine animate-ping opacity-60" />
                     <span className="relative inline-flex w-2 h-2 rounded-full bg-wine" />
@@ -664,7 +690,7 @@ export default function WelcomeLive() {
                 </div>
 
                 {/* Name pill */}
-                <div className="absolute bottom-3.5 left-4 rounded-full bg-navy/70 backdrop-blur-sm px-3 py-1.5">
+                <div className="absolute z-10 bottom-3.5 left-4 rounded-full bg-navy/70 backdrop-blur-sm px-3 py-1.5">
                   <span className="font-display text-[12.5px] text-ivory">
                     Rémi <span className="text-ivory/60">· ta prof, en direct de Paris</span>
                   </span>
@@ -674,7 +700,7 @@ export default function WelcomeLive() {
                 <button
                   type="button"
                   onClick={() => { if (avatarSpeaking) stopWelcomeAudio(); else playWelcomeLine(); }}
-                  className="absolute bottom-3 right-3.5 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm border border-wine/25 text-wine hover:text-wine2 hover:border-wine/50 flex items-center justify-center shadow-sm transition-colors"
+                  className="absolute z-10 bottom-3 right-3.5 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm border border-wine/25 text-wine hover:text-wine2 hover:border-wine/50 flex items-center justify-center shadow-sm transition-colors"
                   aria-label={avatarSpeaking ? 'Stop' : 'Replay the welcome'}
                   aria-pressed={avatarSpeaking}
                 >
