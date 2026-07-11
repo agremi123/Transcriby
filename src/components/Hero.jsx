@@ -765,7 +765,7 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
 }
 
 const DEMO_NARRATORS = {
-  lea: { id: 'lea', name: 'Rémi', src: '/assets/remi-avatar.jpg' },
+  lea: { id: 'lea', name: 'Léa', src: '/assets/lea.jpg' },
   jules: { id: 'jules', name: 'Rémi', src: '/assets/remi-avatar.jpg' },
 };
 
