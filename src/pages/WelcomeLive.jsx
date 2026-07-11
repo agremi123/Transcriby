@@ -661,7 +661,9 @@ export default function WelcomeLive() {
                     alt=""
                     className="absolute inset-0 w-full h-full object-cover object-bottom select-none"
                     style={{
-                      filter: 'saturate(0.9) contrast(1.9) brightness(0.98)',
+                      transform: 'scale(1.45) translateX(-13%)',
+                      transformOrigin: '50% 100%',
+                      filter: 'saturate(0.95) contrast(1.32) brightness(0.94)',
                       mixBlendMode: 'multiply',
                       opacity: 1,
                     }}
