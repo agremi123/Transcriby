@@ -557,7 +557,9 @@ export default function WelcomeLive() {
       <div className="relative flex flex-col flex-1 min-h-0 w-full max-w-[880px] mx-auto px-4">
         <header className="shrink-0 flex items-center justify-between pt-3 pb-2 sm:pt-5 sm:pb-3">
           <Logo />
-          <Link to="/classic" className="text-[11px] font-mono uppercase tracking-widest text-navy/40 hover:text-wine transition-colors">
+          {/* Masqué sur mobile : le crédit « by Kru Rémi » (fixe, en haut à droite)
+              occupe déjà ce coin — les deux se chevauchaient. */}
+          <Link to="/classic" className="hidden sm:block text-[11px] font-mono uppercase tracking-widest text-navy/40 hover:text-wine transition-colors">
             Classic page →
           </Link>
         </header>
