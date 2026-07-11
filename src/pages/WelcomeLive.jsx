@@ -554,15 +554,15 @@ export default function WelcomeLive() {
         />
       </div>
 
-      <div className="relative max-w-[880px] mx-auto px-4">
-        <header className="flex items-center justify-between pt-5 pb-4">
+      <div className="relative flex flex-col flex-1 min-h-0 w-full max-w-[880px] mx-auto px-4">
+        <header className="shrink-0 flex items-center justify-between pt-3 pb-2 sm:pt-5 sm:pb-3">
           <Logo />
           <Link to="/classic" className="text-[11px] font-mono uppercase tracking-widest text-navy/40 hover:text-wine transition-colors">
             Classic page →
           </Link>
         </header>
 
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center flex-1 min-h-0 gap-2 sm:gap-3 pb-3 sm:pb-4">
           {/* Challenge panel takes the avatar's spot while an exercise is active
               (same swap the classic landing does with its headline). */}
           {exercisePanelActive ? (
