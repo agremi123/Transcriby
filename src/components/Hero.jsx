@@ -4261,7 +4261,7 @@ export function AudioDemoCard({
                       <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
                     </span>
                     <span className="font-display text-[16px] italic text-navy/60 leading-snug">
-                      Tap here to chat with Rémi
+                      Tap here to chat with Léa
                     </span>
                     <span className="font-display text-[12px] text-navy/35 leading-snug max-w-[220px]">
                       She'll ask you a question — answer her out loud
