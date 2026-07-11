@@ -7506,8 +7506,8 @@ export default function Hero() {
       const intro = getNarratorIntro(id, effectiveLevel);
       return {
         id,
-        name: id === 'lea' ? 'Rémi' : 'Rémi',
-        src: id === 'lea' ? '/assets/remi-avatar.jpg' : '/assets/remi-avatar.jpg',
+        name: id === 'lea' ? 'Léa' : 'Rémi',
+        src: id === 'lea' ? '/assets/lea.jpg' : '/assets/remi-avatar.jpg',
         intro: intro.text,
         introTranslation: intro.translation,
       };
