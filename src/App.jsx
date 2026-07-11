@@ -121,13 +121,6 @@ export default function App() {
         <GoogleAuthHandler />
         <WelcomeOnboardingGate />
         <KruRemiCredit />
-          <img src="/assets/remi-avatar.jpg" alt="Kru Rémi"
-            className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all shrink-0" />
-          <span className="font-display text-[12px] italic text-navy/60 leading-none whitespace-nowrap">
-            by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span>
-            <span className="text-navy/40"> · certified French teacher</span>
-          </span>
-        </a>
         {import.meta.env.DEV && <DevPanel />}
         <Routes>
           {/* Main page: the live avatar + chatbox. */}
