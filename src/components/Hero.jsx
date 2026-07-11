@@ -1785,9 +1785,9 @@ export function AudioDemoCard({
 
   // Chat tab intro — play once on first load when no conversation yet
   const CHAT_INTROS = [
-    "Bonjour ! Je suis Rémi, ta coach de français parisien. Dis-moi, pourquoi tu apprends le français ?",
-    "Salut ! Moi c'est Rémi. Tu as déjà visité Paris ? Raconte-moi !",
-    "Bonjour ! Je m'appelle Rémi. Pour commencer, dis-moi une chose que tu aimes en France !",
+    "Bonjour ! Je suis Léa, ta coach de français parisien. Dis-moi, pourquoi tu apprends le français ?",
+    "Salut ! Moi c'est Léa. Tu as déjà visité Paris ? Raconte-moi !",
+    "Bonjour ! Je m'appelle Léa. Pour commencer, dis-moi une chose que tu aimes en France !",
   ];
   React.useEffect(() => {
     const alreadyHasContent = utterances.length > 0 || !!partialTranscript || !!settledText;
