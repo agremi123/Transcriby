@@ -61,6 +61,29 @@ function WelcomeOnboardingGate() {
   return <WelcomeOnboarding />;
 }
 
+// Kru Rémi credit. Mobile: top-right. Desktop: bottom-left. z-50 keeps it above
+// the nav bar so its scroll-triggered backdrop-blur doesn't blur the credit; the
+// pointer-events guard means only the link itself is clickable.
+// The mobile offset is per-page: the classic landing has a 72px nav bar (logo
+// centred at 20px), while the live landing's header is tighter — there, 20px
+// pushed the credit down onto the avatar frame. So it rides higher on the live page.
+function KruRemiCredit() {
+  const { pathname } = useLocation();
+  const onLiveLanding = pathname === '/' || pathname.startsWith('/welcome');
+  return (
+    <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer"
+      className={`fixed ${onLiveLanding ? 'top-[6px]' : 'top-[20px]'} right-6 sm:top-auto sm:right-auto sm:bottom-3 sm:left-3 z-50 flex items-center gap-2 group pointer-events-none [&>*]:pointer-events-auto`}
+    >
+      <img src="/assets/remi-avatar.jpg" alt="Kru Rémi"
+        className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all shrink-0" />
+      <span className="font-display text-[12px] italic text-navy/60 leading-none whitespace-nowrap">
+        by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span>
+        <span className="text-navy/40"> · certified French teacher</span>
+      </span>
+    </a>
+  );
+}
+
 function GoogleAuthHandler() {
   const { completeOnboarding } = useLearnerProfile();
   const handledRef = React.useRef(false);
