@@ -641,8 +641,9 @@ export default function WelcomeLive() {
             </div>
           ) : (
             <div className="w-full max-w-[680px]">
-              {/* The moving avatar, live from Paris */}
-              <div className={`relative w-full h-[52vw] max-h-[340px] min-h-[220px] rounded-[28px] overflow-hidden bg-ivory2 border transition-all duration-300 ${
+              {/* The moving avatar, live from Paris. Sized off the viewport so it
+                  owns the top half of the page — it's the first thing you meet. */}
+              <div className={`relative w-full h-[44vh] max-h-[480px] min-h-[260px] rounded-[28px] overflow-hidden bg-ivory2 border transition-all duration-300 ${
                 avatarSpeaking
                   ? 'border-wine/40 ring-[3px] ring-wine/70 shadow-[0_28px_72px_-18px_rgba(139,30,45,0.38)]'
                   : 'border-line/70 ring-1 ring-line/40 shadow-[0_24px_64px_-24px_rgba(26,35,64,0.32)]'
