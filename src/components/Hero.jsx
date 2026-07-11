@@ -3986,7 +3986,7 @@ export function AudioDemoCard({
                         className="group relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
                         aria-label="Replay Rémi's intro"
                       >
-                        <img src="/assets/remi-avatar.jpg" alt="Rémi" className="w-full h-full object-cover object-top" />
+                        <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
                         <PortraitHoverPlay />
                         {wordPlaying && parisianSpeakingText === chatIntroLine?.text && (
                           <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
@@ -4251,7 +4251,7 @@ export function AudioDemoCard({
                     className="sm:hidden flex flex-col items-center justify-center gap-3 text-center w-full min-h-[220px] py-8 group"
                   >
                     <span className="relative w-16 h-16 rounded-full overflow-hidden ring-2 ring-wine/30 group-hover:ring-wine/60 transition-all">
-                      <img src="/assets/remi-avatar.jpg" alt="Rémi" className="w-full h-full object-cover object-top" />
+                      <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
                     </span>
                     <span className="font-display text-[16px] italic text-navy/60 leading-snug">
                       Tap here to chat with Rémi
@@ -4675,7 +4675,7 @@ export function AudioDemoCard({
                     className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
                     aria-label="Replay Rémi's intro"
                   >
-                    <img src="/assets/remi-avatar.jpg" alt="Rémi" className="w-full h-full object-cover object-top" />
+                    <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
                     {wordPlaying && parisianSpeakingText === chatIntroLine?.text && (
                       <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
                     )}
@@ -7668,7 +7668,7 @@ export default function Hero() {
                   <div className={`relative w-20 h-20 rounded-full overflow-hidden transition-all duration-300 ${
                     isPlaying ? 'ring-[3px] ring-wine shadow-lg' : 'ring-2 ring-wine/40 group-hover:ring-wine shadow-sm'
                   }`}>
-                    <img src="/assets/remi-avatar.jpg" alt="Rémi" className="w-full h-full object-cover object-top" />
+                    <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
                     {isPlaying && <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-35 pointer-events-none" />}
                   </div>
                 </button>
