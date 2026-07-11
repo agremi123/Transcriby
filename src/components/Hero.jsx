@@ -7662,7 +7662,7 @@ export default function Hero() {
                   type="button"
                   onClick={() => playNarratorIntro({ id: 'lea', intro: exerciseLine })}
                   className="group relative flex-shrink-0"
-                  aria-label="Rejouer le message de Rémi"
+                  aria-label="Rejouer le message de Léa"
                   aria-pressed={isPlaying}
                 >
                   <div className={`relative w-20 h-20 rounded-full overflow-hidden transition-all duration-300 ${
