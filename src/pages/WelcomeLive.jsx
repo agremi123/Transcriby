@@ -566,7 +566,7 @@ export default function WelcomeLive() {
           {/* Challenge panel takes the avatar's spot while an exercise is active
               (same swap the classic landing does with its headline). */}
           {exercisePanelActive ? (
-            <div className="w-full">
+            <div className="w-full shrink-0 max-h-[38vh] overflow-y-auto">
               {heroActiveTab === 'reading' && readingActive && (
                 <ReadingArticlePanel
                   loading={readingLoading}
