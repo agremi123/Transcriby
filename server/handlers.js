@@ -64,8 +64,8 @@ function learnerLevelContext(level) {
 }
 
 export const ELEVENLABS_VOICES = {
-  lea: 'n1u6R6yj3qEpDLH3liBh', // voix de Rémi partout (ancienne voix Léa retirée)
-  alex: 'n1u6R6yj3qEpDLH3liBh',
+  lea: 'm5U7XCsc8v988k2RJAqN',  // Léa — voix féminine
+  alex: 'n1u6R6yj3qEpDLH3liBh', // Rémi — narrateurs masculins
 };
 
 export function normalizeNarrator(narrator) {
