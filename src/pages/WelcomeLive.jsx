@@ -731,10 +731,12 @@ export default function WelcomeLive() {
             </div>
           )}
 
-          {/* The chatbox — the exact same engine as the classic landing */}
-          <div className={`relative w-full max-w-[680px] ${exercisePanelActive ? 'h-[calc(100dvh-205px)]' : 'h-[440px] sm:h-[500px]'}`}>
+          {/* The chatbox — the exact same engine as the classic landing. It takes
+              every pixel the avatar didn't use, so writing space grows on small
+              screens instead of pushing the page into a scroll. */}
+          <div className="relative w-full max-w-[680px] flex-1 min-h-0 flex justify-center">
             <AudioDemoCard
-              tall={exercisePanelActive}
+              fill
               onOpenFullscreen={(topic) => goToDashboard(topic)}
               initialTopic={practiceType === 'reading' ? null : practiceTopic}
               initialLearnMode={speakingActive ? 'speak' : writingActive ? 'write' : learnMode}
