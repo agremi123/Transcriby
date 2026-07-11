@@ -686,10 +686,12 @@ export default function WelcomeLive() {
                   </React.Suspense>
                 </div>
 
-                {/* Name pill */}
-                <div className="absolute z-10 bottom-3.5 left-4 rounded-full bg-navy/70 backdrop-blur-sm px-3 py-1.5">
+                {/* Name pill. Mobile : juste « Léa », en haut à gauche — le cadre
+                    est petit, la tagline mangeait son visage. Desktop : version
+                    complète, en bas à gauche. */}
+                <div className="absolute z-10 top-2.5 left-3 sm:top-auto sm:bottom-3.5 sm:left-4 rounded-full bg-navy/70 backdrop-blur-sm px-2.5 py-1 sm:px-3 sm:py-1.5">
                   <span className="font-display text-[12.5px] text-ivory">
-                    Léa <span className="text-ivory/60">· ta prof de français à Paris</span>
+                    Léa <span className="hidden sm:inline text-ivory/60">· ta prof de français à Paris</span>
                   </span>
                 </div>
 
