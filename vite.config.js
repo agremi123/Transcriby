@@ -623,26 +623,39 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
     const parsed = JSON.parse(raw);
     if (!parsed.word) throw new Error('No word generated');
 
+    // L'exemple parlé passe par le cache narrator-audio, exactement comme en
+    // prod (handlers.js). Avant, il était écrit sous un nom aléatoire
+    // (word-<timestamp>.mp3) : jamais relu, donc re-payé à chaque fois.
     let audioUrl = null;
     if (elevenLabsKey && parsed.example) {
       try {
-        const elRes = await fetch(
-          `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICES.lea}`,
-          {
-            method: 'POST',
-            headers: { 'xi-api-key': elevenLabsKey, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg' },
-            body: JSON.stringify({
-              text: parsed.example,
-              model_id: 'eleven_multilingual_v2',
-              voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
-            }),
+        const { slug, voiceId } = resolveNarrator('lea');
+        const cached = await getCachedNarratorAudio(slug, voiceId, parsed.example);
+        if (cached?.audioUrl) {
+          audioUrl = cached.audioUrl;
+        } else {
+          const elRes = await fetch(
+            `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
+            {
+              method: 'POST',
+              headers: { 'xi-api-key': elevenLabsKey, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg' },
+              body: JSON.stringify({
+                text: parsed.example,
+                model_id: 'eleven_multilingual_v2',
+                voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
+              }),
+            }
+          );
+          if (elRes.ok) {
+            const audioBuf = Buffer.from(await elRes.arrayBuffer());
+            audioUrl = await saveNarratorAudio(slug, voiceId, parsed.example, audioBuf);
+            // Repli local si Supabase n'est pas configuré : au moins ça joue.
+            if (!audioUrl) {
+              const fileName = `word-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.mp3`;
+              writeFileSync(resolve(AUDIO_DIR, fileName), audioBuf);
+              audioUrl = `/word-audio/${fileName}`;
+            }
           }
-        );
-        if (elRes.ok) {
-          const audioBuf = Buffer.from(await elRes.arrayBuffer());
-          const fileName = `word-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.mp3`;
-          writeFileSync(resolve(AUDIO_DIR, fileName), audioBuf);
-          audioUrl = `/word-audio/${fileName}`;
         }
       } catch {}
     }
