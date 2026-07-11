@@ -4034,8 +4034,8 @@ export function AudioDemoCard({
                 <div className="absolute bottom-3 left-4 flex items-center gap-2 pointer-events-none">
                   <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0">
                     <img
-                      src={narratorReaction?.id === 'jules' ? '/assets/remi-avatar.jpg' : '/assets/remi-avatar.jpg'}
-                      alt={narratorReaction?.id === 'jules' ? 'Rémi' : 'Rémi'}
+                      src={narratorReaction?.id === 'jules' ? '/assets/remi-avatar.jpg' : '/assets/lea.jpg'}
+                      alt={narratorReaction?.id === 'jules' ? 'Rémi' : 'Léa'}
                       className="w-full h-full object-cover object-top"
                     />
                   </div>
