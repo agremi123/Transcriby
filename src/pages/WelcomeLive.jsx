@@ -643,10 +643,11 @@ export default function WelcomeLive() {
               )}
             </div>
           ) : (
-            <div className="w-full max-w-[680px]">
-              {/* The moving avatar, live from Paris. Sized off the viewport, but
-                  kept short enough that the chatbox stays visible without scrolling. */}
-              <div className={`relative w-full h-[32vh] max-h-[320px] min-h-[200px] rounded-[28px] overflow-hidden bg-ivory2 border transition-all duration-300 ${
+            <div className="w-full max-w-[680px] shrink-0">
+              {/* The moving avatar. Deliberately small — the speech box below is
+                  where the student actually works, so the portrait gets the
+                  leftovers, not the other way round. Tiny on mobile by design. */}
+              <div className={`relative w-full h-[17vh] max-h-[150px] min-h-[104px] sm:h-[24vh] sm:max-h-[240px] sm:min-h-[160px] rounded-2xl sm:rounded-[28px] overflow-hidden bg-ivory2 border transition-all duration-300 ${
                 avatarSpeaking
                   ? 'border-wine/40 ring-[3px] ring-wine/70 shadow-[0_28px_72px_-18px_rgba(139,30,45,0.38)]'
                   : 'border-line/70 ring-1 ring-line/40 shadow-[0_24px_64px_-24px_rgba(26,35,64,0.32)]'
