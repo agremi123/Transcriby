@@ -1451,15 +1451,26 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
         try { generated = JSON.parse(genRaw); } catch {}
         episode = { title: generated.title || 'Journal en Français Facile', audioUrl: null, link: '', pubDate: new Date().toUTCString(), desc: '', transcriptUrl: '', generatedTranscript: generated.transcript || '' };
 
+        // Un bulletin fait 250-300 mots : c'est la génération la plus chère de
+        // l'app. Elle ne vivait qu'en mémoire (SESSION_AUDIO, 1 h) et était
+        // perdue ensuite. On la relit / on l'enregistre dans le cache Léa.
         if (elevenlabsKey && episode.generatedTranscript) {
           try {
-            const elRes = await fetch('https://api.elevenlabs.io/v1/text-to-speech/ebRwkdEFVZIx2A6YucFh', {
-              method: 'POST',
-              headers: { 'xi-api-key': elevenlabsKey, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ text: episode.generatedTranscript, model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.55, similarity_boost: 0.75 } }),
-            });
-            if (elRes.ok) {
-              const buf = Buffer.from(await elRes.arrayBuffer());
+            const { slug, voiceId } = resolveNarrator('lea');
+            const text = episode.generatedTranscript;
+            let buf = (await getCachedNarratorAudio(slug, voiceId, text))?.buffer || null;
+            if (!buf) {
+              const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+                method: 'POST',
+                headers: { 'xi-api-key': elevenlabsKey, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.55, similarity_boost: 0.75 } }),
+              });
+              if (elRes.ok) {
+                buf = Buffer.from(await elRes.arrayBuffer());
+                await saveNarratorAudio(slug, voiceId, text, buf);
+              }
+            }
+            if (buf) {
               const sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
               SESSION_AUDIO.set(sid, buf);
               setTimeout(() => SESSION_AUDIO.delete(sid), 60 * 60 * 1000);
