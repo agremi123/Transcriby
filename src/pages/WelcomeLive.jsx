@@ -45,8 +45,8 @@ const AVATAR_SRC = '/avatars/avaturn.glb';
 
 const WELCOME_LINE = {
   narrator: 'lea',
-  text: "Bienvenue sur Parisly ! Moi, c'est Rémi. Parle-moi ou écris-moi en français juste en dessous — je t'écoute !",
-  translation: "Welcome to Parisly! I'm Rémi. Speak or write to me in French just below — I'm listening!",
+  text: "Bienvenue sur Parisly ! Moi, c'est Léa. Parle-moi ou écris-moi en français juste en dessous — je t'écoute !",
+  translation: "Welcome to Parisly! I'm Léa. Speak or write to me in French just below — I'm listening!",
 };
 
 export default function WelcomeLive() {
