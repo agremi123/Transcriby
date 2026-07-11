@@ -708,7 +708,7 @@ export default function WelcomeLive() {
               </div>
 
               {/* Her speech bubble — the welcome line, then whatever she says in chat */}
-              <div className={`relative mt-3 rounded-2xl border px-4 py-3 transition-colors duration-300 ${
+              <div className={`relative mt-2 rounded-xl sm:rounded-2xl border px-3.5 py-2 sm:px-4 sm:py-3 transition-colors duration-300 ${
                 avatarSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-white/90 border-line/60'
               } shadow-sm`}>
                 <span className={`absolute -top-1 left-10 w-2.5 h-2.5 rotate-45 border-l border-t ${
