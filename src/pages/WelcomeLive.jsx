@@ -721,11 +721,11 @@ export default function WelcomeLive() {
                     highlightSpeech={highlightWelcome}
                     speechPlaybackTime={speechPlaybackTime}
                     speechTimings={speechTimings}
-                    className="font-display text-[15.5px] sm:text-[17px] italic leading-snug text-navy/85"
+                    className="font-display text-[13.5px] sm:text-[16.5px] italic leading-snug text-navy/85"
                     wrapperClassName="relative w-full"
                   />
                 ) : (
-                  <p className="font-display text-[15.5px] sm:text-[17px] italic leading-snug text-navy/85">{bubble.text}</p>
+                  <p className="font-display text-[13.5px] sm:text-[16.5px] italic leading-snug text-navy/85">{bubble.text}</p>
                 )}
               </div>
             </div>
