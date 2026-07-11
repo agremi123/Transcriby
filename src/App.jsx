@@ -27,7 +27,7 @@ const WelcomeLive = React.lazy(() => import('./pages/WelcomeLive'));
 
 function LiveLandingRoute() {
   return (
-    <React.Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-paper text-navy/40 font-display italic">Rémi arrive…</div>}>
+    <React.Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-paper text-navy/40 font-display italic">Léa arrive…</div>}>
       <WelcomeLive />
     </React.Suspense>
   );
