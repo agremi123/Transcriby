@@ -20,11 +20,21 @@ import { isProfileSetupComplete, loadLearnerProfile } from './lib/learnerProfile
 // Lazy so the 3D libraries (Three.js) load ONLY on /avatar-test and never
 // weigh down the main app bundle.
 const AvatarTest = React.lazy(() => import('./pages/AvatarTest'));
-// The "live" welcome landing (moving avatar + chatbox) — also 3D, also lazy.
+// The "live" landing (moving avatar + chatbox) — now the main page at "/".
+// Still lazy: Three.js stays out of the shared bundle, so /dashboard and the
+// classic landing don't pay for it.
 const WelcomeLive = React.lazy(() => import('./pages/WelcomeLive'));
 
+function LiveLandingRoute() {
+  return (
+    <React.Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-paper text-navy/40 font-display italic">Rémi arrive…</div>}>
+      <WelcomeLive />
+    </React.Suspense>
+  );
+}
 
-
+// The classic marketing landing. Not the main page anymore — it lives on
+// /classic and is kept whole, ready to be reused (ads, SEO) later.
 function LandingPage() {
   return (
     <div className="relative">
