@@ -3,8 +3,10 @@ import { buildWordTimings, playDecodedBuffer } from './speechHighlight';
 import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from './siteAudio';
 import { tapSource, startLine, setPlaybackTime, stopLine } from './lipSync';
 
+// Léa is the face and the voice of Parisly again (the server prompts never
+// stopped calling her Léa — only the client display had been swapped to Rémi).
 export const NARRATORS = {
-  lea: { id: 'lea', name: 'Rémi', src: '/assets/remi-avatar.jpg' },
+  lea: { id: 'lea', name: 'Léa', src: '/assets/lea.jpg' },
   jules: { id: 'jules', name: 'Rémi', src: '/assets/remi-avatar.jpg' },
 };
 
