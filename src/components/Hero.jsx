@@ -1331,6 +1331,9 @@ function ExerciseStatus({ prog }) {
 export function AudioDemoCard({
   fullscreen = false,
   tall = false,
+  // `fill` : la carte prend toute la hauteur que le parent lui donne (au lieu
+  // de s'imposer 400/500px). Utilisé par la landing live, qui tient en un écran.
+  fill = false,
   onClose,
   onOpenFullscreen,
   initialTopic,
