@@ -661,11 +661,9 @@ export default function WelcomeLive() {
                     alt=""
                     className="absolute inset-0 w-full h-full object-cover object-bottom select-none"
                     style={{
-                      transform: 'scale(1.3)',
-                      transformOrigin: '50% 92%',
-                      filter: 'blur(3px) saturate(0.8) contrast(1.12)',
+                      filter: 'saturate(0.9) contrast(1.9) brightness(0.98)',
                       mixBlendMode: 'multiply',
-                      opacity: 0.92,
+                      opacity: 1,
                     }}
                   />
                   <div className="absolute inset-0" style={{ background: 'radial-gradient(66% 62% at 76% 16%, rgba(255,232,197,0.62), rgba(255,232,197,0) 62%)' }} />
