@@ -3941,8 +3941,8 @@ export function AudioDemoCard({
                     <div className="flex items-center gap-2.5 shrink-0">
                       <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/30 shrink-0 parisian-exp-bump">
                         <img
-                          src={narratorReaction?.id === 'jules' ? '/assets/remi-avatar.jpg' : '/assets/remi-avatar.jpg'}
-                          alt={narratorReaction?.id === 'jules' ? 'Rémi' : 'Rémi'}
+                          src={narratorReaction?.id === 'jules' ? '/assets/remi-avatar.jpg' : '/assets/lea.jpg'}
+                          alt={narratorReaction?.id === 'jules' ? 'Rémi' : 'Léa'}
                           className="w-full h-full object-cover object-top"
                         />
                       </div>
