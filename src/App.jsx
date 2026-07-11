@@ -52,11 +52,12 @@ function LandingPage() {
   );
 }
 
-// On /welcome the moving avatar IS the welcome — don't cover it with the
-// onboarding modal. Everywhere else the modal behaves exactly as before.
+// Wherever the live landing shows, the moving avatar IS the welcome — don't
+// cover it with the onboarding modal. That's now "/" and its /welcome alias.
+// Everywhere else the modal behaves exactly as before.
 function WelcomeOnboardingGate() {
   const { pathname } = useLocation();
-  if (pathname.startsWith('/welcome')) return null;
+  if (pathname === '/' || pathname.startsWith('/welcome')) return null;
   return <WelcomeOnboarding />;
 }
 
