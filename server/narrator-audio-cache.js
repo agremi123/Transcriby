@@ -6,9 +6,12 @@ const BUCKET = 'narrator-audio';
 /** Single voice per character — always lea or jules in storage paths. */
 export function resolveNarrator(input = 'lea') {
   const slug = input === 'jules' || input === 'alex' ? 'jules' : 'lea';
-  // Une seule voix pour tout le monde : celle de Rémi (le hash de cache inclut
-  // le voiceId, donc l'ancien audio Léa est ignoré et régénéré à la demande).
-  const voiceId = 'n1u6R6yj3qEpDLH3liBh';
+  // Léa reparle avec sa voix ; Jules garde celle de Rémi. Le hash de cache
+  // inclut le voiceId : l'audio enregistré sous l'autre voix est simplement
+  // ignoré et regénéré à la demande, ligne par ligne.
+  const voiceId = slug === 'jules'
+    ? 'n1u6R6yj3qEpDLH3liBh'  // Rémi
+    : 'm5U7XCsc8v988k2RJAqN'; // Léa
   return { slug, voiceId };
 }
 
