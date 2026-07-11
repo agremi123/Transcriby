@@ -6647,8 +6647,8 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
 
 // ── Guided writing review thread (Writing tab) ───────────────────────────────
 function WriteBubble({ narratorId, children, onReplay, text }) {
-  const portrait = narratorId === 'jules' ? '/assets/remi-avatar.jpg' : '/assets/remi-avatar.jpg';
-  const alt = narratorId === 'jules' ? 'Rémi' : 'Rémi';
+  const portrait = narratorId === 'jules' ? '/assets/remi-avatar.jpg' : '/assets/lea.jpg';
+  const alt = narratorId === 'jules' ? 'Rémi' : 'Léa';
   return (
     <div className="flex items-start gap-2.5">
       <button type="button" onClick={() => text && onReplay?.(text, narratorId)}
