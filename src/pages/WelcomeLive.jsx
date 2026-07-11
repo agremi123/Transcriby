@@ -533,7 +533,10 @@ export default function WelcomeLive() {
   const highlightWelcome = avatarSpeaking && bubble.text === WELCOME_LINE.text && speechPlaybackTime != null;
 
   return (
-    <section className="relative min-h-[100dvh] overflow-x-hidden pb-10">
+    // Une seule page, jamais de scroll : hauteur d'écran fixe, colonne flex.
+    // L'avatar et sa bulle prennent le strict minimum, la carte de chat récupère
+    // tout le reste (c'est là qu'on écrit) — surtout sur mobile.
+    <section className="relative h-[100dvh] flex flex-col overflow-hidden">
       {/* Same Parisian paper backdrop as the classic landing */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0" style={{ background: 'radial-gradient(60% 80% at 80% 30%, rgba(217,196,162,0.30), transparent 60%), linear-gradient(180deg, #F6F1E8 0%, #F2EBDA 100%)' }} />
