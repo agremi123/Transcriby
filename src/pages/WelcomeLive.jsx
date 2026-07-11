@@ -674,25 +674,16 @@ export default function WelcomeLive() {
 
                 <div className="absolute inset-0">
                   <React.Suspense fallback={
-                    <img src="/assets/remi-avatar.jpg" alt="Rémi" className="w-full h-full object-cover object-top" />
+                    <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
                   }>
                     <TalkingAvatar3D src={AVATAR_SRC} controls={false} />
                   </React.Suspense>
                 </div>
 
-                {/* LIVE pill */}
-                <div className="absolute z-10 top-3.5 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/85 backdrop-blur-sm border border-wine/20 px-2.5 py-1 shadow-sm">
-                  <span className="relative flex w-2 h-2">
-                    <span className="absolute inline-flex w-full h-full rounded-full bg-wine animate-ping opacity-60" />
-                    <span className="relative inline-flex w-2 h-2 rounded-full bg-wine" />
-                  </span>
-                  <span className="text-[10px] font-semibold tracking-[0.16em] uppercase text-wine">En direct</span>
-                </div>
-
                 {/* Name pill */}
                 <div className="absolute z-10 bottom-3.5 left-4 rounded-full bg-navy/70 backdrop-blur-sm px-3 py-1.5">
                   <span className="font-display text-[12.5px] text-ivory">
-                    Rémi <span className="text-ivory/60">· ta prof, en direct de Paris</span>
+                    Léa <span className="text-ivory/60">· ta prof de français à Paris</span>
                   </span>
                 </div>
 
