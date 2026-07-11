@@ -63,8 +63,10 @@ function learnerLevelContext(level) {
   return buildLearnerLevelContext(normalizeLearnerLevel(level));
 }
 
+// Ne JAMAIS changer ces IDs : le hash du cache audio (narrator-audio-cache.js)
+// inclut le voiceId, donc toute la banque de générations déjà payées en dépend.
 export const ELEVENLABS_VOICES = {
-  lea: 'm5U7XCsc8v988k2RJAqN',  // Léa — voix féminine
+  lea: 'ebRwkdEFVZIx2A6YucFh',  // Léa — sa voix d'origine (celle de la base)
   alex: 'n1u6R6yj3qEpDLH3liBh', // Rémi — narrateurs masculins
 };
 
