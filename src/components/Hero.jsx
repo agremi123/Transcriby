@@ -3723,7 +3723,7 @@ export function AudioDemoCard({
                       <div className="flex gap-3">
                         {[
                           { id: 'jules', src: '/assets/remi-avatar.jpg', label: 'Rémi' },
-                          { id: 'lea',   src: '/assets/remi-avatar.jpg',   label: 'Rémi'   },
+                          { id: 'lea',   src: '/assets/lea.jpg',         label: 'Léa'  },
                         ].map((n) => (
                           <div key={n.id} className="flex flex-col items-center gap-1">
                             <button type="button"
