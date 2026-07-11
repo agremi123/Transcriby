@@ -136,15 +136,12 @@ export default function App() {
         </a>
         {import.meta.env.DEV && <DevPanel />}
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route
-            path="/welcome"
-            element={
-              <React.Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-paper text-navy/40 font-display italic">Rémi arrive…</div>}>
-                <WelcomeLive />
-              </React.Suspense>
-            }
-          />
+          {/* Main page: the live avatar + chatbox. */}
+          <Route path="/" element={<LiveLandingRoute />} />
+          {/* Old address of the live page — kept so existing links still land. */}
+          <Route path="/welcome" element={<LiveLandingRoute />} />
+          {/* The classic landing, intact, for later reuse. */}
+          <Route path="/classic" element={<LandingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/expressions" element={<MyExpressions />} />
           <Route path="/targets" element={<MyTargets />} />
