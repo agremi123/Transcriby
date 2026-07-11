@@ -554,7 +554,7 @@ export default function WelcomeLive() {
       <div className="relative max-w-[880px] mx-auto px-4">
         <header className="flex items-center justify-between pt-5 pb-4">
           <Logo />
-          <Link to="/" className="text-[11px] font-mono uppercase tracking-widest text-navy/40 hover:text-wine transition-colors">
+          <Link to="/classic" className="text-[11px] font-mono uppercase tracking-widest text-navy/40 hover:text-wine transition-colors">
             Classic page →
           </Link>
         </header>
