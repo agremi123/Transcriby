@@ -3984,7 +3984,7 @@ export function AudioDemoCard({
                         type="button"
                         onClick={() => chatIntroLine && playNarratorLine({ id: 'lea', text: chatIntroLine.text })}
                         className="group relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
-                        aria-label="Replay Rémi's intro"
+                        aria-label="Replay Léa's intro"
                       >
                         <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
                         <PortraitHoverPlay />
@@ -4673,7 +4673,7 @@ export function AudioDemoCard({
                     type="button"
                     onClick={() => chatIntroLine && playNarratorLine({ id: 'lea', text: chatIntroLine.text })}
                     className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105"
-                    aria-label="Replay Rémi's intro"
+                    aria-label="Replay Léa's intro"
                   >
                     <img src="/assets/lea.jpg" alt="Léa" className="w-full h-full object-cover object-top" />
                     {wordPlaying && parisianSpeakingText === chatIntroLine?.text && (
