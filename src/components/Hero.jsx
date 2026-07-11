@@ -4738,7 +4738,7 @@ export function AudioDemoCard({
                   ) : (
                     <div className="text-center py-6 space-y-2">
                       <p className="font-display text-[15px] text-navy/50 italic">No speaking session yet.</p>
-                      <p className="text-[12px] text-navy/35">Press the mic button and start speaking French — Rémi will assess your level.</p>
+                      <p className="text-[12px] text-navy/35">Press the mic button and start speaking French — Léa will assess your level.</p>
                     </div>
                   )}
                   <div className="pt-1 border-t border-line/40">
