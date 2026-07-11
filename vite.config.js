@@ -16,7 +16,7 @@ import {
   gradePassageDirective,
   normalizeLevel,
 } from './server/levelAdapt.js';
-import { resolveNarrator, saveNarratorAudio, narratorStoragePath } from './server/narrator-audio-cache.js';
+import { resolveNarrator, saveNarratorAudio, getCachedNarratorAudio, narratorStoragePath } from './server/narrator-audio-cache.js';
 import { getSupabaseAdmin } from './server/supabase.js';
 import { getStoredWritingExample, saveWritingExample } from './server/writing-examples.js';
 import { sendHandlerResult } from './server/node-response.js';
