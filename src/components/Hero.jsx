@@ -18,6 +18,7 @@ import { NarratorHoverText } from '../lib/NarratorHoverText';
 import { lookupNarratorTranslation } from '../lib/narratorTranslations';
 import { SpellcheckUnderline } from '../lib/SpellcheckUnderline';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
+import { uiText } from '../lib/uiLevelText';
 import { matchesCorrectionTarget, isStrictCorrectionMatch, wordDiff, buildCorrectionNarrationText } from '../lib/correctionFormat';
 import { DiffText } from '../lib/DiffText';
 import { registerCorrectionKeyterms } from '../lib/deepgramKeyterms';
@@ -47,13 +48,13 @@ const SHOW_3D_AVATAR = false;
 
 // Parisian-meter progress awarded for completing a speaking défi (≈7 défis to
 // fill the meter and level up to the next CEFR level).
-const DEFI_COMPLETE_XP = 15;
+export const DEFI_COMPLETE_XP = 15;
 
 // How many challenges make up one theme (shown on the "Next challenge" button).
-const THEME_CHALLENGE_TOTAL = 5;
+export const THEME_CHALLENGE_TOTAL = 5;
 
 // How many reading/listening articles make up one theme (shown on "Next article").
-const THEME_ARTICLE_TOTAL = 3;
+export const THEME_ARTICLE_TOTAL = 3;
 
 // Parisian points it costs to discover a new Parisian word.
 const DISCOVER_WORD_COST = 5;
@@ -143,7 +144,7 @@ function TtsPlayButton({ text }) {
   );
 }
 
-// Pulsing dots while Léa / Jules load a correction
+// Pulsing dots while Rémi / Rémi load a correction
 function CorrectionLoading({ className = '' }) {
   return (
     <div className={`flex items-center gap-1.5 py-1 ${className}`} aria-label="Loading">
@@ -597,7 +598,7 @@ function LevelSidebar({ currentLevel }) {
 }
 
 const CEFR = ['A1','A2','B1','B2','C1','C2'];
-function nextLevel(level) {
+export function nextLevel(level) {
   const i = CEFR.indexOf(level);
   return i >= 0 && i < CEFR.length - 1 ? CEFR[i + 1] : null;
 }
@@ -755,7 +756,7 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
               <circle cx={s.x} cy="24" r="2.6" fill={isDone ? '#F6F1E8' : WINE} style={{ pointerEvents: 'none' }} />
             )}
             <text x={s.x} y="46" textAnchor="middle" fill={isDone || started ? WINE : '#1A2340'}
-              fillOpacity={isDone ? 1 : started ? 0.8 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="13">{s.label}</text>
+              fillOpacity={isDone ? 1 : started ? 0.8 : 0.55} fontFamily="Georgia,serif" fontStyle="italic" fontSize="13">{uiText(s.id, level)}</text>
           </g>
         );
       })}
@@ -765,7 +766,7 @@ function LevelProgressArrow({ level, doneTypes = [], counts = {}, lastType = nul
 
 const DEMO_NARRATORS = {
   lea: { id: 'lea', name: 'Léa', src: '/assets/lea.jpg' },
-  jules: { id: 'jules', name: 'Jules', src: '/assets/jules.jpg' },
+  jules: { id: 'jules', name: 'Rémi', src: '/assets/remi-avatar.jpg' },
 };
 
 // Little play icon shown over a clickable portrait on hover (parent needs `group`)
@@ -1330,6 +1331,9 @@ function ExerciseStatus({ prog }) {
 export function AudioDemoCard({
   fullscreen = false,
   tall = false,
+  // `fill` : la carte prend toute la hauteur que le parent lui donne (au lieu
+  // de s'imposer 400/500px). Utilisé par la landing live, qui tient en un écran.
+  fill = false,
   onClose,
   onOpenFullscreen,
   initialTopic,
@@ -1399,7 +1403,7 @@ export function AudioDemoCard({
   const [practiceVocabAnswers, setPracticeVocabAnswers] = React.useState({});
   const [practiceAnsweredQ, setPracticeAnsweredQ] = React.useState({});
   const [pointsDelta, setPointsDelta] = React.useState(null); // { value: +3 | -1, id: number } for animation
-  const { dailyParisianPoints, levelExercisesDone, markExerciseDone, levelArticleCounts, levelLastType, incrementArticle } = useLearnerProfile();
+  const { dailyParisianPoints, levelExercisesDone, markExerciseDone, levelArticleCounts, levelLastType, incrementArticle, effectiveLevel: uiLevel } = useLearnerProfile();
   const [assessingLevel, setAssessingLevel] = React.useState(false);
   const [activeTabInternal, setActiveTabInternal] = React.useState('transcript');
   const activeTab = activeTabProp ?? activeTabInternal;
@@ -1608,10 +1612,10 @@ export function AudioDemoCard({
   const [parisianChallengeAttempt, setParisianChallengeAttempt] = React.useState(0);
   const parisianChallengeAttemptRef = React.useRef(0);
 
-  // Chat tab intro (Léa introduces herself and asks a question)
+  // Chat tab intro (Rémi introduces herself and asks a question)
   const chatIntroPlayedRef = React.useRef(false);
   const [chatIntroLine, setChatIntroLine] = React.useState(null); // { text, narratorId }
-  // Mobile: has the learner tapped "chat with Léa" yet? Once true, Léa has asked
+  // Mobile: has the learner tapped "chat with Rémi" yet? Once true, Rémi has asked
   // her opening question and the box becomes a normal tap-to-record surface.
   const [chatInvited, setChatInvited] = React.useState(false);
 
@@ -1713,6 +1717,7 @@ export function AudioDemoCard({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         type: 'reaction',
+        learnerLevel: effectiveLevel,
         utterance: latestText,
         narratorId: speakingNarratorId,
         topic: speakingTopicLabel,
@@ -1814,6 +1819,7 @@ export function AudioDemoCard({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         type: 'word-challenge',
+        learnerLevel: effectiveLevel,
         utterance: userText,
         word: challenge.word,
         meaning: challenge.meaning,
@@ -1827,7 +1833,7 @@ export function AudioDemoCard({
 
         // Green tick ONLY when the Parisian judge approved the sentence.
         // If wrong: attach the grammar correction when we have one, otherwise
-        // leave the bubble unmarked (no tick, no popup) — Léa's reply explains.
+        // leave the bubble unmarked (no tick, no popup) — Rémi's reply explains.
         if (isCorrect) {
           chatHistoryRef.current = chatHistoryRef.current.map(m =>
             m.id === userId ? { ...m, correctionOk: true } : m
@@ -1919,7 +1925,7 @@ export function AudioDemoCard({
     return true;
   };
 
-  // Chat tab: on recording stop, commit utterances as user bubble then get Léa's reply
+  // Chat tab: on recording stop, commit utterances as user bubble then get Rémi's reply
   React.useEffect(() => {
     const justStopped = chatWasRecordingRef.current && !isRecording;
     chatWasRecordingRef.current = isRecording;
@@ -1933,7 +1939,7 @@ export function AudioDemoCard({
     const leaId = `lea-${Date.now()}`;
     const userId = `user-${Date.now()}`;
     const lastLeaText = [...chatHistoryRef.current].reverse().find(m => m.role === 'lea' && !m.loading)?.text || '';
-    // Reply comes from the active challenge narrator (Léa or Jules), else Léa
+    // Reply comes from the active challenge narrator (Rémi or Rémi), else Rémi
     const replyNarrator = parisianWordChallengeRef.current?.narratorId || 'lea';
 
     const updated = [
@@ -1949,12 +1955,13 @@ export function AudioDemoCard({
     if (submitParisianChallengeAttempt(userText, userId, leaId)) return; // skip normal flow
 
     // ── Normal chat reaction ──────────────────────────────────────────────────
-    // Fetch Léa's reply + correction in parallel
+    // Fetch Rémi's reply + correction in parallel
     fetch('/api/speaking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         type: 'reaction',
+        learnerLevel: effectiveLevel,
         utterance: userText,
         narratorId: 'lea',
         topic: 'conversation générale en français',
@@ -2491,7 +2498,7 @@ export function AudioDemoCard({
       parisianWordChallengeRef.current = challenge;
       setParisianChallengeAttempt(0);
       parisianChallengeAttemptRef.current = 0;
-      // Append the word card + Léa's intro inline, below existing chat
+      // Append the word card + Rémi's intro inline, below existing chat
       const cardId = `word-card-${Date.now()}`;
       const introId = `lea-intro-${Date.now()}`;
       const withCard = [
@@ -3096,9 +3103,13 @@ export function AudioDemoCard({
         body: JSON.stringify({ step: 'example', prompt: writingPrompt, tips: writingTips, wordTarget: writingWordTarget, narratorId: writeReview.narratorId || 'lea', level: effectiveLevel || 'B1' }),
       });
       const data = await r.json();
-      setWriteReviewExample(data.example || '');
+      const ex = (data.example || '').trim();
+      // Empty (e.g. the AI is unreachable) → stay null so the button remains
+      // clickable and the learner can retry, instead of locking into a
+      // "shown" state that displays nothing.
+      setWriteReviewExample(ex || null);
     } catch {
-      setWriteReviewExample('');
+      setWriteReviewExample(null);
     }
     setWriteReviewExampleLoading(false);
   }, [writeReviewExampleLoading, writeReviewExample, writingPrompt, writingTips, writingWordTarget, writeReview.narratorId, effectiveLevel]);
@@ -3380,11 +3391,17 @@ export function AudioDemoCard({
       </div>
       <button type="button"
         onClick={() => { if (inputMode !== 'write') activateWriteMode(); else if (writeText.trim()) finishWriteInput(); }}
-        className={`relative z-10 w-9 h-9 rounded-full inline-flex items-center justify-center transition-colors ${inputMode === 'write' ? 'bg-wine text-ivory' : 'text-navy/45'}`}
-        aria-label={inputMode === 'write' ? 'Submit writing' : 'Switch to write'}>
-        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden>
-          <path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        className={`relative z-10 w-9 h-9 rounded-full inline-flex items-center justify-center transition-colors ${inputMode === 'write' ? 'bg-wine text-ivory' : 'text-navy/45'} ${inputMode === 'write' && writeText.trim() ? 'ring-2 ring-wine/40' : ''}`}
+        aria-label={inputMode === 'write' ? (writeText.trim() ? 'Send writing' : 'Write') : 'Switch to write'}>
+        {inputMode === 'write' && writeText.trim() ? (
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden>
+            <path d="M4 10.5l4 4 8-9.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden>
+            <path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
       </button>
     </div>
   );
@@ -3406,7 +3423,7 @@ export function AudioDemoCard({
             className="absolute bottom-full mb-3 flex flex-col items-center gap-1 pointer-events-none z-20"
           >
             <span className="font-display text-[12px] italic text-wine whitespace-nowrap">
-              {showRepeatHint ? 'Repeat to gain experience' : 'Start speaking'}
+              {showRepeatHint ? 'Repeat to gain experience' : uiText('startSpeaking', effectiveLevel)}
             </span>
             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
               <path d="M5 8L0.669873 0.5L9.33013 0.5L5 8Z" fill="#8B1E2D" opacity="0.6"/>
@@ -3437,11 +3454,17 @@ export function AudioDemoCard({
       {/* Pen / Write */}
       <button type="button"
         onClick={() => { if (inputMode !== 'write') activateWriteMode(); else if (writeText.trim() && !isDuplicateSubmit(writeText.trim())) finishWriteInput(); }}
-        className={`relative z-10 w-11 h-11 rounded-full inline-flex items-center justify-center transition-all ${inputMode === 'write' ? 'bg-wine text-ivory shadow-md' : 'text-navy/45 hover:text-wine/70'}`}
-        aria-label={inputMode === 'write' ? 'Submit writing' : 'Switch to write'}>
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden>
-          <path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        className={`relative z-10 w-11 h-11 rounded-full inline-flex items-center justify-center transition-all ${inputMode === 'write' ? 'bg-wine text-ivory shadow-md' : 'text-navy/45 hover:text-wine/70'} ${inputMode === 'write' && writeText.trim() ? 'ring-2 ring-wine/40' : ''}`}
+        aria-label={inputMode === 'write' ? (writeText.trim() ? 'Send writing' : 'Write') : 'Switch to write'}>
+        {inputMode === 'write' && writeText.trim() ? (
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden>
+            <path d="M4 10.5l4 4 8-9.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        ) : (
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden>
+            <path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
       </button>
     </div>
   );
@@ -3456,7 +3479,11 @@ export function AudioDemoCard({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={fullscreen
         ? 'fixed inset-6 z-50 bg-paper flex overflow-hidden rounded-2xl'
-        : `relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 ${tall ? 'h-[calc(100dvh-205px)]' : 'h-[400px]'} sm:min-h-[500px] sm:max-h-[500px] max-lg:landscape:!h-full max-lg:landscape:!min-h-0 max-lg:landscape:!max-h-full`}
+        : `relative bg-paper hairline flex flex-col overflow-hidden rounded-2xl w-full max-w-[640px] lg:w-[640px] lg:min-w-[640px] shrink-0 ${
+            fill
+              ? 'h-full min-h-0 max-h-full'
+              : `${tall ? 'h-[calc(100dvh-205px)]' : 'h-[400px]'} sm:min-h-[500px] sm:max-h-[500px]`
+          } max-lg:landscape:!h-full max-lg:landscape:!min-h-0 max-lg:landscape:!max-h-full`}
       style={fullscreen ? { boxShadow: '0 40px 120px -20px rgba(26,35,64,0.4)' } : { boxShadow: '0 30px 80px -30px rgba(26,35,64,0.25), 0 8px 24px -12px rgba(26,35,64,0.08)' }}
     >
       {/* Close button in fullscreen */}
@@ -3483,7 +3510,7 @@ export function AudioDemoCard({
               Plain text (no filled background) so it doesn't read as a button. */}
           <div className="flex flex-col items-center -mb-0.5">
             <span className="font-display text-[13px] sm:text-[15px] uppercase tracking-[0.14em] text-wine" style={{ fontWeight: 700 }}>
-              Pick your challenge
+              {uiText('pickChallenge', effectiveLevel)}
             </span>
             <svg width="11" height="7" viewBox="0 0 11 7" fill="none" aria-hidden className="mt-0.5 text-wine/70">
               <path d="M5.5 7L0.5 0.5h10L5.5 7z" fill="currentColor" />
@@ -3496,7 +3523,10 @@ export function AudioDemoCard({
             lastType={levelLastType}
             current={inputMode === 'write' ? 'writing' : (['reading', 'listening', 'speaking'].includes(activeTab) ? activeTab : null)}
             onPick={(type) => {
-              if (type === 'writing') { activateWriteMode(); return; }
+              // Writing must also switch the active tab to 'writing' — that's what
+              // triggers the challenge load (topic + prompt fetch), just like the
+              // other tabs. Without it, write mode opened but no challenge started.
+              if (type === 'writing') { activateWriteMode(); setActiveTab('writing'); return; }
               // Leaving the writing tab: drop out of write mode so the picked tab
               // (especially Speaking) actually takes over instead of staying stuck
               // showing the write textarea.
@@ -3699,8 +3729,8 @@ export function AudioDemoCard({
                       {/* Portrait buttons — click to play/stop */}
                       <div className="flex gap-3">
                         {[
-                          { id: 'jules', src: '/assets/jules.jpg', label: 'Jules' },
-                          { id: 'lea',   src: '/assets/lea.jpg',   label: 'Léa'   },
+                          { id: 'jules', src: '/assets/remi-avatar.jpg', label: 'Rémi' },
+                          { id: 'lea',   src: '/assets/lea.jpg',         label: 'Léa'  },
                         ].map((n) => (
                           <div key={n.id} className="flex flex-col items-center gap-1">
                             <button type="button"
@@ -3918,8 +3948,8 @@ export function AudioDemoCard({
                     <div className="flex items-center gap-2.5 shrink-0">
                       <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/30 shrink-0 parisian-exp-bump">
                         <img
-                          src={narratorReaction?.id === 'jules' ? '/assets/jules.jpg' : '/assets/lea.jpg'}
-                          alt={narratorReaction?.id === 'jules' ? 'Jules' : 'Léa'}
+                          src={narratorReaction?.id === 'jules' ? '/assets/remi-avatar.jpg' : '/assets/lea.jpg'}
+                          alt={narratorReaction?.id === 'jules' ? 'Rémi' : 'Léa'}
                           className="w-full h-full object-cover object-top"
                         />
                       </div>
@@ -4011,8 +4041,8 @@ export function AudioDemoCard({
                 <div className="absolute bottom-3 left-4 flex items-center gap-2 pointer-events-none">
                   <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0">
                     <img
-                      src={narratorReaction?.id === 'jules' ? '/assets/jules.jpg' : '/assets/lea.jpg'}
-                      alt={narratorReaction?.id === 'jules' ? 'Jules' : 'Léa'}
+                      src={narratorReaction?.id === 'jules' ? '/assets/remi-avatar.jpg' : '/assets/lea.jpg'}
+                      alt={narratorReaction?.id === 'jules' ? 'Rémi' : 'Léa'}
                       className="w-full h-full object-cover object-top"
                     />
                   </div>
@@ -4058,7 +4088,7 @@ export function AudioDemoCard({
                       <p className="text-[12px] text-navy/55 italic mt-0.5 leading-snug">« {msg.example} »</p>
                     </div>
                   ) : msg.role === 'lea' ? (
-                    /* Mobile: Léa's lines live next to her portrait (hero), not in the box */
+                    /* Mobile: Rémi's lines live next to her portrait (hero), not in the box */
                     <div key={msg.id} className="hidden sm:flex items-start gap-2.5">
                       <button
                         type="button"
@@ -4066,7 +4096,7 @@ export function AudioDemoCard({
                         className="group relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-wine/25 shrink-0 hover:ring-wine/60 transition-all hover:scale-105 mt-0.5"
                         aria-label="Replay"
                       >
-                        <img src={(msg.narratorId === 'jules') ? '/assets/jules.jpg' : '/assets/lea.jpg'} alt={(msg.narratorId === 'jules') ? 'Jules' : 'Léa'} className="w-full h-full object-cover object-top" />
+                        <img src={(msg.narratorId === 'jules') ? '/assets/remi-avatar.jpg' : '/assets/lea.jpg'} alt={(msg.narratorId === 'jules') ? 'Rémi' : 'Léa'} className="w-full h-full object-cover object-top" />
                         <PortraitHoverPlay />
                         {wordPlaying && parisianSpeakingText === msg.text && (
                           <span className="absolute inset-0 rounded-full border-2 border-wine animate-ping opacity-40" />
@@ -4213,8 +4243,8 @@ export function AudioDemoCard({
                     Discovering a Parisian word…
                   </div>
                 )}
-                {/* Mobile: Léa's lines play next to her portrait (not in this box), so
-                    the empty chat box gets a clear CTA. Tapping it makes Léa ask her
+                {/* Mobile: Rémi's lines play next to her portrait (not in this box), so
+                    the empty chat box gets a clear CTA. Tapping it makes Rémi ask her
                     opening question; after that the box becomes a tap-to-record surface. */}
                 {!chatInvited && !isRecording && utterances.length === 0 && !chatHistory.some(m => m.role === 'user') && (
                   <button
@@ -4795,7 +4825,7 @@ export function AudioDemoCard({
                   <h3 className="text-[9px] font-mono tracking-widest uppercase text-navy/40">My Writing Progress</h3>
                   <div className="text-center py-6 space-y-2">
                     <p className="font-display text-[15px] text-navy/50 italic">No writing session yet.</p>
-                    <p className="text-[12px] text-navy/35">Switch to Write mode and start composing — Léa will correct you.</p>
+                    <p className="text-[12px] text-navy/35">Switch to Write mode and start composing — Rémi will correct you.</p>
                   </div>
                 </div>
               )}
@@ -5097,7 +5127,7 @@ export function AudioDemoCard({
                         ? 'bg-wine text-ivory ring-[3px] ring-wine/45 shadow-md scale-[1.03]'
                         : 'bg-wine text-ivory hover:bg-wine2'
                 }`}>
-                Discover a Parisian word
+                {uiText('discoverWord', uiLevel)}
               </button>
               <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 z-30 w-56 text-center rounded-lg bg-navy text-ivory text-[11px] leading-snug px-2.5 py-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
                 {dailyParisianPoints < DISCOVER_WORD_COST
@@ -5716,7 +5746,7 @@ function ThemeBadge({ achieved = false, total = THEME_ARTICLE_TOTAL, label = 'ar
   );
 }
 
-function ReadingArticlePanel({
+export function ReadingArticlePanel({
   loading,
   title,
   theme = '',
@@ -5987,7 +6017,7 @@ const CEFR_BADGE = {
   C2: { bg: '#4a1942', label: 'C2' },
 };
 
-function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, clipEnd = 180, transcript, wordTimings = null, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', contentLevel = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience, doneTabs = 0, articleIndex = 1, onNextArticle = null, targetLevel = '' }) {
+export function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, clipEnd = 180, transcript, wordTimings = null, source, date, vocab = [], questions = [], grammar = [], vocabTheme = '', contentLevel = '', parisianPercent = 0, dailyParisianPoints = 0, onSpendExperience, doneTabs = 0, articleIndex = 1, onNextArticle = null, targetLevel = '' }) {
   // Badge unlocks once all THEME_ARTICLE_TOTAL podcasts of the theme are done.
   const themeAchieved = articleIndex >= THEME_ARTICLE_TOTAL && doneTabs >= 4;
   // Persist the badge so it also lights up on "My Parisian Progress".
@@ -6234,7 +6264,7 @@ function ListeningPanel({ loading, title, theme = '', audioUrl, clipStart = 0, c
   );
 }
 
-const NARRATOR_PORTRAITS = { lea: '/assets/lea.jpg', jules: '/assets/jules.jpg' };
+const NARRATOR_PORTRAITS = { lea: '/assets/lea.jpg', jules: '/assets/remi-avatar.jpg' };
 
 // Normalize a vocab item for loose matching (strip articles, accents, case).
 function normVocab(s) {
@@ -6268,13 +6298,13 @@ function tipsProgress(tips, usedTips) {
   }
   return { done, total };
 }
-function allTipsFulfilled(tips, usedTips) {
+export function allTipsFulfilled(tips, usedTips) {
   const { done, total } = tipsProgress(tips, usedTips);
   return total > 0 && done === total;
 }
 
-function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null, usedVocab = [], usedGrammar = false, challengeIndex = 1, onNextChallenge = null }) {
-  const name = narratorId === 'lea' ? 'Léa' : 'Jules';
+export function SpeakingChallengePanel({ loading, narratorId = 'lea', openingLine = '', openingLineTranslation = '', topicLabel = '', targetGrammar = null, targetVocab = null, usedVocab = [], usedGrammar = false, challengeIndex = 1, onNextChallenge = null }) {
+  const name = narratorId === 'lea' ? 'Rémi' : 'Rémi';
 
   // Défi progress drives the "Next challenge" button (a progress bar, like the
   // other tabs): it fills as the learner uses each target, and only becomes
@@ -6550,7 +6580,7 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
     try {
       let url = audioCacheRef.current[clean];
       if (!url) {
-        // ElevenLabs Parisian voice (Léa/Jules), cached across levels
+        // ElevenLabs Parisian voice (Rémi/Rémi), cached across levels
         const buf = await fetchNarratorAudio(clean, narratorId);
         url = URL.createObjectURL(new Blob([buf], { type: 'audio/mpeg' }));
         audioCacheRef.current[clean] = url;
@@ -6624,8 +6654,8 @@ function TranslatableText({ text, className = '', context = '', narratorId = 'le
 
 // ── Guided writing review thread (Writing tab) ───────────────────────────────
 function WriteBubble({ narratorId, children, onReplay, text }) {
-  const portrait = narratorId === 'jules' ? '/assets/jules.jpg' : '/assets/lea.jpg';
-  const alt = narratorId === 'jules' ? 'Jules' : 'Léa';
+  const portrait = narratorId === 'jules' ? '/assets/remi-avatar.jpg' : '/assets/lea.jpg';
+  const alt = narratorId === 'jules' ? 'Rémi' : 'Léa';
   return (
     <div className="flex items-start gap-2.5">
       <button type="button" onClick={() => text && onReplay?.(text, narratorId)}
@@ -6806,17 +6836,17 @@ function WritingReviewThread({ review, frozen = false, question, onQuestionChang
             onClick={() => { if (!example && !exampleLoading) onShowExample?.(); }}
             disabled={exampleLoading || example !== null}
             className="self-start text-[12px] font-mono uppercase tracking-wider px-4 py-1.5 rounded-full bg-wine text-ivory hover:bg-wine2 transition-colors disabled:opacity-60">
-            {exampleLoading ? '…' : example !== null ? 'Example shown ↓' : 'Show example'}
+            {exampleLoading ? '…' : example !== null ? 'Correction shown ↓' : 'Show correction'}
           </button>
           {exampleLoading && (
             <div className="flex items-center gap-1.5 text-[12px] font-display italic text-navy/40">
               <div className="w-3 h-3 rounded-full border-2 border-wine/20 border-t-wine animate-spin shrink-0" />
-              Génération de l'exemple…
+              Génération de la correction…
             </div>
           )}
           {example !== null && example !== '' && (
             <div className="bg-paper border border-line/50 rounded-xl px-4 py-3 shadow-sm">
-              <p className="text-[9px] font-mono uppercase tracking-widest text-wine/50 mb-2">Exemple de rédaction</p>
+              <p className="text-[9px] font-mono uppercase tracking-widest text-wine/50 mb-2">Correction</p>
               <p className="font-display text-[15px] text-navy/80 leading-relaxed whitespace-pre-wrap">{example}</p>
             </div>
           )}
@@ -6836,12 +6866,12 @@ const TIPS_SECTIONS = [
   { key: 'connecteurs', label: 'Connecteurs',  icon: '🔗', pill: true  },
 ];
 
-function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wordTarget = 80, narratorId = 'lea', usedTips = {}, badge = null, onNewChallenge = null, challengeIndex = 1 }) {
+export function WritingChallengePanel({ loading, prompt = '', theme = '', tips = {}, wordTarget = 80, narratorId = 'lea', usedTips = {}, badge = null, onNewChallenge = null, challengeIndex = 1 }) {
   const hasTips = TIPS_SECTIONS.some(s => (tips[s.key] || []).length > 0);
   const { done: goalsDoneCount, total: goalsTotal } = tipsProgress(tips, usedTips);
   const goalsDone = goalsTotal > 0 && goalsDoneCount === goalsTotal;
   const goalsPct = goalsTotal ? Math.round((goalsDoneCount / goalsTotal) * 100) : 0;
-  const name = narratorId === 'jules' ? 'Jules' : 'Léa';
+  const name = narratorId === 'jules' ? 'Rémi' : 'Rémi';
 
   // Theme badge unlocks once all writing challenges of the theme are complete.
   const themeAchieved = challengeIndex >= THEME_CHALLENGE_TOTAL && goalsDone;
@@ -7066,7 +7096,7 @@ export default function Hero() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [heroActiveTab, setHeroActiveTab] = React.useState('transcript');
-  // Léa's latest spoken line — shown next to her portrait on mobile (not in the box).
+  // Rémi's latest spoken line — shown next to her portrait on mobile (not in the box).
   const [leaSpeech, setLeaSpeech] = React.useState(null); // { text, narratorId } | null
   const learnMode = searchParams.get('learn');
   const learnLevel = searchParams.get('level');
@@ -7474,23 +7504,17 @@ export default function Hero() {
     }
   };
 
-  // Auto-play Léa's tab-specific line on mobile when user picks an exercise tab
-  React.useEffect(() => {
-    const entry = EXERCISE_TAB_LINES[heroActiveTab];
-    if (!entry) return;
-    const t = window.setTimeout(() => {
-      playNarratorIntro({ id: 'lea', intro: entry.text });
-    }, 350);
-    return () => window.clearTimeout(t);
-  }, [heroActiveTab]); // eslint-disable-line react-hooks/exhaustive-deps
+  // NOTE: the "Tu as lancé le challenge…" line is no longer auto-played when a
+  // challenge opens (it was noisy). The text stays visible, and the mobile
+  // portrait button still plays it on demand.
 
   const narrators = React.useMemo(() => (
     ['lea', 'jules'].map((id) => {
       const intro = getNarratorIntro(id, effectiveLevel);
       return {
         id,
-        name: id === 'lea' ? 'Léa' : 'Jules',
-        src: id === 'lea' ? '/assets/lea.jpg' : '/assets/jules.jpg',
+        name: id === 'lea' ? 'Léa' : 'Rémi',
+        src: id === 'lea' ? '/assets/lea.jpg' : '/assets/remi-avatar.jpg',
         intro: intro.text,
         introTranslation: intro.translation,
       };
@@ -7604,7 +7628,7 @@ export default function Hero() {
   return (
     <section className="relative pt-24 lg:pt-12 max-lg:landscape:pt-16 pb-12 min-h-screen overflow-visible">
       {/* Mobile-only: assessment CTA relocated to the top-right header (opposite the
-          Parisly logo) once Léa's text has taken its place next to her portrait.
+          Parisly logo) once Rémi's text has taken its place next to her portrait.
           Plain (CSS) fade-in so it never gets stuck mid-animation in throttled tabs. */}
       {leaSpeech?.text && (
         <button
@@ -7612,7 +7636,7 @@ export default function Hero() {
           onClick={() => goToDashboard()}
           className="sm:hidden fixed top-[36px] -translate-y-1/2 right-4 z-50 inline-flex items-center rounded-full bg-wine hover:bg-wine2 text-ivory font-display text-[11px] leading-none px-3 py-2 shadow-md max-w-[55vw] text-right"
         >
-          Click for Léa to judge your French
+          Click for Rémi to judge your French
         </button>
       )}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -7633,7 +7657,7 @@ export default function Hero() {
 
       <Container className="relative">
         <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[1fr_680px] max-lg:landscape:grid-cols-[1fr_minmax(0,46%)] gap-8 max-lg:landscape:gap-5 items-stretch lg:h-[calc(100vh-96px)] max-lg:landscape:h-[calc(100dvh-5rem)]">
-          {/* Mobile-only: Léa portrait + tab-specific line — stacks ON TOP of the speech box on mobile */}
+          {/* Mobile-only: Rémi portrait + tab-specific line — stacks ON TOP of the speech box on mobile */}
           {exercisePanelActive && (() => {
             const entry = EXERCISE_TAB_LINES[heroActiveTab] || {};
             const exerciseLine = entry.text || '';
@@ -7784,21 +7808,21 @@ export default function Hero() {
                 the original stacked layout untouched. */}
             <div className="w-full flex flex-row items-stretch gap-3 text-left sm:contents">
             <h1 className="font-display text-[28px] sm:text-[48px] leading-[1.02] sm:leading-[0.95] tracking-[-0.015em] text-navy flex flex-col gap-1 sm:gap-2 shrink-0 self-center sm:self-auto">
-              <Reveal delay={0.08}>Learn French</Reveal>
-              <Reveal delay={0.18} className="text-wine italic">From Parisiens.</Reveal>
+              <Reveal delay={0.08}>{uiText('heroTitle1', effectiveLevel)}</Reveal>
+              <Reveal delay={0.18} className="text-wine italic">{uiText('heroTitle2', effectiveLevel)}</Reveal>
             </h1>
             <div className="w-px self-stretch bg-navy/15 shrink-0 sm:hidden" aria-hidden />
             <Reveal delay={0.35} className="flex-1 min-w-0 self-center sm:self-auto sm:flex-none">
-              <p className="text-[12.5px] leading-[1.45] text-navy/70 sm:mt-6 sm:max-w-[min(500px,calc(100vw-3rem))] sm:text-[15px] sm:leading-[1.6]">
-                Learn Parisian French with 2 Parisians who'll guide you to your next milestone{' '}
+              <p className="text-center text-[12.5px] leading-[1.45] text-navy/70 sm:mt-6 sm:max-w-[min(500px,calc(100vw-3rem))] sm:text-[15px] sm:leading-[1.6]">
+                {uiText('heroSubtitle', effectiveLevel)}{' '}
                 <span className="font-semibold not-italic text-wine">{nextLevel(effectiveLevel) || 'B1'}</span>.
               </p>
             </Reveal>
             </div>
 
-            {/* Jules et Léa — hidden on practice tabs. w-full on mobile so the row
+            {/* Rémi et Rémi — hidden on practice tabs. w-full on mobile so the row
                 keeps a fixed width (it lives in an items-center column); otherwise the
-                portrait shifts sideways when Léa's speech bubble replaces the CTA. */}
+                portrait shifts sideways when Rémi's speech bubble replaces the CTA. */}
             {!['speaking','listening','reading','writing'].includes(heroActiveTab) && (
             <Reveal delay={0.25} className="w-full sm:w-auto order-last lg:order-none -mb-3 lg:mb-0 relative z-20 overflow-visible">
               <div className="-mt-4 sm:mt-6 flex items-center justify-center gap-8 sm:gap-10 relative z-20 overflow-visible">
@@ -7892,7 +7916,7 @@ export default function Hero() {
                       isPlaying ? 'text-wine italic' : 'text-wine'
                     }`}>{n.name}</span>
                   </button>
-                  {/* Mobile-only: Léa's live speech takes this spot; the assessment CTA
+                  {/* Mobile-only: Rémi's live speech takes this spot; the assessment CTA
                       relocates to the top-right header (fixed) once she has spoken. */}
                   <div className="sm:hidden flex-1 min-w-0 self-center text-left flex flex-col gap-2 translate-y-[44px] sm:translate-y-0">
                     <AnimatePresence>
@@ -7916,7 +7940,7 @@ export default function Hero() {
                         onClick={() => goToDashboard()}
                         className="inline-flex items-center text-left font-display text-[13.5px] leading-snug text-ivory bg-wine hover:bg-wine2 rounded-2xl px-3.5 py-2.5 shadow-sm self-start"
                       >
-                        Click for Léa to judge your French
+                        Click for Rémi to judge your French
                       </button>
                     )}
                   </div>
@@ -7936,7 +7960,7 @@ export default function Hero() {
                       showArrow={false}
                       className="relative z-[1] rounded-full"
                     >
-                      Judge my French
+                      {uiText('judgeMyFrench', effectiveLevel)}
                     </ButtonPrimary>
                     <span
                       className="absolute inset-0 rounded-full border-2 border-wine animate-ping-tight opacity-35 pointer-events-none"

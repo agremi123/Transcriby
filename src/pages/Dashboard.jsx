@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Nav from '../components/Nav';
 import { LevelAssessmentDashboard } from '../components/LevelAssessmentDashboard';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
+import { uiText } from '../lib/uiLevelText';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export default function Dashboard() {
         {!verdictView && (
           <header className="shrink-0 text-center px-6 pt-2 pb-1 z-10">
             <h1 className="font-display text-[clamp(1.75rem,3.5vw,2.5rem)] leading-[1.08] tracking-[-0.02em] text-navy">
-              How&apos;s your <span className="text-wine italic">French</span>&nbsp;?
+              {uiText('dashTitlePre', effectiveLevel)} <span className="text-wine italic">{uiText('dashTitleAccent', effectiveLevel)}</span>&nbsp;{uiText('dashTitlePost', effectiveLevel)}
             </h1>
             <div className="w-16 h-1 bg-wine mx-auto mt-1.5" aria-hidden />
           </header>

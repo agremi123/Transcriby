@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Logo, ButtonPrimary, Container, NAV_CTA_CLASS } from './atoms';
 import { ParisianProfileSquare } from './ParisianCornerBadge';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
+import { uiText } from '../lib/uiLevelText';
 import { getNextLevel } from '../lib/levelTargets';
 
 function NavReachNextLevel() {
@@ -13,11 +14,11 @@ function NavReachNextLevel() {
 
   const pill = nextLevel ? (
     <span className={`${NAV_CTA_CLASS} gap-2`}>
-      <span>How to reach</span>
+      <span>{uiText('navReach', effectiveLevel)}</span>
       <span className="font-semibold tabular-nums">{nextLevel}</span>
     </span>
   ) : (
-    <span className={NAV_CTA_CLASS}>How to keep improving</span>
+    <span className={NAV_CTA_CLASS}>{uiText('navKeepImproving', effectiveLevel)}</span>
   );
 
   return (
@@ -39,6 +40,46 @@ function NavReachNextLevel() {
         />
       </div>
     </div>
+  );
+}
+
+
+// Bouton de déconnexion — visible dès que l'utilisateur est connecté à un
+// compte (authMethod = google ou email, le même signal que le reste de l'app,
+// pas la session Supabase qui n'existe pas pour un login email). Termine la
+// session Supabase, efface l'identité, et renvoie vers la fenêtre d'accueil.
+function NavLogout() {
+  const { profile } = useLearnerProfile();
+  if (!profile?.authMethod) return null;
+
+  const handleLogout = async () => {
+    try {
+      const { supabase } = await import('../lib/supabaseClient');
+      await supabase.auth.signOut();
+    } catch {}
+    try {
+      // Efface l'identité (nom/email/compte) mais garde le niveau et la
+      // progression : la fenêtre d'accueil réapparaît sur le choix du compte.
+      const { loadLearnerProfile, saveLearnerProfile } = await import('../lib/learnerProfile');
+      const p = loadLearnerProfile();
+      saveLearnerProfile({ ...p, name: '', email: '', authMethod: null });
+    } catch {}
+    // Retour à la racine de l'app → la fenêtre d'accueil (welcome) s'affiche.
+    window.location.href = import.meta.env.BASE_URL || '/';
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleLogout}
+      aria-label="Log out"
+      className="hidden sm:inline-flex items-center gap-1.5 mt-1 px-3.5 py-2 rounded-full border border-navy/15 text-navy/55 hover:text-wine hover:border-wine/35 transition-colors text-[13px] font-medium font-display whitespace-nowrap"
+    >
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
+        <path d="M5 2H2a1 1 0 00-1 1v6a1 1 0 001 1h3M8 9l3-3-3-3M11 6H5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      Log out
+    </button>
   );
 }
 
@@ -68,6 +109,7 @@ export default function Nav() {
         <div />
         <div className="flex items-center gap-2.5 sm:gap-3 mr-16">
           <NavReachNextLevel />
+          <NavLogout />
         </div>
       </Container>
     </motion.nav>

@@ -6,7 +6,17 @@ import { tmpdir } from 'os';
 import { execFile } from 'child_process';
 import { createClient } from '@supabase/supabase-js';
 import { handleElevenLabsTts } from './server/handlers.js';
-import { resolveNarrator, saveNarratorAudio, narratorStoragePath } from './server/narrator-audio-cache.js';
+import {
+  conversationDirective,
+  exerciseDirective,
+  readingExerciseDirective,
+  listeningExerciseDirective,
+  writingDirective,
+  speakingPromptDirective,
+  gradePassageDirective,
+  normalizeLevel,
+} from './server/levelAdapt.js';
+import { resolveNarrator, saveNarratorAudio, getCachedNarratorAudio, narratorStoragePath } from './server/narrator-audio-cache.js';
 import { getSupabaseAdmin } from './server/supabase.js';
 import { getStoredWritingExample, saveWritingExample } from './server/writing-examples.js';
 import { sendHandlerResult } from './server/node-response.js';
@@ -64,7 +74,7 @@ async function claudeCall(label, apiKey, body) {
 const CONJUGATION_PROMPT = `From the given French text, create exactly 4 conjugation fill-in-the-blank exercises using verbs from the text. One blank marked "___" per sentence; "hint" = the pronoun/subject context (je/tu/il...). Return ONLY raw JSON: {"conjugation":[{"verb":"infinitive","tense":"présent/passé composé/...","sentence":"...___...","answer":"conjugated form","hint":"je/tu/il..."}]}`;
 
 // Shared prompt: 2 grammar points (each with 6 drills + a production task) from a French text.
-const LISTENING_GRAMMAR_PROMPT = (level) => `You are a French grammar teacher. From the French text, identify exactly 2 grammar structures or patterns that a ${level} learner should study. For each, quote an example sentence from the text, name the grammar point, explain it simply in English (1-2 sentences), give a short usage tip, write exactly 6 fill-in-the-blank practice exercises (one blank marked "___" per sentence; "hint" = infinitive/base form of the answer), AND a "production" task: an instruction (in French) telling the learner to write their own sentence using this grammar, plus a correct model sentence. Return ONLY raw JSON: {"grammar":[{"point":"Le passé composé","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}`;
+const LISTENING_GRAMMAR_PROMPT = (level) => `You are a French grammar teacher. From the French text, identify exactly 2 grammar structures or patterns that a ${level} learner should study. ${listeningExerciseDirective(level)} For each, quote an example sentence from the text, name the grammar point, explain it simply in English (1-2 sentences), give a short usage tip, write exactly 6 fill-in-the-blank practice exercises (one blank marked "___" per sentence; "hint" = infinitive/base form of the answer), AND a "production" task: an instruction (in French) telling the learner to write their own sentence using this grammar, plus a correct model sentence. Return ONLY raw JSON: {"grammar":[{"point":"Le passé composé","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}`;
 
 // OpenRouter — OpenAI-compatible, supports DeepSeek + Perplexity + others
 const DEEPSEEK_MODEL = 'deepseek/deepseek-chat-v3-0324';
@@ -613,26 +623,39 @@ function wordMiddleware(anthropicKey, elevenLabsKey, supabaseUrl, supabaseKey, o
     const parsed = JSON.parse(raw);
     if (!parsed.word) throw new Error('No word generated');
 
+    // L'exemple parlé passe par le cache narrator-audio, exactement comme en
+    // prod (handlers.js). Avant, il était écrit sous un nom aléatoire
+    // (word-<timestamp>.mp3) : jamais relu, donc re-payé à chaque fois.
     let audioUrl = null;
     if (elevenLabsKey && parsed.example) {
       try {
-        const elRes = await fetch(
-          `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICES.lea}`,
-          {
-            method: 'POST',
-            headers: { 'xi-api-key': elevenLabsKey, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg' },
-            body: JSON.stringify({
-              text: parsed.example,
-              model_id: 'eleven_multilingual_v2',
-              voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
-            }),
+        const { slug, voiceId } = resolveNarrator('lea');
+        const cached = await getCachedNarratorAudio(slug, voiceId, parsed.example);
+        if (cached?.audioUrl) {
+          audioUrl = cached.audioUrl;
+        } else {
+          const elRes = await fetch(
+            `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
+            {
+              method: 'POST',
+              headers: { 'xi-api-key': elevenLabsKey, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg' },
+              body: JSON.stringify({
+                text: parsed.example,
+                model_id: 'eleven_multilingual_v2',
+                voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.15, use_speaker_boost: true },
+              }),
+            }
+          );
+          if (elRes.ok) {
+            const audioBuf = Buffer.from(await elRes.arrayBuffer());
+            audioUrl = await saveNarratorAudio(slug, voiceId, parsed.example, audioBuf);
+            // Repli local si Supabase n'est pas configuré : au moins ça joue.
+            if (!audioUrl) {
+              const fileName = `word-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.mp3`;
+              writeFileSync(resolve(AUDIO_DIR, fileName), audioBuf);
+              audioUrl = `/word-audio/${fileName}`;
+            }
           }
-        );
-        if (elRes.ok) {
-          const audioBuf = Buffer.from(await elRes.arrayBuffer());
-          const fileName = `word-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.mp3`;
-          writeFileSync(resolve(AUDIO_DIR, fileName), audioBuf);
-          audioUrl = `/word-audio/${fileName}`;
         }
       } catch {}
     }
@@ -872,10 +895,22 @@ function readingMiddleware(apiKey, openrouterKey, supabaseUrl, supabaseKey) {
     // This is the common path — no API call, no generation. Mirrors production.
     if (supabase) {
       try {
+        const lvl = normalizeLevel(learnerLevel);
+        const isBeginner = ['A1', 'A2', 'B1'].includes(lvl);
+        // Prefer an unserved article AT the learner's level. For beginners we never
+        // serve an off-level (harder) cached article — generate fresh graded text
+        // instead — so only widen to any-level for intermediate/advanced learners.
+        // (Level column added in migration 011; if missing, the level query simply
+        // returns nothing and beginners fall through to graded generation.)
         let { data: rows } = await supabase
           .from('reading_articles').select('*')
-          .eq('served', false).order('created_at', { ascending: true }).limit(1);
-        if (!rows || rows.length === 0) {
+          .eq('served', false).eq('level', lvl).order('created_at', { ascending: true }).limit(1);
+        if ((!rows || rows.length === 0) && !isBeginner) {
+          ({ data: rows } = await supabase
+            .from('reading_articles').select('*')
+            .eq('served', false).order('created_at', { ascending: true }).limit(1));
+        }
+        if ((!rows || rows.length === 0) && !isBeginner) {
           // All served — recycle the oldest rather than generating fresh.
           ({ data: rows } = await supabase
             .from('reading_articles').select('*')
@@ -930,12 +965,13 @@ function readingMiddleware(apiKey, openrouterKey, supabaseUrl, supabaseKey) {
       const chosen = picked.c;
       let rawText = (picked.body || '').slice(0, 6000);
 
-      // Extract a long verbatim passage — enough for 2 reading pages (~400-600 words).
+      // Extract the passage, graded to the learner's level: beginners (A1–B1) get
+      // a simplified retelling, B2+ keeps the authentic article verbatim.
       // Uses fast Claude Haiku (DeepSeek was ~10-15s/call and made reading feel endless).
       const extractData = await claudeCall('reading/extract', apiKey, {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 900,
-        system: 'Extract the most coherent and readable passage from this real French article. Copy sentences verbatim — do NOT rephrase, summarise or add anything. The passage must be at least 15 sentences long (aim for 400-600 words). Organise it into natural paragraphs separated by a blank line (\\n\\n): one short intro paragraph, then 2-3 body paragraphs. Return only the extracted French text with paragraph breaks. If the article is shorter than that, simply extract everything available — NEVER apologize, comment, or add headers/separators; output ONLY French article text.',
+        system: `${gradePassageDirective(normalizeLevel(learnerLevel))} Organise it into natural paragraphs separated by a blank line (\\n\\n). Return ONLY the French text with paragraph breaks — NEVER apologize, comment, or add headers/separators.`,
         messages: [{ role: 'user', content: `Title: ${chosen.title}\n\n${rawText}` }],
       });
       // Clean the extraction: drop markdown headers, "---" separators, and any
@@ -955,13 +991,13 @@ function readingMiddleware(apiKey, openrouterKey, supabaseUrl, supabaseKey) {
         claudeCall('reading/questions', apiKey, {
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 1600,
-          system: `Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. Each has 4 options and one correct answer. For each, add "explanation": one or two clear ENGLISH sentences explaining why the correct answer is right and why the other options are wrong. Return ONLY raw JSON, no markdown: {"questions":[{"question":"Question en français ?","options":["A","B","C","D"],"answer":"A","explanation":"In English: A is correct because…; the others are wrong because…"}]}`,
+          system: `Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. ${readingExerciseDirective(normalizeLevel(learnerLevel))} Each has 4 options and one correct answer. For each, add "explanation": one or two clear ENGLISH sentences explaining why the correct answer is right and why the other options are wrong. Return ONLY raw JSON, no markdown: {"questions":[{"question":"Question en français ?","options":["A","B","C","D"],"answer":"A","explanation":"In English: A is correct because…; the others are wrong because…"}]}`,
           messages: [{ role: 'user', content: passage }],
         }),
         claudeCall('reading/vocab', apiKey, {
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 700,
-          system: `From the given French passage, pick exactly 5 difficult or interesting vocabulary words. For each: "definition" MUST be the English translation/meaning (in English, not French), and write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"French word","definition":"English meaning","sentence":"...___..."}]}`,
+          system: `From the given French passage, pick exactly 5 vocabulary words. ${readingExerciseDirective(normalizeLevel(learnerLevel))} For each: "definition" MUST be the English translation/meaning (in English, not French), and write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"French word","definition":"English meaning","sentence":"...___..."}]}`,
           messages: [{ role: 'user', content: passage }],
         }),
         claudeCall('reading/grammar', apiKey, {
@@ -998,7 +1034,7 @@ function readingMiddleware(apiKey, openrouterKey, supabaseUrl, supabaseKey) {
       const sb = getSupabaseAdmin();
       if (sb) {
         sb.from('reading_articles')
-          .insert([{ title, passage, source, author, date, link, questions, vocab, grammar, conjugation }])
+          .insert([{ title, passage, source, author, date, link, questions, vocab, grammar, conjugation, level: normalizeLevel(learnerLevel) }])
           .then(({ error }) => { if (error) console.error('[reading] Supabase insert error:', error.message); });
       } else {
         console.warn('[reading] Supabase not configured, article not saved to DB');
@@ -1016,10 +1052,11 @@ function readingMiddleware(apiKey, openrouterKey, supabaseUrl, supabaseKey) {
 function practiceMiddleware(apiKey, openrouterKey) {
   return async (req, res, next) => {
     if (req.url !== '/api/practice' || req.method !== 'POST') { next(); return; }
-    let topic = '';
+    let topic = '', learnerLevel = 'A2';
     try {
       const body = JSON.parse(await readBody(req));
       topic = body.topic || '';
+      learnerLevel = body.learnerLevel || 'A2';
     } catch {
       res.statusCode = 400; res.end(JSON.stringify({ error: 'Invalid JSON' })); return;
     }
@@ -1038,7 +1075,7 @@ function practiceMiddleware(apiKey, openrouterKey) {
     try {
       const data = await openrouterCall('practice/exercises', openrouterKey, {
         max_tokens: 600,
-        system: `You are a French language teacher. Generate exactly 4 fill-in-the-blank exercises in French to practice: "${topic}". Each sentence must have exactly one blank marked as "___". For each exercise include a "hint" field: if the answer is a conjugated verb, put the infinitive form (e.g. "aller"); for other words put the base/dictionary form. Respond with raw JSON only, no markdown: {"exercises":[{"sentence":"...___...","answer":"...","hint":"..."},{"sentence":"...___...","answer":"...","hint":"..."},{"sentence":"...___...","answer":"...","hint":"..."},{"sentence":"...___...","answer":"...","hint":"..."}]}`,
+        system: `You are a French language teacher. Generate exactly 4 fill-in-the-blank exercises in French to practice: "${topic}". ${exerciseDirective(learnerLevel)} Each sentence must have exactly one blank marked as "___". For each exercise include a "hint" field: if the answer is a conjugated verb, put the infinitive form (e.g. "aller"); for other words put the base/dictionary form. Respond with raw JSON only, no markdown: {"exercises":[{"sentence":"...___...","answer":"...","hint":"..."},{"sentence":"...___...","answer":"...","hint":"..."},{"sentence":"...___...","answer":"...","hint":"..."},{"sentence":"...___...","answer":"...","hint":"..."}]}`,
         messages: [{ role: 'user', content: `Generate 4 fill-in-the-blank French exercises for: ${topic}` }],
       });
       let raw = data.content?.[0]?.text?.trim() || '{}';
@@ -1221,6 +1258,7 @@ function isBoilerplateContent(text) {
 
 // French podcast sources for listening exercises
 const FRENCH_PODCAST_SOURCES = [
+  { id: 'duolingo', name: 'Duolingo French Podcast', level: 'A1-B1', rssUrl: 'https://frpodcast.libsyn.com/rss' },
   { id: 'rfi', name: 'RFI — Journal en Français Facile', level: 'A2-B1', rssUrl: 'https://www.rfi.fr/fr/podcasts/journal-en-francais-facile/feed/' },
   { id: 'innerfrench', name: 'InnerFrench', level: 'B1-B2', rssUrl: 'https://podcast.innerfrench.com/feed.xml' },
   { id: 'littletalk', name: 'Little Talk in Slow French', level: 'A2-B1', rssUrl: 'https://www.spreaker.com/show/6084166/episodes/feed', hasBuiltinTranscript: true },
@@ -1286,7 +1324,7 @@ function sourceMatchesLevel(sourceLevel, learnerLevel) {
   const lo = order.indexOf(parts[0]);
   const hi = order.indexOf(parts[parts.length - 1]);
   if (lo < 0 || hi < 0) return true;
-  return li >= lo && li <= hi + 1; // +1 gives some stretch
+  return li >= lo - 1 && li <= hi + 1; // stretch one notch each way (matches server/levelAdapt.js)
 }
 
 function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseUrl, supabaseKey, openrouterKey, innerfrenchCookie) {
@@ -1413,15 +1451,26 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
         try { generated = JSON.parse(genRaw); } catch {}
         episode = { title: generated.title || 'Journal en Français Facile', audioUrl: null, link: '', pubDate: new Date().toUTCString(), desc: '', transcriptUrl: '', generatedTranscript: generated.transcript || '' };
 
+        // Un bulletin fait 250-300 mots : c'est la génération la plus chère de
+        // l'app. Elle ne vivait qu'en mémoire (SESSION_AUDIO, 1 h) et était
+        // perdue ensuite. On la relit / on l'enregistre dans le cache Léa.
         if (elevenlabsKey && episode.generatedTranscript) {
           try {
-            const elRes = await fetch('https://api.elevenlabs.io/v1/text-to-speech/ebRwkdEFVZIx2A6YucFh', {
-              method: 'POST',
-              headers: { 'xi-api-key': elevenlabsKey, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ text: episode.generatedTranscript, model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.55, similarity_boost: 0.75 } }),
-            });
-            if (elRes.ok) {
-              const buf = Buffer.from(await elRes.arrayBuffer());
+            const { slug, voiceId } = resolveNarrator('lea');
+            const text = episode.generatedTranscript;
+            let buf = (await getCachedNarratorAudio(slug, voiceId, text))?.buffer || null;
+            if (!buf) {
+              const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+                method: 'POST',
+                headers: { 'xi-api-key': elevenlabsKey, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.55, similarity_boost: 0.75 } }),
+              });
+              if (elRes.ok) {
+                buf = Buffer.from(await elRes.arrayBuffer());
+                await saveNarratorAudio(slug, voiceId, text, buf);
+              }
+            }
+            if (buf) {
               const sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
               SESSION_AUDIO.set(sid, buf);
               setTimeout(() => SESSION_AUDIO.delete(sid), 60 * 60 * 1000);
@@ -1529,7 +1578,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       // Step 4: generate 4 MCQ comprehension questions + infer vocab theme — one call
       const qData = await openrouterCall('listening/questions', openrouterKey, {
         max_tokens: 800,
-        system: `You are a French language teacher creating a comprehension exercise for a ${level} learner. Based on the transcript, create exactly 4 multiple-choice comprehension questions in French. Also infer: (1) the main vocabulary theme (e.g. "Environnement", "Santé", "Société", "Culture", "Politique", "Technologie", "Voyage"), and (2) the actual CEFR level of the text itself (A1/A2/B1/B2/C1/C2) based on vocabulary complexity, sentence length, and grammar. Respond with raw JSON only, no markdown: {"vocabTheme":"Environnement","contentLevel":"B1","questions":[{"question":"Question?","options":["A","B","C","D"],"answer":"A"},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."}]}`,
+        system: `You are a French language teacher creating a comprehension exercise for a ${level} learner. ${listeningExerciseDirective(level)} Based on the transcript, create exactly 4 multiple-choice comprehension questions in French. Also infer: (1) the main vocabulary theme (e.g. "Environnement", "Santé", "Société", "Culture", "Politique", "Technologie", "Voyage"), and (2) the actual CEFR level of the text itself (A1/A2/B1/B2/C1/C2) based on vocabulary complexity, sentence length, and grammar. Respond with raw JSON only, no markdown: {"vocabTheme":"Environnement","contentLevel":"B1","questions":[{"question":"Question?","options":["A","B","C","D"],"answer":"A"},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."}]}`,
         messages: [{ role: 'user', content: `Transcript:\n${transcript.slice(0, 2000)}` }],
       });
       let qRaw = qData.content?.[0]?.text?.trim() || '{}';
@@ -1540,7 +1589,7 @@ function listeningMiddleware(anthropicKey, deepgramKey, elevenlabsKey, supabaseU
       // Step 5: generate vocabulary list targeted to theme + level
       const vData = await openrouterCall('listening/vocab', openrouterKey, {
         max_tokens: 700,
-        system: `You are a French language teacher. From the given French transcript, pick exactly 5 vocabulary words relevant to a ${level} learner${vocabTheme ? ` studying the theme "${vocabTheme}"` : ''}. Choose words appropriate for ${level} level — not too easy, not too advanced. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"English definition","sentence":"...___..."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
+        system: `You are a French language teacher. From the given French transcript, pick exactly 5 vocabulary words relevant to a ${level} learner${vocabTheme ? ` studying the theme "${vocabTheme}"` : ''}. ${listeningExerciseDirective(level)} Choose words appropriate for ${level} level — not too easy, not too advanced. For each, write a NEW French sentence with the word replaced by ___. Return ONLY raw JSON: {"vocab":[{"word":"...","definition":"English definition","sentence":"...___..."},{"word":"...","definition":"...","sentence":"...___..."}]}`,
         messages: [{ role: 'user', content: transcript.slice(0, 2000) }],
       });
       let vRaw = vData.content?.[0]?.text?.trim() || '{}';
@@ -1635,7 +1684,7 @@ function speakingPromptMiddleware(apiKey) {
 
     // Word challenge eval mode
     if (isCombined && body.type === 'word-challenge') {
-      const { utterance = '', word = '', meaning = '', narratorId = 'lea', attemptNumber = 1 } = body;
+      const { utterance = '', word = '', meaning = '', narratorId = 'lea', attemptNumber = 1, learnerLevel = 'A2' } = body;
       if (!apiKey || !utterance.trim() || !word) { res.end(JSON.stringify({ feedback: '', isCorrect: false })); return; }
       const isFinal = attemptNumber >= 3;
       try {
@@ -1644,7 +1693,7 @@ function speakingPromptMiddleware(apiKey) {
         const d = await claudeCall('speaking/word-challenge', apiKey, {
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 350,
-          system: `Tu es ${name}, ${gender} natif(ve). Un étudiant pratique le mot argotique/parisien "${word}" (= ${meaning}).\nIl vient de faire la tentative n°${attemptNumber}/3.\nJuge en vrai(e) Parisien(ne) exigeant(e) : isCorrect=true UNIQUEMENT si la phrase contient bien "${word}" (conjugué ou accordé, ça compte) ET que le mot est employé avec le bon sens (${meaning}), une grammaire correcte et de façon naturelle, comme le dirait un Parisien. Si le mot est absent, déformé, ou utilisé à contresens → isCorrect=false. Une phrase grammaticalement juste mais où le mot sonne faux → false aussi.\n${isFinal ? `C'est la dernière tentative. Donne aussi 2 exemples de vraies phrases parisiennes utilisant "${word}", puis propose un sujet de conversation aléatoire et sympa pour continuer.` : `Dis-lui brièvement si c'est bien ou pas, et invite-le à refaire une phrase — VARIE ta formulation à chaque tentative (ex. "Allez, tente une autre !", "Vas-y, refais-moi une phrase !", "Encore une, pour voir ?", "Une dernière pour la route !"), ne répète jamais la même tournure.`}\nRéponds toujours en français, ton naturel et chaleureux.\nJSON: {"isCorrect":true/false,"feedback":"...(1-2 phrases)","corrected":"phrase corrigée si mauvaise, sinon null","examples":["ex1","ex2"] ou null,"nextTopic":"sujet ou null"}`,
+          system: `Tu es ${name}, ${gender} natif(ve). Un étudiant pratique le mot argotique/parisien "${word}" (= ${meaning}).\n${conversationDirective(normalizeLevel(learnerLevel))}\nIl vient de faire la tentative n°${attemptNumber}/3.\nJuge en vrai(e) Parisien(ne) exigeant(e) : isCorrect=true UNIQUEMENT si la phrase contient bien "${word}" (conjugué ou accordé, ça compte) ET que le mot est employé avec le bon sens (${meaning}), une grammaire correcte et de façon naturelle, comme le dirait un Parisien. Si le mot est absent, déformé, ou utilisé à contresens → isCorrect=false. Une phrase grammaticalement juste mais où le mot sonne faux → false aussi.\n${isFinal ? `C'est la dernière tentative. Donne aussi 2 exemples de vraies phrases parisiennes utilisant "${word}", puis propose un sujet de conversation aléatoire et sympa pour continuer.` : `Dis-lui brièvement si c'est bien ou pas, et invite-le à refaire une phrase — VARIE ta formulation à chaque tentative (ex. "Allez, tente une autre !", "Vas-y, refais-moi une phrase !", "Encore une, pour voir ?", "Une dernière pour la route !"), ne répète jamais la même tournure.`}\nRéponds toujours en français, ton naturel et chaleureux.\nJSON: {"isCorrect":true/false,"feedback":"...(1-2 phrases)","corrected":"phrase corrigée si mauvaise, sinon null","examples":["ex1","ex2"] ou null,"nextTopic":"sujet ou null"}`,
           messages: [{ role: 'user', content: `Phrase de l'étudiant : "${utterance}"` }],
         });
         let raw = d.content?.[0]?.text?.trim() || '{}';
@@ -1665,13 +1714,14 @@ function speakingPromptMiddleware(apiKey) {
     if (isCombined && body.type === 'reaction') {
       const {
         utterance = '', narratorId = 'lea', topic = '', openingLine = '',
-        targetGrammar = null, targetVocab = null, history = [],
+        targetGrammar = null, targetVocab = null, history = [], learnerLevel = 'A2',
       } = body;
       const emptyReaction = { text: '', translation: '', usedGrammar: false, usedVocab: [], complete: false };
       if (!apiKey || !utterance.trim()) { res.end(JSON.stringify(emptyReaction)); return; }
       try {
         const name = narratorId === 'lea' ? 'Léa' : 'Jules';
         const gender = narratorId === 'lea' ? 'une Parisienne' : 'un Parisien';
+        const levelDir = conversationDirective(normalizeLevel(learnerLevel));
         const vocabWords = Array.isArray(targetVocab) ? targetVocab.map(v => v?.word).filter(Boolean) : [];
         const grammarPoint = targetGrammar?.point || '';
         const grammarHint = targetGrammar?.hint || '';
@@ -1680,8 +1730,9 @@ function speakingPromptMiddleware(apiKey) {
         const hasTargets = Boolean(grammarPoint || vocabWords.length);
         const correctionRule = `Évalue aussi la correction du DERNIER tour de l'étudiant (français naturel et correct ?). Ignore la ponctuation, les majuscules et le bruit de transcription orale. S'il y a la moindre faute (grammaire, conjugaison, accord, mot mal employé, ordre des mots), mets sentenceCorrect=false et donne dans correction la phrase corrigée en français naturel + sa traduction anglaise. Sinon sentenceCorrect=true et correction=null.`;
         const system = !hasTargets
-          ? `Tu es ${name}, ${gender} natif(ve) qui aide un étudiant à pratiquer le français oral.\nLe sujet de conversation: "${topic || 'conversation libre'}"\nTu as lancé la conversation en disant: "${openingLine}"\nL'étudiant vient de parler. Réponds naturellement en 1-2 phrases courtes en français.\nSois curieux(se), encourageant(e), et rebondis sur ce qu'il a dit.\n${correctionRule}\nJSON: {"text":"...","translation":"...","usedGrammar":true,"usedVocab":[],"complete":false,"sentenceCorrect":bool,"correction":{"corrected":"...","translation":"..."}|null}`
+          ? `Tu es ${name}, ${gender} natif(ve) qui aide un étudiant à pratiquer le français oral.\n${levelDir}\nLe sujet de conversation: "${topic || 'conversation libre'}"\nTu as lancé la conversation en disant: "${openingLine}"\nL'étudiant vient de parler. Réponds naturellement en 1-2 phrases courtes en français.\nSois curieux(se), encourageant(e), et rebondis sur ce qu'il a dit.\n${correctionRule}\nJSON: {"text":"...","translation":"...","usedGrammar":true,"usedVocab":[],"complete":false,"sentenceCorrect":bool,"correction":{"corrected":"...","translation":"..."}|null}`
           : `Tu es ${name}, ${gender} natif(ve) qui fait pratiquer le français oral à un étudiant dans une conversation guidée.
+${levelDir}
 Sujet : "${topic || 'conversation libre'}". Tu as lancé la conversation par : "${openingLine}".
 Au fil de la discussion, l'étudiant doit employer :
 ${grammarPoint ? `- Grammaire : ${grammarPoint}${grammarHint ? ` (${grammarHint})` : ''}` : '- (pas de grammaire imposée)'}
@@ -1700,13 +1751,17 @@ N'utilise JAMAIS de markdown ni d'astérisques. Réponds uniquement en JSON :
 {"text":"...","translation":"...","usedGrammar":bool,"usedVocab":["..."],"complete":bool,"sentenceCorrect":bool,"correction":{"corrected":"...","translation":"..."}|null}`;
         const d = await claudeCall('speaking/reaction', apiKey, {
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 360,
+          max_tokens: 520,
           system,
           messages: [{ role: 'user', content: `L'étudiant vient de dire: "${utterance}"` }],
         });
         let raw = d.content?.[0]?.text?.trim() || '{}';
         raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-        const parsed = JSON.parse(raw);
+        // Tolerant parse: fall back to the first {...} block if there's any
+        // stray text around the JSON (mirrors the robust server-side helper).
+        let parsed;
+        try { parsed = JSON.parse(raw); }
+        catch { parsed = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || '{}'); }
         const sentenceCorrect = parsed.sentenceCorrect !== false;
         res.end(JSON.stringify({
           text: parsed.text || '',
@@ -1725,6 +1780,7 @@ N'utilise JAMAIS de markdown ni d'astérisques. Réponds uniquement en JSON :
 
     // Prompt mode (opening line)
     const topic = body.topic || '';
+    const learnerLevel = normalizeLevel(body.learnerLevel);
     // Local stock first — recyclable openers. No API call (matches production).
     {
       const localSP = pickSpeakingPrompt(body.learnerLevel || null);
@@ -1749,7 +1805,7 @@ N'utilise JAMAIS de markdown ni d'astérisques. Réponds uniquement en JSON :
       const d = await claudeCall('speaking/opener', apiKey, {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 600,
-        system: `You are ${name}, a Parisian French speaking coach designing a practice challenge for a B1-B2 learner about the given topic. Design: 1) ONE grammar structure to practice (e.g. passé composé, subjonctif, pronoms relatifs, comparatifs). 2) THREE useful French words/expressions to use. 3) A warm, natural opening QUESTION in French that pushes the learner to use that grammar and those words in their spoken answer. Vary the angle — daily life, opinions, memories, hypotheticals.${avoidBlock} Return ONLY raw JSON: {"openingLine":"...","openingLineTranslation":"English","topicLabel":"short FR label","grammarPoint":"FR name","grammarHint":"short English hint","vocab":[{"word":"FR","meaning":"English"}]}`,
+        system: `You are ${name}, a Parisian French speaking coach designing a practice challenge for a ${learnerLevel} learner about the given topic. ${speakingPromptDirective(learnerLevel)} Design: 1) ONE grammar structure to practice (e.g. passé composé, subjonctif, pronoms relatifs, comparatifs). 2) THREE useful French words/expressions to use. 3) A warm, natural opening QUESTION in French that pushes the learner to use that grammar and those words in their spoken answer. Vary the angle — daily life, opinions, memories, hypotheticals.${avoidBlock} Return ONLY raw JSON: {"openingLine":"...","openingLineTranslation":"English","topicLabel":"short FR label","grammarPoint":"FR name","grammarHint":"short English hint","vocab":[{"word":"FR","meaning":"English"}]}`,
         messages: [{ role: 'user', content: `Topic: ${topic}` }],
       });
       let raw = d.content?.[0]?.text?.trim() || '{}';
@@ -1808,8 +1864,8 @@ function writingReviewMiddleware(apiKey) {
         const tipList = ['vocab', 'expressions', 'grammar', 'conjugation', 'connecteurs']
           .map(k => (tips?.[k]?.length ? `${k}: ${tips[k].join(', ')}` : null)).filter(Boolean).join(' | ');
         const d = await claudeCall('writing-review/feedback', apiKey, {
-          model: 'claude-haiku-4-5-20251001', max_tokens: 360,
-          system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte par rapport au défi : longueur atteinte, vocabulaire / expressions / grammaire / connecteurs suggérés utilisés ? Sois chaleureux(se), précis(e), encourageant(e). 2-3 phrases en français.\nTermine TOUJOURS par une relance : une question ou un mini-défi concret qui le pousse à réessayer en utilisant 2-3 mots ou expressions PRÉCIS des conseils qu'il n'a pas encore utilisés (cite-les entre « »). N'utilise JAMAIS de markdown ni d'astérisques — texte brut uniquement.\nDonne aussi usedTips : pour CHAQUE catégorie, liste les conseils fournis que l'étudiant a employés dans son texte. Un conseil compte comme employé dès que le mot ou l'expression apparaît, MÊME conjugué, fléchi, au pluriel, ou sous une variante proche (avec/sans article). Pour la grammaire et les conjugaisons, le conseil est employé si la structure apparaît au moins une fois (ex. « passé composé » → un auxiliaire avoir/être + participe passé ; « imparfait » → une terminaison -ais/-ait/-ions…). Reprends les libellés EXACTEMENT comme dans la liste donnée. Liste vide seulement si vraiment aucun.\nJSON: {"reaction":"...","usedTips":{"vocab":[],"expressions":[],"grammar":[],"conjugation":[],"connecteurs":[]}}`,
+          model: 'claude-haiku-4-5-20251001', max_tokens: 520,
+          system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\n${conversationDirective(normalizeLevel(level))}\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte par rapport au défi : longueur atteinte, vocabulaire / expressions / grammaire / connecteurs suggérés utilisés ? Sois chaleureux(se), précis(e), encourageant(e). 2-3 phrases en français.\nTermine TOUJOURS par une relance : une question ou un mini-défi concret qui le pousse à réessayer en utilisant 2-3 mots ou expressions PRÉCIS des conseils qu'il n'a pas encore utilisés (cite-les entre « »). N'utilise JAMAIS de markdown ni d'astérisques — texte brut uniquement.\nDonne aussi usedTips : pour CHAQUE catégorie, liste les conseils fournis que l'étudiant a employés dans son texte. Un conseil compte comme employé dès que le mot ou l'expression apparaît, MÊME conjugué, fléchi, au pluriel, ou sous une variante proche (avec/sans article). Pour la grammaire et les conjugaisons, le conseil est employé si la structure apparaît au moins une fois (ex. « passé composé » → un auxiliaire avoir/être + participe passé ; « imparfait » → une terminaison -ais/-ait/-ions…). Reprends les libellés EXACTEMENT comme dans la liste donnée. Liste vide seulement si vraiment aucun.\nJSON: {"reaction":"...","usedTips":{"vocab":[],"expressions":[],"grammar":[],"conjugation":[],"connecteurs":[]}}`,
           messages: [{ role: 'user', content: `Texte de l'étudiant :\n"${text}"` }],
         });
         const parsed = parseJson(d);
@@ -1915,7 +1971,7 @@ function writingPromptMiddleware(apiKey, openrouterKey) {
       const avoidBlock = recentPrompts.length
         ? `\nAlready-used prompts — your prompt MUST be clearly different in scenario, angle and wording from ALL of these:\n${recentPrompts.map(p => `- ${p.slice(0, 120)}`).join('\n')}`
         : '';
-      const sys = `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. Make it cultural, societal, or fun — something a Parisian would actually discuss. Be creative and vary the scenario type (a letter, an opinion, a story, a description, a message to a friend…).${avoidBlock}
+      const sys = `You are a French writing coach. Generate a specific, engaging writing prompt in French for a ${learnerLevel} learner about the given topic. ${writingDirective(learnerLevel)} Make it cultural, societal, or fun — something a Parisian would actually discuss. Be creative and vary the scenario type (a letter, an opinion, a story, a description, a message to a friend…).${avoidBlock}
 CRITICAL: Write EVERYTHING in French only. Use ONLY the Latin alphabet with French accents. NEVER include Chinese, Japanese, Korean, Cyrillic, Arabic or any other non-Latin characters — not a single one.
 Return ONLY raw JSON (no markdown):
 {

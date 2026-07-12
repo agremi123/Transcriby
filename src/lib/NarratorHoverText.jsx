@@ -16,6 +16,38 @@ function TutorialMouseCursor() {
   );
 }
 
+/** Finger/tap indicator shown on touch devices instead of a mouse cursor. */
+function TutorialTapIndicator() {
+  return (
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden className="drop-shadow-[0_2px_6px_rgba(26,35,64,0.35)]">
+      {/* ripple */}
+      <circle cx="9" cy="9" r="6" stroke="#8B1E2D" strokeWidth="1.2" opacity="0.5" />
+      {/* pointing hand */}
+      <path
+        d="M11 10.5V6.2a1.3 1.3 0 0 1 2.6 0v5.6l1.7-.5a1.5 1.5 0 0 1 1.9 1.1l.5 2.4a3.4 3.4 0 0 1-2.6 4l-.9.2a3.6 3.6 0 0 1-3.8-1.6l-2-3a1.3 1.3 0 0 1 1.9-1.7l.7.6Z"
+        fill="#FBF8F2"
+        stroke="#1A2340"
+        strokeWidth="1.3"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** True on devices that can actually hover (desktop mouse), false on touch. */
+export function useCanHover() {
+  const [canHover, setCanHover] = React.useState(true);
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return undefined;
+    const mq = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const update = () => setCanHover(mq.matches);
+    update();
+    mq.addEventListener?.('change', update);
+    return () => mq.removeEventListener?.('change', update);
+  }, []);
+  return canHover;
+}
+
 function sleep(ms) {
   return new Promise((resolve) => { window.setTimeout(resolve, ms); });
 }
@@ -40,6 +72,7 @@ export function NarratorHoverText({
   tooltipPosition = 'below',
 }) {
   const cursorControls = useAnimation();
+  const canHover = useCanHover();
   const [showDemoTranslation, setShowDemoTranslation] = React.useState(false);
   const demoRunRef = React.useRef(0);
 
@@ -113,10 +146,6 @@ export function NarratorHoverText({
     ? 'opacity-100 visible'
     : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible';
 
-  const hintClass = showTutorialHint
-    ? 'rounded-lg px-2.5 py-2 bg-wine/[0.08] ring-1 ring-wine/20'
-    : '';
-
   const hasCustomContent = children != null && children !== false;
   const content = hasCustomContent ? children : (
     <HighlightedSpeech
@@ -124,7 +153,7 @@ export function NarratorHoverText({
       playbackTime={highlightSpeech ? speechPlaybackTime : null}
       timings={speechTimings}
       quote={quote}
-      className={`${className} ${hintClass}`.trim()}
+      className={className}
     />
   );
 
@@ -141,6 +170,7 @@ export function NarratorHoverText({
       <div
         className="group relative w-full"
         onMouseEnter={onFirstHover}
+        onTouchStart={onFirstHover}
       >
         {enableHoverDemo && showTutorialHint && (
           <motion.div
@@ -149,17 +179,11 @@ export function NarratorHoverText({
             animate={cursorControls}
             aria-hidden
           >
-            <TutorialMouseCursor />
+            {canHover ? <TutorialMouseCursor /> : <TutorialTapIndicator />}
           </motion.div>
         )}
 
         {body}
-
-        {showTutorialHint && (
-          <p className="mt-1.5 text-[9px] tracking-wide text-wine/55 text-center animate-pulse">
-            Hover for English
-          </p>
-        )}
 
         {translation && (
           <p

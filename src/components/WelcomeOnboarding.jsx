@@ -10,7 +10,7 @@ import { LEVEL_PICKER, WELCOME_LEVEL_LINES, JULES_LEVEL_PICKER_LINE, getLevelPic
 import { fetchNarratorAudio, connectNarratorSource, NARRATORS } from '../lib/narratorAudio';
 import { buildWordTimings, playDecodedBuffer } from '../lib/speechHighlight';
 import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from '../lib/siteAudio';
-import { NarratorHoverText } from '../lib/NarratorHoverText';
+import { NarratorHoverText, useCanHover } from '../lib/NarratorHoverText';
 import { startLine, setPlaybackTime, stopLine } from '../lib/lipSync';
 import { Logo, NAV_CTA_CLASS } from './atoms';
 
@@ -42,6 +42,10 @@ export default function WelcomeOnboarding() {
   const [authError, setAuthError] = React.useState(null);
   const [linesByNarrator, setLinesByNarrator] = React.useState(WELCOME_LINES_BY_NARRATOR);
   const [activeSpeakingNarrator, setActiveSpeakingNarrator] = React.useState(null);
+  // First-run hint on Rémi's opening line: tells the learner they can reveal the
+  // English (hover on desktop / tap on mobile). Dismisses once they try it.
+  const [translationHintDone, setTranslationHintDone] = React.useState(false);
+  const canHover = useCanHover();
   const [playing, setPlaying] = React.useState(false);
   const [audioError, setAudioError] = React.useState(null);
   const [speechPlaybackTime, setSpeechPlaybackTime] = React.useState(null);
@@ -254,7 +258,14 @@ export default function WelcomeOnboarding() {
     const { supabase } = await import('../lib/supabaseClient');
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin },
+      // Reviens sur l'app là où elle est servie (racine en standalone,
+      // /parislyplatform/ sous kruremi.com) — pas sur la racine du site hôte.
+      // prompt: 'select_account' force Google à toujours afficher le choix du
+      // compte (sinon il connecte direct la session Google déjà ouverte).
+      options: {
+        redirectTo: window.location.origin + import.meta.env.BASE_URL,
+        queryParams: { prompt: 'select_account' },
+      },
     });
     if (error) setAuthError(error.message);
   };
@@ -280,9 +291,11 @@ export default function WelcomeOnboarding() {
     }
     const local = email.split('@')[0].replace(/[._-]+/g, ' ').trim();
     const name = (local.split(/\s+/)[0] || 'Ami').replace(/^\w/, (c) => c.toUpperCase());
-    // Use existing level or default — skip level picker entirely
+    // Use existing level or default — skip level picker entirely.
+    // Default to A2 (elementary), NOT B1: beginners must not be dropped into
+    // intermediate content. They can raise their level anytime.
     stopAudio();
-    completeOnboarding(profile.claimedLevel || 'B1', { authMethod: 'email', email, name });
+    completeOnboarding(profile.claimedLevel || 'A2', { authMethod: 'email', email, name });
   };
 
   const activeNarrator = activeSpeakingNarrator;
@@ -300,10 +313,10 @@ export default function WelcomeOnboarding() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           className="w-full max-w-[820px] max-h-[92vh] rounded-2xl border border-line/80 bg-paper shadow-[0_24px_64px_rgba(26,35,64,0.18)] overflow-y-auto"
         >
-          <div className="px-3 sm:px-10 pt-6 pb-3">
+          <div className="px-3 sm:px-10 pt-6 sm:pt-4 pb-3">
 
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 sm:mb-3">
               <Logo className="shrink-0 pointer-events-none" />
               <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group">
                 <img src="/assets/remi-avatar.jpg" alt="Kru Rémi" className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all shrink-0" />
@@ -316,7 +329,7 @@ export default function WelcomeOnboarding() {
             </div>
 
             {/* Narrator portraits row */}
-            {/* Phase 1: only Léa, centered */}
+            {/* Phase 1: only Rémi, centered */}
             {!showLevelPicker && !levelLocked && (() => {
               const id = 'lea';
               const n = NARRATORS[id];
@@ -324,8 +337,8 @@ export default function WelcomeOnboarding() {
               const isSpeaking = activeNarrator === id;
               const highlightSpeech = isSpeaking && speechText === line.text && speechPlaybackTime != null;
               return (
-                <div className="flex flex-col items-center gap-3 mb-6 max-w-[400px] mx-auto">
-                  <div className={`relative w-[150px] h-[150px] sm:w-[190px] sm:h-[190px] rounded-full overflow-hidden shadow-lg bg-ivory2 transition-all duration-300 ${
+                <div className="flex flex-col items-center gap-3 sm:gap-2 mb-6 sm:mb-3 max-w-[400px] mx-auto">
+                  <div className={`relative w-[150px] h-[150px] sm:w-[124px] sm:h-[124px] rounded-full overflow-hidden shadow-lg bg-ivory2 transition-all duration-300 ${
                     isSpeaking ? 'ring-4 ring-wine scale-[1.04] shadow-xl' : 'ring-2 ring-line/60'
                   }`}>
                     {(!SHOW_3D_AVATAR || import.meta.env.DEV) ? (
@@ -341,39 +354,49 @@ export default function WelcomeOnboarding() {
                   <span className={`text-[11px] tracking-[0.18em] uppercase font-semibold transition-colors ${isSpeaking ? 'text-wine' : 'text-navy/60'}`}>
                     {n.name}
                   </span>
-                  <div className={`w-full rounded-xl px-4 py-4 border transition-colors duration-300 flex items-start gap-3 ${
-                    isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
-                  }`}>
-                    <button
-                      type="button"
-                      onClick={() => { if (playing && activeSpeakingNarrator === id) stopAudio(); else playNarratorLine(line); }}
-                      className="relative mt-[3px] w-7 h-7 rounded-full border border-wine/30 text-wine/60 hover:text-wine hover:border-wine/60 flex items-center justify-center transition-colors shrink-0"
-                      aria-label={isSpeaking ? 'Stop' : 'Replay'}
-                    >
-                      {isSpeaking ? (
-                        <svg width="8" height="8" viewBox="0 0 14 14" fill="currentColor" aria-hidden><rect x="2" y="2" width="10" height="10" rx="1.5" /></svg>
-                      ) : (
-                        <svg width="7" height="9" viewBox="0 0 10 12" fill="currentColor" aria-hidden><path d="M0 0 L10 6 L0 12 Z" /></svg>
-                      )}
-                      {isSpeaking && <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-40 pointer-events-none" />}
-                    </button>
-                    <NarratorHoverText
-                      text={line.text}
-                      translation={line.translation}
-                      showTutorialHint={false}
-                      enableHoverDemo={false}
-                      onFirstHover={undefined}
-                      highlightSpeech={highlightSpeech}
-                      speechPlaybackTime={speechPlaybackTime}
-                      speechTimings={speechTimings}
-                      className="font-display text-[16px] sm:text-[18px] leading-[1.5] text-navy/85 italic"
-                    />
+                  <div className="relative w-full">
+                    <div className={`w-full rounded-xl px-4 py-4 sm:py-3 border transition-colors duration-300 flex items-start gap-3 ${
+                      isSpeaking ? 'bg-wine/5 border-wine/20' : 'bg-ivory border-line/60'
+                    }`}>
+                      <button
+                        type="button"
+                        onClick={() => { if (playing && activeSpeakingNarrator === id) stopAudio(); else playNarratorLine(line); }}
+                        className="relative mt-[3px] w-7 h-7 rounded-full border border-wine/30 text-wine/60 hover:text-wine hover:border-wine/60 flex items-center justify-center transition-colors shrink-0"
+                        aria-label={isSpeaking ? 'Stop' : 'Replay'}
+                      >
+                        {isSpeaking ? (
+                          <svg width="8" height="8" viewBox="0 0 14 14" fill="currentColor" aria-hidden><rect x="2" y="2" width="10" height="10" rx="1.5" /></svg>
+                        ) : (
+                          <svg width="7" height="9" viewBox="0 0 10 12" fill="currentColor" aria-hidden><path d="M0 0 L10 6 L0 12 Z" /></svg>
+                        )}
+                        {isSpeaking && <span className="absolute inset-0 rounded-full border border-wine animate-ping opacity-40 pointer-events-none" />}
+                      </button>
+                      <NarratorHoverText
+                        text={line.text}
+                        translation={line.translation}
+                        showTutorialHint={!translationHintDone}
+                        enableHoverDemo={!translationHintDone}
+                        onFirstHover={() => setTranslationHintDone(true)}
+                        highlightSpeech={highlightSpeech}
+                        speechPlaybackTime={speechPlaybackTime}
+                        speechTimings={speechTimings}
+                        className="font-display text-[16px] sm:text-[18px] leading-[1.5] text-navy/85 italic"
+                      />
+                    </div>
+                    {/* Instruction sits OUTSIDE the box: to the right on desktop, below on mobile. */}
+                    {!translationHintDone && (
+                      <p className="mt-2 text-center text-[11px] leading-snug text-wine/70 animate-pulse sm:mt-0 sm:text-left sm:absolute sm:left-full sm:top-1/2 sm:-translate-y-1/2 sm:ml-4 sm:w-[132px]">
+                        <span className="hidden sm:inline">← </span>
+                        <span className="sm:hidden">👆 </span>
+                        {canHover ? 'Hover the text to see the English' : 'Tap the text to see the English'}
+                      </p>
+                    )}
                   </div>
                 </div>
               );
             })()}
 
-            {/* Phase 2: Jules appears with his taunt + badge picker */}
+            {/* Phase 2: Rémi appears with his taunt + badge picker */}
             {(showLevelPicker || levelLocked) && (() => {
               const julesLine = linesByNarrator['jules'] ?? JULES_LEVEL_PICKER_LINE;
               const isSpeaking = activeNarrator === 'jules';
@@ -423,7 +446,7 @@ export default function WelcomeOnboarding() {
 
             {/* Auth CTAs — always visible */}
             {!showLevelPicker && !levelLocked && (
-              <div className="flex flex-col items-center gap-4 mt-6 mb-1 w-full max-w-[300px] mx-auto">
+              <div className="flex flex-col items-center gap-4 sm:gap-2.5 mt-6 sm:mt-3 mb-1 w-full max-w-[300px] mx-auto">
 
                 {/* I'm new — primary path */}
                 <button

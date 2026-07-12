@@ -11,3 +11,5 @@ public/word-audio/
 # Dev-server runtime data (written locally by vite.config.js; not used in prod)
 data/dev-costs.json
 data/reading-sessions.json
+.vercel
+.env*

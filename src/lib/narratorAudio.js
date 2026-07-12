@@ -3,12 +3,14 @@ import { buildWordTimings, playDecodedBuffer } from './speechHighlight';
 import { beginSiteAudioPlayback, isSiteAudioPlaybackCurrent, registerSiteAudioStop } from './siteAudio';
 import { tapSource, startLine, setPlaybackTime, stopLine } from './lipSync';
 
+// Léa is the face and the voice of Parisly again (the server prompts never
+// stopped calling her Léa — only the client display had been swapped to Rémi).
 export const NARRATORS = {
   lea: { id: 'lea', name: 'Léa', src: '/assets/lea.jpg' },
-  jules: { id: 'jules', name: 'Jules', src: '/assets/jules.jpg' },
+  jules: { id: 'jules', name: 'Rémi', src: '/assets/remi-avatar.jpg' },
 };
 
-/** Playback gain — Léa's ElevenLabs voice runs hotter than Jules. */
+/** Playback gain — Rémi's ElevenLabs voice runs hotter than Rémi. */
 export const NARRATOR_VOLUME = {
   lea: 0.85,
   stella: 0.85,
@@ -41,9 +43,22 @@ export function normalizeNarratorId(narrator) {
 }
 
 // ── Persistent audio cache (IndexedDB) ──────────────────────────────────────
-const IDB_NAME = 'nativa-narrator-audio';
+// La clé de cache navigateur ne contient QUE le narrateur + le texte, pas le
+// voiceId : si la voix d'un narrateur change côté serveur, le navigateur
+// continuerait de rejouer l'ancienne voix, indéfiniment. D'où VOICE_REV :
+// on l'incrémente à chaque changement de voix pour invalider les caches déjà
+// posés chez les élèves (et on jette l'ancienne base au passage).
+// rev 2 = retour à la vraie voix de Léa (ebRwkdEFVZIx2A6YucFh).
+const VOICE_REV = 2;
+const IDB_NAME = `nativa-narrator-audio-v${VOICE_REV}`;
 const IDB_VERSION = 1;
 const IDB_STORE = 'audio';
+
+// Ménage : les bases des révisions précédentes contiennent la mauvaise voix.
+try {
+  indexedDB.deleteDatabase('nativa-narrator-audio');
+  for (let r = 1; r < VOICE_REV; r++) indexedDB.deleteDatabase(`nativa-narrator-audio-v${r}`);
+} catch {}
 
 function openAudioCacheDb() {
   return new Promise((resolve, reject) => {
@@ -82,7 +97,7 @@ async function idbPut(key, value) {
 const narratorAudioCache = new Map();
 
 function cacheKey(text, narrator) {
-  return `${resolveClientNarrator(narrator)}:${text.trim()}`;
+  return `v${VOICE_REV}:${resolveClientNarrator(narrator)}:${text.trim()}`;
 }
 
 export async function readNarratorAudioResponse(res) {

@@ -1,5 +1,5 @@
 import React from 'react'; // v2
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
 import { UniversitiesBar, Features } from './components/Features';
@@ -20,9 +20,21 @@ import { isProfileSetupComplete, loadLearnerProfile } from './lib/learnerProfile
 // Lazy so the 3D libraries (Three.js) load ONLY on /avatar-test and never
 // weigh down the main app bundle.
 const AvatarTest = React.lazy(() => import('./pages/AvatarTest'));
+// The "live" landing (moving avatar + chatbox) — now the main page at "/".
+// Still lazy: Three.js stays out of the shared bundle, so /dashboard and the
+// classic landing don't pay for it.
+const WelcomeLive = React.lazy(() => import('./pages/WelcomeLive'));
 
+function LiveLandingRoute() {
+  return (
+    <React.Suspense fallback={<div className="fixed inset-0 flex items-center justify-center bg-paper text-navy/40 font-display italic">Léa arrive…</div>}>
+      <WelcomeLive />
+    </React.Suspense>
+  );
+}
 
-
+// The classic marketing landing. Not the main page anymore — it lives on
+// /classic and is kept whole, ready to be reused (ads, SEO) later.
 function LandingPage() {
   return (
     <div className="relative">
@@ -37,6 +49,38 @@ function LandingPage() {
       <CTABanner />
       <Footer />
     </div>
+  );
+}
+
+// Wherever the live landing shows, the moving avatar IS the welcome — don't
+// cover it with the onboarding modal. That's now "/" and its /welcome alias.
+// Everywhere else the modal behaves exactly as before.
+function WelcomeOnboardingGate() {
+  const { pathname } = useLocation();
+  if (pathname === '/' || pathname.startsWith('/welcome')) return null;
+  return <WelcomeOnboarding />;
+}
+
+// Kru Rémi credit. Mobile: top-right. Desktop: bottom-left. z-50 keeps it above
+// the nav bar so its scroll-triggered backdrop-blur doesn't blur the credit; the
+// pointer-events guard means only the link itself is clickable.
+// The mobile offset is per-page: the classic landing has a 72px nav bar (logo
+// centred at 20px), while the live landing's header is tighter — there, 20px
+// pushed the credit down onto the avatar frame. So it rides higher on the live page.
+function KruRemiCredit() {
+  const { pathname } = useLocation();
+  const onLiveLanding = pathname === '/' || pathname.startsWith('/welcome');
+  return (
+    <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer"
+      className={`fixed ${onLiveLanding ? 'top-[6px]' : 'top-[20px]'} right-6 sm:top-auto sm:right-auto sm:bottom-3 sm:left-3 z-50 flex items-center gap-2 group pointer-events-none [&>*]:pointer-events-auto`}
+    >
+      <img src="/assets/remi-avatar.jpg" alt="Kru Rémi"
+        className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all shrink-0" />
+      <span className="font-display text-[12px] italic text-navy/60 leading-none whitespace-nowrap">
+        by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span>
+        <span className="text-navy/40"> · certified French teacher</span>
+      </span>
+    </a>
   );
 }
 
@@ -65,7 +109,10 @@ function GoogleAuthHandler() {
         || user.user_metadata?.name?.split(' ')[0]
         || user.email?.split('@')[0]
         || 'Ami';
-      completeOnboarding(profile.claimedLevel || 'B1', {
+      // No level picked → default to A2 (elementary), NOT B1. Beginners drowning
+      // in intermediate content is far worse than a false-beginner finding A2 easy;
+      // they can always raise their level. Matches getEffectiveLevel's A2 default.
+      completeOnboarding(profile.claimedLevel || 'A2', {
         authMethod: 'google',
         email: user.email,
         name,
@@ -90,27 +137,21 @@ function GoogleAuthHandler() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    // basename suit la base Vite : "/" en standalone, "/digital-clone" quand
+    // l'app est servie sous kruremi.com (build avec --base=/digital-clone/).
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || '/'}>
       <LearnerProfileProvider>
         <GoogleAuthHandler />
-        <WelcomeOnboarding />
-        {/* Kru Rémi credit. Mobile: top-right, level with the Parisly logo (mirror
-            position, opposite side). Desktop: bottom-left. z-50 keeps it above the
-            nav bar so its scroll-triggered backdrop-blur doesn't blur the credit;
-            the pointer-events guard means only the link itself is clickable. */}
-        <a href="https://kruremi.com" target="_blank" rel="noopener noreferrer"
-          className="fixed top-[20px] right-6 sm:top-auto sm:right-auto sm:bottom-3 sm:left-3 z-50 flex items-center gap-2 group pointer-events-none [&>*]:pointer-events-auto"
-        >
-          <img src="/assets/remi-avatar.jpg" alt="Kru Rémi"
-            className="w-8 h-8 rounded-full object-cover object-top ring-2 ring-wine/60 group-hover:ring-wine transition-all shrink-0" />
-          <span className="font-display text-[12px] italic text-navy/60 leading-none whitespace-nowrap">
-            by <span className="text-navy font-semibold not-italic group-hover:text-wine transition-colors">Kru Rémi</span>
-            <span className="text-navy/40"> · certified French teacher</span>
-          </span>
-        </a>
+        <WelcomeOnboardingGate />
+        <KruRemiCredit />
         {import.meta.env.DEV && <DevPanel />}
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          {/* Main page: the live avatar + chatbox. */}
+          <Route path="/" element={<LiveLandingRoute />} />
+          {/* Old address of the live page — kept so existing links still land. */}
+          <Route path="/welcome" element={<LiveLandingRoute />} />
+          {/* The classic landing, intact, for later reuse. */}
+          <Route path="/classic" element={<LandingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/expressions" element={<MyExpressions />} />
           <Route path="/targets" element={<MyTargets />} />

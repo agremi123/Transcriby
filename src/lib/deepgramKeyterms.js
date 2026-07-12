@@ -22,7 +22,7 @@ export const CASUAL_FRENCH_KEYTERMS = [
   'manuel', 'textbook', 'niveau', 'français', 'francais',
   'viens', 'vais', 'fais', 'veux', 'sais', 'peux', 'dois',
   'États-Unis', 'France', 'parler', 'écrire', 'répète', 'correct',
-  'Léa', 'Jules',
+  'Rémi', 'Rémi',
 ];
 
 function cleanToken(word) {

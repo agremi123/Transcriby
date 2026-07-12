@@ -1,6 +1,6 @@
 // Isolated spike to evaluate a local, API-free 3D talking head.
 // Not linked from anywhere in the app — reach it at /avatar-test.
-// Now driven by Léa's REAL ElevenLabs voice through the shared narrator audio
+// Now driven by Rémi's REAL ElevenLabs voice through the shared narrator audio
 // pipeline + lip-sync engine, so this is a true preview of the final feature:
 // jaw opens with her actual volume, mouth shapes follow her words.
 
@@ -22,7 +22,7 @@ const AVATARS = [
 // Rich in bilabials (m/b/p → lips close), rounded vowels (o/u) and open (a)
 // so the articulation is easy to judge.
 const LEA_LINE =
-  "Bonjour ! Moi, c'est Léa. On va parler français ensemble, d'accord ? Bienvenue à Paris !";
+  "Bonjour ! Moi, c'est Rémi. On va parler français ensemble, d'accord ? Bienvenue à Paris !";
 
 export default function AvatarTest() {
   const [talking, setTalking] = React.useState(false);
@@ -30,7 +30,7 @@ export default function AvatarTest() {
   const ctxRef = React.useRef(null);
   const sourceRef = React.useRef(null);
 
-  // Fetch Léa's real voice, play it, and drive the mouth from the live audio.
+  // Fetch Rémi's real voice, play it, and drive the mouth from the live audio.
   const speak = async () => {
     if (talking) return;
     setTalking(true);
@@ -52,7 +52,7 @@ export default function AvatarTest() {
         onTimeUpdate: (t) => setPlaybackTime(t),
       });
     } catch (e) {
-      console.warn('[AvatarTest] Léa audio failed:', e?.message || e);
+      console.warn('[AvatarTest] Rémi audio failed:', e?.message || e);
     } finally {
       stopLine();
       setTalking(false);
@@ -72,7 +72,7 @@ export default function AvatarTest() {
           <h1 className="font-display text-[20px] text-navy">
             Avatar <span className="text-wine italic">spike</span>
           </h1>
-          <p className="text-[12px] text-navy/50">Idle: blink + sway · Tap “Parler” to hear Léa + lip-sync</p>
+          <p className="text-[12px] text-navy/50">Idle: blink + sway · Tap “Parler” to hear Rémi + lip-sync</p>
         </div>
         <Link to="/" className="text-[11px] font-mono uppercase tracking-widest text-navy/40 hover:text-wine">
           Back
@@ -107,7 +107,7 @@ export default function AvatarTest() {
           disabled={talking}
           className="bg-wine text-ivory rounded-full font-display italic px-10 py-3 text-[16px] hover:bg-wine2 transition-colors disabled:opacity-50"
         >
-          {talking ? 'Léa parle…' : 'Parler (Léa)'}
+          {talking ? 'Rémi parle…' : 'Parler (Rémi)'}
         </button>
       </footer>
     </div>

@@ -22,6 +22,7 @@ import { DiffText } from '../lib/DiffText';
 import { registerCorrectionKeyterms } from '../lib/deepgramKeyterms';
 import { detectLearnerGenderFromFrench, normalizeLearnerGender } from '../lib/learnerGender';
 import { useLearnerProfile } from '../context/LearnerProfileContext';
+import { uiText } from '../lib/uiLevelText';
 import { getEffectiveLevel } from '../lib/learnerProfile';
 import { Logo } from './atoms';
 import { joinTranscriptSegments, segmentNeedsLeadingSpace } from '../lib/transcriptJoin';
@@ -189,16 +190,12 @@ function buildDevSkipInterviewData(levelId, existingAnswers = [], existingAssess
 }
 
 function buildIntroScript() {
+  // Un seul instructeur (Rémi) : une seule réplique d'intro.
   return [
     scriptLine(
-      'lea',
-      "Salut — trois questions perso pour voir si ton français est assez parisien.",
-      'Hi — three personal questions to see if your French is Parisian enough.',
-    ),
-    scriptLine(
       'jules',
-      "Réponds en français, naturellement ; après chaque réponse, on te dit où tu en es.",
-      'Answer in French, naturally; after each answer, we tell you where you stand.',
+      "Salut — trois questions perso pour voir si ton français est assez parisien. Réponds en français, naturellement ; après chaque réponse, je te dis où tu en es.",
+      'Hi — three personal questions to see if your French is Parisian enough. Answer in French, naturally; after each answer, I tell you where you stand.',
     ),
   ];
 }
@@ -500,7 +497,7 @@ function enrichReportForVerdict(report, claimedLevel, assessments) {
   const lines = buildFinalVerdictLines(claimedLevel, assessments);
   const lea = lines.find((l) => l.narrator === 'lea');
   const jules = lines.find((l) => l.narrator === 'jules');
-  // The level shown must be exactly what Léa & Jules state in their verdict lines.
+  // The level shown must be exactly what Rémi & Rémi state in their verdict lines.
   const assessedLevel = computeFinalLevel(claimedLevel, assessments);
   return normalizeVerdictTraits({
     ...report,
@@ -639,7 +636,7 @@ async function fetchInterviewReport(answers, levelId, assessments) {
 
     const fallback = buildFallbackReport(answers, assessments, levelId);
 
-    // The displayed level must match what Léa & Jules actually said per question
+    // The displayed level must match what Rémi & Rémi actually said per question
     // (their per-answer verdicts → `assessments`), not a separate holistic API
     // guess — otherwise an A2 learner can confusingly see a B2/C1 verdict.
     const assessedLevel = computeFinalLevel(levelId, assessments);
@@ -918,6 +915,10 @@ function FrenchOpinionReport({
   const level = report.overallLevel || claimedLevel || 'B1';
   const mood = report.verdictMood || getVerdictMood(claimedLevel, level, report.overallScore);
   const moodClass = mood === 'Pas mal !' ? 'text-wine' : 'text-navy/70';
+  // Next CEFR level up — the goal we nudge the learner toward via a listening défi.
+  const nextLevelIdx = LEVEL_ORDER.indexOf(level) + 1;
+  const nextLevel = nextLevelIdx < LEVEL_ORDER.length ? LEVEL_ORDER[nextLevelIdx] : null;
+  const reachListeningHref = `/?ptype=listening#nativa-demo`;
 
   return (
     <motion.div
@@ -928,16 +929,17 @@ function FrenchOpinionReport({
       <div className={`border-b border-wine/10 bg-gradient-to-b from-ivory/50 to-paper/80 overflow-visible ${
         compact ? 'px-4 sm:px-6 py-4 sm:py-5' : 'px-4 sm:px-6 py-7 sm:py-8'
       }`}>
-        <div className={`grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end ${
+        <div className={`grid grid-cols-[minmax(0,1fr)_auto] items-end ${
           compact ? 'gap-3 sm:gap-4' : 'gap-4 sm:gap-6'
         }`}>
+          {/* Un seul instructeur (Rémi) : un portrait + les deux répliques fusionnées. */}
           <VerdictNarratorColumn
-            narratorId="lea"
-            line={report.leaVerdict}
-            translation={report.leaVerdictTranslation}
+            narratorId="jules"
+            line={[report.leaVerdict, report.julesVerdict].filter(Boolean).join(' ')}
+            translation={[report.leaVerdictTranslation, report.julesVerdictTranslation].filter(Boolean).join(' ') || null}
             compact={compact}
-            isSpeaking={playing && activeNarrator === 'lea'}
-            isOtherSpeaking={playing && activeNarrator === 'jules'}
+            isSpeaking={playing && (activeNarrator === 'lea' || activeNarrator === 'jules')}
+            isOtherSpeaking={false}
             onToggleReplay={onToggleReplay}
             replayDisabled={replayDisabled}
             speechPlaybackTime={speechPlaybackTime}
@@ -951,20 +953,17 @@ function FrenchOpinionReport({
             }`}>
               {mood}
             </p>
+            {nextLevel ? (
+              <a
+                href={reachListeningHref}
+                className={`mt-0.5 inline-flex items-center justify-center rounded-full bg-wine text-ivory font-display whitespace-nowrap hover:bg-wine2 hover:shadow-sm transition-all duration-200 ${
+                  compact ? 'text-[11px] px-3 py-1.5' : 'text-[12px] sm:text-[13px] px-3.5 py-2'
+                }`}
+              >
+                Click to reach {nextLevel}
+              </a>
+            ) : null}
           </div>
-          <VerdictNarratorColumn
-            narratorId="jules"
-            line={report.julesVerdict}
-            translation={report.julesVerdictTranslation}
-            compact={compact}
-            isSpeaking={playing && activeNarrator === 'jules'}
-            isOtherSpeaking={playing && activeNarrator === 'lea'}
-            onToggleReplay={onToggleReplay}
-            replayDisabled={replayDisabled}
-            speechPlaybackTime={speechPlaybackTime}
-            speechTimings={speechTimings}
-            speechText={speechText}
-          />
         </div>
       </div>
 
@@ -1050,11 +1049,11 @@ function CorrectionPanel({
         {same ? (
           <div className="flex items-start gap-2.5">
             <NarratorHoverText
-              text={highlightSpeech ? speechText : 'Rien à corriger, Léa valide celle-là.'}
+              text={highlightSpeech ? speechText : 'Rien à corriger, Rémi valide celle-là.'}
               translation={
                 highlightSpeech
                   ? lookupNarratorTranslation(speechText)
-                  : 'Nothing to fix — Léa approves that one.'
+                  : 'Nothing to fix — Rémi approves that one.'
               }
               highlightSpeech={highlightSpeech}
               speechPlaybackTime={speechPlaybackTime}
@@ -1322,7 +1321,7 @@ function AnswerInput({
   rightInfo = null,
   compact = false,
   correctionContent = null,
-  answerNarratorName = 'Léa',
+  answerNarratorName = 'Rémi',
 }) {
   const hasSpeakContent = getSpeakText(utterances, settledText, partialTranscript).length > 0;
   const micActive = isRecording || isStoppingRecording;
@@ -1399,9 +1398,13 @@ function AnswerInput({
         onClick={() => { if (inputMode !== 'write') onInputModeChange('write'); else onWriteFinish?.(); }}
         disabled={disabled || (inputMode === 'write' && writeFinishDisabled)}
         className={`relative z-10 w-10 h-10 rounded-full inline-flex items-center justify-center transition-colors disabled:opacity-50 ${inputMode === 'write' ? 'bg-wine text-ivory' : 'text-navy/45'}`}
-        aria-label={inputMode === 'write' ? 'Submit writing' : 'Switch to write'}
+        aria-label={inputMode === 'write' ? 'Confirm sentence' : 'Switch to write'}
       >
-        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        {inputMode === 'write' ? (
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none" aria-hidden><rect x="2" y="2" width="10" height="10" rx="1.5" fill="currentColor" /></svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><path d="M13.5 3.5l3 3L7 16l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        )}
       </button>
     </div>
   );
@@ -1640,12 +1643,14 @@ function NarratorPair({
   duoProminent = false,
 }) {
   const hasFeatured = Boolean(featuredId);
-  const narratorIds = heroMode && featuredId ? [featuredId] : ['lea', 'jules'];
+  // Un seul instructeur (Rémi) : on n'affiche qu'un portrait, jamais deux.
+  const narratorIds = heroMode && featuredId ? [featuredId] : ['jules'];
   const largePortrait = (heroMode && hasFeatured) || duoProminent;
+  const singlePortrait = narratorIds.length === 1;
 
   return (
     <div className={`shrink-0 justify-items-center w-full overflow-visible ${
-      heroMode
+      heroMode || singlePortrait
         ? 'flex flex-col items-center'
         : `grid grid-cols-2 ${
             duoProminent
@@ -2343,7 +2348,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
   const questionStep = questionIndex + 1;
   const feedbackAskerName = currentQuestion
     ? NARRATORS[currentQuestion.narrator].name
-    : 'Léa';
+    : 'Rémi';
   const isIntroFlow = phase === 'intro' || phase === 'intro_ack';
   const showHeroPortrait = Boolean(
     currentQuestion
@@ -2523,7 +2528,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
           >
             <AnswerInput
               compact={embedded}
-              answerNarratorName={currentQuestion ? NARRATORS[currentQuestion.narrator].name : 'Léa'}
+              answerNarratorName={currentQuestion ? NARRATORS[currentQuestion.narrator].name : 'Rémi'}
               correctionContent={correctionDisplay?.text ? (
                 <CorrectionDisplayBar
                   inline
@@ -2585,7 +2590,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
               headerRightAction={
                 showFeedbackCompris ? (
                   <NarratorHoverText
-                    text={isLastQuestion ? 'See my rating' : 'Next question'}
+                    text={isLastQuestion ? uiText('seeRating', effectiveLevel) : uiText('nextQuestion', effectiveLevel)}
                     translation={isLastQuestion ? 'View your level rating' : 'Continue to the next question'}
                     tooltipPosition="below"
                     wrapperClassName="relative inline-flex"
@@ -2600,7 +2605,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
                           : 'px-5 py-2 text-[14px] sm:text-[15px]'
                       }`}
                     >
-                      {isLastQuestion ? 'See my rating' : 'Next question'}
+                      {isLastQuestion ? uiText('seeRating', effectiveLevel) : uiText('nextQuestion', effectiveLevel)}
                     </button>
                   </NarratorHoverText>
                 ) : null
@@ -2624,7 +2629,7 @@ export function LevelAssessmentDashboard({ levelId, onBack, embedded = false, on
             animate={{ opacity: 1 }}
             className={`text-center text-[13px] text-navy/45 italic shrink-0 ${embedded ? 'mt-2' : 'mt-4'}`}
           >
-            Léa & Jules are getting ready…
+            Rémi & Rémi are getting ready…
           </motion.p>
         )}
 

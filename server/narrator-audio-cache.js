@@ -6,7 +6,12 @@ const BUCKET = 'narrator-audio';
 /** Single voice per character — always lea or jules in storage paths. */
 export function resolveNarrator(input = 'lea') {
   const slug = input === 'jules' || input === 'alex' ? 'jules' : 'lea';
-  const voiceId = slug === 'jules' ? 'n1u6R6yj3qEpDLH3liBh' : 'ebRwkdEFVZIx2A6YucFh';
+  // Le hash de cache inclut le voiceId : ces IDs sont la clé de toute la banque
+  // d'audio déjà générée (seed-parisian-words.mjs, narrate-listening.mjs).
+  // Les changer = tout regénérer chez ElevenLabs. Ne pas y toucher.
+  const voiceId = slug === 'jules'
+    ? 'n1u6R6yj3qEpDLH3liBh'  // Rémi
+    : 'ebRwkdEFVZIx2A6YucFh'; // Léa
   return { slug, voiceId };
 }
 

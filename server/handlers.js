@@ -11,6 +11,20 @@ import {
 import { getSupabaseAdmin } from './supabase.js';
 import { getStoredWritingExample, saveWritingExample } from './writing-examples.js';
 import { pickWord, pickWritingPrompt, pickSpeakingPrompt, pickPractice, pickReading, pickListening, getLessons } from './contentStock.js';
+import {
+  conversationDirective,
+  exerciseDirective,
+  readingExerciseDirective,
+  listeningExerciseDirective,
+  writingDirective,
+  writingFeedbackDirective,
+  speakingPromptDirective,
+  gradePassageDirective,
+  learnerLevelContext as buildLearnerLevelContext,
+  LISTENING_SOURCES,
+  READING_SOURCES,
+  pickSourcesForLevel,
+} from './levelAdapt.js';
 
 // Log every spoken narrator line (text + cached audio URL) to narrator_lines.
 // Fire-and-forget; duplicate lines are ignored via the (narrator, texthash) key.
@@ -33,7 +47,9 @@ function logNarratorLine(slug, text, audioUrl) {
 import { buildCorrectionSystemPrompts } from './correctionPrompts.js';
 import { sanitizeParisianCorrection, parseCorrectionResponse } from '../src/lib/correctionFormat.js';
 
-export const NARRATOR_ALIASES = { jules: 'alex', lea: 'lea', stella: 'lea' };
+// Léa garde sa propre voix (féminine) ; les narrateurs masculins partagent
+// celle de Rémi (ex-voix de Jules).
+export const NARRATOR_ALIASES = { jules: 'alex', stella: 'lea' };
 
 const CEFR_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 
@@ -42,21 +58,16 @@ function normalizeLearnerLevel(level) {
   return CEFR_LEVELS.includes(v) ? v : 'A2';
 }
 
+// Richer per-level context now lives in server/levelAdapt.js (shared with dev).
 function learnerLevelContext(level) {
-  const l = normalizeLearnerLevel(level);
-  const idx = CEFR_LEVELS.indexOf(l);
-  if (idx <= 1) {
-    return `The learner's approximate level is ${l} (beginner). Use simple, encouraging French. Avoid slang they won't understand. Explain briefly when needed.`;
-  }
-  if (idx <= 3) {
-    return `The learner's approximate level is ${l} (intermediate). Balance clarity with natural Parisian expressions.`;
-  }
-  return `The learner's approximate level is ${l} (advanced). Be demanding — expect nuance, idioms, and authentic Parisian register.`;
+  return buildLearnerLevelContext(normalizeLearnerLevel(level));
 }
 
+// Ne JAMAIS changer ces IDs : le hash du cache audio (narrator-audio-cache.js)
+// inclut le voiceId, donc toute la banque de générations déjà payées en dépend.
 export const ELEVENLABS_VOICES = {
-  lea: 'ebRwkdEFVZIx2A6YucFh',
-  alex: 'n1u6R6yj3qEpDLH3liBh',
+  lea: 'ebRwkdEFVZIx2A6YucFh',  // Léa — sa voix d'origine (celle de la base)
+  alex: 'n1u6R6yj3qEpDLH3liBh', // Rémi — narrateurs masculins
 };
 
 export function normalizeNarrator(narrator) {
@@ -391,6 +402,7 @@ export function handleInterviewFeedbackPost(body) {
 export async function handlePractice(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
+  const level = normalizeLearnerLevel(body?.learnerLevel);
 
   // Local stock first — recyclable MCQ sets matched to the topic. No API call.
   const localExercises = pickPractice(topic);
@@ -409,7 +421,7 @@ export async function handlePractice(body) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 600,
-        system: `You are a French language teacher. Generate exactly 4 multiple-choice comprehension questions in French to practice: "${topic}". Each question has exactly 4 options (A–D) and one correct answer. Respond with raw JSON only, no markdown: {"exercises":[{"question":"Question in French?","options":["Option A","Option B","Option C","Option D"],"answer":"Option A"},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."}]}`,
+        system: `You are a French language teacher. Generate exactly 4 multiple-choice comprehension questions in French to practice: "${topic}". ${exerciseDirective(level)} Each question has exactly 4 options (A–D) and one correct answer. Respond with raw JSON only, no markdown: {"exercises":[{"question":"Question in French?","options":["Option A","Option B","Option C","Option D"],"answer":"Option A"},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."},{"question":"...","options":["...","...","...","..."],"answer":"..."}]}`,
         messages: [{ role: 'user', content: `Generate 4 multiple-choice questions for: ${topic}` }],
       }),
     });
@@ -550,47 +562,108 @@ async function claudeJSON({ apiKey, system, user, maxTokens = 800 }) {
   }
 }
 
-// ── Generate a full reading bundle (article + 4 exercise types) ─────────────
-async function generateReadingBundle(apiKey) {
-  const feedResults = await Promise.all(FRENCH_RSS_FEEDS.map(fetchRssItems));
-  const allItems = feedResults.flat().filter(i => i.title && (i.description || i.content));
-  if (allItems.length === 0) throw new Error('No RSS items');
+// Native French-press RSS feeds for the learner's level (B1–C2 graded ranges).
+// pickSourcesForLevel puts in-range sources first, the rest as fallback — so an
+// A1 learner still gets a feed to grade down when no graded source is reachable.
+function readingRssFeedsForLevel(level) {
+  return pickSourcesForLevel(READING_SOURCES.filter((s) => s.type === 'rss'), level)
+    .map((s) => ({ name: s.name, url: s.rssUrl }));
+}
 
-  // Shuffle candidates, fetch the top few article bodies IN PARALLEL, and pick a
-  // FULL one (>= 1500 chars) so we never serve a half-baked / stub article.
-  const withDesc = allItems.filter(i => (i.description || i.content || '').length > 120);
-  const pool = (withDesc.length ? withDesc : allItems).slice().sort(() => Math.random() - 0.5);
-  const MIN_BODY = 1500;
-  const fetched = await Promise.all(pool.slice(0, 5).map(async (c) => {
-    let body = '';
-    if (c.link) { try { body = await fetchArticleBody(c.link); } catch { body = ''; } }
-    if (body.length < 200) body = c.content || c.description || '';
-    return { c, body };
-  }));
-  const fullOnes = fetched.filter(f => f.body.length >= MIN_BODY);
-  const picked = fullOnes[0] || fetched.slice().sort((a, b) => b.body.length - a.body.length)[0];
-  const chosen = picked.c;
+// Fabulang — free graded short-story site (no RSS). Scrape the per-level index
+// page (`/en/fr/a1`, `/a2`…) for story links, then pull one story's French text.
+// Best-effort: returns null on any hiccup so reading falls back to graded native
+// press. The text is ALREADY at the right level, so we use it as-is.
+async function fetchFabulangStory(level) {
+  const src = READING_SOURCES.find((s) => s.type === 'fabulang');
+  if (!src) return null;
+  const lvl = String(level || 'a1').toLowerCase();
+  try {
+    const idxRes = await fetch(`${src.base}/${lvl}`, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(6000) });
+    if (!idxRes.ok) return null;
+    const html = await idxRes.text();
+    const slugs = [...new Set([...html.matchAll(/\/en\/fr\/stories\/([a-z0-9-]+)/gi)].map((m) => m[1]))];
+    if (!slugs.length) return null;
+    const slug = slugs[Math.floor(Math.random() * slugs.length)];
+    const storyUrl = `${src.base}/stories/${slug}`;
+    const body = await fetchArticleBody(storyUrl);
+    if (!body || body.length < 180) return null;
+    const title = slug.replace(/^[abc][12]-/, '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    return { title, body: body.slice(0, 4000), link: storyUrl, source: src.name };
+  } catch {
+    return null;
+  }
+}
+
+// ── Generate a full reading bundle (article + 4 exercise types), graded to level
+async function generateReadingBundle(apiKey, level = 'B1') {
+  const lvl = normalizeLearnerLevel(level);
+  const isBeginner = CEFR_LEVELS.indexOf(lvl) <= 2; // A1–B1 get easier text
+
+  let chosen = null;     // { title, link, source, author, date }
+  let picked = { body: '' };
+  let preGraded = false;  // true when the source is already at the learner's level
+
+  // 1. Beginners: try a real graded story first (Fabulang). Already at level.
+  if (isBeginner) {
+    const story = await fetchFabulangStory(lvl);
+    if (story) {
+      chosen = { title: story.title, link: story.link, source: story.source, author: null, date: null };
+      picked = { body: story.body };
+      preGraded = true;
+    }
+  }
+
+  // 2. Otherwise (or as fallback): native French press, gated by level.
+  if (!chosen) {
+    const feeds = readingRssFeedsForLevel(lvl);
+    const feedResults = await Promise.all(feeds.map(fetchRssItems));
+    const allItems = feedResults.flat().filter(i => i.title && (i.description || i.content));
+    if (allItems.length === 0) throw new Error('No RSS items');
+
+    // Shuffle candidates, fetch the top few article bodies IN PARALLEL, and pick
+    // a FULL one (>= 1500 chars) so we never serve a half-baked / stub article.
+    const withDesc = allItems.filter(i => (i.description || i.content || '').length > 120);
+    const pool = (withDesc.length ? withDesc : allItems).slice().sort(() => Math.random() - 0.5);
+    const MIN_BODY = 1500;
+    const fetched = await Promise.all(pool.slice(0, 5).map(async (c) => {
+      let body = '';
+      if (c.link) { try { body = await fetchArticleBody(c.link); } catch { body = ''; } }
+      if (body.length < 200) body = c.content || c.description || '';
+      return { c, body };
+    }));
+    const fullOnes = fetched.filter(f => f.body.length >= MIN_BODY);
+    picked = fullOnes[0] || fetched.slice().sort((a, b) => b.body.length - a.body.length)[0];
+    chosen = { title: picked.c.title || '', link: picked.c.link || null, source: picked.c.feedName || null, author: picked.c.author || null, date: picked.c.pubDate || null };
+  }
+
   // Strip CJK characters that can appear in scraped page sidebars/ads
   let rawText = (picked.body || '').replace(/[　-鿿가-힯豈-﫿]/g, '').slice(0, 6000);
 
+  // Graded sources are used as-is (just cleaned); native press is rewritten DOWN
+  // to the learner's level for A1–B1, or kept authentic for B2+.
+  const extractSystem = preGraded
+    ? 'Clean up this French story into a coherent passage entirely in French (omit any non-French text, navigation, or ads). Keep it as written; do not add difficulty. Return ONLY raw JSON: {"passage":"..."}'
+    : `${gradePassageDirective(lvl)} The passage must be entirely in French — omit any non-French text. Natural paragraphs. Return ONLY raw JSON: {"passage":"..."}`;
   const extractData = await claudeJSON({
-    apiKey, maxTokens: 1000,
-    system: 'Extract a coherent readable passage from this French article. The passage must be entirely in French — omit any non-French text. At least 15 sentences, 400-600 words, natural paragraphs. Return ONLY raw JSON: {"passage":"..."}',
+    apiKey, maxTokens: 1100,
+    system: extractSystem,
     user: `Title: ${chosen.title}\n\n${rawText}`,
   });
   const passage = extractData.passage?.trim() || '';
   if (!passage) throw new Error('No passage extracted');
 
-  // Run questions + exercises in parallel
+  // Run questions + exercises in parallel, tuned to the learner's level.
+  const exDir = readingExerciseDirective(lvl);
   const [qParsed, exParsed] = await Promise.all([
     claudeJSON({
       apiKey, maxTokens: 1600,
-      system: 'Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}',
+      system: `Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. ${exDir} For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}`,
       user: passage,
     }),
     claudeJSON({
       apiKey, maxTokens: 2400,
-      system: `French language teacher. From the passage generate:
+      system: `French language teacher. ${exDir} From the passage generate:
 1. 4 vocabulary fill-in-the-blank (key words from article)
 2. 1 grammar point with explanation, example, exactly 6 fill-in-the-blank practice exercises (one "___" per sentence; hint = base form of answer), AND a "production" task: an instruction (in French) telling the learner to write their own sentence using this grammar, plus a correct model sentence
 3. 4 conjugation fill-in-the-blank (verbs from article)
@@ -602,10 +675,11 @@ Raw JSON only:
 
   return {
     title: chosen.title || '',
-    source: chosen.feedName || null,
+    source: chosen.source || null,
     author: chosen.author || null,
-    date: chosen.pubDate || null,
+    date: chosen.date || null,
     link: chosen.link || null,
+    level: lvl,
     passage,
     questions: qParsed.questions || [],
     vocab: exParsed.vocab || [],
@@ -615,25 +689,16 @@ Raw JSON only:
 }
 
 // ── Podcast sources ───────────────────────────────────────────────────────────
-const PODCAST_SOURCES = [
-  // Dedicated French-learning podcasts
-  { name: 'InnerFrench',                      rss: 'https://podcast.innerfrench.com/feed.xml' },
-  { name: 'Français Authentique',              rss: 'https://www.francaisauthentique.com/feed/podcast/' },
-  { name: 'RFI — Journal en Français Facile',  rss: 'https://www.rfi.fr/fr/podcasts/journal-en-francais-facile/feed/' },
-  // Authentic French content
-  { name: 'France Culture — Avec philosophie', rss: 'https://radiofrance-podcast.net/podcast09/rss_56107.xml' },
-  { name: 'France Culture — Le cours de l\'histoire', rss: 'https://radiofrance-podcast.net/podcast09/rss_11549.xml' },
-  { name: 'France Inter — Le grand entretien', rss: 'https://radiofrance-podcast.net/podcast09/rss_13963.xml' },
-  { name: 'Choses à Savoir',                   rss: 'https://podcast.ausha.co/choses-a-savoir/rss.xml' },
-  { name: 'Les Chemins de la philosophie',     rss: 'https://radiofrance-podcast.net/podcast09/rss_14400.xml' },
-];
+// Podcast sources now live in server/levelAdapt.js (LISTENING_SOURCES) — tagged
+// by level and shared with the dev backend so the two can't drift.
 
-async function fetchPodcastEpisode() {
-  // Shuffle so we rotate across sources
-  const sources = PODCAST_SOURCES.slice().sort(() => Math.random() - 0.5);
+async function fetchPodcastEpisode(level = 'B1') {
+  // Sources whose level range fits the learner first, then the rest as fallback,
+  // so A1–A2 get slow/easy podcasts (Duolingo, RFI facile) before native ones.
+  const sources = pickSourcesForLevel(LISTENING_SOURCES, level);
   for (const src of sources) {
     try {
-      const res = await fetch(src.rss, {
+      const res = await fetch(src.rssUrl, {
         headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/rss+xml,application/xml,text/xml,*/*' },
         signal: AbortSignal.timeout(7000),
       });
@@ -721,7 +786,7 @@ async function generateListeningBundle(apiKey, level = 'B1') {
   const { DEEPGRAM_API_KEY } = getEnv();
 
   // 1. Pick a random podcast episode
-  const episode = await fetchPodcastEpisode();
+  const episode = await fetchPodcastEpisode(level);
 
   // 2. Download first ~8 min of audio
   const audioRes = await fetch(episode.audioUrl, {
@@ -746,10 +811,10 @@ async function generateListeningBundle(apiKey, level = 'B1') {
   // 5. Generate exercises from preview transcript + pick segment (parallel)
   const [{ startSec, endSec }, qParsed, vParsed, gParsed, cParsed] = await Promise.all([
     segmentPromise,
-    claudeJSON({ apiKey, maxTokens: 800, system: `French teacher. 4 multiple-choice comprehension questions for ${level} learner. Also infer vocab theme. Raw JSON: {"vocabTheme":"...","questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"}]}`, user: previewTranscript }),
-    claudeJSON({ apiKey, maxTokens: 700, system: `French teacher. 5 vocabulary fill-in-the-blank from transcript for ${level} learner. Raw JSON: {"vocab":[{"word":"...","definition":"English","sentence":"...___..."}]}`, user: previewTranscript }),
-    claudeJSON({ apiKey, maxTokens: 2200, system: `French grammar teacher. Exactly 2 grammar structures from transcript for ${level} learner. Each has exactly 6 fill-in-the-blank exercises (one "___" per sentence; hint = base form of answer) AND a "production" task: an instruction (in French) telling the learner to write their own sentence using this grammar, plus a correct model sentence. Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}`, user: previewTranscript }),
-    claudeJSON({ apiKey, maxTokens: 600, system: 'French teacher. 4 conjugation fill-in-the-blank using verbs from transcript. Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}', user: previewTranscript }),
+    claudeJSON({ apiKey, maxTokens: 800, system: `French teacher. 4 multiple-choice comprehension questions for ${level} learner. ${listeningExerciseDirective(level)} Also infer vocab theme. Raw JSON: {"vocabTheme":"...","questions":[{"question":"...","options":["A","B","C","D"],"answer":"A"}]}`, user: previewTranscript }),
+    claudeJSON({ apiKey, maxTokens: 700, system: `French teacher. 5 vocabulary fill-in-the-blank from transcript for ${level} learner. ${listeningExerciseDirective(level)} Raw JSON: {"vocab":[{"word":"...","definition":"English","sentence":"...___..."}]}`, user: previewTranscript }),
+    claudeJSON({ apiKey, maxTokens: 2200, system: `French grammar teacher. Exactly 2 grammar structures from transcript for ${level} learner. ${listeningExerciseDirective(level)} Each has exactly 6 fill-in-the-blank exercises (one "___" per sentence; hint = base form of answer) AND a "production" task: an instruction (in French) telling the learner to write their own sentence using this grammar, plus a correct model sentence. Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}`, user: previewTranscript }),
+    claudeJSON({ apiKey, maxTokens: 600, system: `French teacher. 4 conjugation fill-in-the-blank using verbs from transcript. ${listeningExerciseDirective(level)} Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}`, user: previewTranscript }),
   ]);
 
   // 6. Extract words and transcript for the chosen segment
@@ -819,7 +884,7 @@ async function generateWritingBundle(apiKey, level = 'B1', topic = '') {
   topic = topic || pickPromptTopic();
   const data = deepStripNonFrench(await claudeJSON({
     apiKey, maxTokens: 1000,
-    system: `French writing teacher. Create a writing challenge for a ${level} learner${topic ? ` on: ${topic}` : ''}. Include useful vocab, expressions, grammar tips, conjugation helpers, and connectors.
+    system: `French writing teacher. Create a writing challenge for a ${level} learner${topic ? ` on: ${topic}` : ''}. ${writingDirective(level)} Include useful vocab, expressions, grammar tips, conjugation helpers, and connectors.
 CRITICAL: Write EVERYTHING in French only. Use ONLY the Latin alphabet with French accents. NEVER include Chinese, Japanese, Korean, Cyrillic, Arabic or any other non-Latin characters — not a single one.
 Raw JSON: {"prompt":"Write a paragraph about...","wordTarget":80,"tips":{"vocab":["mot1","mot2"],"expressions":["expr1"],"grammar":["tip1"],"conjugation":["verb: je ___"],"connecteurs":["d'abord","ensuite"]}}`,
     user: topic || 'choose an everyday Parisian topic',
@@ -840,7 +905,7 @@ async function generateSpeakingBundle(apiKey, topic = '', level = 'B1') {
   const narratorId = narrators[Math.floor(Math.random() * narrators.length)];
   const data = await claudeJSON({
     apiKey, maxTokens: 600,
-    system: `You are a Parisian French speaking coach designing a practice challenge for a ${level} learner. For the topic, design:
+    system: `You are a Parisian French speaking coach designing a practice challenge for a ${level} learner. ${speakingPromptDirective(level)} For the topic, design:
 1. ONE grammar structure to practice (e.g. passé composé, subjonctif, pronoms relatifs, comparatifs, futur proche).
 2. THREE useful French vocabulary words/expressions to use.
 3. A warm, natural opening QUESTION in French that naturally pushes the learner to use that grammar and those words in their spoken answer.
@@ -874,13 +939,16 @@ function getSupabase() {
 export async function handleReading(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const topic = body?.topic || '';
+  const level = normalizeLearnerLevel(body?.learnerLevel);
+  const isBeginner = CEFR_LEVELS.indexOf(level) <= 2; // A1–B1 must get easier text
   const empty = { passage: '', source: null, title: '', author: null, date: null, vocab: [], questions: [], grammar: [], conjugation: [] };
 
-  // Reading uses REAL documents: live French-press articles (RSS) with exercises
-  // generated around them, cached in Supabase. The local Parisly stock is only a
+  // Reading uses REAL documents: graded stories (Fabulang) for beginners and live
+  // French-press articles (RSS) for higher levels, with exercises generated around
+  // them, cached per level in Supabase. The local Parisly stock is only a
   // last-resort fallback so the panel is never blank when feeds are unreachable.
   const stockFallback = () => {
-    const localR = pickReading(body?.learnerLevel || null);
+    const localR = pickReading(level);
     return { statusCode: 200, body: localR || empty };
   };
 
@@ -888,17 +956,28 @@ export async function handleReading(body) {
 
   const supabase = getSupabase();
 
-  // 1. Serve a REAL cached article from the DB (Le Monde, L'Obs…). Prefer an
-  // unserved one; once all are served, recycle the oldest rather than generating
-  // fresh — the library already holds plenty of real articles.
+  // 1. Serve a cached article AT the learner's level. (Level column added in
+  // migration 011 — if it's missing, the level query returns nothing and we
+  // fall through.) For beginners we NEVER serve an off-level (harder) cached
+  // article — better to generate a fresh graded one — so we only widen the
+  // fallback to any-level for intermediate/advanced learners.
   if (supabase) {
     let { data: rows } = await supabase
       .from('reading_articles')
       .select('*')
       .eq('served', false)
+      .eq('level', level)
       .order('created_at', { ascending: true })
       .limit(1);
-    if (!rows || rows.length === 0) {
+    if ((!rows || rows.length === 0) && !isBeginner) {
+      ({ data: rows } = await supabase
+        .from('reading_articles')
+        .select('*')
+        .eq('served', false)
+        .order('created_at', { ascending: true })
+        .limit(1));
+    }
+    if ((!rows || rows.length === 0) && !isBeginner) {
       ({ data: rows } = await supabase
         .from('reading_articles')
         .select('*')
@@ -911,7 +990,9 @@ export async function handleReading(body) {
       supabase.from('reading_articles').update({ served: true }).eq('id', row.id).then(() => {});
       // Replenish stock in background so we never run dry
       triggerReplenish();
-      // Backfill exercise types missing from older cached articles.
+      // Backfill exercise types missing from older cached articles, tuned to the
+      // article's level (fall back to the learner's level if not stored).
+      const exDir = readingExerciseDirective(normalizeLearnerLevel(row.level || level));
       let g = row.grammar || [];
       let c = row.conjugation || [];
       let q = row.questions || [];
@@ -920,22 +1001,22 @@ export async function handleReading(body) {
       const jobs = [];
       if (q.length === 0 && txt) {
         jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 1600,
-          system: 'Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}',
+          system: `Create exactly 6 multiple-choice comprehension questions (in French) about the French passage. ${exDir} For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}`,
           user: txt }).then((r) => { if (r.questions?.length) q = r.questions; }).catch(() => {}));
       }
       if (v.length === 0 && txt) {
         jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 900,
-          system: 'French teacher. Create exactly 4 vocabulary fill-in-the-blank exercises from key words in the passage. Raw JSON: {"vocab":[{"word":"...","definition":"English meaning","sentence":"...___..."}]}',
+          system: `French teacher. ${exDir} Create exactly 4 vocabulary fill-in-the-blank exercises from key words in the passage. Raw JSON: {"vocab":[{"word":"...","definition":"English meaning","sentence":"...___..."}]}`,
           user: txt }).then((r) => { if (r.vocab?.length) v = r.vocab; }).catch(() => {}));
       }
       if (c.length === 0 && txt) {
         jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 700,
-          system: 'French teacher. Create exactly 4 conjugation fill-in-the-blank exercises using verbs from the passage. One "___" per sentence; hint = the pronoun/subject (je/tu/il...). Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}',
+          system: `French teacher. ${exDir} Create exactly 4 conjugation fill-in-the-blank exercises using verbs from the passage. One "___" per sentence; hint = the pronoun/subject (je/tu/il...). Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}`,
           user: txt }).then((r) => { if (r.conjugation?.length) c = r.conjugation; }).catch(() => {}));
       }
       if (g.length === 0 && txt) {
         jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 2000,
-          system: 'French grammar teacher. Exactly 1 grammar point from the passage with 6 fill-in-the-blank exercises ("___" per sentence; hint = base form) AND a "production" task (a French instruction to write a sentence using it, plus a model sentence). Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}',
+          system: `French grammar teacher. ${exDir} Exactly 1 grammar point from the passage with 6 fill-in-the-blank exercises ("___" per sentence; hint = base form) AND a "production" task (a French instruction to write a sentence using it, plus a model sentence). Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}`,
           user: txt }).then((r) => { if (r.grammar?.length) g = r.grammar; }).catch(() => {}));
       }
       if (jobs.length) {
@@ -954,10 +1035,10 @@ export async function handleReading(body) {
     }
   }
 
-  // 2. Cache empty — generate a fresh real article from RSS on-demand
+  // 2. No cached article at this level — generate a fresh one graded to the level
   try {
-    const bundle = await generateReadingBundle(ANTHROPIC_API_KEY);
-    // Save to DB for future use (fire-and-forget)
+    const bundle = await generateReadingBundle(ANTHROPIC_API_KEY, level);
+    // Save to DB for future use (fire-and-forget). bundle carries its level.
     if (supabase) {
       supabase.from('reading_articles').insert([{ ...bundle, served: true }]).then(() => {});
     }
@@ -1072,6 +1153,7 @@ export async function handleSpeakingPrompt(body) {
 export async function handleWordChallenge(body) {
   const { ANTHROPIC_API_KEY } = getEnv();
   const { utterance = '', word = '', meaning = '', narratorId = 'lea', attemptNumber = 1 } = body || {};
+  const level = normalizeLearnerLevel(body?.learnerLevel);
   const empty = { feedback: '', isCorrect: false };
   if (!ANTHROPIC_API_KEY || !utterance.trim() || !word) return { statusCode: 200, body: empty };
 
@@ -1083,6 +1165,7 @@ export async function handleWordChallenge(body) {
     const result = await claudeJSON({
       apiKey: ANTHROPIC_API_KEY,
       system: `Tu es ${name}, ${gender} natif(ve). Un étudiant pratique le mot argotique/parisien "${word}" (= ${meaning}).
+${conversationDirective(level)}
 Il vient de faire la tentative n°${attemptNumber}/3.
 Juge en vrai(e) Parisien(ne) exigeant(e) : isCorrect=true UNIQUEMENT si la phrase contient bien "${word}" (conjugué ou accordé, ça compte) ET que le mot est employé avec le bon sens (${meaning}), une grammaire correcte et de façon naturelle, comme le dirait un Parisien. Si le mot est absent, déformé, ou utilisé à contresens → isCorrect=false. Une phrase grammaticalement juste mais où le mot sonne faux → false aussi.
 ${isFinal ? `C'est la dernière tentative. Donne aussi 2 exemples de vraies phrases parisiennes utilisant "${word}", puis propose un sujet de conversation aléatoire et sympa pour continuer.` : `Dis-lui brièvement si c'est bien ou pas, et invite-le à refaire une phrase — VARIE ta formulation à chaque tentative (ex. "Allez, tente une autre !", "Vas-y, refais-moi une phrase !", "Encore une, pour voir ?", "Une dernière pour la route !"), ne répète jamais la même tournure.`}
@@ -1123,7 +1206,7 @@ export async function handleWritingReview(body) {
       const result = await claudeJSON({
         apiKey: ANTHROPIC_API_KEY,
         maxTokens: 360,
-        system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte de l'étudiant par rapport au défi : a-t-il atteint la longueur, utilisé le vocabulaire / les expressions / la grammaire / les connecteurs suggérés ? Sois chaleureux(se), précis(e) et encourageant(e). 2-3 phrases en français.\nTermine TOUJOURS par une relance : une question ou un mini-défi concret qui le pousse à réessayer en utilisant 2-3 mots ou expressions PRÉCIS des conseils qu'il n'a pas encore utilisés (cite-les entre « »). N'utilise JAMAIS de markdown ni d'astérisques — texte brut uniquement.\nDonne aussi usedTips : pour CHAQUE catégorie, liste les conseils fournis que l'étudiant a employés dans son texte. Un conseil compte comme employé dès que le mot ou l'expression apparaît, MÊME conjugué, fléchi, au pluriel, ou sous une variante proche (avec/sans article). Pour la grammaire et les conjugaisons, le conseil est employé si la structure apparaît au moins une fois (ex. « passé composé » → un auxiliaire avoir/être + participe passé ; « imparfait » → une terminaison -ais/-ait/-ions…). Reprends les libellés EXACTEMENT comme dans la liste donnée. Liste vide seulement si vraiment aucun.\nJSON: {"reaction":"...","usedTips":{"vocab":[],"expressions":[],"grammar":[],"conjugation":[],"connecteurs":[]}}`,
+        system: `Tu es ${name}, ${gender} qui coache un étudiant ${level} à l'écrit.\n${conversationDirective(level)}\nLe défi d'écriture était : "${prompt}" (objectif ~${wordTarget} mots).\nConseils donnés : ${tipList || 'aucun'}.\nJuge le texte de l'étudiant par rapport au défi : a-t-il atteint la longueur, utilisé le vocabulaire / les expressions / la grammaire / les connecteurs suggérés ?\nRÈGLE ABSOLUE SUR LA FORME DE TON RETOUR : ${writingFeedbackDirective(level)}\nQuand tu cites un conseil non encore utilisé, mets-le entre « ». N'utilise JAMAIS de markdown ni d'astérisques — texte brut uniquement.\nDonne aussi usedTips : pour CHAQUE catégorie, liste les conseils fournis que l'étudiant a employés dans son texte. Un conseil compte comme employé dès que le mot ou l'expression apparaît, MÊME conjugué, fléchi, au pluriel, ou sous une variante proche (avec/sans article). Pour la grammaire et les conjugaisons, le conseil est employé si la structure apparaît au moins une fois (ex. « passé composé » → un auxiliaire avoir/être + participe passé ; « imparfait » → une terminaison -ais/-ait/-ions…). Reprends les libellés EXACTEMENT comme dans la liste donnée. Liste vide seulement si vraiment aucun.\nJSON: {"reaction":"...","usedTips":{"vocab":[],"expressions":[],"grammar":[],"conjugation":[],"connecteurs":[]}}`,
         user: `Texte de l'étudiant :\n"${text}"`,
       });
       const ut = result.usedTips || {};
@@ -1173,7 +1256,7 @@ export async function handleWritingReview(body) {
       const result = await claudeJSON({
         apiKey: ANTHROPIC_API_KEY,
         maxTokens: 500,
-        system: `Tu es ${name}, ${gender} qui aide un étudiant ${level}.\nL'étudiant n'a pas compris "${question}" dans la correction de son texte.\nTexte original: "${original}"\nVersion corrigée: "${corrected}"\nÉtape 1 : explique simplement en français ce que veut dire "${question}" (2-3 phrases).\nÉtape 2 : crée UN exercice court pour pratiquer cet élément. Choisis le type le plus adapté.\nTypes possibles:\n- {"type":"fill-blank","sentence":"... ___ ...","answer":"...","hint":"indice court"}\n- {"type":"mcq","question":"...","options":["a","b","c"],"answer":"option correcte exacte"}\n- {"type":"rephrase","instruction":"...","example":"phrase à reformuler","answer":"reformulation correcte"}\nJSON: {"explanation":"...","exercise":{...}}`,
+        system: `Tu es ${name}, ${gender} qui aide un étudiant ${level}.\n${conversationDirective(level)}\nL'étudiant n'a pas compris "${question}" dans la correction de son texte.\nTexte original: "${original}"\nVersion corrigée: "${corrected}"\nÉtape 1 : explique ce que veut dire "${question}". RÈGLE SUR LA FORME DE TON EXPLICATION : ${writingFeedbackDirective(level)}\nÉtape 2 : crée UN exercice court pour pratiquer cet élément, adapté au niveau ${level}. Choisis le type le plus adapté.\nTypes possibles:\n- {"type":"fill-blank","sentence":"... ___ ...","answer":"...","hint":"indice court"}\n- {"type":"mcq","question":"...","options":["a","b","c"],"answer":"option correcte exacte"}\n- {"type":"rephrase","instruction":"...","example":"phrase à reformuler","answer":"reformulation correcte"}\nJSON: {"explanation":"...","exercise":{...}}`,
         user: `Élément à expliquer : "${question}"`,
       });
       return { statusCode: 200, body: { explanation: result.explanation || '', exercise: result.exercise || null } };
@@ -1188,12 +1271,14 @@ export async function handleWritingReview(body) {
 // Build the system prompt for a Parisian's conversational reply in a speaking
 // défi. The Parisian keeps the conversation going and nudges the learner to use
 // the défi's target grammar + vocab, and reports when they've used them all.
-function buildSpeakingReactionSystem({ name, gender, topic, openingLine, grammarPoint, grammarHint, vocabWords, allTurns, hasTargets }) {
+function buildSpeakingReactionSystem({ name, gender, topic, openingLine, grammarPoint, grammarHint, vocabWords, allTurns, hasTargets, level }) {
+  const levelDir = conversationDirective(level);
   const correctionRule = `Évalue aussi la correction du DERNIER tour de l'étudiant (français naturel et correct ?). Ignore la ponctuation, les majuscules et le bruit de transcription orale. S'il y a la moindre faute (grammaire, conjugaison, accord, mot mal employé, ordre des mots), mets sentenceCorrect=false et donne dans correction la phrase corrigée en français naturel + sa traduction anglaise. Sinon sentenceCorrect=true et correction=null.`;
   if (!hasTargets) {
-    return `Tu es ${name}, ${gender} natif(ve) qui aide un étudiant à pratiquer le français oral.\nLe sujet de conversation: "${topic || 'conversation libre'}"\nTu as lancé la conversation en disant: "${openingLine}"\nL'étudiant vient de parler. Réponds naturellement en 1-2 phrases courtes en français.\nSois curieux(se), encourageant(e), et rebondis sur ce qu'il a dit.\n${correctionRule}\nJSON: {"text":"...","translation":"...","usedGrammar":true,"usedVocab":[],"complete":false,"sentenceCorrect":bool,"correction":{"corrected":"...","translation":"..."}|null}`;
+    return `Tu es ${name}, ${gender} natif(ve) qui aide un étudiant à pratiquer le français oral.\n${levelDir}\nLe sujet de conversation: "${topic || 'conversation libre'}"\nTu as lancé la conversation en disant: "${openingLine}"\nL'étudiant vient de parler. Réponds naturellement en 1-2 phrases courtes en français.\nSois curieux(se), encourageant(e), et rebondis sur ce qu'il a dit.\n${correctionRule}\nJSON: {"text":"...","translation":"...","usedGrammar":true,"usedVocab":[],"complete":false,"sentenceCorrect":bool,"correction":{"corrected":"...","translation":"..."}|null}`;
   }
   return `Tu es ${name}, ${gender} natif(ve) qui fait pratiquer le français oral à un étudiant dans une conversation guidée.
+${levelDir}
 Sujet : "${topic || 'conversation libre'}". Tu as lancé la conversation par : "${openingLine}".
 Au fil de la discussion, l'étudiant doit employer :
 ${grammarPoint ? `- Grammaire : ${grammarPoint}${grammarHint ? ` (${grammarHint})` : ''}` : '- (pas de grammaire imposée)'}
@@ -1218,6 +1303,7 @@ export async function handleSpeakingReaction(body) {
     utterance = '', narratorId = 'lea', topic = '', openingLine = '',
     targetGrammar = null, targetVocab = null, history = [],
   } = body || {};
+  const level = normalizeLearnerLevel(body?.learnerLevel);
   const empty = { text: '', translation: '', usedGrammar: false, usedVocab: [], complete: false };
   if (!ANTHROPIC_API_KEY || !utterance.trim()) return { statusCode: 200, body: empty };
 
@@ -1233,9 +1319,9 @@ export async function handleSpeakingReaction(body) {
   try {
     const result = await claudeJSON({
       apiKey: ANTHROPIC_API_KEY,
-      system: buildSpeakingReactionSystem({ name, gender, topic, openingLine, grammarPoint, grammarHint, vocabWords, allTurns, hasTargets }),
+      system: buildSpeakingReactionSystem({ name, gender, topic, openingLine, grammarPoint, grammarHint, vocabWords, allTurns, hasTargets, level }),
       user: `L'étudiant vient de dire: "${utterance}"`,
-      maxTokens: 320,
+      maxTokens: 520,
     });
     const sentenceCorrect = result.sentenceCorrect !== false;
     return { statusCode: 200, body: {
@@ -1281,13 +1367,18 @@ export async function handleReplenish() {
 
   const tasks = [];
 
+  // Spread background stock across levels so every CEFR cache fills over time
+  // (beginners get graded/slow content, not just default B1).
+  const randomLevel = () => CEFR_LEVELS[Math.floor(Math.random() * CEFR_LEVELS.length)];
+
   for (let i = readCount; i < MIN_STOCK; i++) {
-    tasks.push(generateReadingBundle(ANTHROPIC_API_KEY).then(b => supabase.from('reading_articles').insert([{ ...b, served: false }])).catch(() => {}));
+    tasks.push(generateReadingBundle(ANTHROPIC_API_KEY, randomLevel()).then(b => supabase.from('reading_articles').insert([{ ...b, served: false }])).catch(() => {}));
   }
   for (let i = listenCount; i < MIN_STOCK; i++) {
-    tasks.push(generateListeningBundle(ANTHROPIC_API_KEY).then(async b => {
+    const lvl = randomLevel();
+    tasks.push(generateListeningBundle(ANTHROPIC_API_KEY, lvl).then(async b => {
       return supabase.from('listening_episodes').insert([{
-        level: 'B1', title: b.title, audio_url: b.audioUrl,
+        level: lvl, title: b.title, audio_url: b.audioUrl,
         clip_start: b.clipStart ?? 0,
         clip_end: b.clipEnd ?? CLIP_DURATION,
         transcript: b.transcript,
@@ -1298,10 +1389,10 @@ export async function handleReplenish() {
     }).catch(() => {}));
   }
   for (let i = writeCount; i < MIN_STOCK; i++) {
-    tasks.push(generateWritingBundle(ANTHROPIC_API_KEY).then(b => supabase.from('writing_prompts').insert([{ ...b, served: false }])).catch(() => {}));
+    tasks.push(generateWritingBundle(ANTHROPIC_API_KEY, randomLevel()).then(b => supabase.from('writing_prompts').insert([{ ...b, served: false }])).catch(() => {}));
   }
   for (let i = speakCount; i < MIN_STOCK; i++) {
-    tasks.push(generateSpeakingBundle(ANTHROPIC_API_KEY).then(b => supabase.from('speaking_prompts').insert([{ ...b, served: false }])).catch(() => {}));
+    tasks.push(generateSpeakingBundle(ANTHROPIC_API_KEY, '', randomLevel()).then(b => supabase.from('speaking_prompts').insert([{ ...b, served: false }])).catch(() => {}));
   }
 
   // Run up to 4 tasks concurrently to avoid timeout
@@ -1527,7 +1618,9 @@ export async function handleListening(body) {
       if (cached && cached.length > 0) {
         const row = cached[Math.floor(Math.random() * cached.length)];
         // Backfill exercise types missing from older cached episodes so every
-        // tab (grammaire + conjugaison) always has content.
+        // tab (grammaire + conjugaison) always has content — tuned to the
+        // episode's level (fall back to the learner's level if not stored).
+        const exDir = listeningExerciseDirective(normalizeLearnerLevel(row.level || level));
         let g = row.grammar || [];
         let c = row.conjugation || [];
         let q = row.questions || [];
@@ -1536,22 +1629,22 @@ export async function handleListening(body) {
         const jobs = [];
         if (q.length === 0 && txt) {
           jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 1600,
-            system: 'Create exactly 6 multiple-choice comprehension questions (in French) about the French transcript. For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}',
+            system: `Create exactly 6 multiple-choice comprehension questions (in French) about the French transcript. ${exDir} For each, add "explanation": a clear English sentence or two explaining why the correct answer is right and why the others are wrong. Raw JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"answer":"A","explanation":"In English: why A is correct and the others are not."}]}`,
             user: txt }).then((r) => { if (r.questions?.length) q = r.questions; }).catch(() => {}));
         }
         if (v.length === 0 && txt) {
           jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 900,
-            system: 'French teacher. Create exactly 4 vocabulary fill-in-the-blank exercises from key words in the transcript. Raw JSON: {"vocab":[{"word":"...","definition":"English meaning","sentence":"...___..."}]}',
+            system: `French teacher. ${exDir} Create exactly 4 vocabulary fill-in-the-blank exercises from key words in the transcript. Raw JSON: {"vocab":[{"word":"...","definition":"English meaning","sentence":"...___..."}]}`,
             user: txt }).then((r) => { if (r.vocab?.length) v = r.vocab; }).catch(() => {}));
         }
         if (c.length === 0 && txt) {
           jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 700,
-            system: 'French teacher. Create exactly 4 conjugation fill-in-the-blank exercises using verbs from the transcript. One "___" per sentence; hint = the pronoun/subject (je/tu/il...). Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}',
+            system: `French teacher. ${exDir} Create exactly 4 conjugation fill-in-the-blank exercises using verbs from the transcript. One "___" per sentence; hint = the pronoun/subject (je/tu/il...). Raw JSON: {"conjugation":[{"verb":"...","tense":"...","sentence":"...___...","answer":"...","hint":"je/tu/il..."}]}`,
             user: txt }).then((r) => { if (r.conjugation?.length) c = r.conjugation; }).catch(() => {}));
         }
         if (g.length === 0 && txt) {
           jobs.push(claudeJSON({ apiKey: ANTHROPIC_API_KEY, maxTokens: 2000,
-            system: 'French grammar teacher. Exactly 2 grammar structures from the transcript. Each has 6 fill-in-the-blank exercises ("___" per sentence; hint = base form) AND a "production" task (a French instruction to write a sentence using it, plus a model sentence). Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}',
+            system: `French grammar teacher. ${exDir} Exactly 2 grammar structures from the transcript. Each has 6 fill-in-the-blank exercises ("___" per sentence; hint = base form) AND a "production" task (a French instruction to write a sentence using it, plus a model sentence). Raw JSON: {"grammar":[{"point":"...","example":"...","explanation":"...","tip":"...","exercises":[{"sentence":"...___...","answer":"...","hint":"..."}],"production":{"instruction":"...","example":"..."}}]}`,
             user: txt }).then((r) => { if (r.grammar?.length) g = r.grammar; }).catch(() => {}));
         }
         if (jobs.length) {
