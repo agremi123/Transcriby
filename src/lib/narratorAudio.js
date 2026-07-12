@@ -43,9 +43,22 @@ export function normalizeNarratorId(narrator) {
 }
 
 // ── Persistent audio cache (IndexedDB) ──────────────────────────────────────
-const IDB_NAME = 'nativa-narrator-audio';
+// La clé de cache navigateur ne contient QUE le narrateur + le texte, pas le
+// voiceId : si la voix d'un narrateur change côté serveur, le navigateur
+// continuerait de rejouer l'ancienne voix, indéfiniment. D'où VOICE_REV :
+// on l'incrémente à chaque changement de voix pour invalider les caches déjà
+// posés chez les élèves (et on jette l'ancienne base au passage).
+// rev 2 = retour à la vraie voix de Léa (ebRwkdEFVZIx2A6YucFh).
+const VOICE_REV = 2;
+const IDB_NAME = `nativa-narrator-audio-v${VOICE_REV}`;
 const IDB_VERSION = 1;
 const IDB_STORE = 'audio';
+
+// Ménage : les bases des révisions précédentes contiennent la mauvaise voix.
+try {
+  indexedDB.deleteDatabase('nativa-narrator-audio');
+  for (let r = 1; r < VOICE_REV; r++) indexedDB.deleteDatabase(`nativa-narrator-audio-v${r}`);
+} catch {}
 
 function openAudioCacheDb() {
   return new Promise((resolve, reject) => {
