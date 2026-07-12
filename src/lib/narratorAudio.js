@@ -97,7 +97,7 @@ async function idbPut(key, value) {
 const narratorAudioCache = new Map();
 
 function cacheKey(text, narrator) {
-  return `${resolveClientNarrator(narrator)}:${text.trim()}`;
+  return `v${VOICE_REV}:${resolveClientNarrator(narrator)}:${text.trim()}`;
 }
 
 export async function readNarratorAudioResponse(res) {
